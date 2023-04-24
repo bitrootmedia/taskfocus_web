@@ -1,0 +1,28 @@
+<template>
+  <div>
+    <Sidebar v-model:closePanel="closePanel"/>
+    <div class="relative bg-blueGray-100" :class="{'md:ml-64': !closePanel,'md:ml-16': closePanel}">
+      <AdminNavbar />
+      <div class="relative pt-8 md:pt-24 pb-8 md:pb-32 h-full">
+        <div class=" mx-auto w-full">
+          <router-view />
+        </div>
+      </div>
+
+<!--      <div class="px-4 md:px-10 mx-auto w-full -m-24">-->
+<!--        <FooterAdmin />-->
+<!--      </div>-->
+    </div>
+  </div>
+</template>
+
+<script setup>
+import AdminNavbar from "../components/Navbars/AdminNavbar.vue";
+import Sidebar from "../components/Sidebar/Sidebar.vue";
+import FooterAdmin from "../components/Footers/FooterAdmin.vue";
+import {ref} from "vue";
+
+const closePanel = ref(false)
+
+</script>
+

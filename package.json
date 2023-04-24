@@ -1,0 +1,62 @@
+{
+  "name": "my-project",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite --port=3000",
+    "build": "vite build",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "@fortawesome/fontawesome-free": "5.15.3",
+    "@kangc/v-md-editor": "^2.3.15",
+    "@popperjs/core": "2.9.1",
+    "@tailwindcss/forms": "0.2.1",
+    "@vuelidate/core": "^2.0.0",
+    "@vuelidate/validators": "^2.0.0",
+    "axios": "^1.1.3",
+    "chart.js": "2.9.4",
+    "core-js": "3.9.1",
+    "dotenv": "^16.0.3",
+    "dropzone-vue": "^0.1.11",
+    "gulp": "4.0.2",
+    "gulp-append-prepend": "1.0.8",
+    "moment": "^2.29.4",
+    "path": "^0.12.7",
+    "pinia": "^2.0.23",
+    "vue": "^3.2.45",
+    "vue-router": "4.0.5",
+    "vue-toastification": "^2.0.0-rc.2",
+    "vue3-cookies": "^1.0.6",
+    "vuedraggable": "^4.1.0"
+  },
+  "devDependencies": {
+    "@babel/core": "7.13.10",
+    "@babel/eslint-parser": "7.13.10",
+    "@vitejs/plugin-vue": "^4.0.0",
+    "@vue/cli-plugin-babel": "5.0.0-alpha.7",
+    "@vue/cli-plugin-eslint": "5.0.0-alpha.7",
+    "@vue/cli-service": "5.0.0-alpha.7",
+    "autoprefixer": "^10.4.14",
+    "eslint": "7.22.0",
+    "eslint-plugin-vue": "7.7.0",
+    "postcss": "^8.4.21",
+    "tailwindcss": "^3.2.7",
+    "vite": "^4.1.0"
+  },
+  "eslintConfig": {
+    "root": true,
+    "env": {
+      "node": true
+    },
+    "extends": [
+      "plugin:vue/essential",
+      "eslint:recommended"
+    ],
+    "rules": {},
+    "parserOptions": {
+      "parser": "@babel/eslint-parser"
+    }
+  }
+}
