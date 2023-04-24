@@ -474,6 +474,8 @@ const fetchTask = async () => {
       task.value = {...resp.data}
       form.value = {...resp.data}
 
+      // console.log(resp.data,'data')
+
       if (!resp.data.eta_date) form.value.eta_date = new Date().toISOString().slice(0, 10)
       if (resp.data.responsible?.id) form.value.user = resp.data.responsible.id
       if (resp.data.responsible?.id) form.value.owner = resp.data.responsible.id
