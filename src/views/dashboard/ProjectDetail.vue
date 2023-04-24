@@ -102,7 +102,7 @@
         </div>
 
         <div class="mb-10">
-          <CommentsDataTable :project-id="project.id" />
+          <CommentsDataTable :project-id="project.id" :project-name="project.title" />
         </div>
 
         <div class="mb-10">
