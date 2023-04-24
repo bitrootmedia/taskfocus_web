@@ -87,6 +87,10 @@
                 </td>
 
                 <td class="border-t-0 px-3 align-middle border-l-0 border-r-0 text-xs whitespace-nowrap p-4">
+                  <span>{{ element.urgency_level || '-' }}</span>
+                </td>
+
+                <td class="border-t-0 px-3 align-middle border-l-0 border-r-0 text-xs whitespace-nowrap p-4">
                           <span v-if="element.owner?.first_name || element.owner?.last_name">{{
                               element.owner?.first_name
                             }} {{ element.owner?.last_name }}</span>
@@ -103,7 +107,7 @@
                   <span>{{ convertDayDiff(element.eta_date) }}</span>
                 </td>
                 <td class="border-t-0 px-3 align-middle border-l-0 border-r-0 text-xs whitespace-nowrap p-4">
-                  <span>{{ element.tag }}</span>
+                  <span>{{ element.tag || '-' }}</span>
                 </td>
                 <td class="border-t-0 px-3 align-middle border-l-0 border-r-0 text-xs whitespace-nowrap p-4">
                   <span>{{ element.progress || 0 }}%</span>
@@ -188,16 +192,17 @@ const headers = computed(() => {
   const list = [
     {id: 1, label: 'Title', sorting: true, sortLabel: 'title'},
     {id: 2, label: 'Status', sorting: true, sortLabel: 'status'},
-    {id: 3, label: 'Owner', sorting: true, sortLabel: 'owner'},
-    {id: 4, label: 'Responsible', sorting: true, sortLabel: 'responsible'},
-    {id: 5, label: 'ETA', sorting: true, sortLabel: 'eta'},
-    {id: 6, label: 'Tag', sorting: true, sortLabel: 'tag'},
-    {id: 7, label: 'Progress', sorting: true, sortLabel: 'progress'},
-    {id: 8, label: 'Closed', sorting: true, sortLabel: 'is_closed'},
-    {id: 9, label: 'Created at', sorting: true, sortLabel: 'created_at'},
+    {id: 3, label: 'Urgency Level', sorting: true, sortLabel: 'status'},
+    {id: 4, label: 'Owner', sorting: true, sortLabel: 'owner'},
+    {id: 5, label: 'Responsible', sorting: true, sortLabel: 'responsible'},
+    {id: 6, label: 'ETA', sorting: true, sortLabel: 'eta'},
+    {id: 7, label: 'Tag', sorting: true, sortLabel: 'tag'},
+    {id: 8, label: 'Progress', sorting: true, sortLabel: 'progress'},
+    {id: 9, label: 'Closed', sorting: true, sortLabel: 'is_closed'},
+    {id: 10, label: 'Created at', sorting: true, sortLabel: 'created_at'},
   ]
 
-  const projectObj = {id: 10, label: 'Project', sorting: true, sortLabel: 'project'}
+  const projectObj = {id: 11, label: 'Project', sorting: true, sortLabel: 'project'}
   if (props.hideCreate) list.splice(2, 0, projectObj)
 
   return list

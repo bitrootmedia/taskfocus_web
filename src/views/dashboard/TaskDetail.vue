@@ -30,7 +30,7 @@
             </div>
           </div>
 
-          <div class="actions mb-4 flex gap-x-1 sm:gap-x-4">
+          <div class="actions mb-4 flex gap-x-1 sm:gap-x-4 flex-wrap">
             <button
                 v-if="!task.is_closed"
                 @click="toggleTask(currentTask?.id === task?.id ? 'stop' : 'work')"
@@ -78,26 +78,46 @@
           </div>
 
           <div class="mb-2 sm:mb-4">
-            <p class="text-blueGray-500 inline-flex">
+            <div class="text-blueGray-500">
               Task Owner: &nbsp;
-              <b>
+              <b :class="{'cursor-pointer': isAuthOwner}" @click="isAuthOwner ? isEditPanel.owner = true : null"
+                 v-if="!isEditPanel.owner">
                 <span v-if="task.owner?.first_name || task.owner?.last_name">{{
                     task.owner?.first_name
                   }} {{ task.owner?.last_name }}</span>
                 <span v-else>{{ task.owner?.username }}</span>
               </b>
-            </p>
+
+              <div v-else class="mb-2 w-80">
+                <select v-model="form.owner" placeholder="Select User"
+                        class="border-0 px-3 py-3 placeholder-blueGray-300 text-blueGray-600 bg-white rounded text-sm shadow focus:outline-none focus:ring w-full ease-linear transition-all duration-150"
+                >
+                  <option :value="user.id" v-for="(user) in users" :key="user.id">{{ user.username }}</option>
+                </select>
+              </div>
+
+            </div>
           </div>
 
           <div class="mb-2 sm:mb-4">
             <div class="flex gap-x-1">
-              <span class="text-blueGray-500 ">Task Access: </span>
-              <ul class="flex gap-x-2 flex-wrap" v-if="haveTaskAccessIds.length">
-                <li v-for="(item,index) in haveTaskAccess" :key="item.user.id" class="text-blueGray-500 font-bold">
-                  {{ item.user.username }}<span v-if="index !== haveTaskAccess.length - 1">,</span>
-                </li>
-              </ul>
-              <span v-else class="text-blueGray-500 font-bold">N/A</span>
+              <span class="text-blueGray-500 whitespace-nowrap">Task Access: &nbsp;</span>
+
+                <ul class="flex gap-x-2 flex-wrap">
+                  <li class="text-blueGray-500 font-bold">
+                    {{ task.owner?.username }}(owner){{haveTaskAccess.length || haveProjectAccess.length ? ',' : ''}}
+                  </li>
+
+                  <li v-if="haveProjectAccess.length" v-for="(item,index) in haveProjectAccess" :key="item.user.id" class="text-blueGray-500 font-bold">
+                    {{ item.user.username }}<span class="text-blueGray-500 font-bold">(project)</span><span
+                      v-if="haveTaskAccessIds.length || index !== haveProjectAccess.length - 1">,</span>
+                  </li>
+
+                  <li v-if="haveTaskAccess.length" v-for="(item,index) in haveTaskAccess" :key="item.user.id" class="text-blueGray-500 font-bold">
+                    {{ item.user.username }}<span class="text-blueGray-500 font-bold">(task)</span><span
+                      v-if="index !== haveTaskAccess.length - 1">,</span>
+                  </li>
+                </ul>
             </div>
           </div>
 
@@ -124,9 +144,7 @@
 
           <div class="mb-2 sm:mb-4">
             <div class="text-blueGray-500">
-
-              <label class="text-red">ETA:</label>&nbsp;
-
+              ETA:&nbsp;
               <b class="cursor-pointer" v-if="!isEditPanel.eta" @click="isEditPanel.eta = true">
                 <span v-if="!task.eta_date">N/A</span>
                 <span v-else>{{ convertDayDiff(task.eta_date) }} ({{ task.eta_date }})</span>
@@ -146,6 +164,26 @@
 
           <div class="mb-2 sm:mb-4">
             <div class="text-blueGray-500">
+              Tag:&nbsp;
+              <b class="cursor-pointer" v-if="!isEditPanel.tag" @click="isEditPanel.tag = true">
+                <span v-if="!task.tag">N/A</span>
+                <span v-else>{{ task.tag }}</span>
+              </b>
+
+              <div v-else class="mb-2 w-80">
+                <input
+                    v-model="form.tag"
+                    type="text"
+                    class="border-0 px-3 py-3 placeholder-blueGray-300 text-blueGray-600 bg-white rounded text-sm shadow focus:outline-none focus:ring w-full ease-linear transition-all duration-150"
+                    placeholder="Tag"
+                />
+              </div>
+            </div>
+
+          </div>
+
+          <div class="mb-2 sm:mb-4">
+            <div class="text-blueGray-500">
               Status:&nbsp;
               <b class="uppercase cursor-pointer" v-if="!isEditPanel.status"
                  @click="isEditPanel.status = true">{{ task.status || 'N/A' }}
@@ -155,6 +193,24 @@
                         class="border-0 px-3 py-3 placeholder-blueGray-300 text-blueGray-600 bg-white rounded text-sm shadow focus:outline-none focus:ring w-full ease-linear transition-all duration-150"
                 >
                   <option :value="item[0]" v-for="(item) in dictionary" :key="item[0]">{{ item[1] }}</option>
+                </select>
+              </div>
+            </div>
+
+          </div>
+
+          <div class="mb-2 sm:mb-4">
+
+            <div class="text-blueGray-500">
+              Urgency Level:&nbsp;
+              <b class="uppercase cursor-pointer" v-if="!isEditPanel.urgency_level"
+                 @click="isEditPanel.urgency_level = true">{{ task.urgency_level || 'N/A' }}
+              </b>
+              <div v-else class="mb-2 w-80">
+                <select v-model="form.urgency_level" placeholder="Select User"
+                        class="border-0 px-3 py-3 placeholder-blueGray-300 text-blueGray-600 bg-white rounded text-sm shadow focus:outline-none focus:ring w-full ease-linear transition-all duration-150"
+                >
+                  <option :value="item[0]" v-for="(item) in urgencyLevels" :key="item[0]">{{ item[1] }}</option>
                 </select>
               </div>
             </div>
@@ -189,8 +245,7 @@
                 <b v-if="!task.description" class="cursor-pointer">N/A</b>
                 <v-md-preview-html v-else
                                    :html="xss.process(VMdEditor.vMdParser.themeConfig.markdownParser.render(task.description))"
-                                   preview-class="vuepress-markdown-body"
-                                   class="cursor-pointer bg-orange-100 rounded-lg p-4 mt-3"></v-md-preview-html>
+                                   preview-class="vuepress-markdown-body" class="cursor-pointer"></v-md-preview-html>
               </template>
 
               <div v-else class="w-[800px]">
@@ -223,8 +278,9 @@
         <AttachmentsDataTable :task-id="task.id" :is-task="true"/>
       </div>
 
-      <div class="mb-10 ">
-        <CommentsDataTable :task-id="task.id" :is-task="true"/>
+
+      <div class="mb-10">
+        <CommentsDataTable :task-id="task.id" :task-name="task.title" :is-task="true"/>
       </div>
 
       <div>
@@ -293,6 +349,9 @@ const defaultEditValues = {
   progress: false,
   eta: false,
   user: false,
+  tag: false,
+  urgency_level: false,
+  owner: false,
 }
 
 // State
@@ -317,9 +376,11 @@ const backgroundSize = ref('0% 0%')
 const users = ref([])
 const usersList = ref([])
 const dictionary = ref([])
+const urgencyLevels = ref([])
 const haveTaskAccess = ref([])
 const haveTaskAccessIds = ref([])
 const haveProjectAccessIds = ref([])
+const haveProjectAccess = ref([])
 const isEditPanel = ref({...defaultEditValues})
 const form = ref({
   title: '',
@@ -327,7 +388,10 @@ const form = ref({
   eta_date: '',
   status: '',
   user: '',
+  owner: '',
   progress: '',
+  tag: '',
+  urgency_level: '',
 })
 
 const v$ = useVuelidate(rules, form)
@@ -349,7 +413,7 @@ const showPanel = computed(() => {
 
 
 // Methods
-const updateTasks = ()=>{
+const updateTasks = () => {
   fetchTask()
   fetchTaskAccess()
 }
@@ -410,8 +474,11 @@ const fetchTask = async () => {
       task.value = {...resp.data}
       form.value = {...resp.data}
 
+      // console.log(resp.data,'data')
+
       if (!resp.data.eta_date) form.value.eta_date = new Date().toISOString().slice(0, 10)
       if (resp.data.responsible?.id) form.value.user = resp.data.responsible.id
+      if (resp.data.responsible?.id) form.value.owner = resp.data.responsible.id
       backgroundSize.value = `${resp.data.progress || 0}% 100%`
     }
 
@@ -426,6 +493,7 @@ const fetchDictionary = async () => {
   try {
     const resp = await taskStore.fetchDictionary()
     dictionary.value = resp.data.task_status_choices
+    urgencyLevels.value = resp.data.task_urgency_level_choices
   } catch (e) {
     catchErrors(e)
   }
@@ -447,6 +515,7 @@ const resetData = () => {
   form.value = {...task.value}
 
   if (task.value.responsible?.id) form.value.user = task.value.responsible.id
+  if (task.value.owner?.id) form.value.owner = task.value.responsible.id
   form.value.eta_date = new Date().toISOString().slice(0, 10)
   backgroundSize.value = `${task.value.progress || 0}% 100%`
 }
@@ -460,11 +529,14 @@ const updateTask = async () => {
       eta_date: form.value.eta_date,
       status: form.value.status,
       responsible: form.value.user,
+      owner: form.value.owner,
       progress: form.value.progress,
+      tag: form.value.tag,
+      urgency_level: form.value.urgency_level,
     }
 
     await taskStore.updateTask(data)
-    await toast.success("Successfully project updated");
+    await toast.success("Successfully task updated");
     isEditPanel.value = {...defaultEditValues}
     await fetchTask()
   } catch (e) {
@@ -485,9 +557,9 @@ const fetchUsers = async () => {
     ]
 
     usersList.value = resp.data.results.filter((item) => item.id !== task.value?.owner?.id)
-    const arrIds = [...new Set([...haveTaskAccessIds.value,...haveProjectAccessIds.value])];
+    const arrIds = [...new Set([...haveTaskAccessIds.value, ...haveProjectAccessIds.value])];
     const tempArr = []
-    resp.data.results.forEach((item)=>{
+    resp.data.results.forEach((item) => {
       if (arrIds.includes(item.id) || item.id === task.value?.owner?.id) {
         tempArr.push(item)
       }
@@ -526,7 +598,7 @@ const fetchProjectAccess = async () => {
   try {
     const projectId = task.value.project.id
     if (projectId) {
-      const resp = await projectStore.fetchProjectAccess({id:projectId})
+      const resp = await projectStore.fetchProjectAccess({id: projectId})
       const user = cookies.get('crowdsteer_user')
       const list = []
       const ids = []
@@ -536,6 +608,8 @@ const fetchProjectAccess = async () => {
           ids.push(item.user.id)
         }
       })
+
+      haveProjectAccess.value = list
       haveProjectAccessIds.value = ids
     }
   } catch (e) {
