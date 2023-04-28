@@ -30,5 +30,5 @@ jobs:
           username: ${{ secrets.STAGE_USERNAME }}
           password: ${{ secrets.STAGE_PASSWORD }}
           port: ${{ secrets.STAGE_PORT }}
-          source: "dist/*"
+          source: "dist/**"
           target: "/home/deploy/www/web/"
