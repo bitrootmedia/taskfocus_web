@@ -19,4 +19,4 @@ jobs:
           password: ${{ secrets.STAGE_PASSWORD }}
           port: ${{ secrets.STAGE_PORT }}
           source: "index.html"
-          target: "/home/deploy/web/www"
+          target: "/home/deploy/www/web"
