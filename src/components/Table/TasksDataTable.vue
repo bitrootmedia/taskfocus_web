@@ -242,17 +242,21 @@ const changeDrag = async (e) => {
 
     if (newIndex !== 0) {
       const findItem = tempData.value.find((item, index) => index === newIndex)
-      console.log(findItem,'findItem')
       aboveItemId = findItem.id
+    }
+
+    if (newIndex !== tempData.value.length){
+      const nextItem = tempData.value.find((item, index) => index === newIndex + 1)
+      belowItemId = nextItem.id
     }
 
     const data = {
       id: e.moved.element.id,
-      task_above_id:aboveItemId
+      task_above_id: aboveItemId,
+      task_below_id: belowItemId,
     }
-    console.log(data,'data')
 
-    // await tasksStore.updateOrder(data)
+    await tasksStore.updateOrder(data)
   } catch (e) {
     catchErrors(e)
   }

@@ -73,20 +73,30 @@
                 </div>
 
                 <p class="text-sm text-blueGray-500">
-                  <span v-if="props.taskId">Task link: <router-link class="underline"
-                                                                    :to="`/dashboard/task/${props.taskId}`">{{
+                  <span v-if="props.taskId && route.name !== 'Task Detail'" class="block">Task link: <router-link
+                      class="underline"
+                      :to="`/dashboard/task/${props.taskId}`">{{
                       taskName
                     }}</router-link></span>
-                  <span v-else-if="props.projectId">Project link: <router-link class="underline"
-                                                                               :to="`/dashboard/project/${props.projectId}`">{{
-                      projectName
-                    }}</router-link></span>
-                  <span v-else-if="comment.task?.id">Task link: <router-link class="underline"
-                                                                             :to="`/dashboard/task/${comment.task?.id}`">{{
+                  <span v-else-if="comment.task?.id && route.name !== 'Task Detail'" class="block">Task link: <router-link
+                      class="underline"
+                      :to="`/dashboard/task/${comment.task?.id}`">{{
                       comment.task.title
                     }}</router-link></span>
-                  <span v-else-if="comment.project?.id">Project link: <router-link class="underline"
-                                                                                   :to="`/dashboard/project/${comment.project?.id}`">{{
+
+                  <span v-if="comment.task?.project?.id" class="block">Project link: <router-link class="underline"
+                                                                                                  :to="`/dashboard/project/${comment.task?.project?.id}`">{{
+                      comment.task.project.title
+                    }}</router-link></span>
+
+
+                  <span v-if="props.projectId && route.name !== 'Project Detail'" class="block">Project link: <router-link class="underline"
+                                                                                        :to="`/dashboard/project/${props.projectId}`">{{
+                      projectName
+                    }}</router-link></span>
+
+                  <span v-else-if="comment.project?.id && route.name !== 'Project Detail'" class="block">Project link: <router-link class="underline"
+                                                                                                 :to="`/dashboard/project/${comment.project?.id}`">{{
                       comment.project.title
                     }}</router-link></span>
                 </p>

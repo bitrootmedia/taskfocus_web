@@ -8,7 +8,7 @@
           <div class="flex justify-between sm:justify-start gap-x-4 sm:gap-x-10 items-center mb-6">
             <div :class="{'w-5/6 sm:w-3/4 md:w-3/6': isEditPanel.title}">
               <h1 v-if="!isEditPanel.title" class="text-3xl font-bold text-blueGray-700 mb-1 cursor-pointer"
-                  @click="isEditPanel.title = true">{{ task.title }}</h1>
+                  @click="isEditPanel.title = true">{{ task?.title }}</h1>
               <div v-else class="mb-2">
                 <input
                     v-model="form.title"
@@ -22,7 +22,7 @@
               </div>
             </div>
 
-            <div class="flex items-center gap-x-2" v-if="task.project">
+            <div class="flex items-center gap-x-2" v-if="task?.project">
               <span class="text-sm text-blueGray-600 whitespace-nowrap">In project:</span>
               <h2 class="text-lg sm:text-2xl font-bold text-blueGray-700 mb-1 cursor-pointer lg:whitespace-nowrap"
                   @click="router.push(`/dashboard/project/${task.project.id}`)">
@@ -32,7 +32,7 @@
 
           <div class="actions mb-4 flex gap-x-1 sm:gap-x-4 flex-wrap">
             <button
-                v-if="!task.is_closed"
+                v-if="!task?.is_closed"
                 @click="toggleTask(currentTask?.id === task?.id ? 'stop' : 'work')"
                 class="mt-2 bg-blueGray-800 whitespace-nowrap text-white active:bg-blueGray-600 text-sm font-bold px-2 sm:px-4 py-2 rounded shadow hover:shadow-lg outline-none focus:outline-none ease-linear transition-all duration-150"
                 type="button"
@@ -474,8 +474,6 @@ const fetchTask = async () => {
       task.value = {...resp.data}
       form.value = {...resp.data}
 
-      console.log(resp,'resp')
-
       // console.log(resp.data,'data')
 
       if (!resp.data.eta_date) form.value.eta_date = new Date().toISOString().slice(0, 10)
@@ -495,7 +493,9 @@ const fetchDictionary = async () => {
   try {
     const resp = await taskStore.fetchDictionary()
     dictionary.value = resp.data.task_status_choices
-    urgencyLevels.value = resp.data.task_urgency_level_choices
+
+    const arr = ['NONE', 'NONE']
+    urgencyLevels.value = [arr,...resp.data.task_urgency_level_choices]
   } catch (e) {
     catchErrors(e)
   }
@@ -613,6 +613,7 @@ const fetchProjectAccess = async () => {
 
       haveProjectAccess.value = list
       haveProjectAccessIds.value = ids
+      console.log(haveProjectAccessIds.value,'haveProjectAccessIds.value1011111')
     }
   } catch (e) {
     catchErrors(e)
@@ -626,8 +627,11 @@ onMounted(() => {
 
   setTimeout(() => {
     fetchProjectAccess()
-    fetchUsers()
   }, 300)
+
+  setTimeout(() => {
+    fetchUsers()
+  }, 700)
 })
 
 
