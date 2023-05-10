@@ -60,7 +60,7 @@
               <span class="text-blueGray-500 ">Access: </span>
               <ul class="flex gap-x-2 flex-wrap">
                 <li v-for="(item,index) in haveProjectAccess" :key="item.user.id" class="text-blueGray-500 font-medium">
-                  {{ item.user.username }}<span v-if="index !== haveProjectAccess.length - 1">,</span>
+                  {{ item.user.first_name }} {{ item.user.last_name }}<span v-if="index !== haveProjectAccess.length - 1">,</span>
                 </li>
               </ul>
             </div>
