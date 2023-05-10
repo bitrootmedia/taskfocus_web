@@ -92,7 +92,7 @@
                 <select v-model="form.owner" placeholder="Select User"
                         class="border-0 px-3 py-3 placeholder-blueGray-300 text-blueGray-600 bg-white rounded text-sm shadow focus:outline-none focus:ring w-full ease-linear transition-all duration-150"
                 >
-                  <option :value="user.id" v-for="(user) in users" :key="user.id">{{ user.username }}</option>
+                  <option :value="user.id" v-for="(user) in users" :key="user.id">{{ user.first_name }} {{ user.last_name }}</option>
                 </select>
               </div>
 
@@ -105,16 +105,16 @@
 
                 <ul class="flex gap-x-2 flex-wrap">
                   <li class="text-blueGray-500 font-bold">
-                    {{ task.owner?.username }}(owner){{haveTaskAccess.length || haveProjectAccess.length ? ',' : ''}}
+                    {{ task.owner?.first_name }} {{ task.owner?.last_name }}(owner){{haveTaskAccess.length || haveProjectAccess.length ? ',' : ''}}
                   </li>
 
                   <li v-if="haveProjectAccess.length" v-for="(item,index) in haveProjectAccess" :key="item.user.id" class="text-blueGray-500 font-bold">
-                    {{ item.user.username }}<span class="text-blueGray-500 font-bold">(project)</span><span
+                    {{ item.user.first_name }} {{ item.user.last_name }}<span class="text-blueGray-500 font-bold">(project)</span><span
                       v-if="haveTaskAccessIds.length || index !== haveProjectAccess.length - 1">,</span>
                   </li>
 
                   <li v-if="haveTaskAccess.length" v-for="(item,index) in haveTaskAccess" :key="item.user.id" class="text-blueGray-500 font-bold">
-                    {{ item.user.username }}<span class="text-blueGray-500 font-bold">(task)</span><span
+                    {{ item.user.first_name }} {{ item.user.last_name }}<span class="text-blueGray-500 font-bold">(task)</span><span
                       v-if="index !== haveTaskAccess.length - 1">,</span>
                   </li>
                 </ul>
@@ -136,7 +136,7 @@
                 <select v-model="form.user" placeholder="Select User"
                         class="border-0 px-3 py-3 placeholder-blueGray-300 text-blueGray-600 bg-white rounded text-sm shadow focus:outline-none focus:ring w-full ease-linear transition-all duration-150"
                 >
-                  <option :value="user.id" v-for="(user) in users" :key="user.id">{{ user.username }}</option>
+                  <option :value="user.id" v-for="(user) in users" :key="user.id">{{ user.first_name }} {{user.last_name}}</option>
                 </select>
               </div>
             </div>
@@ -473,6 +473,8 @@ const fetchTask = async () => {
       const resp = await taskStore.fetchTaskById({id})
       task.value = {...resp.data}
       form.value = {...resp.data}
+
+      console.log(resp,'resp')
 
       // console.log(resp.data,'data')
 

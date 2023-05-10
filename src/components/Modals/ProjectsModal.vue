@@ -32,7 +32,7 @@
             </div>
 
             <ul v-if="projects.length">
-              <li v-for="project in projects" :key="project.id" class="flex justify-between align-center gap-x-1 my-3">
+              <li v-for="project in projects" :key="project.id" class="flex justify-between items-center gap-x-1 my-3">
                 <span class="text-lg text-blueGray-500 font-medium">{{ project.title }}</span>
                 <button
                     :class="{'bg-red-600': project.id === projectId, 'bg-emerald-600': project.id !== projectId}"

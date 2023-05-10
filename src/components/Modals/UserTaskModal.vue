@@ -22,8 +22,8 @@
 
           <div v-else class="content">
             <ul>
-              <li v-for="user in users" :key="user.id" class="flex justify-between align-center gap-x-1 my-3">
-                <span class="text-lg text-blueGray-500 font-medium">{{ user.username }}</span>
+              <li v-for="user in users" :key="user.id" class="flex justify-between items-center gap-x-1 my-3">
+                <span class="text-lg text-blueGray-500 font-medium">{{ user.first_name }} {{ user.last_name }}</span>
                 <button
                     :class="{'bg-red-600': haveTaskAccessIds.includes(user.id), 'bg-emerald-600':!haveTaskAccessIds.includes(user.id)}"
                     class="text-white active:bg-blueGray-600 text-sm font-bold px-3 py-1 rounded shadow hover:shadow-lg outline-none focus:outline-none ease-linear transition-all duration-150"

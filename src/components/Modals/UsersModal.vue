@@ -22,7 +22,7 @@
 
           <div v-else class="content">
             <ul>
-              <li v-for="user in users" :key="user.id" class="flex justify-between align-center gap-x-1 my-3">
+              <li v-for="user in users" :key="user.id" class="flex justify-between items-center gap-x-1 my-3">
                 <span class="text-lg text-blueGray-500 font-medium">{{ user.username }}</span>
                 <button
                     :class="{'bg-red-600': haveProjectAccessIds.includes(user.id), 'bg-emerald-600':!haveProjectAccessIds.includes(user.id)}"
