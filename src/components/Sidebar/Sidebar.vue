@@ -1,7 +1,7 @@
 <template>
   <nav
       class="md:left-0 md:block md:fixed md:top-0 md:bottom-0 md:flex-row md:flex-nowrap shadow-xl bg-white flex flex-wrap items-center justify-between relative z-10 py-4"
-      :class="{'md:w-64 px-6': !closePanel, 'md:w-16 px-2': closePanel}"
+      :class="{'md:w-64 px-4 sm:px-6': !closePanel, 'md:w-16 px-2': closePanel}"
   >
     <span v-if="closePanel" @click="emit('update:closePanel',false)"
           class="w-8 h-8 bg-white rounded-full flex items-center justify-center cursor-pointer absolute -right-[10px] top-1/2">
@@ -40,11 +40,12 @@
       </div>
       <!-- User -->
       <div class="flex md:hidden items-center">
-        <span class="font-medium mr-3 flex items-center gap-x-2">
-          <i class="fas fa-user-circle text-blueGray-300 text-lg"></i>
-          {{ fullName }}
-        </span>
-        <span class="cursor-pointer font-medium" @click="logout">Logout</span>
+<!--        <span class="font-medium mr-3 flex items-center gap-x-2">-->
+<!--          <i class="fas fa-user-circle text-blueGray-300 text-lg"></i>-->
+<!--          {{ fullName }}-->
+<!--        </span>-->
+        <Notifications :mode="'dark'"/>
+        <span class="cursor-pointer font-medium text-blueGray-600" @click="logout">Logout</span>
       </div>
       <!-- Collapse -->
       <div
@@ -167,14 +168,13 @@
 
 <script setup>
 import {computed, ref} from "vue";
-import {catchErrors} from "../../utils";
 import {useUserStore} from "../../store/user";
 import {useCookies} from "vue3-cookies";
 import {useToast} from "vue-toastification";
 import {useRouter} from "vue-router";
 import axios from "axios";
-import logo from './../../assets/vue.svg'
 import config from '../../config'
+import Notifications from "../../components/Notifications/Notifications.vue";
 
 const emit = defineEmits(['update:closePanel'])
 const props = defineProps({
@@ -198,9 +198,7 @@ const fullName = computed(() => {
   if (!cookies.get('crowdsteer_user')) return ''
 
   const user = cookies.get('crowdsteer_user')
-
-  if (user.first_name || user.last_name) return user.first_name + user.last_name
-
+  if (user.first_name || user.last_name) return user.first_name + ' ' +user.last_name
   return user.username
 })
 

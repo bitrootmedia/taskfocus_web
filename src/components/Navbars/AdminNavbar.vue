@@ -6,13 +6,15 @@
         class="w-full mx-auto items-center flex justify-between md:flex-nowrap flex-wrap"
     >
       <a
-          class="text-white text-sm uppercase hidden lg:inline-block font-semibold"
+          class="text-white text-sm uppercase hidden md:inline-block font-semibold"
           href="javascript:void(0)"
       >
-        {{route.name || 'Dashboard' }}
+        {{ route.name || 'Dashboard' }}
       </a>
 
       <div class="flex items-center">
+        <Notifications />
+
         <span class="text-white font-medium mr-4 flex items-center gap-x-2">
           <i class="fas fa-user-circle text-blueGray-300 text-lg"></i>
           {{ fullName }}
@@ -30,9 +32,9 @@ import {useUserStore} from "../../store/user";
 import {useCookies} from "vue3-cookies";
 import {useToast} from "vue-toastification";
 import {useRoute, useRouter} from "vue-router";
-import {catchErrors} from "../../utils";
 import {computed} from "vue";
 import axios from "axios";
+import Notifications from "../../components/Notifications/Notifications.vue";
 
 const userStore = useUserStore()
 const {cookies} = useCookies();
@@ -47,7 +49,7 @@ const fullName = computed(() => {
 
   const user = cookies.get('crowdsteer_user')
 
-  if (user.first_name || user.last_name) return user.first_name + user.last_name
+  if (user.first_name || user.last_name) return user.first_name + ' ' + user.last_name
 
   return user.username
 })
@@ -58,7 +60,7 @@ const logout = async () => {
   try {
     await userStore.logout()
   } catch (e) {
-  }finally {
+  } finally {
     cookies.remove('crowdsteer_token')
     cookies.remove('crowdsteer_user')
     delete axios.defaults.headers.common['Authorization'];

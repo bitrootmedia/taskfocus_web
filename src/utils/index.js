@@ -12,6 +12,10 @@ export const convertDateTime = (date) => {
     return moment(date).format("YYYY-MM-DD HH:mm:ss")
 }
 
+export const convertTimeAgo = (date) => {
+    return moment(date).fromNow()
+}
+
 export const convertDayDiff = (date) => {
     if (!date) return '-'
 
