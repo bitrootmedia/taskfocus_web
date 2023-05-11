@@ -29,7 +29,16 @@
           </button>
         </div>
 
-        <div class="mb-2 text-blueGray-600">
+        <div class="text-blueGray-800" :class="{'text-line-3': !readMore[index]}">
+          {{ item.notification.content }}
+        </div>
+
+        <div v-if="item.notification.content.length > 120 && !readMore[index]">
+          <span class="cursor-pointer font-semibold underline mt-1 text-blueGray-700 text-sm"
+                @click.stop="readMoreText(index)">Read More</span>
+        </div>
+
+        <div class="mt-2 text-blueGray-600">
           <span v-if="item.notification.task" class="block">Task:
           <router-link :to="`/dashboard/task/${item.notification.task.id}`" class="underline text-blue-500">{{
               item.notification.task.title
@@ -41,15 +50,6 @@
               item.notification.project.title
             }}</router-link>
           </span>
-        </div>
-
-        <div class="text-blueGray-800" :class="{'text-line-3': !readMore[index]}">
-          {{ item.notification.content }}
-        </div>
-
-        <div v-if="item.notification.content.length > 120 && !readMore[index]">
-          <span class="cursor-pointer font-semibold underline mt-1 text-blueGray-700 text-sm"
-                @click.stop="readMoreText(index)">Read More</span>
         </div>
 
         <div class="flex justify-end text-blueGray-500 font-semibold text-sm mt-2">
