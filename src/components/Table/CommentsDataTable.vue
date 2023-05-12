@@ -4,18 +4,17 @@
 
     <form v-if="!hideCreate" @submit="sendComment">
 
-      <button
+      <input
           v-if="!writeComment"
           @click="writeComment = true"
-          class="bg-blueGray-800 text-white active:bg-blueGray-600 text-sm font-bold px-6 py-3 rounded shadow hover:shadow-lg outline-none focus:outline-none ease-linear transition-all duration-150"
-          type="submit"
-      >
-        Write Comment
-      </button>
+          class="text-white w-full sm:w-1/2 hover:bg-gray-100 text-sm px-6 py-3 rounded cursor-pointer shadow outline-none focus:outline-none ease-linear transition-all duration-150"
+          placeholder="Write a comment..."
+      />
+
 
       <div class="w-full items-center gap-x-6" v-else>
-        <div class="w-[800px]">
-          <v-md-editor v-model="message" height="300px" :right-toolbar="'toc sync-scroll fullscreen'">
+        <div class="w-full sm:w-1/2">
+          <v-md-editor v-model="message" :right-toolbar="'toc sync-scroll fullscreen'">
           </v-md-editor>
         </div>
 
@@ -41,17 +40,17 @@
         v$.message.$errors[0].$message
       }} </span>
 
-    <div class="header flex flex-col md:flex-row items-baseline md:items-center justify-between mt-4 mb-4 gap-y-3">
-      <div class="relative w-full md:w-2/4">
-        <i class="fas fa-search mr-2 text-sm text-blueGray-300 absolute top-[12px] left-[8px]"/>
-        <input
-            v-model="filter.search.value"
-            type="text"
-            class="border-0 pl-8 pr-3 py-3 placeholder-blueGray-300 text-blueGray-600 bg-white rounded text-sm shadow focus:outline-none focus:ring w-full ease-linear transition-all duration-150"
-            placeholder="Search"
-        />
-      </div>
-    </div>
+<!--    <div class="header flex flex-col md:flex-row items-baseline md:items-center justify-between mt-4 mb-4 gap-y-3">-->
+<!--      <div class="relative w-full md:w-2/4">-->
+<!--        <i class="fas fa-search mr-2 text-sm text-blueGray-300 absolute top-[12px] left-[8px]"/>-->
+<!--        <input-->
+<!--            v-model="filter.search.value"-->
+<!--            type="text"-->
+<!--            class="border-0 pl-8 pr-3 py-3 placeholder-blueGray-300 text-blueGray-600 bg-white rounded text-sm shadow focus:outline-none focus:ring w-full ease-linear transition-all duration-150"-->
+<!--            placeholder="Search"-->
+<!--        />-->
+<!--      </div>-->
+<!--    </div>-->
 
     <div class="comments mt-3">
       <ul>
