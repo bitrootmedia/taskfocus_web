@@ -58,7 +58,6 @@
       </div>
 
       <div class="flex items-center justify-center flex-col min-h-[200px]" v-else>
-        <img src="src/assets/img/empty-notification.svg" alt="empty">
         <h4 class="text-blueGray-600 font-semibold text-lg mt-2">No unread notifications</h4>
       </div>
 
