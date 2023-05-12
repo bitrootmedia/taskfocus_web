@@ -47,9 +47,9 @@ const route = useRoute()
 
 // Computed
 const fullName = computed(() => {
-  if (!cookies.get('crowdsteer_user')) return ''
+  if (!cookies.get('task_focus_user')) return ''
 
-  const user = cookies.get('crowdsteer_user')
+  const user = cookies.get('task_focus_user')
 
   if (user.first_name || user.last_name) return user.first_name + ' ' + user.last_name
 
@@ -63,8 +63,8 @@ const logout = async () => {
     await userStore.logout()
   } catch (e) {
   } finally {
-    cookies.remove('crowdsteer_token')
-    cookies.remove('crowdsteer_user')
+    cookies.remove('task_focus_token')
+    cookies.remove('task_focus_user')
     delete axios.defaults.headers.common['Authorization'];
     toast.success("Successfully logout");
     await router.push('/')

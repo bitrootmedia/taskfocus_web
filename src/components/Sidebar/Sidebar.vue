@@ -194,9 +194,9 @@ const collapseShow = ref('hidden')
 
 // Computed
 const fullName = computed(() => {
-  if (!cookies.get('crowdsteer_user')) return ''
+  if (!cookies.get('task_focus_user')) return ''
 
-  const user = cookies.get('crowdsteer_user')
+  const user = cookies.get('task_focus_user')
   if (user.first_name || user.last_name) return user.first_name + ' ' +user.last_name
   return user.username
 })

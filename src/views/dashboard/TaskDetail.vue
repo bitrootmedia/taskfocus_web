@@ -398,9 +398,9 @@ const v$ = useVuelidate(rules, form)
 
 // Computed
 const isAuthOwner = computed(() => {
-  if (!cookies.get('crowdsteer_user')) return ''
+  if (!cookies.get('task_focus_user')) return ''
 
-  const user = cookies.get('crowdsteer_user')
+  const user = cookies.get('task_focus_user')
   const taskOwnerId = task.value.owner.id
 
   return user.pk === taskOwnerId
@@ -578,7 +578,7 @@ const fetchTaskAccess = async () => {
     const id = route.params.id
     if (id) {
       const resp = await taskStore.fetchTaskAccess({id})
-      const user = cookies.get('crowdsteer_user')
+      const user = cookies.get('task_focus_user')
       const list = []
       const ids = []
       resp.data.results.forEach((item) => {
@@ -602,7 +602,7 @@ const fetchProjectAccess = async () => {
     const projectId = task.value.project.id
     if (projectId) {
       const resp = await projectStore.fetchProjectAccess({id: projectId})
-      const user = cookies.get('crowdsteer_user')
+      const user = cookies.get('task_focus_user')
       const list = []
       const ids = []
       resp.data.results.forEach((item) => {

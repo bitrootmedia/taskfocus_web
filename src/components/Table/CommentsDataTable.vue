@@ -244,9 +244,9 @@ const updateComment = async (comment) => {
 }
 
 const isAuthOwner = (comment) => {
-  if (!cookies.get('crowdsteer_user')) return ''
+  if (!cookies.get('task_focus_user')) return ''
 
-  const user = cookies.get('crowdsteer_user')
+  const user = cookies.get('task_focus_user')
   const commentOwnerId = comment.author.id
 
   return user.pk === commentOwnerId

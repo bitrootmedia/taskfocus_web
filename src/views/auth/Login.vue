@@ -108,10 +108,10 @@ const signIn = async () => {
 
     if (isValid){
       const resp = await userStore.login(form.value)
-      await cookies.set('crowdsteer_token',resp.data.key)
+      await cookies.set('task_focus_token',resp.data.key)
       axios.defaults.headers.common['Authorization'] = `Token ${resp.data.key}`
       const respUser = await userStore.fetchUser(resp.data.key)
-      await cookies.set('crowdsteer_user',respUser.data)
+      await cookies.set('task_focus_user',respUser.data)
       await toast.success("Successfully loggedIn");
       await router.push('/dashboard')
     }

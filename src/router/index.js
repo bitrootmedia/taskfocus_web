@@ -29,7 +29,7 @@ const routes = [
             },
         ],
         beforeEnter: (to, from,next) => {
-            const token = cookies.get('crowdsteer_token')
+            const token = cookies.get('task_focus_token')
             if (token) next({ name: 'Dashboard' })
             else next()
         },
@@ -85,7 +85,7 @@ export const router = createRouter({
 });
 
 router.beforeEach(async (to, from,next) => {
-    const token = cookies.get('crowdsteer_token')
+    const token = cookies.get('task_focus_token')
 
     if (to.name !== 'Login' && !token) next({ name: 'Login' })
     else next()
