@@ -366,7 +366,7 @@ const {cookies} = useCookies();
 const loading = ref(false)
 const showModal = ref(false)
 const showUsersModal = ref(false)
-const confirmModal = ref(false)
+let confirmModal = ref(false)
 const task = ref(null)
 const currentTask = ref(null)
 const hasAccess = ref(false)
@@ -494,7 +494,7 @@ const fetchDictionary = async () => {
     const resp = await taskStore.fetchDictionary()
     dictionary.value = resp.data.task_status_choices
 
-    const arr = ['NONE', 'NONE']
+    const arr = [null, 'NONE']
     urgencyLevels.value = [arr,...resp.data.task_urgency_level_choices]
   } catch (e) {
     catchErrors(e)
@@ -536,6 +536,7 @@ const updateTask = async () => {
       tag: form.value.tag,
       urgency_level: form.value.urgency_level,
     }
+
 
     await taskStore.updateTask(data)
     await toast.success("Successfully task updated");
@@ -613,7 +614,6 @@ const fetchProjectAccess = async () => {
 
       haveProjectAccess.value = list
       haveProjectAccessIds.value = ids
-      console.log(haveProjectAccessIds.value,'haveProjectAccessIds.value1011111')
     }
   } catch (e) {
     catchErrors(e)

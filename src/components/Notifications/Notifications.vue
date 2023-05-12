@@ -126,7 +126,6 @@ const handleClick = (e) => {
 }
 
 const fetchNotifications = async () => {
-  console.log('1111')
   try {
     const options = {
       pagination: paginate.pagination.value,

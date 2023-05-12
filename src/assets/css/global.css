@@ -167,3 +167,6 @@ tr:nth-child(odd) {
     background-color: #c1bfbf;
     border-radius: 8px;
 }
+.v-md-editor__preview-wrapper{
+    display: none !important;
+}

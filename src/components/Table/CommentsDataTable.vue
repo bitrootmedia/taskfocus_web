@@ -15,7 +15,8 @@
 
       <div class="w-full items-center gap-x-6" v-else>
         <div class="w-[800px]">
-          <v-md-editor v-model="message" height="300px"></v-md-editor>
+          <v-md-editor v-model="message" height="300px" :right-toolbar="'toc sync-scroll fullscreen'">
+          </v-md-editor>
         </div>
 
         <div class="mt-3 flex gap-x-2">
@@ -84,19 +85,21 @@
                       comment.task.title
                     }}</router-link></span>
 
-                  <span v-if="comment.task?.project?.id" class="block">Project link: <router-link class="underline"
+                  <span v-if="comment.task?.project?.id && route.name !== 'Task Detail'" class="block">Project link: <router-link class="underline"
                                                                                                   :to="`/dashboard/project/${comment.task?.project?.id}`">{{
                       comment.task.project.title
                     }}</router-link></span>
 
 
-                  <span v-if="props.projectId && route.name !== 'Project Detail'" class="block">Project link: <router-link class="underline"
-                                                                                        :to="`/dashboard/project/${props.projectId}`">{{
+                  <span v-if="props.projectId && route.name !== 'Project Detail'" class="block">Project link: <router-link
+                      class="underline"
+                      :to="`/dashboard/project/${props.projectId}`">{{
                       projectName
                     }}</router-link></span>
 
-                  <span v-else-if="comment.project?.id && route.name !== 'Project Detail'" class="block">Project link: <router-link class="underline"
-                                                                                                 :to="`/dashboard/project/${comment.project?.id}`">{{
+                  <span v-else-if="comment.project?.id && route.name !== 'Project Detail'" class="block">Project link: <router-link
+                      class="underline"
+                      :to="`/dashboard/project/${comment.project?.id}`">{{
                       comment.project.title
                     }}</router-link></span>
                 </p>
