@@ -21,7 +21,7 @@ jobs:
         run: npm install
 
       - name: .env
-        run: cp .env.development .env
+        run: cp .env.base .env
 
       - name: Build
         run: npm run build
