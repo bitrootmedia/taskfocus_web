@@ -3,6 +3,7 @@
     <div class="text-white relative mr-6 cursor-pointer" @click="show = !show">
       <i class="fas fa-bell text-lg" :class="[mode === 'dark'? 'text-blueGray-700': 'text-blueGray-300']"></i>
       <span
+          v-if="notificationsStore.notificationsCount"
           class="absolute text-sm rounded-full w-4 h-4 text-white flex items-center justify-center bg-red-500 top-0 -right-3">{{
           notificationsStore.notificationsCount
         }}</span>
@@ -125,6 +126,7 @@ const handleClick = (e) => {
 }
 
 const fetchNotifications = async () => {
+  console.log('1111')
   try {
     const options = {
       pagination: paginate.pagination.value,

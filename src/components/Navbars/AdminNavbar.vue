@@ -13,7 +13,9 @@
       </a>
 
       <div class="flex items-center">
-        <Notifications />
+        <div>
+          <Notifications />
+        </div>
 
         <span class="text-white font-medium mr-4 flex items-center gap-x-2">
           <i class="fas fa-user-circle text-blueGray-300 text-lg"></i>

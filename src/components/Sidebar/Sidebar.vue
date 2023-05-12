@@ -40,11 +40,9 @@
       </div>
       <!-- User -->
       <div class="flex md:hidden items-center">
-<!--        <span class="font-medium mr-3 flex items-center gap-x-2">-->
-<!--          <i class="fas fa-user-circle text-blueGray-300 text-lg"></i>-->
-<!--          {{ fullName }}-->
-<!--        </span>-->
-        <Notifications :mode="'dark'"/>
+        <div v-if="showMobile">
+          <Notifications :mode="'dark'"/>
+        </div>
         <span class="cursor-pointer font-medium text-blueGray-600" @click="logout">Logout</span>
       </div>
       <!-- Collapse -->
@@ -167,7 +165,7 @@
 </template>
 
 <script setup>
-import {computed, ref} from "vue";
+import {computed, onMounted, ref} from "vue";
 import {useUserStore} from "../../store/user";
 import {useCookies} from "vue3-cookies";
 import {useToast} from "vue-toastification";
@@ -187,6 +185,7 @@ const props = defineProps({
 const userStore = useUserStore()
 const {cookies} = useCookies();
 const toast = useToast()
+const showMobile = ref(false)
 const router = useRouter()
 
 // State
@@ -220,6 +219,10 @@ const logout = async () => {
     await router.push('/')
   }
 }
+
+onMounted(()=>{
+  if (window.innerWidth < 600) showMobile.value = true
+})
 
 </script>
 
