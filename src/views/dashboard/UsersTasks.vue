@@ -38,7 +38,7 @@
               <template v-else>
                 <tr v-if="!userTask[Object.keys(userTask)[0]].data.length">
                   <td :colspan="headers.length">
-                    <p class="flex justify-center py-8 text-blueGray-500 font-medium">
+                    <p class="flex text-center px-4 justify-center py-8 text-blueGray-500 font-medium">
                       Sorry, but we can't find any information
                     </p>
                   </td>
@@ -165,12 +165,11 @@ const changeDrag = async (e, item) => {
   } catch (e) {
     catchErrors(e)
   }
-
 }
 
 const fetchUsersTasks = async (user) => {
   try {
-    const resp = await usersTasksStore.fetchUsersTask({id: user.id})
+    const resp = await usersTasksStore.fetchUsersTasks({id: user.id})
     const temp = []
 
     const obj = {

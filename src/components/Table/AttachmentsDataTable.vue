@@ -32,7 +32,7 @@
         <template v-else>
           <tr v-if="!attachments.length">
             <td :colspan="headers.length">
-              <p class="flex justify-center py-8 text-blueGray-500 font-medium">
+              <p class="flex text-center px-4 justify-center py-8 text-blueGray-500 font-medium">
                 Sorry, but we can't find any information
               </p>
             </td>

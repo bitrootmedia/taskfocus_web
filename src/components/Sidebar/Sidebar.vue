@@ -129,7 +129,7 @@
                 ]"
               >
                 <i
-                    class="fas fa-map-marked mr-2 text-sm"
+                    class="fas fa-project-diagram mr-2 text-sm"
                     :class="[isExactActive ? 'opacity-75' : 'text-blueGray-300']"
                 ></i>
                 {{ !closePanel ? 'Projects' : '' }}
@@ -151,7 +151,7 @@
                 ]"
               >
                 <i
-                    class="fas fa-user mr-2 text-sm"
+                    class="fas fa-user-check mr-2 text-sm"
                     :class="[isExactActive ? 'opacity-75' : 'text-blueGray-300']"
                 ></i>
                 {{ !closePanel ? 'User Guide' : '' }}
@@ -173,7 +173,7 @@
                 ]"
               >
                 <i
-                    class="fas fa-user mr-2 text-sm"
+                    class="fas fa-list-ul mr-2 text-sm"
                     :class="[isExactActive ? 'opacity-75' : 'text-blueGray-300']"
                 ></i>
                 {{ !closePanel ? 'Users Tasks' : '' }}

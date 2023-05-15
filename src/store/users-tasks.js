@@ -15,8 +15,13 @@ export const useUsersTasksStore = defineStore('users-tasks', {
     }),
 
     actions: {
-        async fetchUsersTask(payload) {
-            return await axios.get(`${config.BASE_API_URL}/user-task-queue?user=${payload.id}`)
+        async fetchUsersTasks(payload) {
+            let url = `${config.BASE_API_URL}/user-task-queue?`
+
+            if (payload?.id) url += `user=${payload.id}`
+            if (payload?.query) url += `&${payload.query}`
+
+            return await axios.get(url)
         },
 
         async updateOrder(payload) {
