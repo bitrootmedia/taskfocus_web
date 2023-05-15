@@ -22,7 +22,14 @@ export const useUsersTasksStore = defineStore('users-tasks', {
         async updateOrder(payload) {
             const id = payload.id
             delete payload.id
-            return await axios.post(`${config.BASE_API_URL}/user-task-queue-position-change/${id}`,payload)
+            return await axios.post(`${config.BASE_API_URL}/user-task-queue-position-change/${id}`, payload)
+        },
+
+        async fetchWorkingTask(payload) {
+            const resp = await axios.get(`${config.BASE_API_URL}/current-task?user=${payload.id}`)
+            if (resp.data) return resp.data
+
+            return null
         },
     },
 })
