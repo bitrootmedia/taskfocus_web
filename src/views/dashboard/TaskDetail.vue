@@ -121,7 +121,7 @@
             </div>
           </div>
 
-          <div class="mb-2 sm:mb-4" v-if="task.project || hasAccess">
+          <div class="mb-2 sm:mb-4">
             <div class="text-blueGray-500">
               Responsible: &nbsp;
               <b class="cursor-pointer" @click="isEditPanel.user = true" v-if="!isEditPanel.user">
@@ -292,7 +292,7 @@
           :project-id="task.project?.id"
           :task-id="task.id"
           @close="showModal = false"
-          @update="fetchTask"
+          @update="updateTaskShowData"
       />
 
       <UserTaskModal
@@ -413,6 +413,22 @@ const showPanel = computed(() => {
 
 
 // Methods
+const updateTaskShowData = ()=>{
+  fetchTask()
+
+  setTimeout(() => {
+    fetchProjectAccess()
+    fetchTaskAccess()
+  }, 300)
+
+  // setTimeout(() => {
+  //   fetchUsers()
+  // }, 700)
+
+  setTimeout(() => {
+    fetchUsers()
+  }, 700)
+}
 const updateTasks = () => {
   fetchTask()
   fetchTaskAccess()
@@ -473,8 +489,6 @@ const fetchTask = async () => {
       const resp = await taskStore.fetchTaskById({id})
       task.value = {...resp.data}
       form.value = {...resp.data}
-
-      // console.log(resp.data,'data')
 
       if (!resp.data.eta_date) form.value.eta_date = new Date().toISOString().slice(0, 10)
       if (resp.data.responsible?.id) form.value.user = resp.data.responsible.id
@@ -559,7 +573,6 @@ const fetchUsers = async () => {
       }
     ]
 
-    usersList.value = resp.data.results.filter((item) => item.id !== task.value?.owner?.id)
     const arrIds = [...new Set([...haveTaskAccessIds.value, ...haveProjectAccessIds.value])];
     const tempArr = []
     resp.data.results.forEach((item) => {
@@ -567,7 +580,16 @@ const fetchUsers = async () => {
         tempArr.push(item)
       }
     })
+
     users.value = [...users.value, ...tempArr]
+
+    if (task.value?.owner?.id !== task.value?.project?.owner?.id && task.value?.project?.owner?.id){
+      users.value.push(task.value?.project?.owner)
+    }
+
+
+
+    usersList.value = resp.data.results.filter((item) => item.id !== task.value?.owner?.id)
   } catch (e) {
     catchErrors(e)
   }
@@ -599,7 +621,7 @@ const fetchTaskAccess = async () => {
 
 const fetchProjectAccess = async () => {
   try {
-    const projectId = task.value.project.id
+    const projectId = task.value.project?.id
     if (projectId) {
       const resp = await projectStore.fetchProjectAccess({id: projectId})
       const user = cookies.get('task_focus_user')
@@ -627,6 +649,7 @@ onMounted(() => {
 
   setTimeout(() => {
     fetchProjectAccess()
+    fetchTaskAccess()
   }, 300)
 
   setTimeout(() => {
@@ -637,7 +660,6 @@ onMounted(() => {
 
 // Run Functions
 fetchTask()
-fetchTaskAccess()
 fetchDictionary()
 fetchCurrentTask()
 </script>

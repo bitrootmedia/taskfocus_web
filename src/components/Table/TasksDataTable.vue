@@ -234,8 +234,6 @@ const fetchTasks = async (label = null) => {
 
 const changeDrag = async (e) => {
   try {
-    console.log(e,'e')
-
     const newIndex = e.moved.newIndex
     let aboveItemId = null
     let belowItemId = null

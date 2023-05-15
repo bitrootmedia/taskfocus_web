@@ -15,6 +15,8 @@ import CreateTask from "../views/dashboard/CreateTask.vue";
 import ProjectDetail from "../views/dashboard/ProjectDetail.vue";
 import TaskDetail from "../views/dashboard/TaskDetail.vue";
 import UserGuide from "../views/dashboard/UserGuide.vue";
+import UsersTasks from "../views/dashboard/UsersTasks.vue";
+import UsersTasksDetail from "../views/dashboard/UsersTasksDetail.vue";
 
 // routes
 const routes = [
@@ -73,6 +75,16 @@ const routes = [
                 path: "/dashboard/user-guide",
                 component: UserGuide,
                 name: 'User Guide',
+            },
+            {
+                path: "/dashboard/users-tasks",
+                component: UsersTasks,
+                name: 'Users Tasks',
+            },
+            {
+                path: "/dashboard/users-tasks/:id",
+                component: UsersTasksDetail,
+                name: 'Users Tasks Detail',
             },
         ],
     },

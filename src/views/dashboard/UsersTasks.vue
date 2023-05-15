@@ -1,0 +1,189 @@
+<template>
+  <div class="main-container">
+
+    <Loader v-if="loading"/>
+
+    <div v-else class="content grid grid-cols-1 sm:grid-cols-2 gap-6">
+      <div @click="toLink(`/dashboard/users-tasks/${Object.keys(userTask)[0]}`)" v-for="(userTask,index) in usersTasks"
+           :key="index"
+           class="border-2 border-blueGray-300 rounded-[4px] px-4 pt-4 cursor-pointer">
+        <h4 class="text-xl font-bold text-center mb-4 text-blueGray-800">
+          {{ userTask[Object.keys(userTask)[0]].user.first_name }} {{
+            userTask[Object.keys(userTask)[0]].user.last_name
+          }}</h4>
+
+        <p class="text-blueGray-600 font-semibold mb-3">Currently working on:
+          <router-link :to="`/dashboard/task`" class="underline text-blue-500">Task name</router-link>
+        </p>
+
+        <p class="text-blueGray-600 font-semibold mb-2">Next in line:</p>
+
+        <DataTable :headers="headers">
+          <template v-slot:tableBody>
+            <tr v-if="loading">
+              <td :colspan="headers.length">
+                <div class="flex justify-center py-1 text-blueGray-500 font-medium">
+                  <Loader/>
+                </div>
+              </td>
+            </tr>
+
+            <template v-else>
+              <tr v-if="!userTask[Object.keys(userTask)[0]].data.length">
+                <td :colspan="headers.length">
+                  <p class="flex justify-center py-8 text-blueGray-500 font-medium">
+                    Sorry, but we can't find any information
+                  </p>
+                </td>
+              </tr>
+
+              <draggable
+                  v-else
+                  tag="tbody"
+                  :disabled="isDragDisabled"
+                  v-model="userTask[Object.keys(userTask)[0]].data"
+                  item-key="id"
+                  group="id"
+                  @change="changeDrag($event,userTask[Object.keys(userTask)[0]])"
+              >
+                <template #item="{element}">
+                  <tr :class="{'cursor-move': !isDragDisabled}">
+                    <td class="border-t-0 px-3 align-middle border-l-0 border-r-0 text-xs whitespace-nowrap p-4">
+                      <span @click.stop="toLink(`/dashboard/project/${element.task.project?.id}`)"
+                            class="cursor-pointer">{{ element.task.project?.title || '-' }}</span>
+                    </td>
+                    <td class="border-t-0 px-3 align-middle border-l-0 border-r-0 text-xs whitespace-nowrap p-4">
+                      <span @click.stop="toLink(`/dashboard/task/${element.task?.id}`)"
+                            class="cursor-pointer">{{ element.task.title || '-' }}</span>
+                    </td>
+                  </tr>
+                </template>
+              </draggable>
+            </template>
+          </template>
+        </DataTable>
+
+        <!--        <Pagination-->
+        <!--            v-if="paginate.pagination.value.total > 1 && !loading"-->
+        <!--            :pagination="paginate.pagination.value"-->
+        <!--            v-model:query="paginate.query.value"-->
+        <!--        />-->
+      </div>
+    </div>
+  </div>
+</template>
+
+<script setup>
+import DataTable from "./../../components/Table/DataTable.vue"
+import Loader from "./../../components/Loader/Loader.vue"
+import Pagination from "./../../components/Pagination/Pagination.vue"
+import draggable from 'vuedraggable'
+import {useUsersTasksStore} from "../../store/users-tasks";
+import {computed, ref} from "vue";
+import {useToast} from "vue-toastification";
+import {useRouter} from "vue-router";
+import {usePaginate} from "../../composables/usePaginate";
+import {catchErrors} from "../../utils";
+import {useUserStore} from "../../store/user";
+
+const usersTasksStore = useUsersTasksStore()
+const userStore = useUserStore()
+const toast = useToast()
+const router = useRouter()
+
+
+//State
+const isDragDisabled = false
+const loading = ref(false)
+const usersTasks = ref([])
+const users = ref([])
+
+
+// Computed
+const headers = computed(() => {
+  return [
+    {id: 1, label: 'Project', sorting: false, sortLabel: 'created_at'},
+    {id: 2, label: 'Task', sorting: false, sortLabel: 'author'},
+  ]
+})
+
+// Methods
+const toLink = (link) => {
+  router.push(link)
+}
+
+const fetchUsers = async () => {
+  try {
+    loading.value = true
+    const resp = await userStore.fetchUsers()
+    const users = resp.data.results
+
+    await users.map(async (item) => {
+      await fetchUsersTasks(item)
+    })
+  } catch (e) {
+    catchErrors(e)
+  }
+}
+
+const changeDrag = async (e, item) => {
+  try {
+    console.log(e,'e')
+    console.log( item.data,' item.data')
+    const newIndex = e.moved.newIndex
+    let aboveItemId = null
+    let belowItemId = null
+
+    if (newIndex !== 0) {
+      const findItem = item.data.find((item, index) => index === newIndex)
+      console.log(findItem,'aboveItemId')
+      aboveItemId = findItem.id
+    }
+
+    if (newIndex !== item.data.length) {
+      const nextItem = item.data.find((item, index) => index === newIndex + 1)
+      console.log(nextItem,'belowItemId')
+      belowItemId = nextItem.id
+    }
+
+    const data = {
+      id: e.moved.element.id,
+      task_above_id: aboveItemId,
+      task_below_id: belowItemId,
+    }
+    console.log(data, 'data')
+    await usersTasksStore.updateOrder(data)
+  } catch (e) {
+    catchErrors(e)
+  }
+
+}
+
+const fetchUsersTasks = async (user) => {
+  try {
+    const resp = await usersTasksStore.fetchUsersTask({id: user.id})
+    const temp = []
+
+    if (resp.data.results.length) {
+      const obj = {
+        user: user,
+        data: resp.data.results
+      }
+
+      if (temp[user.id]) temp[user.id].push(obj)
+      else temp[user.id] = obj
+      usersTasks.value = [...usersTasks.value, temp]
+
+      console.log(usersTasks.value, 'usersTasks')
+    }
+  } catch (e) {
+    catchErrors(e)
+  } finally {
+    loading.value = false
+  }
+}
+
+
+const paginate = usePaginate(fetchUsersTasks, null)
+fetchUsers()
+</script>
