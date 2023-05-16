@@ -317,7 +317,7 @@
       <UserQueueModal
           :show-modal="showUsersQueueModal"
           :task="task"
-          :users="usersList"
+          :users="usersQueue"
           :have-task-access="haveQueueAccess"
           :have-task-access-ids="haveQueueAccessIds"
           @close="showUsersQueueModal = false"
@@ -399,6 +399,7 @@ const timer = ref(null)
 const backgroundSize = ref('0% 0%')
 const users = ref([])
 const usersList = ref([])
+const usersQueue = ref([])
 const dictionary = ref([])
 const urgencyLevels = ref([])
 const haveTaskAccess = ref([])
@@ -610,12 +611,11 @@ const fetchUsers = async () => {
     })
 
     users.value = [...users.value, ...tempArr]
+    usersQueue.value = resp.data.results
 
     if (task.value?.owner?.id !== task.value?.project?.owner?.id && task.value?.project?.owner?.id){
       users.value.push(task.value?.project?.owner)
     }
-
-
 
     usersList.value = resp.data.results.filter((item) => item.id !== task.value?.owner?.id)
   } catch (e) {
@@ -675,19 +675,15 @@ const fetchQueueAccess = async () => {
     const id = route.params.id
     if (id) {
       const resp = await usersTasksStore.fetchUsersTasksQueue({id})
-      const user = cookies.get('task_focus_user')
+      // const user = cookies.get('task_focus_user')
       const list = []
       const ids = []
       resp.data.users.forEach((item) => {
-        if (item.id !== user.pk) {
           list.push(item)
           ids.push(item.id)
-        }
       })
       haveQueueAccess.value = list
       haveQueueAccessIds.value = ids
-
-      // console.log(haveQueueAccess.value,'haveQueueAccess')
     }
   } catch (e) {
     catchErrors(e)
