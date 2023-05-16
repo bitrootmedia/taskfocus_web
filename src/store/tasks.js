@@ -27,6 +27,7 @@ export const useTasksStore = defineStore('tasks', {
             if (payload?.sorting) url += `&ordering=${payload.sorting}`
             if (payload?.search) url += `&title=${payload.search}`
             if (payload?.isClosed) url += `&is_closed=false`
+            if (payload?.userId) url += `&user=${payload.userId}`
 
             return await axios.get(url)
         },

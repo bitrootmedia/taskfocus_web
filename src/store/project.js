@@ -20,10 +20,12 @@ export const useProjectStore = defineStore('project', {
 
     actions: {
         async fetchProjects(payload) {
-            let url = `${config.BASE_API_URL}/projects?${payload.query}`
+            let url = `${config.BASE_API_URL}/projects?`
 
+            if (payload?.query) url += `&${payload.query}`
             if (payload?.sorting) url += `&ordering=${payload.sorting}`
             if (payload?.search) url += `&title=${payload.search}`
+            if (payload?.userId) url += `&user=${payload.userId}`
 
             return await axios.get(url)
         },

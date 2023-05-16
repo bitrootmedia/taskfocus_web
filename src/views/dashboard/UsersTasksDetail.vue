@@ -7,7 +7,8 @@
     <Loader v-if="loading"/>
 
     <template v-else>
-      <div class="content">
+      <div class="content mb-8">
+        <h2 class="text-lg text-blueGray-600 font-semibold mb-2">Tasks</h2>
         <DataTable :headers="headers">
           <template v-slot:tableBody>
             <tr v-if="loading">
@@ -52,11 +53,106 @@
             </template>
           </template>
         </DataTable>
-
         <Pagination
             v-if="paginate.pagination.value.total > 1 && !loading"
             :pagination="paginate.pagination.value"
             v-model:query="paginate.query.value"
+        />
+      </div>
+
+      <div class="accesses mb-8">
+        <h2 class="text-lg text-blueGray-600 font-semibold mb-2">Project Access</h2>
+        <DataTable :headers="headersProject">
+          <template v-slot:tableBody>
+            <tr v-if="loading">
+              <td :colspan="headersProject.length">
+                <div class="flex justify-center py-1 text-blueGray-500 font-medium">
+                  <Loader/>
+                </div>
+              </td>
+            </tr>
+
+            <template v-else>
+              <tr v-if="!projectsAccess.length">
+                <td :colspan="headersProject.length">
+                  <p class="flex justify-center py-8 px- text-blueGray-500 font-medium">
+                    Sorry, but we can't find any information
+                  </p>
+                </td>
+              </tr>
+
+              <draggable
+                  v-else
+                  tag="tbody"
+                  :disabled="true"
+                  v-model="projectsAccess"
+                  item-key="id"
+                  group="id"
+              >
+                <template #item="{element}">
+                  <tr :class="{'cursor-move': false}">
+                    <td class="border-t-0 px-3 align-middle border-l-0 border-r-0 text-xs whitespace-nowrap p-4">
+                      <span @click.stop="toLink(`/dashboard/project/${element.id}`)"
+                            class="cursor-pointer">{{ element.title || '-' }}</span>
+                    </td>
+                  </tr>
+                </template>
+              </draggable>
+            </template>
+          </template>
+        </DataTable>
+        <Pagination
+            v-if="paginateProject.pagination.value.total > 1 && !loading"
+            :pagination="paginateProject.pagination.value"
+            v-model:query="paginateProject.query.value"
+        />
+      </div>
+
+      <div class="accesses ">
+        <h2 class="text-lg text-blueGray-600 font-semibold mb-2">Tasks Access</h2>
+        <DataTable :headers="headersTask">
+          <template v-slot:tableBody>
+            <tr v-if="loading">
+              <td :colspan="headersTask.length">
+                <div class="flex justify-center py-1 text-blueGray-500 font-medium">
+                  <Loader/>
+                </div>
+              </td>
+            </tr>
+
+            <template v-else>
+              <tr v-if="!tasksAccess.length">
+                <td :colspan="headersTask.length">
+                  <p class="flex justify-center py-8 px- text-blueGray-500 font-medium">
+                    Sorry, but we can't find any information
+                  </p>
+                </td>
+              </tr>
+
+              <draggable
+                  v-else
+                  tag="tbody"
+                  :disabled="true"
+                  v-model="tasksAccess"
+                  item-key="id"
+                  group="id"
+              >
+                <template #item="{element}">
+                  <tr :class="{'cursor-move': false}">
+                    <td class="border-t-0 px-3 align-middle border-l-0 border-r-0 text-xs whitespace-nowrap p-4">
+                      <span @click.stop="toLink(`/dashboard/project/${element.id}`)"
+                            class="cursor-pointer">{{ element.title || '-' }}</span>
+                    </td>
+                  </tr>
+                </template>
+              </draggable>
+            </template>
+          </template>
+        </DataTable>
+        <Pagination
+            v-if="paginateTask.pagination.value.total > 1 && !loading"
+            :pagination="paginateTask.pagination.value"
+            v-model:query="paginateTask.query.value"
         />
       </div>
     </template>
@@ -74,11 +170,15 @@ import Pagination from "./../../components/Pagination/Pagination.vue"
 import {usePaginate} from "../../composables/usePaginate";
 import draggable from 'vuedraggable'
 import {useUserStore} from "../../store/user";
+import {useTasksStore} from "../../store/tasks";
+import {useProjectStore} from "../../store/project";
 
 const route = useRoute()
 const router = useRouter()
 const usersTasksStore = useUsersTasksStore()
 const userStore = useUserStore()
+const tasksStore = useTasksStore()
+const projectStore = useProjectStore()
 
 
 // State
@@ -86,6 +186,8 @@ const isDragDisabled = false
 const loading = ref(false)
 const tempData = ref([])
 const userTasks = ref([])
+const projectsAccess = ref([])
+const tasksAccess = ref([])
 const currentUser = ref(null)
 
 
@@ -94,6 +196,18 @@ const headers = computed(() => {
   return [
     {id: 1, label: 'Project', sorting: false, sortLabel: 'created_at'},
     {id: 2, label: 'Task', sorting: false, sortLabel: 'author'},
+  ]
+})
+
+const headersProject = computed(() => {
+  return [
+    {id: 1, label: 'Project', sorting: false, sortLabel: 'created_at'},
+  ]
+})
+
+const headersTask = computed(() => {
+  return [
+    {id: 1, label: 'Task', sorting: false, sortLabel: 'created_at'},
   ]
 })
 
@@ -164,8 +278,51 @@ const fetchUsersTask = async () => {
   }
 }
 
+const fetchTasksAccess = async () => {
+  try {
+    const id = route.params.id
+    if (id) {
+      const options = {
+        pagination: paginateTask.pagination.value,
+        query: paginateTask.query.value,
+        userId: id
+      }
+      const resp = await tasksStore.fetchTasks(options)
+      tasksAccess.value = resp.data.results
+      paginateTask.updatePagination(resp)
+    }
+
+  } catch (e) {
+    catchErrors(e)
+  }
+}
+
+const fetchProjectAccess = async () => {
+  try {
+    const id = route.params.id
+    if (id) {
+      const options = {
+        pagination: paginateProject.pagination.value,
+        query: paginateProject.query.value,
+        userId: id
+      }
+      const resp = await projectStore.fetchProjects(options)
+      projectsAccess.value = resp.data.results
+      paginateProject.updatePagination(resp)
+    }
+
+  } catch (e) {
+    catchErrors(e)
+  }
+}
+
 // Composables
 const paginate = usePaginate(fetchUsersTask, null)
+const paginateTask = usePaginate(fetchTasksAccess, null)
+const paginateProject = usePaginate(fetchProjectAccess, null)
+
 fetchUsersTask()
 fetchUser()
+fetchTasksAccess()
+fetchProjectAccess()
 </script>
