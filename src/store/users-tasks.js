@@ -47,7 +47,9 @@ export const useUsersTasksStore = defineStore('users-tasks', {
         },
 
         async removeUserFromQueue(payload) {
-            return await axios.delete(`${config.BASE_API_URL}/user-task-queue-manage/${payload.id}`)
+            const id = payload.task
+            delete payload.task
+            return await axios.delete(`${config.BASE_API_URL}/user-task-queue-manage/${id}`,payload)
         },
     },
 })

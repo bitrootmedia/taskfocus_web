@@ -1,7 +1,7 @@
 <template>
   <div v-if="showModal"
        class="overflow-x-hidden overflow-y-auto fixed inset-0 z-50 outline-none focus:outline-none justify-center items-center flex">
-    <div class="relative my-6 mx-auto w-[350px] sm:w-[500px]">
+    <div class="relative my-6 mx-auto w-[350px] sm:w-[400px]">
       <!--content-->
       <div class="border-0 rounded-lg shadow-lg relative flex flex-col w-full bg-white outline-none focus:outline-none">
         <!--header-->
@@ -30,7 +30,7 @@
                     type="button"
                     @click="haveTaskAccessIds.includes(user.id) ? removeUser(user) : assignUser(user)"
                 >
-                  {{ haveTaskAccessIds.includes(user.id) ? 'Remove from my queue' : 'Add to my queue' }}
+                  {{ haveTaskAccessIds.includes(user.id) ? 'Remove' : 'Add' }}
                 </button>
               </li>
             </ul>
@@ -103,8 +103,13 @@ const assignUser = async (user) => {
 
 const removeUser = async (user)=>{
   try {
-    const findItem = props.haveTaskAccess.find((item)=>item.user.id === user.id)
-    await usersTasksStore.removeUserFromQueue({id: findItem.id})
+    const findItem = props.haveTaskAccess.find((item)=>item.id === user.id)
+
+    const data = {
+      task: props.task.id,
+      user: findItem.id
+    }
+    await usersTasksStore.removeUserFromQueue(data)
     toast.success("Successfully removed");
     emit('update')
   } catch (e) {
