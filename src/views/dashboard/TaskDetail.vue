@@ -75,6 +75,15 @@
             >
               Manage Task Users
             </button>
+
+            <button
+                v-if="isAuthOwner"
+                @click="showUsersQueueModal = true"
+                class="mt-2 bg-blueGray-800 whitespace-nowrap text-white active:bg-blueGray-600 text-sm font-bold px-2 sm:px-4 py-2 rounded shadow hover:shadow-lg outline-none focus:outline-none ease-linear transition-all duration-150"
+                type="button"
+            >
+              Queue
+            </button>
           </div>
 
           <div class="mb-2 sm:mb-4">
@@ -305,6 +314,17 @@
           @update="updateTasks"
       />
 
+      <UserQueueModal
+          :show-modal="showUsersQueueModal"
+          :task="task"
+          :users="usersList"
+          :have-task-access="haveQueueAccess"
+          :have-task-access-ids="haveQueueAccessIds"
+          @close="showUsersQueueModal = false"
+          @update="updateTasksQueue"
+      />
+
+
       <ConfirmCloseModal
           :show-modal="confirmModal"
           @close="confirmModal = false"
@@ -335,6 +355,8 @@ import UserTaskModal from "../../components/Modals/UserTaskModal.vue";
 import ConfirmCloseModal from "../../components/Modals/ConfirmCloseModal.vue";
 import VMdEditor, {xss} from '@kangc/v-md-editor';
 import {useProjectStore} from "../../store/project";
+import UserQueueModal from "../../components/Modals/UserQueueModal.vue";
+import {useUsersTasksStore} from "../../store/users-tasks";
 
 // ValidationRules
 const rules = {
@@ -358,6 +380,7 @@ const defaultEditValues = {
 const taskStore = useTasksStore()
 const projectStore = useProjectStore()
 const userStore = useUserStore()
+const usersTasksStore = useUsersTasksStore()
 const route = useRoute()
 const router = useRouter()
 const toast = useToast()
@@ -366,6 +389,7 @@ const {cookies} = useCookies();
 const loading = ref(false)
 const showModal = ref(false)
 const showUsersModal = ref(false)
+const showUsersQueueModal = ref(false)
 let confirmModal = ref(false)
 const task = ref(null)
 const currentTask = ref(null)
@@ -379,6 +403,8 @@ const dictionary = ref([])
 const urgencyLevels = ref([])
 const haveTaskAccess = ref([])
 const haveTaskAccessIds = ref([])
+const haveQueueAccess = ref([])
+const haveQueueAccessIds = ref([])
 const haveProjectAccessIds = ref([])
 const haveProjectAccess = ref([])
 const isEditPanel = ref({...defaultEditValues})
@@ -419,11 +445,8 @@ const updateTaskShowData = ()=>{
   setTimeout(() => {
     fetchProjectAccess()
     fetchTaskAccess()
+    fetchQueueAccess()
   }, 300)
-
-  // setTimeout(() => {
-  //   fetchUsers()
-  // }, 700)
 
   setTimeout(() => {
     fetchUsers()
@@ -432,6 +455,11 @@ const updateTaskShowData = ()=>{
 const updateTasks = () => {
   fetchTask()
   fetchTaskAccess()
+}
+
+const updateTasksQueue = () => {
+  fetchTask()
+  fetchQueueAccess()
 }
 const updateSlider = (e) => {
   let clickedElement = e.target,
@@ -642,6 +670,30 @@ const fetchProjectAccess = async () => {
   }
 }
 
+const fetchQueueAccess = async () => {
+  try {
+    const id = route.params.id
+    if (id) {
+      const resp = await usersTasksStore.fetchUsersTasksQueue({id})
+      const user = cookies.get('task_focus_user')
+      const list = []
+      const ids = []
+      resp.data.users.forEach((item) => {
+        if (item.id !== user.pk) {
+          list.push(item)
+          ids.push(item.id)
+        }
+      })
+      haveQueueAccess.value = list
+      haveQueueAccessIds.value = ids
+
+      // console.log(haveQueueAccess.value,'haveQueueAccess')
+    }
+  } catch (e) {
+    catchErrors(e)
+  }
+}
+
 onMounted(() => {
   timer.value = setInterval(() => {
     key.value += 1
@@ -650,6 +702,7 @@ onMounted(() => {
   setTimeout(() => {
     fetchProjectAccess()
     fetchTaskAccess()
+    fetchQueueAccess()
   }, 300)
 
   setTimeout(() => {

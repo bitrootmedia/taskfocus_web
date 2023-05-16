@@ -1,13 +1,13 @@
 <template>
   <div v-if="showModal"
        class="overflow-x-hidden overflow-y-auto fixed inset-0 z-50 outline-none focus:outline-none justify-center items-center flex">
-    <div class="relative my-6 mx-auto w-[350px] sm:w-[400px]">
+    <div class="relative my-6 mx-auto w-[350px] sm:w-[500px]">
       <!--content-->
       <div class="border-0 rounded-lg shadow-lg relative flex flex-col w-full bg-white outline-none focus:outline-none">
         <!--header-->
         <div class="flex items-center justify-between p-5 border-b border-solid border-blueGray-200 rounded-t">
           <h3 class="text-3xl font-semibold">
-            Manage Task Access
+            Manage Task Queue
           </h3>
 
           <div>
@@ -30,7 +30,7 @@
                     type="button"
                     @click="haveTaskAccessIds.includes(user.id) ? removeUser(user) : assignUser(user)"
                 >
-                  {{ haveTaskAccessIds.includes(user.id) ? 'Remove' : 'Assign' }}
+                  {{ haveTaskAccessIds.includes(user.id) ? 'Remove from my queue' : 'Add to my queue' }}
                 </button>
               </li>
             </ul>
@@ -49,6 +49,7 @@ import Loader from "./../../components/Loader/Loader.vue"
 import {useTasksStore} from "../../store/tasks";
 import {useCookies} from "vue3-cookies";
 import {useToast} from "vue-toastification";
+import {useUsersTasksStore} from "../../store/users-tasks";
 
 const emit = defineEmits(['close','update'])
 const props = defineProps({
@@ -76,7 +77,7 @@ const props = defineProps({
 })
 
 
-const taskStore = useTasksStore()
+const usersTasksStore = useUsersTasksStore()
 const {cookies} = useCookies();
 const toast = useToast()
 
@@ -92,7 +93,7 @@ const assignUser = async (user) => {
       user: user.id
     }
 
-    await taskStore.assignUserToTask(data)
+    await usersTasksStore.assignUserToQueue(data)
     toast.success("Successfully assigned");
     emit('update')
   } catch (e) {
@@ -103,7 +104,7 @@ const assignUser = async (user) => {
 const removeUser = async (user)=>{
   try {
     const findItem = props.haveTaskAccess.find((item)=>item.user.id === user.id)
-    await taskStore.removeUserFromTask({id: findItem.id})
+    await usersTasksStore.removeUserFromQueue({id: findItem.id})
     toast.success("Successfully removed");
     emit('update')
   } catch (e) {

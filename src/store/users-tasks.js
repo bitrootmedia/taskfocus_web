@@ -33,8 +33,19 @@ export const useUsersTasksStore = defineStore('users-tasks', {
         async fetchWorkingTask(payload) {
             const resp = await axios.get(`${config.BASE_API_URL}/current-task?user=${payload.id}`)
             if (resp.data) return resp.data
-
             return null
+        },
+
+        async fetchUsersTasksQueue(payload) {
+            return await axios.get(`${config.BASE_API_URL}/user-task-queue-manage/${payload.id}`)
+        },
+
+        async assignUserToQueue(payload) {
+            return await axios.post(`${config.BASE_API_URL}/user-task-queue-manage/`,payload)
+        },
+
+        async removeUserFromQueue(payload) {
+            return await axios.delete(`${config.BASE_API_URL}/user-task-queue-manage/${payload.id}`)
         },
     },
 })
