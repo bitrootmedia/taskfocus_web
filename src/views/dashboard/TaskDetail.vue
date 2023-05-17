@@ -84,6 +84,16 @@
             >
               Queue
             </button>
+
+            <button
+                v-if="showBtn"
+                @click="updateMyQueue"
+                :class="[!isAuthQueue ? 'bg-blueGray-800' : 'bg-red-800']"
+                class="mt-2 whitespace-nowrap text-white active:bg-blueGray-600 text-sm font-bold px-2 sm:px-4 py-2 rounded shadow hover:shadow-lg outline-none focus:outline-none ease-linear transition-all duration-150"
+                type="button"
+            >
+              {{ !isAuthQueue ? 'Add to my queue' : 'Remove from my queue' }}
+            </button>
           </div>
 
           <div class="mb-2 sm:mb-4">
@@ -401,6 +411,7 @@ const toast = useToast()
 const {cookies} = useCookies();
 
 const loading = ref(false)
+const showBtn = ref(false)
 const showModal = ref(false)
 const showUsersModal = ref(false)
 const showUsersQueueModal = ref(false)
@@ -438,6 +449,13 @@ const form = ref({
 const v$ = useVuelidate(rules, form)
 
 // Computed
+const isAuthQueue = computed(() => {
+  if (!cookies.get('task_focus_user')) return ''
+
+  const user = cookies.get('task_focus_user')
+  return haveQueueAccessIds.value.includes(user.pk)
+})
+
 const isAuthOwner = computed(() => {
   if (!cookies.get('task_focus_user')) return ''
 
@@ -446,6 +464,9 @@ const isAuthOwner = computed(() => {
 
   return user.pk === taskOwnerId
 })
+
+
+
 
 const showPanel = computed(() => {
   const arr = Object.values(isEditPanel.value)
@@ -484,6 +505,46 @@ const updateTasksQueue = () => {
     fetchUsers()
   }, 700)
 }
+
+
+const updateMyQueue = ()=>{
+  if (isAuthQueue.value) return removeUser()
+
+  assignUser()
+}
+
+const assignUser = async () => {
+  try {
+    const user = cookies.get('task_focus_user')
+    const data = {
+      task: task.value.id,
+      user: user.pk
+    }
+
+    await usersTasksStore.assignUserToQueue(data)
+    toast.success("Successfully assigned");
+    updateTasksQueue()
+  } catch (e) {
+    catchErrors(e)
+  }
+}
+
+const removeUser = async ()=>{
+  try {
+    const user = cookies.get('task_focus_user')
+
+    const data = {
+      task: task.value.id,
+      user: user.pk
+    }
+    await usersTasksStore.removeUserFromQueue(data)
+    toast.success("Successfully removed");
+    updateTasksQueue()
+  } catch (e) {
+    catchErrors(e)
+  }
+}
+
 const updateSlider = (e) => {
   let clickedElement = e.target,
       min = clickedElement.min,
@@ -724,6 +785,8 @@ onMounted(() => {
   }, 300)
 
   setTimeout(() => {
+    showBtn.value = true
+
     fetchUsers()
   }, 700)
 })
