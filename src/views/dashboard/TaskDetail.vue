@@ -633,7 +633,7 @@ const fetchUsers = async () => {
     })
 
     users.value = [...users.value, ...tempArr]
-    usersQueue.value = resp.data.results
+    usersQueue.value = tempArr
 
     if (task.value?.owner?.id !== task.value?.project?.owner?.id && task.value?.project?.owner?.id) {
       users.value.push(task.value?.project?.owner)
