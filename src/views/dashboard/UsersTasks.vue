@@ -23,7 +23,7 @@
             </router-link>
           </p>
 
-          <p class="text-blueGray-600 font-semibold mb-2">Next in line:</p>
+          <p class="text-blueGray-600 font-semibold mb-2">Queue:</p>
 
           <DataTable :headers="headers">
             <template v-slot:tableBody>
