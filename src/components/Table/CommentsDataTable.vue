@@ -40,17 +40,17 @@
         v$.message.$errors[0].$message
       }} </span>
 
-<!--    <div class="header flex flex-col md:flex-row items-baseline md:items-center justify-between mt-4 mb-4 gap-y-3">-->
-<!--      <div class="relative w-full md:w-2/4">-->
-<!--        <i class="fas fa-search mr-2 text-sm text-blueGray-300 absolute top-[12px] left-[8px]"/>-->
-<!--        <input-->
-<!--            v-model="filter.search.value"-->
-<!--            type="text"-->
-<!--            class="border-0 pl-8 pr-3 py-3 placeholder-blueGray-300 text-blueGray-600 bg-white rounded text-sm shadow focus:outline-none focus:ring w-full ease-linear transition-all duration-150"-->
-<!--            placeholder="Search"-->
-<!--        />-->
-<!--      </div>-->
-<!--    </div>-->
+    <!--    <div class="header flex flex-col md:flex-row items-baseline md:items-center justify-between mt-4 mb-4 gap-y-3">-->
+    <!--      <div class="relative w-full md:w-2/4">-->
+    <!--        <i class="fas fa-search mr-2 text-sm text-blueGray-300 absolute top-[12px] left-[8px]"/>-->
+    <!--        <input-->
+    <!--            v-model="filter.search.value"-->
+    <!--            type="text"-->
+    <!--            class="border-0 pl-8 pr-3 py-3 placeholder-blueGray-300 text-blueGray-600 bg-white rounded text-sm shadow focus:outline-none focus:ring w-full ease-linear transition-all duration-150"-->
+    <!--            placeholder="Search"-->
+    <!--        />-->
+    <!--      </div>-->
+    <!--    </div>-->
 
     <div class="comments mt-3">
       <ul>
@@ -84,8 +84,9 @@
                       comment.task.title
                     }}</router-link></span>
 
-                  <span v-if="comment.task?.project?.id && route.name !== 'Task Detail'" class="block">Project link: <router-link class="underline"
-                                                                                                  :to="`/dashboard/project/${comment.task?.project?.id}`">{{
+                  <span v-if="comment.task?.project?.id && route.name !== 'Task Detail'" class="block">Project link: <router-link
+                      class="underline"
+                      :to="`/dashboard/project/${comment.task?.project?.id}`">{{
                       comment.task.project.title
                     }}</router-link></span>
 
@@ -152,7 +153,7 @@
 
 <script setup>
 import Pagination from './../Pagination/Pagination.vue'
-import {computed, onMounted, onUnmounted, ref} from "vue";
+import {onMounted, onUnmounted, ref} from "vue";
 import {catchErrors} from "../../utils";
 import {convertDateTime} from "../../utils";
 import {useRoute, useRouter} from "vue-router";
@@ -164,6 +165,8 @@ import {useVuelidate} from '@vuelidate/core'
 import {required} from '@vuelidate/validators'
 import VMdEditor, {xss} from '@kangc/v-md-editor';
 import {useCookies} from "vue3-cookies";
+import config from '../../config'
+import {watch} from "vue";
 
 
 const props = defineProps({
@@ -217,8 +220,13 @@ const v$ = useVuelidate(rules, {message})
 
 // Methods
 const editComment = (comment) => {
-  editCommentsIds.value.push(comment.id)
+  editCommentsIds.value = [...editCommentsIds.value, comment.id]
 }
+
+watch(editCommentsIds, (val) => {
+  if (val.length) stopTimer()
+  else startTimer()
+})
 
 const resetEditComment = (comment) => {
   fetchComments()
@@ -312,25 +320,31 @@ const sorting = (label) => {
   fetchComments(label)
 }
 
+const startTimer = () => {
+  timer = setInterval(() => {
+    fetchComments()
+  }, 15000)
+}
+
+const stopTimer = () => {
+  clearInterval(timer)
+  timer = null
+}
+
 onMounted(() => {
-  if (route.name === 'Task Detail') {
-    timer = setInterval(() => {
-      fetchComments()
-    }, 15000)
-  }
+  if (route.name === 'Task Detail') startTimer()
 
   const host = window.location.host
   domain.value = host.replace('www.', '')
 })
 
 onUnmounted(() => {
-  clearInterval(timer)
-  timer = null
+  stopTimer()
 });
 
 // Composables
 const options = {
-  pageSize: 6
+  pageSize: config.COMMENTS_PAGE_SIZE
 }
 const paginate = usePaginate(fetchComments, options)
 const filter = useFilter(comments, fetchComments)
