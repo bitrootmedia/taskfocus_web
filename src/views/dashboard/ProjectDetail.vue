@@ -19,30 +19,38 @@
                 }} </span>
             </div>
           </div>
-          <div>
-            <p v-if="!isEditDesc" class="text-blueGray-500 cursor-pointer" @click="isEditDesc = true">
-              {{ project.description }}</p>
-            <div v-else>
-              <textarea
-                  v-model="form.description"
-                  type="text"
-                  placeholder="Project Description"
-                  class="resize-none border-0 px-3 py-3 placeholder-blueGray-300 text-blueGray-600 bg-white rounded text-sm shadow focus:outline-none focus:ring w-full ease-linear transition-all duration-150"
-                  rows="5"
-              ></textarea>
-              <span class="text-xs font-medium text-red-600"
-                    v-if="v$.description.$error"> {{ v$.description.$errors[0].$message }} </span>
+          <div class="description-panel">
+            <div v-if="!isEditDesc" class="text-blueGray-500 cursor-pointer" @click="isEditDesc = true">
+              <v-md-preview-html
+                  v-if="project.description"
+                  :html="xss.process(VMdEditor.vMdParser.themeConfig.markdownParser.render(project.description))"
+                  preview-class="vuepress-markdown-body" class="cursor-pointer"></v-md-preview-html>
+            </div>
+            <div v-else class="mt-[10px]">
+              <div>
+                <v-md-editor v-model="form.description" height="300px"></v-md-editor>
+              </div>
             </div>
           </div>
 
-          <button
-              v-if="isEditTitle || isEditDesc"
-              @click="updateProject"
-              class="mt-2 mb-6 bg-blueGray-800 text-white active:bg-blueGray-600 text-md font-bold px-6 py-2 rounded shadow hover:shadow-lg outline-none focus:outline-none ease-linear transition-all duration-150"
-              type="button"
-          >
-            Update
-          </button>
+          <div v-if="isEditTitle || isEditDesc" class="flex gap-x-4">
+            <button
+                @click="updateProject"
+                class="mt-2 bg-blueGray-800 text-white active:bg-blueGray-600 text-md font-bold px-6 py-2 rounded shadow hover:shadow-lg outline-none focus:outline-none ease-linear transition-all duration-150"
+                type="button"
+            >
+              Update
+            </button>
+
+            <button
+                @click="resetData"
+                class="mt-2 bg-blueGray-800 text-white active:bg-blueGray-600 text-md font-bold px-6 py-2 rounded shadow hover:shadow-lg outline-none focus:outline-none ease-linear transition-all duration-150"
+                type="button"
+            >
+              Close
+            </button>
+          </div>
+
         </div>
 
         <div class="users mt-6 md:mt-0 w-full md:w-2/6">
@@ -60,7 +68,8 @@
                   </b>
                 </li>
 
-                <li v-if="haveProjectAccess.length" v-for="(item,index) in haveProjectAccess" :key="item.user.id" class="text-blueGray-500 font-medium">
+                <li v-if="haveProjectAccess.length" v-for="(item,index) in haveProjectAccess" :key="item.user.id"
+                    class="text-blueGray-500 font-medium">
                   {{ item.user.first_name }} {{ item.user.last_name }}<span
                     v-if="index !== haveProjectAccess.length - 1">,</span>
                 </li>
@@ -131,6 +140,7 @@ import TasksDataTable from "../../components/Table/TasksDataTable.vue";
 import AttachmentsDataTable from "../../components/Table/AttachmentsDataTable.vue";
 import CommentsDataTable from "../../components/Table/CommentsDataTable.vue";
 import LogsDataTable from "../../components/Table/LogsDataTable.vue";
+import VMdEditor, {xss} from '@kangc/v-md-editor';
 
 // ValidationRules
 const rules = {
@@ -171,6 +181,11 @@ const isAuthOwner = computed(() => {
 })
 
 // Methods
+const resetData = () => {
+  isEditDesc.value = isEditTitle.value = false
+  form.value = {...project.value}
+}
+
 const fetchProject = async () => {
   try {
     const id = route.params.id

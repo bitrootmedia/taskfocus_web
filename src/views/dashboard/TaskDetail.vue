@@ -267,7 +267,7 @@
                         preview-class="vuepress-markdown-body" class="cursor-pointer"></v-md-preview-html>
                   </template>
 
-                  <div v-else class="w-[800px]">
+                  <div v-else class="w-[800px] mt-[10px]">
                     <v-md-editor v-model="form.description" height="300px"></v-md-editor>
                   </div>
                 </div>

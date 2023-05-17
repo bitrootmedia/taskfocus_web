@@ -143,6 +143,7 @@ tr:nth-child(odd) {
 .vuepress-markdown-body{
     padding: 8px 16px!important;
     background-color: transparent !important;
+    color: #64748B !important;
 }
 
 .description-panel .v-md-editor-preview{
@@ -155,6 +156,7 @@ tr:nth-child(odd) {
     background-color: #ffffe0 !important;
     width: fit-content;
     border-radius: 6px;
+    color: #64748B !important;
 }
 
 
@@ -180,7 +182,7 @@ tr:nth-child(odd) {
     background-color: #c1bfbf;
     border-radius: 8px;
 }
-.v-md-editor__preview-wrapper{
+.v-md-editor__preview-wrapper, .v-md-icon-preview {
     display: none !important;
 }
 .v-md-textarea-editor{
