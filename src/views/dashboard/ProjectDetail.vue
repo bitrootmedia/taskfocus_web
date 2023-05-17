@@ -20,15 +20,18 @@
             </div>
           </div>
           <div class="description-panel">
-            <div v-if="!isEditDesc" class="text-blueGray-500 cursor-pointer" @click="isEditDesc = true">
+            <div v-if="!isEditDesc" class="text-blueGray-500 cursor-pointer w-fit" @click="isEditDesc = true">
               <v-md-preview-html
                   v-if="project.description"
                   :html="xss.process(VMdEditor.vMdParser.themeConfig.markdownParser.render(project.description))"
-                  preview-class="vuepress-markdown-body" class="cursor-pointer"></v-md-preview-html>
+                  preview-class="vuepress-markdown-body" class="cursor-pointer">
+              </v-md-preview-html>
+
+              <span v-else>No Description</span>
             </div>
             <div v-else class="mt-[10px]">
               <div>
-                <v-md-editor v-model="form.description" height="300px"></v-md-editor>
+                <v-md-editor v-model="form.description"></v-md-editor>
               </div>
             </div>
           </div>
