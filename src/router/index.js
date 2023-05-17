@@ -17,6 +17,7 @@ import TaskDetail from "../views/dashboard/TaskDetail.vue";
 import UserGuide from "../views/dashboard/UserGuide.vue";
 import UsersTasks from "../views/dashboard/UsersTasks.vue";
 import UsersTasksDetail from "../views/dashboard/UsersTasksDetail.vue";
+import Tasks from "../views/dashboard/Tasks.vue";
 
 // routes
 const routes = [
@@ -50,6 +51,11 @@ const routes = [
                 path: "/dashboard/projects",
                 component: ProjectList,
                 name: 'Project List',
+            },
+            {
+                path: "/dashboard/Tasks",
+                component: Tasks,
+                name: 'Tasks',
             },
             {
                 path: "/dashboard/create-project",

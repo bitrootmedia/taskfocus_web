@@ -1,15 +1,5 @@
 <template>
   <div class="main-container">
-    <div class="actions flex gap-x-6">
-      <button
-          @click="router.push('/dashboard/create-task')"
-          class="bg-yellow-600 text-white active:bg-blueGray-600 text-sm font-bold px-6 py-3 rounded shadow hover:shadow-lg outline-none focus:outline-none ease-linear transition-all duration-150"
-          type="button"
-      >
-        Create Task
-      </button>
-    </div>
-
     <div v-if="task" class="working-task mt-4">
       Currently working on:
       <span class="underline cursor-pointer text-blue-500" @click="toLink('task')">{{ task.title }}</span>
@@ -21,7 +11,7 @@
 
     <div class="content">
       <div class="mb-10">
-        <TasksDataTable :hide-create="true"/>
+
       </div>
 
       <div class="mb-10">
