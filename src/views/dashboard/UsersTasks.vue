@@ -39,7 +39,7 @@
                 <tr v-if="!userTask[Object.keys(userTask)[0]].data.length">
                   <td :colspan="headers.length">
                     <p class="flex text-center px-4 justify-center py-8 text-blueGray-500 font-medium">
-                      Sorry, but we can't find any information
+                      No data found
                     </p>
                   </td>
                 </tr>
@@ -93,6 +93,7 @@ import {useRouter} from "vue-router";
 import {usePaginate} from "../../composables/usePaginate";
 import {catchErrors} from "../../utils";
 import {useUserStore} from "../../store/user";
+import config from "../../config"
 
 const usersTasksStore = useUsersTasksStore()
 const userStore = useUserStore()
@@ -190,7 +191,7 @@ const fetchUsersTasks = async (user) => {
 
 // Composables
 const options = {
-  pageSize: 4
+  pageSize: config.USERS_TASKS_PAGE_SIZE
 }
 const paginate = usePaginate(fetchUsers, options)
 fetchUsers()

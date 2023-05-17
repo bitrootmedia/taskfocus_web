@@ -43,24 +43,26 @@
           >
             Update
           </button>
-
-          <p class="text-blueGray-500 mb-1">Owner:
-            <b>
-                <span v-if="project.owner?.first_name || project.owner?.last_name">{{
-                    project.owner?.first_name
-                  }} {{ project.owner?.last_name }}</span>
-              <span v-else>{{ project.owner?.username }}</span>
-            </b>
-          </p>
         </div>
 
         <div class="users mt-6 md:mt-0 w-full md:w-2/6">
           <div class="flex justify-between items-center gap-x-2">
-            <div class="flex gap-x-1 flex-col" v-if="haveProjectAccess.length">
+            <div class="flex gap-x-1 flex-col">
               <span class="text-blueGray-500 ">Access: </span>
               <ul class="flex gap-x-2 flex-wrap">
-                <li v-for="(item,index) in haveProjectAccess" :key="item.user.id" class="text-blueGray-500 font-medium">
-                  {{ item.user.first_name }} {{ item.user.last_name }}<span v-if="index !== haveProjectAccess.length - 1">,</span>
+                <li class="text-blueGray-500 mb-1">
+                  <b>
+                    <span v-if="project.owner?.first_name || project.owner?.last_name">{{
+                        project.owner?.first_name
+                      }} {{ project.owner?.last_name }}(owner)</span>
+                    <span v-else>{{ project.owner?.username }}(owner)</span>
+                    <span v-if="haveProjectAccess.length">,</span>
+                  </b>
+                </li>
+
+                <li v-if="haveProjectAccess.length" v-for="(item,index) in haveProjectAccess" :key="item.user.id" class="text-blueGray-500 font-medium">
+                  {{ item.user.first_name }} {{ item.user.last_name }}<span
+                    v-if="index !== haveProjectAccess.length - 1">,</span>
                 </li>
               </ul>
             </div>
@@ -88,7 +90,7 @@
 
       </div>
 
-      <div class="mt-6 sm:mt-16" v-if="project.id">
+      <div class="mt-6 sm:mt-8" v-if="project.id">
         <div class="mb-10">
           <TasksDataTable
               :project-id="project.id"
@@ -98,15 +100,15 @@
         </div>
 
         <div class="mb-10">
-          <AttachmentsDataTable :project-id="project.id" />
+          <AttachmentsDataTable :project-id="project.id"/>
         </div>
 
         <div class="mb-10">
-          <CommentsDataTable :project-id="project.id" :project-name="project.title" />
+          <CommentsDataTable :project-id="project.id" :project-name="project.title"/>
         </div>
 
         <div class="mb-10">
-          <LogsDataTable :project-id="project.id" />
+          <LogsDataTable :project-id="project.id"/>
         </div>
       </div>
     </div>

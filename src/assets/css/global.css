@@ -145,6 +145,19 @@ tr:nth-child(odd) {
     background-color: transparent !important;
 }
 
+.description-panel .v-md-editor-preview{
+    width: fit-content;
+}
+
+.description-panel .vuepress-markdown-body{
+    margin-top: 10px;
+    padding: 16px 24px!important;
+    background-color: #ffffe0 !important;
+    width: fit-content;
+    border-radius: 6px;
+}
+
+
 .text-line-3{
     overflow: hidden;
     display: -webkit-box;

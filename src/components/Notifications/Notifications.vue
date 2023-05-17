@@ -72,13 +72,13 @@
 </template>
 
 <script setup>
-
 import {ref, onMounted, onBeforeUnmount, onUnmounted} from "vue";
 import {catchErrors} from "../../utils";
 import {useNotifications} from "../../store/notifications";
 import {convertTimeAgo} from "../../utils";
 import {usePaginate} from "../../composables/usePaginate";
 import Pagination from './../Pagination/Pagination.vue'
+import config from "../../config"
 
 
 const props = defineProps({
@@ -155,7 +155,7 @@ const markAsRead = async (id) => {
 
 // Composables
 const options = {
-  pageSize: 3
+  pageSize: config.NOTIFICATIONS_PAGE_SIZE
 }
 const paginate = usePaginate(fetchNotifications, options)
 

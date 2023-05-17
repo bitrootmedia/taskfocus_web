@@ -23,7 +23,7 @@
               <tr v-if="!userTasks.length">
                 <td :colspan="headers.length">
                   <p class="flex justify-center py-8 px- text-blueGray-500 font-medium">
-                    Sorry, but we can't find any information
+                    No data found
                   </p>
                 </td>
               </tr>
@@ -76,7 +76,7 @@
               <tr v-if="!projectsAccess.length">
                 <td :colspan="headersProject.length">
                   <p class="flex justify-center py-8 px- text-blueGray-500 font-medium">
-                    Sorry, but we can't find any information
+                    No data found
                   </p>
                 </td>
               </tr>
@@ -124,7 +124,7 @@
               <tr v-if="!tasksAccess.length">
                 <td :colspan="headersTask.length">
                   <p class="flex justify-center py-8 px- text-blueGray-500 font-medium">
-                    Sorry, but we can't find any information
+                    No data found
                   </p>
                 </td>
               </tr>

@@ -101,7 +101,9 @@
                 <select v-model="form.owner" placeholder="Select User"
                         class="border-0 px-3 py-3 placeholder-blueGray-300 text-blueGray-600 bg-white rounded text-sm shadow focus:outline-none focus:ring w-full ease-linear transition-all duration-150"
                 >
-                  <option :value="user.id" v-for="(user) in users" :key="user.id">{{ user.first_name }} {{ user.last_name }}</option>
+                  <option :value="user.id" v-for="(user) in users" :key="user.id">{{ user.first_name }}
+                    {{ user.last_name }}
+                  </option>
                 </select>
               </div>
 
@@ -112,21 +114,26 @@
             <div class="flex gap-x-1">
               <span class="text-blueGray-500 whitespace-nowrap">Task Access: &nbsp;</span>
 
-                <ul class="flex gap-x-2 flex-wrap">
-                  <li class="text-blueGray-500 font-bold">
-                    {{ task.owner?.first_name }} {{ task.owner?.last_name }}(owner){{haveTaskAccess.length || haveProjectAccess.length ? ',' : ''}}
-                  </li>
+              <ul class="flex gap-x-2 flex-wrap">
+                <li class="text-blueGray-500 font-bold">
+                  {{ task.owner?.first_name }} {{
+                    task.owner?.last_name
+                  }}(owner){{ haveTaskAccess.length || haveProjectAccess.length ? ',' : '' }}
+                </li>
 
-                  <li v-if="haveProjectAccess.length" v-for="(item,index) in haveProjectAccess" :key="item.user.id" class="text-blueGray-500 font-bold">
-                    {{ item.user.first_name }} {{ item.user.last_name }}<span class="text-blueGray-500 font-bold">(project)</span><span
-                      v-if="haveTaskAccessIds.length || index !== haveProjectAccess.length - 1">,</span>
-                  </li>
+                <li v-if="haveProjectAccess.length" v-for="(item,index) in haveProjectAccess" :key="item.user.id"
+                    class="text-blueGray-500 font-bold">
+                  {{ item.user.first_name }} {{ item.user.last_name }}<span class="text-blueGray-500 font-bold">(project)</span><span
+                    v-if="haveTaskAccessIds.length || index !== haveProjectAccess.length - 1">,</span>
+                </li>
 
-                  <li v-if="haveTaskAccess.length" v-for="(item,index) in haveTaskAccess" :key="item.user.id" class="text-blueGray-500 font-bold">
-                    {{ item.user.first_name }} {{ item.user.last_name }}<span class="text-blueGray-500 font-bold">(task)</span><span
-                      v-if="index !== haveTaskAccess.length - 1">,</span>
-                  </li>
-                </ul>
+                <li v-if="haveTaskAccess.length" v-for="(item,index) in haveTaskAccess" :key="item.user.id"
+                    class="text-blueGray-500 font-bold">
+                  {{ item.user.first_name }} {{ item.user.last_name }}<span
+                    class="text-blueGray-500 font-bold">(task)</span><span
+                    v-if="index !== haveTaskAccess.length - 1">,</span>
+                </li>
+              </ul>
             </div>
           </div>
 
@@ -145,7 +152,9 @@
                 <select v-model="form.user" placeholder="Select User"
                         class="border-0 px-3 py-3 placeholder-blueGray-300 text-blueGray-600 bg-white rounded text-sm shadow focus:outline-none focus:ring w-full ease-linear transition-all duration-150"
                 >
-                  <option :value="user.id" v-for="(user) in users" :key="user.id">{{ user.first_name }} {{user.last_name}}</option>
+                  <option :value="user.id" v-for="(user) in users" :key="user.id">{{ user.first_name }}
+                    {{ user.last_name }}
+                  </option>
                 </select>
               </div>
             </div>
@@ -246,20 +255,25 @@
           </div>
 
           <div>
-            <div class="text-blueGray-500"
-                 @click="isEditPanel.description = true">
+            <div class="text-blueGray-500 description-panel">
               Description:
+              <b v-if="!task.description && !isEditPanel.description" class="cursor-pointer" @click="isEditPanel.description = true">N/A</b>
 
-              <template v-if="!isEditPanel.description">
-                <b v-if="!task.description" class="cursor-pointer">N/A</b>
-                <v-md-preview-html v-else
-                                   :html="xss.process(VMdEditor.vMdParser.themeConfig.markdownParser.render(task.description))"
-                                   preview-class="vuepress-markdown-body" class="cursor-pointer"></v-md-preview-html>
-              </template>
+              <div v-else>
+                <div @click="isEditPanel.description = true" class="inline-flex">
+                  <template v-if="!isEditPanel.description">
+                    <v-md-preview-html
+                        :html="xss.process(VMdEditor.vMdParser.themeConfig.markdownParser.render(task.description))"
+                        preview-class="vuepress-markdown-body" class="cursor-pointer"></v-md-preview-html>
+                  </template>
 
-              <div v-else class="w-[800px]">
-                <v-md-editor v-model="form.description" height="300px"></v-md-editor>
+                  <div v-else class="w-[800px]">
+                    <v-md-editor v-model="form.description" height="300px"></v-md-editor>
+                  </div>
+                </div>
               </div>
+
+
             </div>
 
           </div>
@@ -440,7 +454,7 @@ const showPanel = computed(() => {
 
 
 // Methods
-const updateTaskShowData = ()=>{
+const updateTaskShowData = () => {
   fetchTask()
 
   setTimeout(() => {
@@ -456,11 +470,19 @@ const updateTaskShowData = ()=>{
 const updateTasks = () => {
   fetchTask()
   fetchTaskAccess()
+
+  setTimeout(() => {
+    fetchUsers()
+  }, 700)
 }
 
 const updateTasksQueue = () => {
   fetchTask()
   fetchQueueAccess()
+
+  setTimeout(() => {
+    fetchUsers()
+  }, 700)
 }
 const updateSlider = (e) => {
   let clickedElement = e.target,
@@ -538,7 +560,7 @@ const fetchDictionary = async () => {
     dictionary.value = resp.data.task_status_choices
 
     const arr = [null, 'NONE']
-    urgencyLevels.value = [arr,...resp.data.task_urgency_level_choices]
+    urgencyLevels.value = [arr, ...resp.data.task_urgency_level_choices]
   } catch (e) {
     catchErrors(e)
   }
@@ -613,7 +635,7 @@ const fetchUsers = async () => {
     users.value = [...users.value, ...tempArr]
     usersQueue.value = resp.data.results
 
-    if (task.value?.owner?.id !== task.value?.project?.owner?.id && task.value?.project?.owner?.id){
+    if (task.value?.owner?.id !== task.value?.project?.owner?.id && task.value?.project?.owner?.id) {
       users.value.push(task.value?.project?.owner)
     }
 
@@ -679,8 +701,8 @@ const fetchQueueAccess = async () => {
       const list = []
       const ids = []
       resp.data.users.forEach((item) => {
-          list.push(item)
-          ids.push(item.id)
+        list.push(item)
+        ids.push(item.id)
       })
       haveQueueAccess.value = list
       haveQueueAccessIds.value = ids

@@ -47,7 +47,7 @@
 
             <div v-else>
               <p class="flex justify-center py-3 text-blueGray-500 font-medium">
-                Sorry, but we can't find any information
+                No data found
               </p>
             </div>
 
