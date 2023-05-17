@@ -149,12 +149,12 @@ const changeDrag = async (e, item) => {
 
     if (newIndex !== 0) {
       const findItem = item.data.find((item, index) => index === newIndex - 1)
-      aboveItemId = findItem.id
+      aboveItemId = findItem?.id
     }
 
     if (newIndex !== item.data.length) {
       const nextItem = item.data.find((item, index) => index === newIndex + 1)
-      belowItemId = nextItem.id
+      belowItemId = nextItem?.id
     }
 
     const data = {

@@ -5,5 +5,6 @@ export default {
     USERS_TASKS_PAGE_SIZE: import.meta.env.VITE_USERS_TASKS_PAGE_SIZE,
     NOTIFICATIONS_PAGE_SIZE: import.meta.env.VITE_NOTIFICATIONS_PAGE_SIZE,
     COMMENTS_PAGE_SIZE: import.meta.env.VITE_COMMENTS_PAGE_SIZE,
+    USER_TASKS_QUEUE: import.meta.env.VITE_USER_TASKS_QUEUE,
     LOGO_URL: import.meta.env.VITE_LOGO_URL,
 }

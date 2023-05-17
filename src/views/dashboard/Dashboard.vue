@@ -11,7 +11,7 @@
 
     <div class="content">
       <div class="mb-10">
-
+        <UserTasksQueue />
       </div>
 
       <div class="mb-10">
@@ -31,7 +31,7 @@
 
 <script setup>
 import {useRouter} from "vue-router";
-import TasksDataTable from './../../components/Table/TasksDataTable.vue'
+import UserTasksQueue from "../../components/Table/UserTasksQueue.vue";
 import CommentsDataTable from './../../components/Table/CommentsDataTable.vue'
 import LogsDataTable from './../../components/Table/LogsDataTable.vue'
 import AttachmentsDataTable from './../../components/Table/AttachmentsDataTable.vue'
