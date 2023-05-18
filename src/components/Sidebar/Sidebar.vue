@@ -160,6 +160,72 @@
           </li>
 
           <li class="items-center">
+            <router-link to="/dashboard/comments" exact v-slot="{ href, navigate, isActive, isExactActive }">
+              <a
+                  :href="href"
+                  @click="navigate"
+                  class="text-xs uppercase py-3 font-bold block"
+                  :class="[
+                  isExactActive
+                    ? 'text-emerald-500 hover:text-emerald-600'
+                    : 'text-blueGray-700 hover:text-blueGray-500',
+                    closePanel ? 'text-center' : ''
+                ]"
+              >
+                <i
+                    class="fas fa-comments mr-2 text-sm"
+                    :class="[isExactActive ? 'opacity-75' : 'text-blueGray-300']"
+                ></i>
+                {{ !closePanel ? 'Comments' : '' }}
+              </a>
+            </router-link>
+          </li>
+
+          <li class="items-center">
+            <router-link to="/dashboard/attachments" exact v-slot="{ href, navigate, isActive, isExactActive }">
+              <a
+                  :href="href"
+                  @click="navigate"
+                  class="text-xs uppercase py-3 font-bold block"
+                  :class="[
+                  isExactActive
+                    ? 'text-emerald-500 hover:text-emerald-600'
+                    : 'text-blueGray-700 hover:text-blueGray-500',
+                    closePanel ? 'text-center' : ''
+                ]"
+              >
+                <i
+                    class="fas fa-images mr-2 text-sm"
+                    :class="[isExactActive ? 'opacity-75' : 'text-blueGray-300']"
+                ></i>
+                {{ !closePanel ? 'Attachments' : '' }}
+              </a>
+            </router-link>
+          </li>
+
+          <li class="items-center">
+            <router-link to="/dashboard/logs" exact v-slot="{ href, navigate, isActive, isExactActive }">
+              <a
+                  :href="href"
+                  @click="navigate"
+                  class="text-xs uppercase py-3 font-bold block"
+                  :class="[
+                  isExactActive
+                    ? 'text-emerald-500 hover:text-emerald-600'
+                    : 'text-blueGray-700 hover:text-blueGray-500',
+                    closePanel ? 'text-center' : ''
+                ]"
+              >
+                <i
+                    class="fas fa-bug mr-2 text-sm"
+                    :class="[isExactActive ? 'opacity-75' : 'text-blueGray-300']"
+                ></i>
+                {{ !closePanel ? 'Logs' : '' }}
+              </a>
+            </router-link>
+          </li>
+
+          <li class="items-center">
             <router-link to="/dashboard/user-guide" exact v-slot="{ href, navigate, isActive, isExactActive }">
               <a
                   :href="href"

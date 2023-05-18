@@ -18,6 +18,9 @@ import UserGuide from "../views/dashboard/UserGuide.vue";
 import UsersTasks from "../views/dashboard/UsersTasks.vue";
 import UsersTasksDetail from "../views/dashboard/UsersTasksDetail.vue";
 import Tasks from "../views/dashboard/Tasks.vue";
+import Comments from "../views/dashboard/Comments.vue";
+import Logs from "../views/dashboard/Logs.vue";
+import Attachments from "../views/dashboard/Attachments.vue";
 
 // routes
 const routes = [
@@ -53,9 +56,24 @@ const routes = [
                 name: 'Project List',
             },
             {
-                path: "/dashboard/Tasks",
+                path: "/dashboard/tasks",
                 component: Tasks,
                 name: 'Tasks',
+            },
+            {
+                path: "/dashboard/comments",
+                component: Comments,
+                name: 'Comments',
+            },
+            {
+                path: "/dashboard/logs",
+                component: Logs,
+                name: 'Logs',
+            },
+            {
+                path: "/dashboard/attachments",
+                component: Attachments,
+                name: 'Attachments',
             },
             {
                 path: "/dashboard/create-project",

@@ -13,18 +13,6 @@
       <div class="mb-10">
         <UserTasksQueue />
       </div>
-
-      <div class="mb-10">
-        <CommentsDataTable :hide-create="true"/>
-      </div>
-
-      <div class="mb-10">
-        <LogsDataTable :hide-create="true"/>
-      </div>
-
-      <div>
-        <AttachmentsDataTable :hide-create="true"/>
-      </div>
     </div>
   </div>
 </template>
