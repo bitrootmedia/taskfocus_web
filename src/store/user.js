@@ -51,5 +51,9 @@ export const useUserStore = defineStore('user', {
         async resetPassword(payload) {
             return await axios.post(`${config.BASE_API_URL}/auth/password/reset/`, payload)
         },
+
+        async updatePassword(payload) {
+            return await axios.post(`${config.BASE_API_URL}/auth/password/change/`, payload)
+        },
     },
 })

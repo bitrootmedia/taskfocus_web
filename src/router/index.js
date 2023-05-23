@@ -22,6 +22,7 @@ import Tasks from "../views/dashboard/Tasks.vue";
 import Comments from "../views/dashboard/Comments.vue";
 import Logs from "../views/dashboard/Logs.vue";
 import Attachments from "../views/dashboard/Attachments.vue";
+import Settings from "../views/dashboard/Settings.vue";
 
 // routes
 const routes = [
@@ -115,6 +116,11 @@ const routes = [
                 path: "/dashboard/users-tasks/:id",
                 component: UsersTasksDetail,
                 name: 'Users Tasks Detail',
+            },
+            {
+                path: "/dashboard/user-settings",
+                component: Settings,
+                name: 'Settings',
             },
         ],
     },
