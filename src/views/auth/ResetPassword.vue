@@ -8,7 +8,7 @@
           <div class="rounded-t mb-0 px-6 py-6">
             <div class="text-center mb-3">
               <h6 class="text-blueGray-500 text-sm font-bold">
-                Sign in
+                Reset Password
               </h6>
             </div>
           </div>
@@ -19,50 +19,26 @@
                     class="block uppercase text-blueGray-600 text-xs font-bold mb-2"
                     htmlFor="grid-password"
                 >
-                  Username
+                  Email
                 </label>
                 <input
-                    v-model="form.username"
-                    type="text"
+                    v-model="form.email"
+                    type="email"
                     class="border-0 px-3 py-3 placeholder-blueGray-300 text-blueGray-600 bg-white rounded text-sm shadow focus:outline-none focus:ring w-full ease-linear transition-all duration-150"
-                    placeholder="Username"
+                    placeholder="Email"
                 />
                 <span class="text-xs font-medium text-red-600"
-                      v-if="v$.username.$error"> {{ v$.username.$errors[0].$message }} </span>
-              </div>
-
-              <div class="relative w-full mb-3">
-                <label
-                    class="block uppercase text-blueGray-600 text-xs font-bold mb-2"
-                    htmlFor="grid-password"
-                >
-                  Password
-                </label>
-                <input
-                    v-model="form.password"
-                    type="password"
-                    class="border-0 px-3 py-3 placeholder-blueGray-300 text-blueGray-600 bg-white rounded text-sm shadow focus:outline-none focus:ring w-full ease-linear transition-all duration-150"
-                    placeholder="Password"
-                />
-                <span class="text-xs font-medium text-red-600"
-                      v-if="v$.password.$error"> {{ v$.password.$errors[0].$message }} </span>
-              </div>
-
-              <div class="flex justify-end">
-                <span @click="router.push('/reset-password')" class="cursor-pointer text-blueGray-600 underline font-semibold">
-                  Forgot Password?
-                </span>
-
+                      v-if="v$.email.$error"> {{ v$.email.$errors[0].$message }} </span>
               </div>
 
               <div class="text-center mt-6">
                 <button
-                    @click="signIn"
+                    @click="sendEmail"
                     :disabled="loading"
                     class="bg-blueGray-800 text-white active:bg-blueGray-600 text-sm font-bold uppercase px-6 py-3 rounded shadow hover:shadow-lg outline-none focus:outline-none mr-1 mb-1 w-full ease-linear transition-all duration-150"
                     type="button"
                 >
-                  Sign In
+                  Send
                 </button>
               </div>
             </form>
@@ -74,15 +50,14 @@
 </template>
 
 <script setup>
-import {ref} from "vue";
-import {useRouter} from 'vue-router'
-import {useToast} from 'vue-toastification';
-import {useCookies} from "vue3-cookies";
 import {useUserStore} from "../../store/user";
+import {useCookies} from "vue3-cookies";
+import {useToast} from "vue-toastification";
+import {useRouter} from "vue-router";
+import {required,  email} from "@vuelidate/validators";
+import {ref} from "vue";
+import {useVuelidate} from "@vuelidate/core";
 import {catchErrors} from "../../utils";
-import {useVuelidate} from '@vuelidate/core'
-import {required} from '@vuelidate/validators'
-import axios from "axios";
 
 const userStore = useUserStore()
 const {cookies} = useCookies();
@@ -91,38 +66,31 @@ const router = useRouter()
 
 // ValidationRules
 const rules = {
-  username: {required},
-  password: {required},
+  email: {required,  email},
 }
 
 
 // State
 const loading = ref(false)
 const form = ref({
-  username: '',
-  password: '',
+  email: '',
 })
-
-const v$ = useVuelidate(rules, form)
 
 // Methods
 const enterIn = (e) => {
-  if (e.charCode === 13) signIn()
+  if (e.charCode === 13) sendEmail()
 }
 
-const signIn = async () => {
+const sendEmail = async () => {
   try {
     loading.value = true
     const isValid = await v$.value.$validate();
+    console.log(isValid,'isValid')
 
     if (isValid) {
-      const resp = await userStore.login(form.value)
-      await cookies.set('task_focus_token', resp.data.key)
-      axios.defaults.headers.common['Authorization'] = `Token ${resp.data.key}`
-      const respUser = await userStore.fetchUser(resp.data.key)
-      await cookies.set('task_focus_user', respUser.data)
-      await toast.success("Successfully loggedIn");
-      await router.push('/dashboard')
+      const resp = await userStore.resetPassword(form.value)
+      await toast.success(resp.data.detail || "Successfully send");
+      await router.push('/')
     }
   } catch (e) {
     catchErrors(e)
@@ -131,5 +99,5 @@ const signIn = async () => {
   }
 }
 
+const v$ = useVuelidate(rules, form)
 </script>
-

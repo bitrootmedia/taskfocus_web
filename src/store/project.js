@@ -26,6 +26,7 @@ export const useProjectStore = defineStore('project', {
             if (payload?.sorting) url += `&ordering=${payload.sorting}`
             if (payload?.search) url += `&title=${payload.search}`
             if (payload?.userId) url += `&user=${payload.userId}`
+            if (payload?.isClosed) url += `&is_closed=false`
 
             return await axios.get(url)
         },

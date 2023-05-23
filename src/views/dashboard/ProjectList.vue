@@ -20,6 +20,17 @@
       </button>
     </div>
 
+    <div class="flex items-center mt-4">
+      <input
+          id="hideClosed"
+          v-model="hideClosed"
+          type="checkbox"
+          class="border-0 flex pl-8 pr-3 py-3 placeholder-blueGray-300 text-blueGray-600 rounded text-sm ease-linear transition-all duration-150 cursor-pointer"
+          placeholder="Search"
+      />
+      <label for="hideClosed" class="text-md text-blueGray-500 font-medium cursor-pointer ml-2 whitespace-nowrap">Hide closed tasks</label>
+    </div>
+
     <div class="content mt-4">
       <DataTable :headers="headers" @sorting="sorting">
         <template v-slot:tableBody>
@@ -79,7 +90,7 @@
 </template>
 
 <script setup>
-import {ref} from "vue";
+import {ref, watch} from "vue";
 import {useProjectStore} from "../../store/project";
 import {catchErrors} from "../../utils";
 import DataTable from './../../components/Table/DataTable.vue'
@@ -103,9 +114,15 @@ const headers = [
 ]
 
 const loading = ref(false)
-const drag = ref(false)
+let drag = ref(false)
 const search = ref('')
 const projects = ref([])
+const hideClosed = ref(true)
+
+
+watch( hideClosed, (newValue, oldValue) => {
+  fetchProjects()
+})
 
 
 // Methods
@@ -116,7 +133,8 @@ const fetchProjects = async (label) => {
       pagination: paginate.pagination.value,
       query: paginate.query.value,
       search: filter.search.value,
-      sorting: label
+      sorting: label,
+      isClosed: hideClosed.value
     }
     const resp = await projectStore.fetchProjects(options)
     projects.value = resp.data.results

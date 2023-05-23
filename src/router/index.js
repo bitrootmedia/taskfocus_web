@@ -8,6 +8,7 @@ import Admin from "../layouts/Admin.vue";
 
 // views for Auth layout
 import Login from "../views/auth/Login.vue";
+import ResetPassword from "../views/auth/ResetPassword.vue";
 import Dashboard from "../views/dashboard/Dashboard.vue";
 import ProjectList from "../views/dashboard/ProjectList.vue";
 import CreateProject from "../views/dashboard/CreateProject.vue";
@@ -32,6 +33,11 @@ const routes = [
                 path: "/",
                 component: Login,
                 name: 'Login'
+            },
+            {
+                path: "/reset-password",
+                component: ResetPassword,
+                name: 'Reset Password'
             },
         ],
         beforeEnter: (to, from,next) => {
@@ -122,6 +128,8 @@ export const router = createRouter({
 
 router.beforeEach(async (to, from,next) => {
     const token = cookies.get('task_focus_token')
+
+    if (to.name === 'Reset Password') return next()
 
     if (to.name !== 'Login' && !token) next({ name: 'Login' })
     else next()
