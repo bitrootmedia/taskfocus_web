@@ -172,6 +172,7 @@ import draggable from 'vuedraggable'
 import {useUserStore} from "../../store/user";
 import {useTasksStore} from "../../store/tasks";
 import {useProjectStore} from "../../store/project";
+import config from "../../config";
 
 const route = useRoute()
 const router = useRouter()
@@ -230,17 +231,32 @@ const fetchUser = async () => {
 const changeDrag = async (e) => {
   try {
     const newIndex = e.moved.newIndex
+    const oldIndex = e.moved.oldIndex
     let aboveItemId = null
     let belowItemId = null
 
-    if (newIndex !== 0) {
-      const findItem = tempData.value.find((item, index) => index === newIndex)
-      aboveItemId = findItem?.id
-    }
+    if (+newIndex > +oldIndex){
+      // top-bottom
+      if (newIndex !== 0) {
+        const findItem = tempData.value.find((item, index) => index === newIndex)
+        aboveItemId = findItem?.id
+      }
 
-    if (newIndex !== tempData.value.length) {
-      const nextItem = tempData.value.find((item, index) => index === newIndex + 1)
-      belowItemId = nextItem?.id
+      if (newIndex !== tempData.value.length) {
+        const nextItem = tempData.value.find((item, index) => index === newIndex + 1)
+        belowItemId = nextItem?.id
+      }
+    }else {
+      // bottom-top
+      if (newIndex !== 0) {
+        const findItem = tempData.value.find((item, index) => index === newIndex - 1)
+        aboveItemId = findItem?.id
+      }
+
+      if (newIndex !== tempData.value.length) {
+        const nextItem = tempData.value.find((item, index) => index === newIndex)
+        belowItemId = nextItem?.id
+      }
     }
 
     const data = {
@@ -248,6 +264,7 @@ const changeDrag = async (e) => {
       task_above_id: aboveItemId,
       user_task_queue_id: belowItemId,
     }
+
     await usersTasksStore.updateOrder(data)
   } catch (e) {
     catchErrors(e)
@@ -317,7 +334,10 @@ const fetchProjectAccess = async () => {
 }
 
 // Composables
-const paginate = usePaginate(fetchUsersTask, null)
+const options = {
+  pageSize: config.USER_TASKS_QUEUES_LIST
+}
+const paginate = usePaginate(fetchUsersTask, options)
 const paginateTask = usePaginate(fetchTasksAccess, null)
 const paginateProject = usePaginate(fetchProjectAccess, null)
 

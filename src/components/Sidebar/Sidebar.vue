@@ -264,7 +264,7 @@
                     class="fas fa-list-ul mr-2 text-sm"
                     :class="[isExactActive ? 'opacity-75' : 'text-blueGray-300']"
                 ></i>
-                {{ !closePanel ? 'Users Tasks' : '' }}
+                {{ !closePanel ? 'Queue' : '' }}
               </a>
             </router-link>
           </li>

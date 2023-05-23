@@ -91,6 +91,10 @@
                 </td>
 
                 <td class="border-t-0 px-3 align-middle border-l-0 border-r-0 text-xs whitespace-nowrap p-4">
+                  <span>{{ element.position || '-' }}</span>
+                </td>
+
+                <td class="border-t-0 px-3 align-middle border-l-0 border-r-0 text-xs whitespace-nowrap p-4">
                           <span v-if="element.owner?.first_name || element.owner?.last_name">{{
                               element.owner?.first_name
                             }} {{ element.owner?.last_name }}</span>
@@ -193,6 +197,7 @@ const headers = computed(() => {
     {id: 1, label: 'Title', sorting: true, sortLabel: 'title'},
     {id: 2, label: 'Status', sorting: true, sortLabel: 'status'},
     {id: 3, label: 'Urgency Level', sorting: true, sortLabel: 'status'},
+    {id: 12, label: 'Position', sorting: true, sortLabel: 'position'},
     {id: 4, label: 'Owner', sorting: true, sortLabel: 'owner'},
     {id: 5, label: 'Responsible', sorting: true, sortLabel: 'responsible'},
     {id: 6, label: 'ETA', sorting: true, sortLabel: 'eta'},
@@ -235,30 +240,44 @@ const fetchTasks = async (label = null) => {
 const changeDrag = async (e) => {
   try {
     const newIndex = e.moved.newIndex
+    const oldIndex = e.moved.oldIndex
     let aboveItemId = null
     let belowItemId = null
 
-    if (newIndex !== 0) {
-      const findItem = tempData.value.find((item, index) => index === newIndex)
-      aboveItemId = findItem?.id
-    }
+    if (+newIndex > +oldIndex){
+      // top-bottom
+      if (newIndex !== 0) {
+        const findItem = tempData.value.find((item, index) => index === newIndex)
+        aboveItemId = findItem?.id
+      }
 
-    if (newIndex !== tempData.value.length){
-      const nextItem = tempData.value.find((item, index) => index === newIndex + 1)
-      belowItemId = nextItem?.id
+      if (newIndex !== tempData.value.length) {
+        const nextItem = tempData.value.find((item, index) => index === newIndex + 1)
+        belowItemId = nextItem?.id
+      }
+    }else {
+      // bottom-top
+      if (newIndex !== 0) {
+        const findItem = tempData.value.find((item, index) => index === newIndex - 1)
+        aboveItemId = findItem?.id
+      }
+
+      if (newIndex !== tempData.value.length) {
+        const nextItem = tempData.value.find((item, index) => index === newIndex)
+        belowItemId = nextItem?.id
+      }
     }
 
     const data = {
       id: e.moved.element.id,
       task_above_id: aboveItemId,
-      task_below_id: belowItemId,
+      user_task_queue_id: belowItemId,
     }
 
     await tasksStore.updateOrder(data)
   } catch (e) {
     catchErrors(e)
   }
-
 }
 
 const sorting = (label) => {

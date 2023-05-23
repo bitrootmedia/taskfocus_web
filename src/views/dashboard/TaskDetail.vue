@@ -246,6 +246,25 @@
           </div>
 
           <div class="mb-2 sm:mb-4">
+
+            <div class="text-blueGray-500">
+             Position:&nbsp;
+              <b class="uppercase cursor-pointer" v-if="!isEditPanel.position"
+                 @click="isEditPanel.position = true">{{ task.position || 'N/A' }}
+              </b>
+              <div v-else class="mb-2 w-80">
+                <input
+                    v-model="form.position"
+                    type="number"
+                    class="border-0 px-3 py-3 placeholder-blueGray-300 text-blueGray-600 bg-white rounded text-sm shadow focus:outline-none focus:ring w-full ease-linear transition-all duration-150"
+                    placeholder="Position"
+                />
+              </div>
+            </div>
+
+          </div>
+
+          <div class="mb-2 sm:mb-4">
             <div class="text-blueGray-500 inline-flex items-center" v-if="!isEditPanel.progress">
               Progress:
 
@@ -397,6 +416,7 @@ const defaultEditValues = {
   user: false,
   tag: false,
   urgency_level: false,
+  position: false,
   owner: false,
 }
 
@@ -444,6 +464,7 @@ const form = ref({
   progress: '',
   tag: '',
   urgency_level: '',
+  position: '',
 })
 
 const v$ = useVuelidate(rules, form)
@@ -661,6 +682,7 @@ const updateTask = async () => {
       progress: form.value.progress,
       tag: form.value.tag,
       urgency_level: form.value.urgency_level,
+      position: form.value.position,
     }
 
 
