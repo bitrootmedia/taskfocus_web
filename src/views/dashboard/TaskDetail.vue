@@ -94,6 +94,15 @@
             >
               {{ !isAuthQueue ? 'Add to my queue' : 'Remove from my queue' }}
             </button>
+
+            <button
+                v-if="isAuthOwner"
+                @click="showReminderModal = true"
+                class="mt-2 bg-blueGray-800 whitespace-nowrap text-white active:bg-blueGray-600 text-sm font-bold px-2 sm:px-4 py-2 rounded shadow hover:shadow-lg outline-none focus:outline-none ease-linear transition-all duration-150"
+                type="button"
+            >
+              Add Reminder
+            </button>
           </div>
 
           <div class="mb-2 sm:mb-4">
@@ -248,7 +257,7 @@
           <div class="mb-2 sm:mb-4">
 
             <div class="text-blueGray-500">
-             Position:&nbsp;
+              Position:&nbsp;
               <b class="uppercase cursor-pointer" v-if="!isEditPanel.position"
                  @click="isEditPanel.position = true">{{ task.position || 'N/A' }}
               </b>
@@ -286,7 +295,8 @@
           <div>
             <div class="text-blueGray-500 description-panel">
               Description:
-              <b v-if="!task.description && !isEditPanel.description" class="cursor-pointer" @click="isEditPanel.description = true">N/A</b>
+              <b v-if="!task.description && !isEditPanel.description" class="cursor-pointer"
+                 @click="isEditPanel.description = true">N/A</b>
 
               <div v-else>
                 <div @click="isEditPanel.description = true" class="inline-flex">
@@ -324,6 +334,16 @@
             </button>
           </div>
         </div>
+      </div>
+
+      <div class="mb-10" v-if="reminders?.length">
+        <Reminders
+            :paginate="paginate"
+            :reminders="reminders"
+            :loading="loadingRem"
+            :users="users"
+            @update="fetchReminders"
+        />
       </div>
 
       <div class="mb-10">
@@ -367,6 +387,14 @@
           @update="updateTasksQueue"
       />
 
+      <ReminderModal
+          :show-modal="showReminderModal"
+          :task="task"
+          :users="usersQueue"
+          @close="showReminderModal = false"
+          @update="fetchReminders"
+      />
+
 
       <ConfirmCloseModal
           :show-modal="confirmModal"
@@ -393,13 +421,16 @@ import LogsDataTable from "../../components/Table/LogsDataTable.vue";
 import {useToast} from "vue-toastification";
 import {useUserStore} from "../../store/user";
 import {useCookies} from "vue3-cookies";
-import moment from "moment";
 import UserTaskModal from "../../components/Modals/UserTaskModal.vue";
 import ConfirmCloseModal from "../../components/Modals/ConfirmCloseModal.vue";
 import VMdEditor, {xss} from '@kangc/v-md-editor';
 import {useProjectStore} from "../../store/project";
 import UserQueueModal from "../../components/Modals/UserQueueModal.vue";
 import {useUsersTasksStore} from "../../store/users-tasks";
+import ReminderModal from "../../components/Modals/ReminderModal.vue";
+import {usePaginate} from "../../composables/usePaginate";
+import Reminders from '../../components/Reminders/Reminders.vue'
+import config from "../../config";
 
 // ValidationRules
 const rules = {
@@ -431,8 +462,10 @@ const toast = useToast()
 const {cookies} = useCookies();
 
 const loading = ref(false)
+const loadingRem = ref(false)
 const showBtn = ref(false)
 const showModal = ref(false)
+const showReminderModal = ref(false)
 const showUsersModal = ref(false)
 const showUsersQueueModal = ref(false)
 let confirmModal = ref(false)
@@ -442,6 +475,7 @@ const hasAccess = ref(false)
 const key = ref(0)
 const timer = ref(null)
 const backgroundSize = ref('0% 0%')
+const reminders = ref([])
 const users = ref([])
 const usersList = ref([])
 const usersQueue = ref([])
@@ -487,8 +521,6 @@ const isAuthOwner = computed(() => {
 })
 
 
-
-
 const showPanel = computed(() => {
   const arr = Object.values(isEditPanel.value)
   return arr.includes(true)
@@ -528,7 +560,7 @@ const updateTasksQueue = () => {
 }
 
 
-const updateMyQueue = ()=>{
+const updateMyQueue = () => {
   if (isAuthQueue.value) return removeUser()
 
   assignUser()
@@ -550,7 +582,7 @@ const assignUser = async () => {
   }
 }
 
-const removeUser = async ()=>{
+const removeUser = async () => {
   try {
     const user = cookies.get('task_focus_user')
 
@@ -780,7 +812,6 @@ const fetchQueueAccess = async () => {
     const id = route.params.id
     if (id) {
       const resp = await usersTasksStore.fetchUsersTasksQueue({id})
-      // const user = cookies.get('task_focus_user')
       const list = []
       const ids = []
       resp.data.users.forEach((item) => {
@@ -792,6 +823,28 @@ const fetchQueueAccess = async () => {
     }
   } catch (e) {
     catchErrors(e)
+  }
+}
+
+const fetchReminders = async () => {
+  try {
+    const id = route.params.id
+    if (id) {
+      loadingRem.value = true
+      const options = {
+        pagination: paginate.pagination.value,
+        query: paginate.query.value,
+        id
+      }
+
+      const resp = await taskStore.fetchReminders(options)
+      reminders.value = resp.data.results
+      paginate.updatePagination(resp)
+    }
+  } catch (e) {
+    catchErrors(e)
+  } finally {
+    loadingRem.value = false
   }
 }
 
@@ -815,7 +868,13 @@ onMounted(() => {
 
 
 // Run Functions
+const options = {
+  pageSize: config.REMINDERS
+}
+const paginate = usePaginate(fetchReminders, options)
+
 fetchTask()
 fetchDictionary()
 fetchCurrentTask()
+fetchReminders()
 </script>

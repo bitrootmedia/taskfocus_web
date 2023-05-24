@@ -92,5 +92,22 @@ export const useTasksStore = defineStore('tasks', {
             const id = payload.id
             return await axios.delete(`${config.BASE_API_URL}/task-access/${id}`)
         },
+
+        async fetchReminders(payload) {
+            let url = `${config.BASE_API_URL}/reminders?`
+
+            if (payload?.id) url += `task=${payload.id}`
+            if (payload?.query) url += `&${payload.query}`
+
+            return await axios.get(url)
+        },
+
+        async createReminders(payload) {
+            return await axios.post(`${config.BASE_API_URL}/reminders/`,payload)
+        },
+
+        async closeReminder(payload) {
+            return await axios.post(`${config.BASE_API_URL}/reminder-close/${payload.id}`)
+        },
     },
 })

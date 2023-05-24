@@ -7,5 +7,6 @@ export default {
     COMMENTS_PAGE_SIZE: import.meta.env.VITE_COMMENTS_PAGE_SIZE,
     USER_TASKS_QUEUE: import.meta.env.VITE_USER_TASKS_QUEUE,
     USER_TASKS_QUEUES_LIST: import.meta.env.VITE_USER_TASKS_QUEUES_LIST,
+    REMINDERS: import.meta.env.VITE_REMINDERS,
     LOGO_URL: import.meta.env.VITE_LOGO_URL,
 }
