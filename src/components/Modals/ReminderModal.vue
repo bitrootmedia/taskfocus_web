@@ -154,12 +154,10 @@ const createReminder = async()=>{
         message: form.value.label,
       }
 
-      const resp = await tasksStore.createReminders(data);
-      console.log(resp,'resp')
-      reset()
-      toast.success("Successfully created");
-
-
+      await tasksStore.createReminders(data);
+      await emit('update')
+      await toast.success("Successfully created");
+      await close()
     }
   }catch (e) {
     catchErrors(e)

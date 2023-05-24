@@ -103,7 +103,7 @@ export const useTasksStore = defineStore('tasks', {
         },
 
         async createReminders(payload) {
-            return await axios.post(`${config.BASE_API_URL}/reminders/`,payload)
+            return await axios.post(`${config.BASE_API_URL}/reminders`,payload)
         },
 
         async closeReminder(payload) {

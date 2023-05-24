@@ -159,6 +159,13 @@ tr:nth-child(odd) {
     color: #64748B !important;
 }
 
+.v-md-editor__preview-wrapper, .v-md-icon-preview {
+    display: none !important;
+}
+.v-md-textarea-editor{
+    min-height: 100px;
+}
+
 
 .text-line-3{
     overflow: hidden;
@@ -181,10 +188,4 @@ tr:nth-child(odd) {
 .notifications-wrapper::-webkit-scrollbar-thumb {
     background-color: #c1bfbf;
     border-radius: 8px;
-}
-.v-md-editor__preview-wrapper, .v-md-icon-preview {
-    display: none !important;
-}
-.v-md-textarea-editor{
-    min-height: 100px;
 }

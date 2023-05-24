@@ -15,8 +15,10 @@
       <div class="w-full items-center gap-x-6" v-else>
         <div class="w-full sm:w-1/2">
           <v-md-editor
+              :right-toolbar="'toc sync-scroll fullscreen'"
               v-model="message"
-              :right-toolbar="'toc sync-scroll fullscreen'">
+              :disabled-menus="[]"
+              @upload-image="handleUploadImage">
           </v-md-editor>
         </div>
 
@@ -169,6 +171,7 @@ import VMdEditor, {xss} from '@kangc/v-md-editor';
 import {useCookies} from "vue3-cookies";
 import config from '../../config'
 import {watch} from "vue";
+import {useAttachmentsStore} from "../../store/attachments";
 
 
 const props = defineProps({
@@ -204,6 +207,7 @@ const rules = {
 }
 
 const commentsStore = useCommentsStore()
+const attachmentsStore = useAttachmentsStore()
 const toast = useToast()
 const router = useRouter()
 const route = useRoute()
@@ -230,18 +234,28 @@ const editComment = (comment) => {
   editCommentsIds.value = [...editCommentsIds.value, comment.id]
 }
 
-const handleUploadImage = (event, insertImage, files)=> {
-  // Get the files and upload them to the file server, then insert the corresponding content into the editor
-  console.log(files);
+const handleUploadImage = async (event, insertImage, files) => {
+ try {
+   const file = files[0]
+   const formData = new FormData();
+   formData.append(file.name, file);
 
-  // Here is just an example
-  insertImage({
-    url:
-        'https://ss0.bdstatic.com/70cFvHSh_Q1YnxGkpoWK1HF6hhy/it/u=1269952892,3525182336&fm=26&gp=0.jpg',
-    desc: 'desc',
-    // width: 'auto',
-    // height: 'auto',
-  });
+   if (props.projectId) {
+     formData.append('project_id', props.projectId);
+   }
+   if (props.taskId) {
+     formData.append('task_id', props.taskId);
+   }
+
+   const resp = await attachmentsStore.uploadAttachments(formData)
+   if (resp.data.attachments[0].file_path){
+     insertImage({
+       url: resp.data.attachments[0].file_path,
+     });
+   }
+ }catch (e) {
+   catchErrors(e)
+ }
 }
 
 const resetEditComment = (comment) => {
