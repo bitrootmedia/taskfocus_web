@@ -14,7 +14,9 @@
 
       <div class="w-full items-center gap-x-6" v-else>
         <div class="w-full sm:w-1/2">
-          <v-md-editor v-model="message" :right-toolbar="'toc sync-scroll fullscreen'">
+          <v-md-editor
+              v-model="message"
+              :right-toolbar="'toc sync-scroll fullscreen'">
           </v-md-editor>
         </div>
 
@@ -218,15 +220,29 @@ let timer = null
 const v$ = useVuelidate(rules, {message})
 
 
+watch(editCommentsIds, (val) => {
+  if (val.length) stopTimer()
+  else startTimer()
+})
+
 // Methods
 const editComment = (comment) => {
   editCommentsIds.value = [...editCommentsIds.value, comment.id]
 }
 
-watch(editCommentsIds, (val) => {
-  if (val.length) stopTimer()
-  else startTimer()
-})
+const handleUploadImage = (event, insertImage, files)=> {
+  // Get the files and upload them to the file server, then insert the corresponding content into the editor
+  console.log(files);
+
+  // Here is just an example
+  insertImage({
+    url:
+        'https://ss0.bdstatic.com/70cFvHSh_Q1YnxGkpoWK1HF6hhy/it/u=1269952892,3525182336&fm=26&gp=0.jpg',
+    desc: 'desc',
+    // width: 'auto',
+    // height: 'auto',
+  });
+}
 
 const resetEditComment = (comment) => {
   fetchComments()

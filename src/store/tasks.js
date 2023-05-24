@@ -94,9 +94,9 @@ export const useTasksStore = defineStore('tasks', {
         },
 
         async fetchReminders(payload) {
-            let url = `${config.BASE_API_URL}/reminders?`
+            let url = `${config.BASE_API_URL}/reminders?open_only=true`
 
-            if (payload?.id) url += `task=${payload.id}`
+            if (payload?.id) url += `&task=${payload.id}`
             if (payload?.query) url += `&${payload.query}`
 
             return await axios.get(url)
