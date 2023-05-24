@@ -154,7 +154,7 @@ const fetchUserTaskQueue = async () => {
 
 // Composables
 const options = {
-  pageSize: config.USER_TASKS_QUEUE
+  pageSize: config.USER_TASKS_QUEUES_LIST
 }
 const paginate = usePaginate(fetchUserTaskQueue, options)
 fetchUserTaskQueue()

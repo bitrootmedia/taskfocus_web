@@ -116,6 +116,28 @@
           </li>
 
           <li class="items-center">
+            <router-link to="/dashboard/create-task" exact v-slot="{ href, navigate, isActive, isExactActive }">
+              <a
+                  :href="href"
+                  @click="navigate"
+                  class="text-xs uppercase py-3 font-bold block"
+                  :class="[
+                  isExactActive
+                    ? 'text-emerald-500 hover:text-emerald-600'
+                    : 'text-blueGray-700 hover:text-blueGray-500',
+                    closePanel ? 'text-center' : ''
+                ]"
+              >
+                <i
+                    class="fas fa-newspaper mr-2 text-sm"
+                    :class="[isExactActive ? 'opacity-75' : 'text-blueGray-300']"
+                ></i>
+                {{ !closePanel ? 'New Task' : '' }}
+              </a>
+            </router-link>
+          </li>
+
+          <li class="items-center">
             <router-link to="/dashboard/projects" exact v-slot="{ href, navigate, isActive, isExactActive }">
               <a
                   :href="href"
