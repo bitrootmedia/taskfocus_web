@@ -179,7 +179,7 @@ const isAuthOwner = computed(() => {
   if (!cookies.get('task_focus_user')) return ''
 
   const user = cookies.get('task_focus_user')
-  const projectOwnerId = project.value.owner.id
+  const projectOwnerId = project.value.owner?.id
   return user.pk === projectOwnerId
 })
 

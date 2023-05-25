@@ -14,6 +14,7 @@
             <span class="text-blueGray-700 font-semibold">{{ convertDateTime(reminder.reminder_date) }}</span>
 
             <button
+                v-if="!hide"
                 @click="close(reminder)"
                 class="bg-red-400 whitespace-nowrap text-white active:bg-blueGray-600 text-sm font-bold px-2 sm:px-4 py-2 rounded shadow hover:shadow-lg outline-none focus:outline-none ease-linear transition-all duration-150"
                 type="button"
@@ -52,6 +53,10 @@ import {useToast} from "vue-toastification";
 const emit = defineEmits(['update'])
 const props = defineProps({
   loading: {
+    type: Boolean,
+    default: false
+  },
+  hide: {
     type: Boolean,
     default: false
   },

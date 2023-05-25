@@ -23,6 +23,7 @@ import Comments from "../views/dashboard/Comments.vue";
 import Logs from "../views/dashboard/Logs.vue";
 import Attachments from "../views/dashboard/Attachments.vue";
 import Settings from "../views/dashboard/Settings.vue";
+import Reminders from "../views/dashboard/Reminders.vue";
 
 // routes
 const routes = [
@@ -66,6 +67,11 @@ const routes = [
                 path: "/dashboard/tasks",
                 component: Tasks,
                 name: 'Tasks',
+            },
+            {
+                path: "/dashboard/reminders",
+                component: Reminders,
+                name: 'Reminders',
             },
             {
                 path: "/dashboard/comments",

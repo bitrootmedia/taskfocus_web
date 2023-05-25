@@ -128,6 +128,7 @@ const fetchUsers = async () => {
       pagination: paginate.pagination.value,
       query: paginate.query.value,
     }
+    console.log(options,'options')
     const resp = await userStore.fetchUsersPage(options)
     const users = resp.data.results
     paginate.updatePagination(resp)

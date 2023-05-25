@@ -8,5 +8,6 @@ export default {
     USER_TASKS_QUEUE: import.meta.env.VITE_USER_TASKS_QUEUE,
     USER_TASKS_QUEUES_LIST: import.meta.env.VITE_USER_TASKS_QUEUES_LIST,
     REMINDERS: import.meta.env.VITE_REMINDERS,
+    REMINDERS_ALL: import.meta.env.VITE_REMINDERS_ALL,
     LOGO_URL: import.meta.env.VITE_LOGO_URL,
 }
