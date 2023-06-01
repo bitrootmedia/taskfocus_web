@@ -11,6 +11,10 @@
 
     <div class="content">
       <div class="mb-10">
+        <UrgentTasks />
+      </div>
+
+      <div class="mb-10">
         <UserTasksQueue />
       </div>
     </div>
@@ -20,12 +24,10 @@
 <script setup>
 import {useRouter} from "vue-router";
 import UserTasksQueue from "../../components/Table/UserTasksQueue.vue";
-import CommentsDataTable from './../../components/Table/CommentsDataTable.vue'
-import LogsDataTable from './../../components/Table/LogsDataTable.vue'
-import AttachmentsDataTable from './../../components/Table/AttachmentsDataTable.vue'
 import {catchErrors} from "../../utils";
 import {ref} from "vue";
 import {useTasksStore} from "../../store/tasks";
+import UrgentTasks from "../../components/Lists/UrgentTasks.vue";
 
 const router = useRouter()
 const tasksStore = useTasksStore()

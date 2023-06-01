@@ -14,14 +14,11 @@ export const useTasksStore = defineStore('tasks', {
         tempProject: {}
     }),
 
-    // getters: {
-    //     currentUser: (state) => state.user,
-    // },
-
     actions: {
         async fetchTasks(payload) {
             let url = `${config.BASE_API_URL}/tasks?`
 
+            if (payload?.is_urgent) url += `is_urgent=true`
             if (payload?.id) url += `project=${payload.id}`
             if (payload?.query) url += `&${payload.query}`
             if (payload?.sorting) url += `&ordering=${payload.sorting}`
