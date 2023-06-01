@@ -1,6 +1,7 @@
 <template>
-  <div v-if="showModal"
-       class="overflow-x-hidden overflow-y-auto fixed inset-0 z-50 outline-none focus:outline-none justify-center items-center flex">
+  <div v-if="showModal" ref="componentModalRef"
+       class="overflow-x-hidden overflow-y-auto fixed inset-0 z-50 outline-none focus:outline-none justify-center items-center flex"
+  @click.self="emit('close')">
     <div class="relative my-6 mx-auto w-[350px]">
       <!--content-->
       <div class="border-0 rounded-lg shadow-lg relative flex flex-col w-full bg-white outline-none focus:outline-none">
@@ -67,7 +68,7 @@
 
 <script setup>
 import {catchErrors} from "../../utils";
-import {ref} from "vue";
+import {onBeforeUnmount, onMounted, ref} from "vue";
 import Loader from "./../../components/Loader/Loader.vue"
 import {useProjectStore} from "../../store/project";
 import {useCookies} from "vue3-cookies";
@@ -77,7 +78,7 @@ import {useFilter} from "../../composables/useFilter";
 import Pagination from "./../Pagination/Pagination.vue"
 import {useTasksStore} from "../../store/tasks";
 
-const emit = defineEmits(['close','update'])
+const emit = defineEmits(['close', 'update'])
 const props = defineProps({
   showModal: {
     type: Boolean,
@@ -93,6 +94,10 @@ const props = defineProps({
     default: () => {
     }
   },
+  btnTitle: {
+    type: String,
+    default: ''
+  },
 })
 
 
@@ -101,13 +106,15 @@ const taskStore = useTasksStore()
 const {cookies} = useCookies();
 const toast = useToast()
 const projects = ref([])
+const componentModalRef = ref()
+
 
 // State
 const loading = ref(false)
 
 
 // Methods
-const fetchProjects = async()=>{
+const fetchProjects = async () => {
   try {
     const options = {
       pagination: paginate.pagination.value,
@@ -123,7 +130,7 @@ const fetchProjects = async()=>{
 }
 
 
-const updateProject = async (id)=>{
+const updateProject = async (id) => {
   try {
     const data = {
       id: props.taskId,
@@ -138,9 +145,24 @@ const updateProject = async (id)=>{
   }
 }
 
+const handleClick = (e) => {
+  if (e.target.innerHTML === props.btnTitle) return false
+
+  if (!componentModalRef.value === e.target) {
+    emit('close')
+  }
+}
+
+onMounted(() => {
+  window.addEventListener('click', handleClick)
+})
+onBeforeUnmount(() => {
+  window.removeEventListener('click', handleClick)
+})
+
 // Composables
-const paginate = usePaginate(fetchProjects,null)
-const filter = useFilter(projects,fetchProjects)
+const paginate = usePaginate(fetchProjects, null)
+const filter = useFilter(projects, fetchProjects)
 
 fetchProjects()
 

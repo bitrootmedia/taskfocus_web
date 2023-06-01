@@ -1,5 +1,5 @@
 <template>
-  <div v-if="showModal"
+  <div v-if="showModal" ref="componentModalRef" @click.self="emit('close')"
        class="overflow-x-hidden overflow-y-auto fixed inset-0 z-50 outline-none focus:outline-none justify-center items-center flex">
     <div class="relative my-6 mx-auto w-[350px] sm:w-[400px]">
       <!--content-->
@@ -44,7 +44,7 @@
 
 <script setup>
 import {catchErrors} from "../../utils";
-import {ref} from "vue";
+import {onBeforeUnmount, onMounted, ref} from "vue";
 import Loader from "./../../components/Loader/Loader.vue"
 import {useTasksStore} from "../../store/tasks";
 import {useCookies} from "vue3-cookies";
@@ -72,7 +72,11 @@ const props = defineProps({
   users: {
     type: Array,
     default: () => []
-  }
+  },
+  btnTitle: {
+    type: String,
+    default: ''
+  },
 })
 
 
@@ -82,6 +86,7 @@ const toast = useToast()
 
 // State
 const loading = ref(false)
+const componentModalRef = ref()
 
 
 // Methods
@@ -110,5 +115,20 @@ const removeUser = async (user)=>{
     catchErrors(e)
   }
 }
+
+const handleClick = (e) => {
+  if (e.target.innerHTML === props.btnTitle) return false
+
+  if (!componentModalRef.value === e.target) {
+    emit('close')
+  }
+}
+
+onMounted(() => {
+  window.addEventListener('click', handleClick)
+})
+onBeforeUnmount(() => {
+  window.removeEventListener('click', handleClick)
+})
 
 </script>

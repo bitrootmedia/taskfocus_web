@@ -26,6 +26,14 @@
           <div>
             <div class="mt-2">
               <span class="text-blueGray-400 font-semibold block mb-2">User: {{ fullName(reminder) }}</span>
+              <div class="mb-2 text-sm text-blueGray-500">
+              <span v-if="showLinks && reminder.task?.id" class="block">Task link: <router-link
+                    class="underline"
+                    :to="`/dashboard/task/${reminder.task.id}`">{{ reminder.task.title }}</router-link></span>
+                <span v-if="showLinks && reminder.task?.project?.id" class="block">Project link: <router-link
+                    class="underline"
+                    :to="`/dashboard/project/${reminder.task.project.id}`">{{reminder.task.project.title}}</router-link></span>
+              </div>
 
               <p class="text-blueGray-500 ">{{ reminder.message }}</p>
             </div>
@@ -57,6 +65,10 @@ const props = defineProps({
     default: false
   },
   hide: {
+    type: Boolean,
+    default: false
+  },
+  showLinks: {
     type: Boolean,
     default: false
   },
@@ -95,5 +107,7 @@ const close = async (reminder) => {
     catchErrors(e)
   }
 }
+
+console.log(props.reminders,'reminders')
 
 </script>

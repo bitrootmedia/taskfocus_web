@@ -84,9 +84,7 @@
                 @click="showModal = true"
                 class="bg-blueGray-800 whitespace-nowrap text-white active:bg-blueGray-600 text-sm font-bold px-3 py-1 rounded shadow hover:shadow-lg outline-none focus:outline-none ease-linear transition-all duration-150"
                 type="button"
-            >
-              Manage Project Users
-            </button>
+            >Manage Project Users</button>
           </div>
         </div>
 
@@ -96,6 +94,7 @@
             :users="users"
             :have-project-access="haveProjectAccess"
             :have-project-access-ids="haveProjectAccessIds"
+            :btn-title="'Manage Project Users'"
             @close="showModal = false"
             @update="fetchProjectAccess"
         />

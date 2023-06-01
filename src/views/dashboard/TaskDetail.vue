@@ -63,27 +63,21 @@
                 @click="showModal = true"
                 class="mt-2 bg-blueGray-400 whitespace-nowrap text-white active:bg-blueGray-600 text-sm font-bold px-2 sm:px-4 py-2 rounded shadow hover:shadow-lg outline-none focus:outline-none ease-linear transition-all duration-150"
                 type="button"
-            >
-              Change project
-            </button>
+            >Change project</button>
 
             <button
                 v-if="isAuthOwner"
                 @click="showUsersModal = true"
                 class="mt-2 bg-blueGray-800 whitespace-nowrap text-white active:bg-blueGray-600 text-sm font-bold px-2 sm:px-4 py-2 rounded shadow hover:shadow-lg outline-none focus:outline-none ease-linear transition-all duration-150"
                 type="button"
-            >
-              Manage Task Users
-            </button>
+            >Manage Task Users</button>
 
             <button
                 v-if="isAuthOwner"
                 @click="showUsersQueueModal = true"
                 class="mt-2 bg-blueGray-800 whitespace-nowrap text-white active:bg-blueGray-600 text-sm font-bold px-2 sm:px-4 py-2 rounded shadow hover:shadow-lg outline-none focus:outline-none ease-linear transition-all duration-150"
                 type="button"
-            >
-              Queue
-            </button>
+            >Queue</button>
 
             <button
                 v-if="showBtn"
@@ -100,9 +94,7 @@
                 @click="showReminderModal = true"
                 class="mt-2 bg-blueGray-800 whitespace-nowrap text-white active:bg-blueGray-600 text-sm font-bold px-2 sm:px-4 py-2 rounded shadow hover:shadow-lg outline-none focus:outline-none ease-linear transition-all duration-150"
                 type="button"
-            >
-              Add Reminder
-            </button>
+            >Add Reminder</button>
           </div>
 
           <div class="mb-2 sm:mb-4">
@@ -363,6 +355,7 @@
           :show-modal="showModal"
           :project-id="task.project?.id"
           :task-id="task.id"
+          :btn-title="'Change project'"
           @close="showModal = false"
           @update="updateTaskShowData"
       />
@@ -373,6 +366,7 @@
           :users="usersList"
           :have-task-access="haveTaskAccess"
           :have-task-access-ids="haveTaskAccessIds"
+          :btn-title="'Manage Task Users'"
           @close="showUsersModal = false"
           @update="updateTasks"
       />
@@ -383,6 +377,7 @@
           :users="usersQueue"
           :have-task-access="haveQueueAccess"
           :have-task-access-ids="haveQueueAccessIds"
+          :btn-title="'Queue'"
           @close="showUsersQueueModal = false"
           @update="updateTasksQueue"
       />
@@ -391,6 +386,7 @@
           :show-modal="showReminderModal"
           :task="task"
           :users="usersQueue"
+          :btn-title="'Add Reminder'"
           @close="showReminderModal = false"
           @update="fetchReminders"
       />

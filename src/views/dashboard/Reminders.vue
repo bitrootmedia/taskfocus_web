@@ -5,6 +5,7 @@
     <div class="content " v-else>
       <div v-if="reminders?.length">
         <Reminders
+            :show-links="true"
             :paginate="paginate"
             :reminders="reminders"
             :loading="loading"
