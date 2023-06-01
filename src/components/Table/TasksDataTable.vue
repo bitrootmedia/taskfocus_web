@@ -87,10 +87,6 @@
                 </td>
 
                 <td class="border-t-0 px-3 align-middle border-l-0 border-r-0 text-xs whitespace-nowrap p-4">
-                  <span>{{ element.urgency_level || '-' }}</span>
-                </td>
-
-                <td class="border-t-0 px-3 align-middle border-l-0 border-r-0 text-xs whitespace-nowrap p-4">
                   <span>{{ element.position || '-' }}</span>
                 </td>
 
@@ -196,7 +192,6 @@ const headers = computed(() => {
   const list = [
     {id: 1, label: 'Title', sorting: true, sortLabel: 'title'},
     {id: 2, label: 'Status', sorting: true, sortLabel: 'status'},
-    {id: 3, label: 'Urgency Level', sorting: true, sortLabel: 'status'},
     {id: 12, label: 'Position', sorting: true, sortLabel: 'position'},
     {id: 4, label: 'Owner', sorting: true, sortLabel: 'owner'},
     {id: 5, label: 'Responsible', sorting: true, sortLabel: 'responsible'},

@@ -63,21 +63,24 @@
                 @click="showModal = true"
                 class="mt-2 bg-blueGray-400 whitespace-nowrap text-white active:bg-blueGray-600 text-sm font-bold px-2 sm:px-4 py-2 rounded shadow hover:shadow-lg outline-none focus:outline-none ease-linear transition-all duration-150"
                 type="button"
-            >Change project</button>
+            >Change project
+            </button>
 
             <button
                 v-if="isAuthOwner"
                 @click="showUsersModal = true"
                 class="mt-2 bg-blueGray-800 whitespace-nowrap text-white active:bg-blueGray-600 text-sm font-bold px-2 sm:px-4 py-2 rounded shadow hover:shadow-lg outline-none focus:outline-none ease-linear transition-all duration-150"
                 type="button"
-            >Manage Task Users</button>
+            >Manage Task Users
+            </button>
 
             <button
                 v-if="isAuthOwner"
                 @click="showUsersQueueModal = true"
                 class="mt-2 bg-blueGray-800 whitespace-nowrap text-white active:bg-blueGray-600 text-sm font-bold px-2 sm:px-4 py-2 rounded shadow hover:shadow-lg outline-none focus:outline-none ease-linear transition-all duration-150"
                 type="button"
-            >Queue</button>
+            >Queue
+            </button>
 
             <button
                 v-if="showBtn"
@@ -94,7 +97,18 @@
                 @click="showReminderModal = true"
                 class="mt-2 bg-blueGray-800 whitespace-nowrap text-white active:bg-blueGray-600 text-sm font-bold px-2 sm:px-4 py-2 rounded shadow hover:shadow-lg outline-none focus:outline-none ease-linear transition-all duration-150"
                 type="button"
-            >Add Reminder</button>
+            >Add Reminder
+            </button>
+          </div>
+
+          <div class="mb-5" v-if="reminders?.length">
+            <Reminders
+                :paginate="paginate"
+                :reminders="reminders"
+                :loading="loadingRem"
+                :users="users"
+                @update="fetchReminders"
+            />
           </div>
 
           <div class="mb-2 sm:mb-4">
@@ -230,17 +244,17 @@
 
           <div class="mb-2 sm:mb-4">
 
-            <div class="text-blueGray-500">
-              Urgency Level:&nbsp;
-              <b class="uppercase cursor-pointer" v-if="!isEditPanel.urgency_level"
-                 @click="isEditPanel.urgency_level = true">{{ task.urgency_level || 'N/A' }}
+            <div class="text-blueGray-500 flex items-center">
+              Urgent:&nbsp;
+              <b class="uppercase cursor-pointer ml-1" v-if="!isEditPanel.is_urgent"
+                 @click="isEditPanel.is_urgent = true">{{ task.is_urgent ? 'Yes' : 'No' }}
               </b>
-              <div v-else class="mb-2 w-80">
-                <select v-model="form.urgency_level" placeholder="Select User"
-                        class="border-0 px-3 py-3 placeholder-blueGray-300 text-blueGray-600 bg-white rounded text-sm shadow focus:outline-none focus:ring w-full ease-linear transition-all duration-150"
-                >
-                  <option :value="item[0]" v-for="(item) in urgencyLevels" :key="item[0]">{{ item[1] }}</option>
-                </select>
+              <div v-else class="ml-2">
+                <input
+                    v-model="form.is_urgent"
+                    type="checkbox"
+                    class="cursor-pointer border-0 placeholder-blueGray-300 text-blueGray-600 bg-white rounded text-smfocus:outline-none focus:ring ease-linear transition-all duration-150"
+                />
               </div>
             </div>
 
@@ -326,16 +340,6 @@
             </button>
           </div>
         </div>
-      </div>
-
-      <div class="mb-10" v-if="reminders?.length">
-        <Reminders
-            :paginate="paginate"
-            :reminders="reminders"
-            :loading="loadingRem"
-            :users="users"
-            @update="fetchReminders"
-        />
       </div>
 
       <div class="mb-10">
@@ -442,7 +446,7 @@ const defaultEditValues = {
   eta: false,
   user: false,
   tag: false,
-  urgency_level: false,
+  is_urgent: false,
   position: false,
   owner: false,
 }
@@ -493,7 +497,7 @@ const form = ref({
   owner: '',
   progress: '',
   tag: '',
-  urgency_level: '',
+  is_urgent: '',
   position: '',
 })
 
@@ -668,9 +672,6 @@ const fetchDictionary = async () => {
   try {
     const resp = await taskStore.fetchDictionary()
     dictionary.value = resp.data.task_status_choices
-
-    const arr = [null, 'NONE']
-    urgencyLevels.value = [arr, ...resp.data.task_urgency_level_choices]
   } catch (e) {
     catchErrors(e)
   }
@@ -709,7 +710,7 @@ const updateTask = async () => {
       owner: form.value.owner,
       progress: form.value.progress,
       tag: form.value.tag,
-      urgency_level: form.value.urgency_level,
+      is_urgent: form.value.is_urgent,
       position: form.value.position,
     }
 
