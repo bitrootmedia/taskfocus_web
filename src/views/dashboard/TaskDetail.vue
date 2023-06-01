@@ -22,7 +22,7 @@
               </div>
             </div>
 
-            <div class="flex items-center gap-x-2" v-if="task?.project">
+            <div class="flex items-center gap-x-2" v-if="task?.project?.id">
               <span class="text-sm text-blueGray-600 whitespace-nowrap">In project:</span>
               <h2 class="text-lg sm:text-2xl font-bold text-blueGray-700 mb-1 cursor-pointer lg:whitespace-nowrap"
                   @click="router.push(`/dashboard/project/${task.project.id}`)">
@@ -627,7 +627,7 @@ const closeTask = async (notes) => {
     const resp = await taskStore.closeTask(data)
     confirmModal.value = false
     await toast.success(resp.data.message);
-    if (task.value.project) {
+    if (task.value.project?.id) {
       return await router.push(`/dashboard/project/${task.value.project.id}`)
     }
     await router.push(`/dashboard`)

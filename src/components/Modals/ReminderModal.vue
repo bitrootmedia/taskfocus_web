@@ -93,7 +93,7 @@
 
 <script setup>
 import {catchErrors} from "../../utils";
-import {onBeforeUnmount, onMounted, ref} from "vue";
+import {onBeforeUnmount, onMounted, ref, watch} from "vue";
 import Loader from "./../../components/Loader/Loader.vue"
 import {useTasksStore} from "../../store/tasks";
 import {useCookies} from "vue3-cookies";
@@ -144,6 +144,17 @@ const form = ref({
 
 
 const v$ = useVuelidate(rules, form)
+
+watch(() => props.showModal,(val)=>{
+  if (val){
+    if (!cookies.get('task_focus_user')) return ''
+    const user = cookies.get('task_focus_user')
+
+    const findItem = props.users.find((item)=>item.id === user.pk)
+    if (findItem) form.value.user = findItem.id
+  }
+
+})
 
 // Methods
 const createReminder = async()=>{

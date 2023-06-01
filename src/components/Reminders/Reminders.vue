@@ -108,6 +108,5 @@ const close = async (reminder) => {
   }
 }
 
-console.log(props.reminders,'reminders')
 
 </script>
