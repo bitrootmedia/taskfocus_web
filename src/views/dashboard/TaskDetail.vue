@@ -60,7 +60,14 @@
 
             <button
                 v-if="isAuthOwner"
-                @click="showModal = true"
+                @click="showOwnersModal = true"
+                class="mt-2 bg-blueGray-800 whitespace-nowrap text-white active:bg-blueGray-600 text-sm font-bold px-2 sm:px-4 py-2 rounded shadow hover:shadow-lg outline-none focus:outline-none ease-linear transition-all duration-150"
+                type="button"
+            >Change Owner</button>
+
+            <button
+                v-if="isAuthOwner"
+                @click="showOwnersModal = true"
                 class="mt-2 bg-blueGray-400 whitespace-nowrap text-white active:bg-blueGray-600 text-sm font-bold px-2 sm:px-4 py-2 rounded shadow hover:shadow-lg outline-none focus:outline-none ease-linear transition-all duration-150"
                 type="button"
             >Change project
@@ -110,29 +117,29 @@
             />
           </div>
 
-          <div class="mb-2 sm:mb-4">
-            <div class="text-blueGray-500">
-              Task Owner: &nbsp;
-              <b :class="{'cursor-pointer': isAuthOwner}" @click="isAuthOwner ? isEditPanel.owner = true : null"
-                 v-if="!isEditPanel.owner">
-                <span v-if="task.owner?.first_name || task.owner?.last_name">{{
-                    task.owner?.first_name
-                  }} {{ task.owner?.last_name }}</span>
-                <span v-else>{{ task.owner?.username }}</span>
-              </b>
+<!--          <div class="mb-2 sm:mb-4">-->
+<!--            <div class="text-blueGray-500">-->
+<!--              Task Owner: &nbsp;-->
+<!--              <b :class="{'cursor-pointer': isAuthOwner}" @click="isAuthOwner ? isEditPanel.owner = true : null"-->
+<!--                 v-if="!isEditPanel.owner">-->
+<!--                <span v-if="task.owner?.first_name || task.owner?.last_name">{{-->
+<!--                    task.owner?.first_name-->
+<!--                  }} {{ task.owner?.last_name }}</span>-->
+<!--                <span v-else>{{ task.owner?.username }}</span>-->
+<!--              </b>-->
 
-              <div v-else class="mb-2 w-80">
-                <select v-model="form.owner" placeholder="Select User"
-                        class="border-0 px-3 py-3 placeholder-blueGray-300 text-blueGray-600 bg-white rounded text-sm shadow focus:outline-none focus:ring w-full ease-linear transition-all duration-150"
-                >
-                  <option :value="user.id" v-for="(user) in users" :key="user.id">{{ user.first_name }}
-                    {{ user.last_name }}
-                  </option>
-                </select>
-              </div>
+<!--              <div v-else class="mb-2 w-80">-->
+<!--                <select v-model="form.owner" placeholder="Select User"-->
+<!--                        class="border-0 px-3 py-3 placeholder-blueGray-300 text-blueGray-600 bg-white rounded text-sm shadow focus:outline-none focus:ring w-full ease-linear transition-all duration-150"-->
+<!--                >-->
+<!--                  <option :value="user.id" v-for="(user) in users" :key="user.id">{{ user.first_name }}-->
+<!--                    {{ user.last_name }}-->
+<!--                  </option>-->
+<!--                </select>-->
+<!--              </div>-->
 
-            </div>
-          </div>
+<!--            </div>-->
+<!--          </div>-->
 
           <div class="mb-2 sm:mb-4">
             <div class="flex gap-x-1">
@@ -374,6 +381,18 @@
           @update="updateTasks"
       />
 
+      <OwnersModal
+          :show-modal="showOwnersModal"
+          :task="task"
+          :users="usersList"
+          :have-task-access="haveTaskAccess"
+          :have-task-access-ids="haveTaskAccessIds"
+          :btn-title="'Change Owners'"
+          @close="showOwnersModal = false"
+          @update="updateTask"
+      />
+
+
       <UserQueueModal
           :show-modal="showUsersQueueModal"
           :task="task"
@@ -430,6 +449,7 @@ import ReminderModal from "../../components/Modals/ReminderModal.vue";
 import {usePaginate} from "../../composables/usePaginate";
 import Reminders from '../../components/Reminders/Reminders.vue'
 import config from "../../config";
+import OwnersModal from "../../components/Modals/OwnersModal.vue";
 
 // ValidationRules
 const rules = {
@@ -467,6 +487,7 @@ const showModal = ref(false)
 let showReminderModal = ref(false)
 let showUsersModal = ref(false)
 let showUsersQueueModal = ref(false)
+let showOwnersModal = ref(false)
 let confirmModal = ref(false)
 const task = ref(null)
 const currentTask = ref(null)
@@ -540,7 +561,9 @@ const updateTaskShowData = () => {
     fetchUsers()
   }, 700)
 }
-const updateTasks = () => {
+const updateTasks = (owner) => {
+  console.log(owner,'owner')
+
   fetchTask()
   fetchTaskAccess()
 
@@ -697,7 +720,7 @@ const resetData = () => {
   backgroundSize.value = `${task.value.progress || 0}% 100%`
 }
 
-const updateTask = async () => {
+const updateTask = async (owner) => {
   try {
     const data = {
       id: task.value.id,
@@ -706,13 +729,12 @@ const updateTask = async () => {
       eta_date: form.value.eta_date,
       status: form.value.status,
       responsible: form.value.user,
-      owner: form.value.owner,
+      owner: owner || form.value.owner,
       progress: form.value.progress,
       tag: form.value.tag,
       is_urgent: form.value.is_urgent,
       position: form.value.position,
     }
-
 
     await taskStore.updateTask(data)
     await toast.success("Successfully task updated");
