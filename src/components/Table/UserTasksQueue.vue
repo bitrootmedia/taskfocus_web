@@ -7,8 +7,6 @@
           {{ user.first_name }} {{ user.last_name }}</h4>
       </div>
 
-      <p class="text-blueGray-600 font-semibold mb-2">Queue:</p>
-
       <DataTable :headers="headers">
         <template v-slot:tableBody>
           <tr v-if="loading">

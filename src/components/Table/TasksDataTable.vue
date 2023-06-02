@@ -25,16 +25,32 @@
 
       </div>
 
-            <div class="flex items-center">
-              <input
-                  id="hideClosed"
-                  v-model="hideClosed"
-                  type="checkbox"
-                  class="border-0 flex pl-8 pr-3 py-3 placeholder-blueGray-300 text-blueGray-600 rounded text-sm ease-linear transition-all duration-150 cursor-pointer"
-                  placeholder="Search"
-              />
-              <label for="hideClosed" class="text-md text-blueGray-500 font-medium cursor-pointer ml-2 whitespace-nowrap">Hide closed tasks</label>
-            </div>
+      <div>
+        <div class="inline-flex items-center mr-6">
+          <input
+              id="hideClosed"
+              v-model="hideClosed"
+              type="checkbox"
+              class="border-0 flex pl-8 pr-3 py-3 placeholder-blueGray-300 text-blueGray-600 rounded text-sm ease-linear transition-all duration-150 cursor-pointer"
+              placeholder="Search"
+          />
+          <label for="hideClosed" class="text-md text-blueGray-500 font-medium cursor-pointer ml-2 whitespace-nowrap">Hide
+            closed tasks</label>
+        </div>
+
+        <div class="inline-flex items-center">
+          <input
+              id="showCurrentUser"
+              v-model="showCurrentUser"
+              type="checkbox"
+              class="border-0 flex pl-8 pr-3 py-3 placeholder-blueGray-300 text-blueGray-600 rounded text-sm ease-linear transition-all duration-150 cursor-pointer"
+              placeholder="Search"
+          />
+          <label for="showCurrentUser"
+                 class="text-md text-blueGray-500 font-medium cursor-pointer ml-2 whitespace-nowrap">{{ currentUser?.first_name }}
+            {{ currentUser?.last_name }}</label>
+        </div>
+      </div>
     </div>
 
     <DataTable :headers="headers" @sorting="sorting">
@@ -145,6 +161,7 @@ import {convertDate, convertDayDiff} from "../../utils";
 import {useRouter} from "vue-router";
 import {usePaginate} from "../../composables/usePaginate";
 import {useFilter} from "../../composables/useFilter";
+import {useCookies} from "vue3-cookies";
 
 const props = defineProps({
   projectId: {
@@ -167,12 +184,14 @@ const props = defineProps({
 
 const tasksStore = useTasksStore()
 const router = useRouter()
+const {cookies} = useCookies();
 
 const isDragDisabled = false
 const loading = ref(false)
 const tasks = ref([])
 const tempData = ref([])
 const hideClosed = ref(true)
+const showCurrentUser = ref(false)
 
 
 // Watch
@@ -182,8 +201,12 @@ watch(() => props.haveProjectAccessIds, (newValue, oldValue) => {
   }
 })
 
-watch( hideClosed, (newValue, oldValue) => {
-    fetchTasks()
+watch(hideClosed, (newValue, oldValue) => {
+  fetchTasks()
+})
+
+watch(showCurrentUser, (newValue, oldValue) => {
+  fetchTasks()
 })
 
 
@@ -208,6 +231,16 @@ const headers = computed(() => {
   return list
 })
 
+const currentUser = computed(() => {
+  if (!cookies.get('task_focus_user')) return ''
+
+  const user = cookies.get('task_focus_user')
+
+  if (user) return user
+
+  return null
+})
+
 
 // Methods
 const fetchTasks = async (label = null) => {
@@ -219,7 +252,8 @@ const fetchTasks = async (label = null) => {
       search: filter.search.value,
       id: props.projectId,
       sorting: label,
-      isClosed: hideClosed.value
+      isClosed: hideClosed.value,
+      responsible: showCurrentUser.value ? currentUser.value : null,
     }
     const resp = await tasksStore.fetchTasks(options)
     tasks.value = resp.data.results
@@ -239,7 +273,7 @@ const changeDrag = async (e) => {
     let aboveItemId = null
     let belowItemId = null
 
-    if (+newIndex > +oldIndex){
+    if (+newIndex > +oldIndex) {
       // top-bottom
       if (newIndex !== 0) {
         const findItem = tempData.value.find((item, index) => index === newIndex)
@@ -250,7 +284,7 @@ const changeDrag = async (e) => {
         const nextItem = tempData.value.find((item, index) => index === newIndex + 1)
         belowItemId = nextItem?.id
       }
-    }else {
+    } else {
       // bottom-top
       if (newIndex !== 0) {
         const findItem = tempData.value.find((item, index) => index === newIndex - 1)

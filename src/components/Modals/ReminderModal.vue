@@ -101,6 +101,9 @@ import {useToast} from "vue-toastification";
 import {required} from "@vuelidate/validators";
 import {useVuelidate} from "@vuelidate/core";
 
+const checkIn = ref(null);
+const checkOut = ref(null);
+
 const emit = defineEmits(['close', 'update'])
 const props = defineProps({
   showModal: {
@@ -127,6 +130,7 @@ const tasksStore = useTasksStore()
 const {cookies} = useCookies();
 const toast = useToast()
 
+
 // ValidationRules
 const rules = {
   date: {required},
@@ -145,23 +149,23 @@ const form = ref({
 
 const v$ = useVuelidate(rules, form)
 
-watch(() => props.showModal,(val)=>{
-  if (val){
+watch(() => props.showModal, (val) => {
+  if (val) {
     if (!cookies.get('task_focus_user')) return ''
     const user = cookies.get('task_focus_user')
 
-    const findItem = props.users.find((item)=>item.id === user.pk)
+    const findItem = props.users.find((item) => item.id === user.pk)
     if (findItem) form.value.user = findItem.id
   }
 
 })
 
 // Methods
-const createReminder = async()=>{
+const createReminder = async () => {
   try {
     const isValid = await v$.value.$validate();
 
-    if (isValid){
+    if (isValid) {
       const data = {
         task: props.task.id,
         reminder_date: form.value.date,
@@ -174,17 +178,17 @@ const createReminder = async()=>{
       await toast.success("Successfully created");
       await close()
     }
-  }catch (e) {
+  } catch (e) {
     catchErrors(e)
   }
 }
 
-const close = ()=>{
+const close = () => {
   emit('close')
   reset()
 }
 
-const reset = ()=>{
+const reset = () => {
   form.value = {
     date: null,
     label: '',

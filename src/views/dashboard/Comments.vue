@@ -1,6 +1,6 @@
 <template>
   <div class="main-container">
-    <CommentsDataTable :hide-create="true"/>
+    <CommentsDataTable :show-search="true" :hide-create="true"/>
   </div>
 </template>
 

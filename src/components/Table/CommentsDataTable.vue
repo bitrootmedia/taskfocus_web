@@ -44,17 +44,17 @@
         v$.message.$errors[0].$message
       }} </span>
 
-    <!--    <div class="header flex flex-col md:flex-row items-baseline md:items-center justify-between mt-4 mb-4 gap-y-3">-->
-    <!--      <div class="relative w-full md:w-2/4">-->
-    <!--        <i class="fas fa-search mr-2 text-sm text-blueGray-300 absolute top-[12px] left-[8px]"/>-->
-    <!--        <input-->
-    <!--            v-model="filter.search.value"-->
-    <!--            type="text"-->
-    <!--            class="border-0 pl-8 pr-3 py-3 placeholder-blueGray-300 text-blueGray-600 bg-white rounded text-sm shadow focus:outline-none focus:ring w-full ease-linear transition-all duration-150"-->
-    <!--            placeholder="Search"-->
-    <!--        />-->
-    <!--      </div>-->
-    <!--    </div>-->
+        <div v-if="showSearch" class="header flex flex-col md:flex-row items-baseline md:items-center justify-between mt-4 mb-4 gap-y-3">
+          <div class="relative w-full md:w-2/4">
+            <i class="fas fa-search mr-2 text-sm text-blueGray-300 absolute top-[12px] left-[8px]"/>
+            <input
+                v-model="filter.search.value"
+                type="text"
+                class="border-0 pl-8 pr-3 py-3 placeholder-blueGray-300 text-blueGray-600 bg-white rounded text-sm shadow focus:outline-none focus:ring w-full ease-linear transition-all duration-150"
+                placeholder="Search"
+            />
+          </div>
+        </div>
 
     <div class="comments mt-3">
       <ul>
@@ -196,6 +196,10 @@ const props = defineProps({
     default: false
   },
   isTask: {
+    type: Boolean,
+    default: false
+  },
+  showSearch: {
     type: Boolean,
     default: false
   },

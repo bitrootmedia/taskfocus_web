@@ -3,7 +3,7 @@
     <Loader />
   </div>
 
-  <div v-else class="mt-4">
+  <div v-else-if="tasks.length" class="mt-4">
     <div class="header flex items-center gap-x-6 mb-4">
       <h2 class="font-bold text-xl block text-blueGray-700">Urgent Tasks</h2>
     </div>

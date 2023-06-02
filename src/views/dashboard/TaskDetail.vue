@@ -93,7 +93,6 @@
             </button>
 
             <button
-                v-if="isAuthOwner"
                 @click="showReminderModal = true"
                 class="mt-2 bg-blueGray-800 whitespace-nowrap text-white active:bg-blueGray-600 text-sm font-bold px-2 sm:px-4 py-2 rounded shadow hover:shadow-lg outline-none focus:outline-none ease-linear transition-all duration-150"
                 type="button"
