@@ -54,6 +54,23 @@
             </button>
           </div>
 
+          <div class="mt-3">
+            <button
+                v-if="isAuthOwner"
+                @click="showOwnersModal = true"
+                class="mt-2 bg-blueGray-800 text-white active:bg-blueGray-600 text-md font-bold px-6 py-2 rounded shadow hover:shadow-lg outline-none focus:outline-none ease-linear transition-all duration-150"
+                type="button"
+            >Change Owner</button>
+          </div>
+
+          <OwnersModal
+              :show-modal="showOwnersModal"
+              :users="users"
+              :btn-title="'Change Owners'"
+              @close="showOwnersModal = false"
+              @update="updateProjectOwner"
+          />
+
         </div>
 
         <div class="users mt-6 md:mt-0 w-full md:w-2/6">
@@ -143,6 +160,7 @@ import AttachmentsDataTable from "../../components/Table/AttachmentsDataTable.vu
 import CommentsDataTable from "../../components/Table/CommentsDataTable.vue";
 import LogsDataTable from "../../components/Table/LogsDataTable.vue";
 import VMdEditor, {xss} from '@kangc/v-md-editor';
+import OwnersModal from '../../components/Modals/OwnersModal.vue'
 
 // ValidationRules
 const rules = {
@@ -161,6 +179,7 @@ const loading = ref(false)
 let isEditTitle = ref(false)
 let isEditDesc = ref(false)
 let showModal = ref(false)
+let showOwnersModal = ref(false)
 const project = ref({})
 const haveProjectAccess = ref([])
 const haveProjectAccessIds = ref([])
@@ -183,6 +202,26 @@ const isAuthOwner = computed(() => {
 })
 
 // Methods
+const updateProjectOwner = async(owner)=>{
+  console.log(owner,'qqqqq')
+  try {
+    if (owner) {
+      const data = {
+        id: project.value.id,
+        owner
+      }
+
+      await projectStore.updateProjectOwner(data)
+      console.log(resp,'resp')
+
+      await fetchProject()
+    }
+  } catch (e) {
+    catchErrors(e)
+  }
+}
+
+
 const resetData = () => {
   isEditDesc.value = isEditTitle.value = false
   form.value = {...project.value}

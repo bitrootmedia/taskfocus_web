@@ -45,6 +45,12 @@ export const useProjectStore = defineStore('project', {
             return await axios.put(`${config.BASE_API_URL}/project/${id}`,payload)
         },
 
+        async updateProjectOwner(payload) {
+            const id = payload.id
+            delete payload.id
+            return await axios.post(`${config.BASE_API_URL}/change-project-owner/${id}`,payload)
+        },
+
         async fetchProjectAccess(payload) {
             const id = payload.id
             return await axios.get(`${config.BASE_API_URL}/project-accesses?project=${id}`)

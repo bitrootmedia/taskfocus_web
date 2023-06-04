@@ -57,7 +57,6 @@
 </template>
 
 <script setup>
-import {catchErrors} from "../../utils";
 import {onBeforeUnmount, onMounted, ref} from "vue";
 import Loader from "./../../components/Loader/Loader.vue"
 import {useProjectStore} from "../../store/project";
