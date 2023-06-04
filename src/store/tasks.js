@@ -45,6 +45,12 @@ export const useTasksStore = defineStore('tasks', {
             return await axios.get(`${config.BASE_API_URL}/task/${payload.id}`)
         },
 
+        async updateTaskOwner(payload) {
+            const id = payload.id
+            delete payload.id
+            return await axios.post(`${config.BASE_API_URL}/change-task-owner/${id}`,payload)
+        },
+
         async updateTask(payload) {
             const id = payload.id
             delete payload.id

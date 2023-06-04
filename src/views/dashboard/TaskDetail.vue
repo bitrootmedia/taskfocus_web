@@ -67,7 +67,7 @@
 
             <button
                 v-if="isAuthOwner"
-                @click="showOwnersModal = true"
+                @click="showModal = true"
                 class="mt-2 bg-blueGray-400 whitespace-nowrap text-white active:bg-blueGray-600 text-sm font-bold px-2 sm:px-4 py-2 rounded shadow hover:shadow-lg outline-none focus:outline-none ease-linear transition-all duration-150"
                 type="button"
             >Change project
@@ -389,7 +389,7 @@
           :have-task-access-ids="haveTaskAccessIds"
           :btn-title="'Change Owners'"
           @close="showOwnersModal = false"
-          @update="updateTask"
+          @update="updateTaskOwner"
       />
 
 
@@ -720,7 +720,22 @@ const resetData = () => {
   backgroundSize.value = `${task.value.progress || 0}% 100%`
 }
 
-const updateTask = async (owner) => {
+const updateTaskOwner = async (owner)=>{
+  try {
+    const data = {
+      id: task.value.id,
+      owner
+    }
+
+    await taskStore.updateTaskOwner(data)
+    await toast.success("Successfully owner updated");
+    await updateTaskShowData()
+  }catch (e) {
+    catchErrors(e)
+  }
+}
+
+const updateTask = async () => {
   try {
     const data = {
       id: task.value.id,
@@ -729,7 +744,7 @@ const updateTask = async (owner) => {
       eta_date: form.value.eta_date,
       status: form.value.status,
       responsible: form.value.user,
-      owner: owner || form.value.owner,
+      owner: form.value.owner,
       progress: form.value.progress,
       tag: form.value.tag,
       is_urgent: form.value.is_urgent,
