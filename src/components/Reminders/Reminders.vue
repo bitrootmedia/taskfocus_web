@@ -23,6 +23,7 @@
             </button>
           </div>
 
+          
           <div>
             <div class="mt-2">
               <span class="text-blueGray-400 font-semibold block mb-2">User: {{ fullName(reminder) }}</span>
