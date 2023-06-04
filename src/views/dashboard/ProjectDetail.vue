@@ -144,7 +144,7 @@
 </template>
 
 <script setup>
-import {useRoute} from 'vue-router'
+import {useRoute, useRouter} from 'vue-router'
 import {computed, ref} from "vue";
 import {catchErrors} from "../../utils";
 import {useProjectStore} from "../../store/project";
@@ -169,6 +169,7 @@ const rules = {
 }
 
 const route = useRoute()
+const router = useRouter()
 const toast = useToast()
 const projectStore = useProjectStore()
 const userStore = useUserStore()
@@ -203,7 +204,6 @@ const isAuthOwner = computed(() => {
 
 // Methods
 const updateProjectOwner = async(owner)=>{
-  console.log(owner,'qqqqq')
   try {
     if (owner) {
       const data = {
@@ -212,9 +212,8 @@ const updateProjectOwner = async(owner)=>{
       }
 
       await projectStore.updateProjectOwner(data)
-      console.log(resp,'resp')
-
-      await fetchProject()
+      await toast.success("Successfully owner updated");
+      await router.push('/dashboard/projects')
     }
   } catch (e) {
     catchErrors(e)

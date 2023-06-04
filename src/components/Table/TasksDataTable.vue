@@ -134,6 +134,9 @@
                 <td class="border-t-0 px-3 align-middle border-l-0 border-r-0 text-xs whitespace-nowrap p-4">
                   {{ convertDate(element.created_at) }}
                 </td>
+                <td class="border-t-0 px-3 align-middle border-l-0 border-r-0 text-xs whitespace-nowrap p-4">
+                  {{ convertDate(element.updated_at) }}
+                </td>
               </tr>
             </template>
           </draggable>
@@ -223,6 +226,7 @@ const headers = computed(() => {
     {id: 8, label: 'Progress', sorting: true, sortLabel: 'progress'},
     {id: 9, label: 'Closed', sorting: true, sortLabel: 'is_closed'},
     {id: 10, label: 'Created at', sorting: true, sortLabel: 'created_at'},
+    {id: 12, label: 'Updated at', sorting: true, sortLabel: 'updated_at'},
   ]
 
   const projectObj = {id: 11, label: 'Project', sorting: true, sortLabel: 'project'}
