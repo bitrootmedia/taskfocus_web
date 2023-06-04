@@ -1,6 +1,6 @@
 <template>
   <div v-if="loading" class="mt-4">
-    <Loader />
+    <Loader/>
   </div>
 
   <div v-else-if="tasks.length" class="mt-4">
@@ -11,12 +11,10 @@
     <div class="content">
       <ul>
         <li v-for="task in tasks" :key="task.id"
-            class="w-full lg:w-[700px] mb-3 border border-blueGray-300 rounded-[4px] px-4 py-3 cursor-pointer" @click="router.push(`/dashboard/task/${task.id}`)">
+            class="w-full lg:w-[700px] mb-3 border border-blueGray-300 rounded-[4px] px-4 py-3 cursor-pointer"
+            @click="router.push(`/dashboard/task/${task.id}`)">
           <p class="text-blueGray-500 mb-1">
             <span>Title: </span> <b> {{ task.title }}</b>
-          </p>
-          <p class="text-blueGray-500 mb-1">
-            <span> Status: </span> <b> {{ task.status || 'N/A' }}</b>
           </p>
           <div class="flex items-center text-blueGray-500 mb-1">
             <span>Progress: </span>
@@ -30,10 +28,10 @@
             </div>
           </div>
 
-          <div class="description-panel">
-            <v-md-preview-html
-                :html="xss.process(VMdEditor.vMdParser.themeConfig.markdownParser.render(task.description))"
-                preview-class="vuepress-markdown-body"></v-md-preview-html>
+          <div class="mt-4 text-sm text-blueGray-500" v-if="task?.project?.id">
+            <span class="block">Project link: <router-link
+                class="underline"
+                :to="`/dashboard/project/${task.project.id}`">{{ task.project.title }}</router-link></span>
           </div>
         </li>
       </ul>

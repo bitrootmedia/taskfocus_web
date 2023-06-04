@@ -47,8 +47,7 @@
               placeholder="Search"
           />
           <label for="showCurrentUser"
-                 class="text-md text-blueGray-500 font-medium cursor-pointer ml-2 whitespace-nowrap">{{ currentUser?.first_name }}
-            {{ currentUser?.last_name }}</label>
+                 class="text-md text-blueGray-500 font-medium cursor-pointer ml-2 whitespace-nowrap">Just mine</label>
         </div>
       </div>
     </div>
