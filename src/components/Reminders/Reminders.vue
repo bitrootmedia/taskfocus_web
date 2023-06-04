@@ -9,7 +9,9 @@
 
       <ul>
         <li v-for="reminder in reminders" :key="reminder.id"
-            class="w-full lg:w-[700px] mb-3 border border-blueGray-300 rounded-[4px] px-4 py-3">
+            class="w-full lg:w-[700px] mb-3 border border-blueGray-300 rounded-[4px] px-4 py-3"
+            :class="[reminderCheck(reminder.reminder_date) === 'today' ? 'bg-red-100' : reminderCheck(reminder.reminder_date) === 'tmr' ? 'bg-orange-100' : '']"
+        >
           <div class="flex items-center justify-between">
             <span class="text-blueGray-700 font-semibold">{{ convertDateTime(reminder.reminder_date) }}</span>
 
@@ -23,17 +25,17 @@
             </button>
           </div>
 
-          
+
           <div>
             <div class="mt-2">
               <span class="text-blueGray-400 font-semibold block mb-2">User: {{ fullName(reminder) }}</span>
               <div class="mb-2 text-sm text-blueGray-500">
               <span v-if="showLinks && reminder.task?.id" class="block">Task link: <router-link
-                    class="underline"
-                    :to="`/dashboard/task/${reminder.task.id}`">{{ reminder.task.title }}</router-link></span>
+                  class="underline"
+                  :to="`/dashboard/task/${reminder.task.id}`">{{ reminder.task.title }}</router-link></span>
                 <span v-if="showLinks && reminder.task?.project?.id" class="block">Project link: <router-link
                     class="underline"
-                    :to="`/dashboard/project/${reminder.task.project.id}`">{{reminder.task.project.title}}</router-link></span>
+                    :to="`/dashboard/project/${reminder.task.project.id}`">{{ reminder.task.project.title }}</router-link></span>
               </div>
 
               <p class="text-blueGray-500 ">{{ reminder.message }}</p>
@@ -58,6 +60,7 @@ import {catchErrors, convertDateTime} from "../../utils";
 import Loader from '../Loader/Loader.vue'
 import {useTasksStore} from "../../store/tasks";
 import {useToast} from "vue-toastification";
+import moment from "moment";
 
 const emit = defineEmits(['update'])
 const props = defineProps({
@@ -107,6 +110,16 @@ const close = async (reminder) => {
   } catch (e) {
     catchErrors(e)
   }
+}
+
+const reminderCheck = (date)=>{
+  const isToday = moment(0, "HH").diff(date, "days") === 0
+  const isTmr = moment(0, "HH").diff(date, "days") === -1
+
+  if (isToday) return 'today'
+  if (isTmr) return 'tmr'
+
+  return ''
 }
 
 

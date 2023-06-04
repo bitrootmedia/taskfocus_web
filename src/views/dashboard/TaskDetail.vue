@@ -59,7 +59,7 @@
             </button>
 
             <button
-                v-if="isAuthOwner"
+                v-if="isAuthOwner || isAuthProjectOwner"
                 @click="showOwnersModal = true"
                 class="mt-2 bg-blueGray-800 whitespace-nowrap text-white active:bg-blueGray-600 text-sm font-bold px-2 sm:px-4 py-2 rounded shadow hover:shadow-lg outline-none focus:outline-none ease-linear transition-all duration-150"
                 type="button"
@@ -116,30 +116,6 @@
                 @update="fetchReminders"
             />
           </div>
-
-<!--          <div class="mb-2 sm:mb-4">-->
-<!--            <div class="text-blueGray-500">-->
-<!--              Task Owner: &nbsp;-->
-<!--              <b :class="{'cursor-pointer': isAuthOwner}" @click="isAuthOwner ? isEditPanel.owner = true : null"-->
-<!--                 v-if="!isEditPanel.owner">-->
-<!--                <span v-if="task.owner?.first_name || task.owner?.last_name">{{-->
-<!--                    task.owner?.first_name-->
-<!--                  }} {{ task.owner?.last_name }}</span>-->
-<!--                <span v-else>{{ task.owner?.username }}</span>-->
-<!--              </b>-->
-
-<!--              <div v-else class="mb-2 w-80">-->
-<!--                <select v-model="form.owner" placeholder="Select User"-->
-<!--                        class="border-0 px-3 py-3 placeholder-blueGray-300 text-blueGray-600 bg-white rounded text-sm shadow focus:outline-none focus:ring w-full ease-linear transition-all duration-150"-->
-<!--                >-->
-<!--                  <option :value="user.id" v-for="(user) in users" :key="user.id">{{ user.first_name }}-->
-<!--                    {{ user.last_name }}-->
-<!--                  </option>-->
-<!--                </select>-->
-<!--              </div>-->
-
-<!--            </div>-->
-<!--          </div>-->
 
           <div class="mb-2 sm:mb-4">
             <div class="flex gap-x-1">
@@ -500,7 +476,6 @@ const users = ref([])
 const usersList = ref([])
 const usersQueue = ref([])
 const dictionary = ref([])
-const urgencyLevels = ref([])
 const haveTaskAccess = ref([])
 const haveTaskAccessIds = ref([])
 const haveQueueAccess = ref([])
@@ -529,6 +504,13 @@ const isAuthQueue = computed(() => {
 
   const user = cookies.get('task_focus_user')
   return haveQueueAccessIds.value.includes(user.pk)
+})
+
+const isAuthProjectOwner = computed(() => {
+  if (!cookies.get('task_focus_user')) return ''
+
+  const user = cookies.get('task_focus_user')
+  return haveProjectAccessIds.value.includes(user.pk)
 })
 
 const isAuthOwner = computed(() => {
@@ -562,8 +544,6 @@ const updateTaskShowData = () => {
   }, 700)
 }
 const updateTasks = (owner) => {
-  console.log(owner,'owner')
-
   fetchTask()
   fetchTaskAccess()
 
