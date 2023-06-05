@@ -63,7 +63,8 @@
                 @click="showOwnersModal = true"
                 class="mt-2 bg-blueGray-800 whitespace-nowrap text-white active:bg-blueGray-600 text-sm font-bold px-2 sm:px-4 py-2 rounded shadow hover:shadow-lg outline-none focus:outline-none ease-linear transition-all duration-150"
                 type="button"
-            >Change Owner</button>
+            >Change Owner
+            </button>
 
             <button
                 v-if="isAuthOwner"
@@ -204,7 +205,27 @@
                 />
               </div>
             </div>
+          </div>
 
+          <div class="mb-2 sm:mb-4">
+            <div class="text-blueGray-500">
+              Est Hours:&nbsp;
+              <b class="cursor-pointer" v-if="!isEditPanel.estimated_work_hours"
+                 @click="isEditPanel.estimated_work_hours = true">
+                <span v-if="!task.estimated_work_hours">N/A</span>
+                <span v-else>{{ task.estimated_work_hours }}</span>
+              </b>
+
+              <div v-else class="mb-2 w-80">
+                <input
+                    v-model="form.estimated_work_hours"
+                    type="number"
+                    patern="[0-9]"
+                    class="border-0 px-3 py-3 placeholder-blueGray-300 text-blueGray-600 bg-white rounded text-sm shadow focus:outline-none focus:ring w-full ease-linear transition-all duration-150"
+                    placeholder="Est Hours"
+                />
+              </div>
+            </div>
           </div>
 
           <div class="mb-2 sm:mb-4">
@@ -405,7 +426,7 @@ import {catchErrors} from "../../utils";
 import {useRoute, useRouter} from "vue-router";
 import {useTasksStore} from "../../store/tasks";
 import Loader from "./../../components/Loader/Loader.vue"
-import {required} from "@vuelidate/validators";
+import {required, helpers} from "@vuelidate/validators";
 import {useVuelidate} from "@vuelidate/core";
 import {convertDayDiff} from "../../utils";
 import ProjectsModal from "../../components/Modals/ProjectsModal.vue";
@@ -430,6 +451,18 @@ import OwnersModal from "../../components/Modals/OwnersModal.vue";
 // ValidationRules
 const rules = {
   title: {required},
+  estimated_work_hours: {
+    asyncValidator: (val) => {
+      helpers.withParams(
+          { type: 'maxDecimals', max: length },
+          value =>
+              !helpers.req(value) ||
+              new RegExp(
+                  `^\\s*-?(\\d+(\\.\\d{1,${1}})?|\\.\\d{1,${1}})\\s*$`
+              ).test(val)
+      )
+    }
+  }
 }
 
 // toggleTask('close')
@@ -444,6 +477,7 @@ const defaultEditValues = {
   is_urgent: false,
   position: false,
   owner: false,
+  estimated_work_hours: false,
 }
 
 // State
@@ -487,6 +521,7 @@ const form = ref({
   title: '',
   description: '',
   eta_date: '',
+  estimated_work_hours: '',
   status: '',
   user: '',
   owner: '',
@@ -657,6 +692,8 @@ const fetchTask = async () => {
       task.value = {...resp.data}
       form.value = {...resp.data}
 
+      console.log(resp.data, 'resp.data')
+
       if (!resp.data.eta_date) form.value.eta_date = new Date().toISOString().slice(0, 10)
       if (resp.data.responsible?.id) form.value.user = resp.data.responsible.id
       if (resp.data.responsible?.id) form.value.owner = resp.data.responsible.id
@@ -700,7 +737,7 @@ const resetData = () => {
   backgroundSize.value = `${task.value.progress || 0}% 100%`
 }
 
-const updateTaskOwner = async (owner)=>{
+const updateTaskOwner = async (owner) => {
   try {
     const data = {
       id: task.value.id,
@@ -710,7 +747,7 @@ const updateTaskOwner = async (owner)=>{
     await taskStore.updateTaskOwner(data)
     await toast.success("Successfully owner updated");
     await updateTaskShowData()
-  }catch (e) {
+  } catch (e) {
     catchErrors(e)
   }
 }
@@ -722,6 +759,7 @@ const updateTask = async () => {
       title: form.value.title,
       description: form.value.description,
       eta_date: form.value.eta_date,
+      estimated_work_hours: form.value.estimated_work_hours,
       status: form.value.status,
       responsible: form.value.user,
       owner: form.value.owner,
