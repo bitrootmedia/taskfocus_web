@@ -168,163 +168,169 @@
             </div>
           </div>
 
-          <div class="mb-2 sm:mb-4">
-            <div class="text-blueGray-500">
-              ETA:&nbsp;
-              <b class="cursor-pointer" v-if="!isEditPanel.eta" @click="isEditPanel.eta = true">
-                <span v-if="!task.eta_date">N/A</span>
-                <span v-else>{{ convertDayDiff(task.eta_date) }} ({{ task.eta_date }})</span>
-              </b>
+          <div class="flex flex-col lg:flex-row lg:gap-x-20">
+            <div class="lg:w-1/2 order-2 lg:order-1">
+              <div class="text-blueGray-500 description-panel">
+                Description:
+                <b v-if="!task.description && !isEditPanel.description" class="cursor-pointer"
+                   @click="isEditPanel.description = true">N/A</b>
 
-              <div v-else class="mb-2 w-80">
-                <input
-                    v-model="form.eta_date"
-                    type="date"
-                    class="border-0 px-3 py-3 placeholder-blueGray-300 text-blueGray-600 bg-white rounded text-sm shadow focus:outline-none focus:ring w-full ease-linear transition-all duration-150"
-                    placeholder="Eta"
-                />
-              </div>
-            </div>
+                <div v-else>
+                  <div @click="isEditPanel.description = true" class="inline-flex">
+                    <template v-if="!isEditPanel.description">
+                      <v-md-preview-html
+                          :html="xss.process(VMdEditor.vMdParser.themeConfig.markdownParser.render(task.description))"
+                          preview-class="vuepress-markdown-body" class="cursor-pointer"></v-md-preview-html>
+                    </template>
 
-          </div>
-
-          <div class="mb-2 sm:mb-4">
-            <div class="text-blueGray-500">
-              Tag:&nbsp;
-              <b class="cursor-pointer" v-if="!isEditPanel.tag" @click="isEditPanel.tag = true">
-                <span v-if="!task.tag">N/A</span>
-                <span v-else>{{ task.tag }}</span>
-              </b>
-
-              <div v-else class="mb-2 w-80">
-                <input
-                    v-model="form.tag"
-                    type="text"
-                    class="border-0 px-3 py-3 placeholder-blueGray-300 text-blueGray-600 bg-white rounded text-sm shadow focus:outline-none focus:ring w-full ease-linear transition-all duration-150"
-                    placeholder="Tag"
-                />
-              </div>
-            </div>
-          </div>
-
-          <div class="mb-2 sm:mb-4">
-            <div class="text-blueGray-500">
-              Est Hours:&nbsp;
-              <b class="cursor-pointer" v-if="!isEditPanel.estimated_work_hours"
-                 @click="isEditPanel.estimated_work_hours = true">
-                <span v-if="!task.estimated_work_hours">N/A</span>
-                <span v-else>{{ task.estimated_work_hours }}</span>
-              </b>
-
-              <div v-else class="mb-2 w-80">
-                <input
-                    v-model="form.estimated_work_hours"
-                    type="number"
-                    patern="[0-9]"
-                    class="border-0 px-3 py-3 placeholder-blueGray-300 text-blueGray-600 bg-white rounded text-sm shadow focus:outline-none focus:ring w-full ease-linear transition-all duration-150"
-                    placeholder="Est Hours"
-                />
-              </div>
-            </div>
-          </div>
-
-          <div class="mb-2 sm:mb-4">
-            <div class="text-blueGray-500">
-              Status:&nbsp;
-              <b class="uppercase cursor-pointer" v-if="!isEditPanel.status"
-                 @click="isEditPanel.status = true">{{ task.status || 'N/A' }}
-              </b>
-              <div v-else class="mb-2 w-80">
-                <select v-model="form.status" placeholder="Select User"
-                        class="border-0 px-3 py-3 placeholder-blueGray-300 text-blueGray-600 bg-white rounded text-sm shadow focus:outline-none focus:ring w-full ease-linear transition-all duration-150"
-                >
-                  <option :value="item[0]" v-for="(item) in dictionary" :key="item[0]">{{ item[1] }}</option>
-                </select>
-              </div>
-            </div>
-
-          </div>
-
-          <div class="mb-2 sm:mb-4">
-
-            <div class="text-blueGray-500 flex items-center">
-              Urgent:&nbsp;
-              <b class="uppercase cursor-pointer ml-1" v-if="!isEditPanel.is_urgent"
-                 @click="isEditPanel.is_urgent = true">{{ task.is_urgent ? 'Yes' : 'No' }}
-              </b>
-              <div v-else class="ml-2">
-                <input
-                    v-model="form.is_urgent"
-                    type="checkbox"
-                    class="cursor-pointer border-0 placeholder-blueGray-300 text-blueGray-600 bg-white rounded text-smfocus:outline-none focus:ring ease-linear transition-all duration-150"
-                />
-              </div>
-            </div>
-
-          </div>
-
-          <div class="mb-2 sm:mb-4">
-
-            <div class="text-blueGray-500">
-              Position:&nbsp;
-              <b class="uppercase cursor-pointer" v-if="!isEditPanel.position"
-                 @click="isEditPanel.position = true">{{ task.position || 'N/A' }}
-              </b>
-              <div v-else class="mb-2 w-80">
-                <input
-                    v-model="form.position"
-                    type="number"
-                    class="border-0 px-3 py-3 placeholder-blueGray-300 text-blueGray-600 bg-white rounded text-sm shadow focus:outline-none focus:ring w-full ease-linear transition-all duration-150"
-                    placeholder="Position"
-                />
-              </div>
-            </div>
-
-          </div>
-
-          <div class="mb-2 sm:mb-4">
-            <div class="text-blueGray-500 inline-flex items-center" v-if="!isEditPanel.progress">
-              Progress:
-
-              <div @click="isEditPanel.progress = true" class="cursor-pointer flex items-center">
-                <div class=" w-[150px] h-[20px] border-2 border-blueGray-300 ml-3">
-                  <span class="progress bg-blueGray-500 block h-[16px]"
-                        :style="{width: `${task.progress || 0}%`}"></span>
+                    <div v-else class="w-[800px] mt-[10px]">
+                      <v-md-editor v-model="form.description" height="300px"></v-md-editor>
+                    </div>
+                  </div>
                 </div>
-                <span class="ml-2">{{ task.progress || 0 }}%</span>
+
+
               </div>
+
             </div>
-            <div v-else class="mb-2 w-80 range-slider">
-              <input type="range" min="0" max="100" step="1" v-model="form.progress" @input="updateSlider"
-                     :style="{backgroundSize: backgroundSize}">
-              <div class="data text-blueGray-500">Progress: {{ form.progress }}/100</div>
-            </div>
-          </div>
 
-          <div>
-            <div class="text-blueGray-500 description-panel">
-              Description:
-              <b v-if="!task.description && !isEditPanel.description" class="cursor-pointer"
-                 @click="isEditPanel.description = true">N/A</b>
+            <div class="lg:w-1/2 order-1 lg:order-2">
+              <div class="mb-2 sm:mb-4">
+                <div class="text-blueGray-500">
+                  <span class="w-[80px] inline-block">ETA:</span>
+                  <b class="cursor-pointer" v-if="!isEditPanel.eta" @click="isEditPanel.eta = true">
+                    <span v-if="!task.eta_date">N/A</span>
+                    <span v-else>{{ convertDayDiff(task.eta_date) }} ({{ task.eta_date }})</span>
+                  </b>
 
-              <div v-else>
-                <div @click="isEditPanel.description = true" class="inline-flex">
-                  <template v-if="!isEditPanel.description">
-                    <v-md-preview-html
-                        :html="xss.process(VMdEditor.vMdParser.themeConfig.markdownParser.render(task.description))"
-                        preview-class="vuepress-markdown-body" class="cursor-pointer"></v-md-preview-html>
-                  </template>
+                  <div v-else class="mb-2 w-80">
+                    <input
+                        v-model="form.eta_date"
+                        type="date"
+                        class="border-0 px-3 py-3 placeholder-blueGray-300 text-blueGray-600 bg-white rounded text-sm shadow focus:outline-none focus:ring w-full ease-linear transition-all duration-150"
+                        placeholder="Eta"
+                    />
+                  </div>
+                </div>
 
-                  <div v-else class="w-[800px] mt-[10px]">
-                    <v-md-editor v-model="form.description" height="300px"></v-md-editor>
+              </div>
+
+              <div class="mb-2 sm:mb-4">
+                <div class="text-blueGray-500">
+                  <span class="w-[80px] inline-block">Tag:</span>
+                  <b class="cursor-pointer" v-if="!isEditPanel.tag" @click="isEditPanel.tag = true">
+                    <span v-if="!task.tag">N/A</span>
+                    <span v-else>{{ task.tag }}</span>
+                  </b>
+
+                  <div v-else class="mb-2 w-80">
+                    <input
+                        v-model="form.tag"
+                        type="text"
+                        class="border-0 px-3 py-3 placeholder-blueGray-300 text-blueGray-600 bg-white rounded text-sm shadow focus:outline-none focus:ring w-full ease-linear transition-all duration-150"
+                        placeholder="Tag"
+                    />
                   </div>
                 </div>
               </div>
 
+              <div class="mb-2 sm:mb-4">
+                <div class="text-blueGray-500">
+                  <span class="w-[80px] inline-block">Est Hours:</span>
+                  <b class="cursor-pointer" v-if="!isEditPanel.estimated_work_hours"
+                     @click="isEditPanel.estimated_work_hours = true">
+                    <span v-if="!task.estimated_work_hours">N/A</span>
+                    <span v-else>{{ task.estimated_work_hours }}</span>
+                  </b>
 
+                  <div v-else class="mb-2 w-80">
+                    <input
+                        v-model="form.estimated_work_hours"
+                        type="number"
+                        patern="[0-9]"
+                        class="border-0 px-3 py-3 placeholder-blueGray-300 text-blueGray-600 bg-white rounded text-sm shadow focus:outline-none focus:ring w-full ease-linear transition-all duration-150"
+                        placeholder="Est Hours"
+                    />
+                  </div>
+                </div>
+              </div>
+
+              <div class="mb-2 sm:mb-4">
+                <div class="text-blueGray-500">
+                  <span class="w-[80px] inline-block">Status:</span>
+                  <b class="uppercase cursor-pointer" v-if="!isEditPanel.status"
+                     @click="isEditPanel.status = true">{{ task.status || 'N/A' }}
+                  </b>
+                  <div v-else class="mb-2 w-80">
+                    <select v-model="form.status" placeholder="Select User"
+                            class="border-0 px-3 py-3 placeholder-blueGray-300 text-blueGray-600 bg-white rounded text-sm shadow focus:outline-none focus:ring w-full ease-linear transition-all duration-150"
+                    >
+                      <option :value="item[0]" v-for="(item) in dictionary" :key="item[0]">{{ item[1] }}</option>
+                    </select>
+                  </div>
+                </div>
+
+              </div>
+
+              <div class="mb-2 sm:mb-4">
+
+                <div class="text-blueGray-500 flex items-center">
+                  <span class="w-[80px] inline-block">Urgent:</span>
+                  <b class="uppercase cursor-pointer ml-1" v-if="!isEditPanel.is_urgent"
+                     @click="isEditPanel.is_urgent = true">{{ task.is_urgent ? 'Yes' : 'No' }}
+                  </b>
+                  <div v-else class="ml-2">
+                    <input
+                        v-model="form.is_urgent"
+                        type="checkbox"
+                        class="cursor-pointer border-0 placeholder-blueGray-300 text-blueGray-600 bg-white rounded text-smfocus:outline-none focus:ring ease-linear transition-all duration-150"
+                    />
+                  </div>
+                </div>
+
+              </div>
+
+              <div class="mb-2 sm:mb-4">
+
+                <div class="text-blueGray-500">
+                  <span class="w-[80px] inline-block">Position:</span>
+                  <b class="uppercase cursor-pointer" v-if="!isEditPanel.position"
+                     @click="isEditPanel.position = true">{{ task.position || 'N/A' }}
+                  </b>
+                  <div v-else class="mb-2 w-80">
+                    <input
+                        v-model="form.position"
+                        type="number"
+                        class="border-0 px-3 py-3 placeholder-blueGray-300 text-blueGray-600 bg-white rounded text-sm shadow focus:outline-none focus:ring w-full ease-linear transition-all duration-150"
+                        placeholder="Position"
+                    />
+                  </div>
+                </div>
+
+              </div>
+
+              <div class="mb-2 sm:mb-4">
+                <div class="text-blueGray-500 inline-flex items-center" v-if="!isEditPanel.progress">
+                  <span class="w-[80px] inline-block">Progress:</span>
+
+                  <div @click="isEditPanel.progress = true" class="cursor-pointer flex items-center">
+                    <div class=" w-[150px] h-[20px] border-2 border-blueGray-300">
+                  <span class="progress bg-blueGray-500 block h-[16px]"
+                        :style="{width: `${task.progress || 0}%`}"></span>
+                    </div>
+                    <span class="ml-2">{{ task.progress || 0 }}%</span>
+                  </div>
+                </div>
+                <div v-else class="mb-2 w-80 range-slider">
+                  <input type="range" min="0" max="100" step="1" v-model="form.progress" @input="updateSlider"
+                         :style="{backgroundSize: backgroundSize}">
+                  <div class="data text-blueGray-500">Progress: {{ form.progress }}/100</div>
+                </div>
+              </div>
             </div>
-
           </div>
+
+
 
           <div v-if="showPanel" class="flex gap-x-4">
             <button
