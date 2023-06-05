@@ -9,11 +9,13 @@
              :key="index"
              class="border-2 border-blueGray-300 rounded-[4px] px-4 pt-4">
           <div class="text-center mb-4">
-            <h4 class="text-xl font-bold inline-flex text-blueGray-800 cursor-pointer"
+            <h4 class="flex justify-center items-baseline text-xl font-bold inline-flex text-blueGray-800 cursor-pointer"
                 @click="toLink(`/dashboard/users-tasks/${Object.keys(userTask)[0]}`)">
               {{ userTask[Object.keys(userTask)[0]].user.first_name }} {{
                 userTask[Object.keys(userTask)[0]].user.last_name
-              }}</h4>
+              }}
+              <span class="text-sm ml-[2px] text-blueGray-500">({{userTask[Object.keys(userTask)[0]].user.username}})</span>
+            </h4>
           </div>
 
           <p class="text-blueGray-600 font-semibold mb-3" v-if="userTask[Object.keys(userTask)[0]].currentTask?.id">
@@ -132,6 +134,7 @@ const fetchUsers = async () => {
     const users = resp.data.results
     paginate.updatePagination(resp)
 
+    console.log(users,'users')
     usersTasks.value = []
     await users.map(async (item) => {
       await fetchUsersTasks(item)
@@ -178,6 +181,7 @@ const fetchUsersTasks = async (user) => {
       data: resp.data.results,
       currentTask: await usersTasksStore.fetchWorkingTask({id: user.id})
     }
+
 
     if (temp[user.id]) temp[user.id] = [...temp[user.id], obj]
     else temp[user.id] = obj

@@ -113,7 +113,7 @@ const close = async (reminder) => {
 }
 
 const reminderCheck = (date)=>{
-  const isToday = moment(0, "HH").diff(date, "days") === 0
+  const isToday = moment(0, "HH").diff(date, "days") >= 0
   const isTmr = moment(0, "HH").diff(date, "days") === -1
 
   if (isToday) return 'today'

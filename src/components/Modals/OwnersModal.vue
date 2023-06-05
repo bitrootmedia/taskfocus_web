@@ -7,7 +7,7 @@
         <!--header-->
         <div class="flex items-center justify-between p-5 border-b border-solid border-blueGray-200 rounded-t">
           <h3 class="text-3xl font-semibold">
-            Users
+            Select new owner
           </h3>
 
           <div>
@@ -27,7 +27,7 @@
                     class="block uppercase text-blueGray-600 text-xs font-bold mb-2"
                     htmlFor="grid-label"
                 >
-                  Select Owner
+                  Select new owner
                 </label>
 
                 <select v-model="owner" placeholder="Select User"

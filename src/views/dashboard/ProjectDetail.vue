@@ -54,23 +54,6 @@
             </button>
           </div>
 
-          <div class="mt-3">
-            <button
-                v-if="isAuthOwner"
-                @click="showOwnersModal = true"
-                class="mt-2 bg-blueGray-800 text-white active:bg-blueGray-600 text-md font-bold px-6 py-2 rounded shadow hover:shadow-lg outline-none focus:outline-none ease-linear transition-all duration-150"
-                type="button"
-            >Change Owner</button>
-          </div>
-
-          <OwnersModal
-              :show-modal="showOwnersModal"
-              :users="users"
-              :btn-title="'Change Owners'"
-              @close="showOwnersModal = false"
-              @update="updateProjectOwner"
-          />
-
         </div>
 
         <div class="users mt-6 md:mt-0 w-full md:w-2/6">
@@ -78,7 +61,8 @@
             <div class="flex gap-x-1 flex-col">
               <span class="text-blueGray-500 ">Access: </span>
               <ul class="flex gap-x-2 flex-wrap">
-                <li class="text-blueGray-500 mb-1">
+                <li class="text-blueGray-500 mb-1" :class="{'cursor-pointer': isAuthOwner}"
+                    @click="isAuthOwner ? showOwnersModal = true : null">
                   <b>
                     <span v-if="project.owner?.first_name || project.owner?.last_name">{{
                         project.owner?.first_name
@@ -101,7 +85,8 @@
                 @click="showModal = true"
                 class="bg-blueGray-800 whitespace-nowrap text-white active:bg-blueGray-600 text-sm font-bold px-3 py-1 rounded shadow hover:shadow-lg outline-none focus:outline-none ease-linear transition-all duration-150"
                 type="button"
-            >Manage Project Users</button>
+            >Manage Project Users
+            </button>
           </div>
         </div>
 
@@ -116,6 +101,13 @@
             @update="fetchProjectAccess"
         />
 
+        <OwnersModal
+            :show-modal="showOwnersModal"
+            :users="users"
+            :btn-title="'Change Owners'"
+            @close="showOwnersModal = false"
+            @update="updateProjectOwner"
+        />
       </div>
 
       <div class="mt-6 sm:mt-8" v-if="project.id">
@@ -203,7 +195,7 @@ const isAuthOwner = computed(() => {
 })
 
 // Methods
-const updateProjectOwner = async(owner)=>{
+const updateProjectOwner = async (owner) => {
   try {
     if (owner) {
       const data = {

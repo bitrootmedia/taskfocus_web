@@ -24,6 +24,14 @@ export const convertDayDiff = (date) => {
     return Math.ceil(moment.duration(currentDate.diff(now)).asDays()) + ' days';
 }
 
+export const convertDayDiffCon = (date) => {
+    if (!date) return '-'
+
+    const currentDate = moment(date, "YYYY-MM-DD");
+    const now = moment().format('YYYY-MM-DD');
+    return Math.ceil(moment.duration(currentDate.diff(now)).asDays());
+}
+
 const replacer = (matched) => {
     let withProtocol = matched
 

@@ -118,8 +118,9 @@
                   <span v-else>{{ element.responsible?.username || '-' }}</span>
 
                 </td>
-                <td class="border-t-0 px-3 align-middle border-l-0 border-r-0 text-xs whitespace-nowrap p-4">
-                  <span>{{ convertDayDiff(element.eta_date) }}</span>
+                <td class="border-t-0 px-3 align-middle border-l-0 border-r-0 text-xs whitespace-nowrap p-4"
+                    :class="[convertDayDiffCon(element.eta_date) === '-' ? '' : +convertDayDiffCon(element.eta_date) <= 0 ? 'bg-red-400' : 'bg-orange-400']">
+                  <span class="text-white">{{ convertDayDiff(element.eta_date) }}</span>
                 </td>
                 <td class="border-t-0 px-3 align-middle border-l-0 border-r-0 text-xs whitespace-nowrap p-4">
                   <span>{{ element.tag || '-' }}</span>
@@ -159,7 +160,7 @@ import {computed, ref, watch} from "vue";
 import {useTasksStore} from "../../store/tasks";
 import {catchErrors} from "../../utils";
 import draggable from 'vuedraggable'
-import {convertDate, convertDayDiff} from "../../utils";
+import {convertDate, convertDayDiff, convertDayDiffCon} from "../../utils";
 import {useRouter} from "vue-router";
 import {usePaginate} from "../../composables/usePaginate";
 import {useFilter} from "../../composables/useFilter";
