@@ -119,8 +119,11 @@
 
                 </td>
                 <td class="border-t-0 px-3 align-middle border-l-0 border-r-0 text-xs whitespace-nowrap p-4"
-                    :class="[convertDayDiffCon(element.eta_date) === '-' ? '' : +convertDayDiffCon(element.eta_date) <= 0 ? 'bg-red-400' : 'bg-orange-400']">
-                  <span class="text-white">{{ convertDayDiff(element.eta_date) }}</span>
+                    :class="[convertDayDiffCon(element.eta_date) === '-' || +convertDayDiffCon(element.eta_date) > 2 ? '' : +convertDayDiffCon(element.eta_date) <= 0 ? 'bg-red-400' : 'bg-orange-400']">
+                  <span
+                      :class="[convertDayDiffCon(element.eta_date) === '-' || +convertDayDiffCon(element.eta_date) > 2 ? '' : +convertDayDiffCon(element.eta_date) <= 0 ? 'text-white' : 'text-white']">{{
+                      convertDayDiff(element.eta_date)
+                    }}</span>
                 </td>
                 <td class="border-t-0 px-3 align-middle border-l-0 border-r-0 text-xs whitespace-nowrap p-4">
                   <span>{{ element.tag || '-' }}</span>
