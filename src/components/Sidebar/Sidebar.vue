@@ -203,7 +203,7 @@
             </router-link>
           </li>
 
-          <li class="items-center">
+          <li class="items-center" v-if="userConfig?.extra_menu_links">
             <router-link to="/dashboard/comments" exact v-slot="{ href, navigate, isActive, isExactActive }">
               <a
                   :href="href"
@@ -225,7 +225,7 @@
             </router-link>
           </li>
 
-          <li class="items-center">
+          <li class="items-center" v-if="userConfig?.extra_menu_links">
             <router-link to="/dashboard/attachments" exact v-slot="{ href, navigate, isActive, isExactActive }">
               <a
                   :href="href"
@@ -247,7 +247,7 @@
             </router-link>
           </li>
 
-          <li class="items-center">
+          <li class="items-center" v-if="userConfig?.extra_menu_links">
             <router-link to="/dashboard/logs" exact v-slot="{ href, navigate, isActive, isExactActive }">
               <a
                   :href="href"
@@ -349,6 +349,7 @@ import {useRouter} from "vue-router";
 import axios from "axios";
 import config from '../../config'
 import Notifications from "../../components/Notifications/Notifications.vue";
+import {catchErrors} from "../../utils";
 
 const emit = defineEmits(['update:closePanel'])
 const props = defineProps({
@@ -366,6 +367,7 @@ const router = useRouter()
 
 // State
 const collapseShow = ref('hidden')
+const userConfig = ref(null)
 
 
 // Computed
@@ -399,6 +401,20 @@ const logout = async () => {
 onMounted(()=>{
   if (window.innerWidth < 600) showMobile.value = true
 })
+
+const fetchUser = async () => {
+  try {
+    const id = cookies.get('task_focus_user').pk
+    if (id) {
+      const resp = await userStore.fetchCurrentUser({id})
+      userConfig.value =resp.data.config
+    }
+  } catch (e) {
+    catchErrors(e)
+  }
+}
+
+fetchUser()
 
 </script>
 

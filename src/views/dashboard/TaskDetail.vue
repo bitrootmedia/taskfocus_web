@@ -118,58 +118,60 @@
             />
           </div>
 
-          <div class="mb-2 sm:mb-4">
-            <div class="flex gap-x-1">
-              <span class="text-blueGray-500 whitespace-nowrap">Task Access: &nbsp;</span>
 
-              <ul class="flex gap-x-2 flex-wrap">
-                <li class="text-blueGray-500 font-bold">
-                  {{ task.owner?.first_name }} {{
-                    task.owner?.last_name
-                  }}(owner){{ haveTaskAccess.length || haveProjectAccess.length ? ',' : '' }}
-                </li>
 
-                <li v-if="haveProjectAccess.length" v-for="(item,index) in haveProjectAccess" :key="item.user.id"
-                    class="text-blueGray-500 font-bold">
-                  {{ item.user.first_name }} {{ item.user.last_name }}<span class="text-blueGray-500 font-bold">(project)</span><span
-                    v-if="haveTaskAccessIds.length || index !== haveProjectAccess.length - 1">,</span>
-                </li>
+          <div class="flex flex-col lg:flex-row lg:gap-x-20">
+            <div class="lg:w-1/2 order-1 lg:order-1">
+              <div class="mb-2 sm:mb-4">
+                <div class="flex gap-x-1">
+                  <span class="text-blueGray-500 whitespace-nowrap">Task Access: &nbsp;</span>
 
-                <li v-if="haveTaskAccess.length" v-for="(item,index) in haveTaskAccess" :key="item.user.id"
-                    class="text-blueGray-500 font-bold">
-                  {{ item.user.first_name }} {{ item.user.last_name }}<span
-                    class="text-blueGray-500 font-bold">(task)</span><span
-                    v-if="index !== haveTaskAccess.length - 1">,</span>
-                </li>
-              </ul>
-            </div>
-          </div>
+                  <ul class="flex gap-x-2 flex-wrap">
+                    <li class="text-blueGray-500 font-bold">
+                      {{ task.owner?.first_name }} {{
+                        task.owner?.last_name
+                      }}(owner){{ haveTaskAccess.length || haveProjectAccess.length ? ',' : '' }}
+                    </li>
 
-          <div class="mb-2 sm:mb-4">
-            <div class="text-blueGray-500">
-              Responsible: &nbsp;
-              <b class="cursor-pointer" @click="isEditPanel.user = true" v-if="!isEditPanel.user">
+                    <li v-if="haveProjectAccess.length" v-for="(item,index) in haveProjectAccess" :key="item.user.id"
+                        class="text-blueGray-500 font-bold">
+                      {{ item.user.first_name }} {{ item.user.last_name }}<span class="text-blueGray-500 font-bold">(project)</span><span
+                        v-if="haveTaskAccessIds.length || index !== haveProjectAccess.length - 1">,</span>
+                    </li>
+
+                    <li v-if="haveTaskAccess.length" v-for="(item,index) in haveTaskAccess" :key="item.user.id"
+                        class="text-blueGray-500 font-bold">
+                      {{ item.user.first_name }} {{ item.user.last_name }}<span
+                        class="text-blueGray-500 font-bold">(task)</span><span
+                        v-if="index !== haveTaskAccess.length - 1">,</span>
+                    </li>
+                  </ul>
+                </div>
+              </div>
+
+              <div class="mb-2 sm:mb-4">
+                <div class="text-blueGray-500">
+                  Responsible: &nbsp;
+                  <b class="cursor-pointer" @click="isEditPanel.user = true" v-if="!isEditPanel.user">
                 <span v-if="task.responsible?.first_name || task.responsible?.last_name"> {{
                     task.responsible?.first_name
                   }} {{ task.responsible?.last_name }}</span>
-                <span v-else-if="task.responsible?.username"> {{ task.responsible?.username }}</span>
-                <span v-else>N/A</span>
-              </b>
+                    <span v-else-if="task.responsible?.username"> {{ task.responsible?.username }}</span>
+                    <span v-else>N/A</span>
+                  </b>
 
-              <div v-else class="mb-2 w-80">
-                <select v-model="form.user" placeholder="Select User"
-                        class="border-0 px-3 py-3 placeholder-blueGray-300 text-blueGray-600 bg-white rounded text-sm shadow focus:outline-none focus:ring w-full ease-linear transition-all duration-150"
-                >
-                  <option :value="user.id" v-for="(user) in users" :key="user.id">{{ user.first_name }}
-                    {{ user.last_name }}
-                  </option>
-                </select>
+                  <div v-else class="mb-2 w-80">
+                    <select v-model="form.user" placeholder="Select User"
+                            class="border-0 px-3 py-3 placeholder-blueGray-300 text-blueGray-600 bg-white rounded text-sm shadow focus:outline-none focus:ring w-full ease-linear transition-all duration-150"
+                    >
+                      <option :value="user.id" v-for="(user) in users" :key="user.id">{{ user.first_name }}
+                        {{ user.last_name }}
+                      </option>
+                    </select>
+                  </div>
+                </div>
               </div>
-            </div>
-          </div>
 
-          <div class="flex flex-col lg:flex-row lg:gap-x-20">
-            <div class="lg:w-1/2 order-2 lg:order-1">
               <div class="text-blueGray-500 description-panel">
                 Description:
                 <b v-if="!task.description && !isEditPanel.description" class="cursor-pointer"
@@ -191,10 +193,9 @@
 
 
               </div>
-
             </div>
 
-            <div class="lg:w-1/2 order-1 lg:order-2">
+            <div class="lg:w-1/2 order-2 lg:order-2 mt-3 lg:mt-0">
               <div class="mb-2 sm:mb-4">
                 <div class="text-blueGray-500">
                   <span class="w-[80px] inline-block">ETA:</span>

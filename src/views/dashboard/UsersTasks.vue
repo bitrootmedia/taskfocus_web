@@ -72,12 +72,6 @@
           </DataTable>
         </div>
       </div>
-
-      <Pagination
-          v-if="paginate.pagination.value.total > 1 && !loading"
-          :pagination="paginate.pagination.value"
-          v-model:query="paginate.query.value"
-      />
     </template>
   </div>
 </template>
@@ -85,7 +79,6 @@
 <script setup>
 import DataTable from "./../../components/Table/DataTable.vue"
 import Loader from "./../../components/Loader/Loader.vue"
-import Pagination from "./../../components/Pagination/Pagination.vue"
 import draggable from 'vuedraggable'
 import {useUsersTasksStore} from "../../store/users-tasks";
 import {computed, ref} from "vue";
@@ -95,9 +88,11 @@ import {usePaginate} from "../../composables/usePaginate";
 import {catchErrors} from "../../utils";
 import {useUserStore} from "../../store/user";
 import config from "../../config"
+import {useCookies} from "vue3-cookies";
 
 const usersTasksStore = useUsersTasksStore()
 const userStore = useUserStore()
+const {cookies} = useCookies();
 const toast = useToast()
 const router = useRouter()
 
@@ -107,6 +102,7 @@ const isDragDisabled = false
 const loading = ref(false)
 const usersTasks = ref([])
 const users = ref([])
+const userConfig = ref(null)
 
 
 // Computed
@@ -125,18 +121,13 @@ const toLink = (link) => {
 const fetchUsers = async () => {
   try {
     loading.value = true
-    const options = {
-      pagination: paginate.pagination.value,
-      query: paginate.query.value,
-    }
-    console.log(options,'options')
-    const resp = await userStore.fetchUsersPage(options)
+    const resp = await userStore.fetchUsersPage()
     const users = resp.data.results
-    paginate.updatePagination(resp)
 
-    console.log(users,'users')
+    const filterUsers = users.filter((item)=>userConfig.value.limit_queue_view.includes(item.username))
     usersTasks.value = []
-    await users.map(async (item) => {
+
+    await filterUsers.map(async (item) => {
       await fetchUsersTasks(item)
     })
   } catch (e) {
@@ -193,10 +184,20 @@ const fetchUsersTasks = async (user) => {
   }
 }
 
-// Composables
-const options = {
-  pageSize: config.USERS_TASKS_PAGE_SIZE
+const fetchUser = async () => {
+  try {
+    const id = cookies.get('task_focus_user').pk
+    if (id) {
+      const resp = await userStore.fetchCurrentUser({id})
+      userConfig.value =resp.data.config
+      await fetchUsers()
+    }
+  } catch (e) {
+    catchErrors(e)
+  }
 }
-const paginate = usePaginate(fetchUsers, options)
-fetchUsers()
+
+// Composables
+fetchUser()
+
 </script>
