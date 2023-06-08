@@ -18,7 +18,6 @@
               :right-toolbar="'toc sync-scroll fullscreen'"
               v-model="message"
               :disabled-menus="[]"
-              @change="onInput"
               @upload-image="handleUploadImage">
             <h1>Hello</h1>
           </v-md-editor>
@@ -237,10 +236,6 @@ watch(editCommentsIds, (val) => {
 })
 
 // Methods
-const onInput = (text, html)=>{
-  console.log(text,'e')
-  console.log(html,'e')
-}
 const editComment = (comment) => {
   editCommentsIds.value = [...editCommentsIds.value, comment.id]
 }

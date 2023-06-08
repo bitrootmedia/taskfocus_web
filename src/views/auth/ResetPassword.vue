@@ -85,7 +85,6 @@ const sendEmail = async () => {
   try {
     loading.value = true
     const isValid = await v$.value.$validate();
-    console.log(isValid,'isValid')
 
     if (isValid) {
       const resp = await userStore.resetPassword(form.value)

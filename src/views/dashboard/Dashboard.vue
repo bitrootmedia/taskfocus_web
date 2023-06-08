@@ -42,12 +42,10 @@ const toLink = (type)=>{
 const fetchCurrentTask = async()=>{
   try{
     const resp = await tasksStore.fetchWorkingTask()
-    console.log(resp,'resp')
     if (resp.data && Object.keys(resp.data).length){
       task.value = resp.data
     }
   }catch (e) {
-    console.log(e,'e')
     catchErrors(e)
   }
 }
