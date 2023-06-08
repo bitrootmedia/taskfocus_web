@@ -89,8 +89,8 @@ const user = ref({})
 // Computed
 const headers = computed(() => {
   return [
-    {id: 1, label: 'Project', sorting: false, sortLabel: 'created_at'},
-    {id: 2, label: 'Task', sorting: false, sortLabel: 'author'},
+    {id: 1, label: 'Task', sorting: false, sortLabel: 'task'},
+    {id: 2, label: 'Project', sorting: false, sortLabel: 'project'},
   ]
 })
 
