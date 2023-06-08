@@ -15,6 +15,7 @@
       <div class="w-full items-center gap-x-6" v-else>
         <div class="w-full sm:w-1/2">
           <v-md-editor
+              autofocus
               :right-toolbar="'toc sync-scroll fullscreen'"
               v-model="message"
               :disabled-menus="[]"
@@ -67,12 +68,14 @@
 
             <div :class="{'w-full': editCommentsIds.includes(comment.id)}">
               <div class="mb-2">
-                <div class="flex items-center">
-                  <b v-if="comment.author?.first_name || comment.author?.last_name" class="text-blueGray-600">{{
-                      comment.author?.first_name
-                    }} {{ comment.author?.last_name }}
-                  </b>
-                  <b v-else class="text-blueGray-600">{{ comment.author?.username }}</b>
+                <div class="flex items-center mb-1">
+                  <div class="flex items-center gap-x-1">
+                    <b v-if="comment.author?.first_name || comment.author?.last_name" class="text-blueGray-600">{{
+                        comment.author?.first_name
+                      }} {{ comment.author?.last_name }}
+                    </b>
+                    <span class="text-sm text-blueGray-500 cursor-pointer underline" @click="reply(comment)">(@{{ comment.author?.username }})</span>
+                  </div>
 
                   <span class="text-sm ml-2 text-blueGray-500">{{ convertDateTime(comment.created_at) }}</span>
                 </div>
@@ -120,8 +123,9 @@
                                    preview-class="vuepress-markdown-body"></v-md-preview-html>
               </div>
 
-              <div v-if="isAuthOwner(comment)">
-                <div v-if="editCommentsIds.includes(comment.id)" class="flex gap-x-3 mt-2">
+            <div class="flex gap-x-3 items-center mt-2">
+              <template v-if="isAuthOwner(comment)">
+                <div v-if="editCommentsIds.includes(comment.id)" class="flex gap-x-3">
                   <button
                       @click="updateComment(comment)"
                       class="bg-blueGray-800 text-white active:bg-blueGray-600 text-sm font-bold px-3 py-1 rounded shadow hover:shadow-lg outline-none focus:outline-none ease-linear transition-all duration-150"
@@ -140,7 +144,11 @@
                 <span class="underline text-blueGray-500 text-sm cursor-pointer"
                       v-else
                       @click="editComment(comment)">Edit</span>
-              </div>
+              </template>
+
+              <span class="underline text-blueGray-500 text-sm cursor-pointer"
+                    @click="reply(comment)">Reply</span>
+            </div>
 
             </div>
           </div>
@@ -236,6 +244,15 @@ watch(editCommentsIds, (val) => {
 })
 
 // Methods
+const reply = (comment)=>{
+  writeComment.value = true
+  message.value = `@${comment.author.username} `
+
+  const textarea = document.getElementsByTagName('textarea')
+  if (textarea) textarea[0].focus()
+}
+
+
 const editComment = (comment) => {
   editCommentsIds.value = [...editCommentsIds.value, comment.id]
 }
