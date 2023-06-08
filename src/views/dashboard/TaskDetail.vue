@@ -833,6 +833,7 @@ const fetchUsers = async () => {
     ]
 
     const arrIds = [...new Set([...haveTaskAccessIds.value, ...haveProjectAccessIds.value])];
+    console.log(arrIds,'arrIds')
     const tempArr = []
     resp.data.results.forEach((item) => {
       if (arrIds.includes(item.id) || item.id === task.value?.owner?.id) {
@@ -841,11 +842,12 @@ const fetchUsers = async () => {
     })
 
     users.value = [...users.value, ...tempArr]
+
     usersQueue.value = tempArr
 
-    if (task.value?.owner?.id !== task.value?.project?.owner?.id && task.value?.project?.owner?.id) {
-      users.value.push(task.value?.project?.owner)
-    }
+    // if (task.value?.owner?.id !== task.value?.project?.owner?.id && task.value?.project?.owner?.id) {
+    //   users.value.push(task.value?.project?.owner)
+    // }
 
     usersList.value = resp.data.results.filter((item) => item.id !== task.value?.owner?.id)
   } catch (e) {
