@@ -57,12 +57,12 @@
                   <template #item="{element}">
                     <tr :class="{'cursor-move': !isDragDisabled}">
                       <td class="border-t-0 px-3 align-middle border-l-0 border-r-0 text-xs whitespace-nowrap p-4">
-                      <span @click.stop="toLink(`/dashboard/project/${element.task.project?.id}`)"
-                            class="cursor-pointer">{{ element.task.project?.title || '-' }}</span>
-                      </td>
-                      <td class="border-t-0 px-3 align-middle border-l-0 border-r-0 text-xs whitespace-nowrap p-4">
                       <span @click.stop="toLink(`/dashboard/task/${element.task?.id}`)"
                             class="cursor-pointer">{{ element.task.title || '-' }}</span>
+                      </td>
+                      <td class="border-t-0 px-3 align-middle border-l-0 border-r-0 text-xs whitespace-nowrap p-4">
+                      <span @click.stop="toLink(`/dashboard/project/${element.task.project?.id}`)"
+                            class="cursor-pointer">{{ element.task.project?.title || '-' }}</span>
                       </td>
                     </tr>
                   </template>
@@ -108,8 +108,8 @@ const userConfig = ref(null)
 // Computed
 const headers = computed(() => {
   return [
-    {id: 1, label: 'Project', sorting: false, sortLabel: 'created_at'},
-    {id: 2, label: 'Task', sorting: false, sortLabel: 'author'},
+    {id: 2, label: 'Task', sorting: false, sortLabel: 'task'},
+    {id: 1, label: 'Project', sorting: false, sortLabel: 'project'},
   ]
 })
 
@@ -189,7 +189,11 @@ const fetchUser = async () => {
     const id = cookies.get('task_focus_user').pk
     if (id) {
       const resp = await userStore.fetchCurrentUser({id})
-      userConfig.value =resp.data.config
+      if (!resp.data.config.limit_queue_view.length){
+        toast.info('Ask administrator to setup limit_queue_view config parameter')
+      }
+
+      userConfig.value = resp.data.config
       await fetchUsers()
     }
   } catch (e) {

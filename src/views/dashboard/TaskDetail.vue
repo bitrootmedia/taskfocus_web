@@ -119,7 +119,6 @@
           </div>
 
 
-
           <div class="flex flex-col lg:flex-row lg:gap-x-20">
             <div class="lg:w-1/2 order-1 lg:order-1">
               <div class="mb-2 sm:mb-4">
@@ -332,7 +331,6 @@
           </div>
 
 
-
           <div v-if="showPanel" class="flex gap-x-4">
             <button
                 @click="updateTask"
@@ -461,7 +459,7 @@ const rules = {
   estimated_work_hours: {
     asyncValidator: (val) => {
       helpers.withParams(
-          { type: 'maxDecimals', max: length },
+          {type: 'maxDecimals', max: length},
           value =>
               !helpers.req(value) ||
               new RegExp(
@@ -714,6 +712,21 @@ const fetchTask = async () => {
   }
 }
 
+const fetchProject = async () => {
+  const project = task.value.project
+  if (!project) return
+
+  if (!haveProjectAccessIds.value.includes(project.owner.id)) {
+    const obj = {
+      project: project.id,
+      user: project.owner
+    }
+
+    haveProjectAccessIds.value.push(project.owner.id)
+    haveProjectAccess.value.push(obj)
+  }
+}
+
 const fetchDictionary = async () => {
   try {
     const resp = await taskStore.fetchDictionary()
@@ -859,6 +872,8 @@ const fetchProjectAccess = async () => {
 
       haveProjectAccess.value = list
       haveProjectAccessIds.value = ids
+
+      await fetchProject()
     }
   } catch (e) {
     catchErrors(e)

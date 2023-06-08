@@ -18,7 +18,9 @@
               :right-toolbar="'toc sync-scroll fullscreen'"
               v-model="message"
               :disabled-menus="[]"
+              @change="onInput"
               @upload-image="handleUploadImage">
+            <h1>Hello</h1>
           </v-md-editor>
         </div>
 
@@ -111,7 +113,8 @@
 
               <div class="bg-white rounded-[8px] shadow-lg">
                 <v-md-editor v-if="editCommentsIds.includes(comment.id)" v-model="comment.content"
-                             height="300px"></v-md-editor>
+                             height="300px">
+                </v-md-editor>
 
                 <v-md-preview-html v-else
                                    :html="xss.process(VMdEditor.vMdParser.themeConfig.markdownParser.render(comment.content))"
@@ -234,6 +237,10 @@ watch(editCommentsIds, (val) => {
 })
 
 // Methods
+const onInput = (text, html)=>{
+  console.log(text,'e')
+  console.log(html,'e')
+}
 const editComment = (comment) => {
   editCommentsIds.value = [...editCommentsIds.value, comment.id]
 }
