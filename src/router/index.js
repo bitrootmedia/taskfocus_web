@@ -24,6 +24,7 @@ import Logs from "../views/dashboard/Logs.vue";
 import Attachments from "../views/dashboard/Attachments.vue";
 import Settings from "../views/dashboard/Settings.vue";
 import Reminders from "../views/dashboard/Reminders.vue";
+import {useUserStore} from "../store/user";
 
 // routes
 const routes = [
@@ -140,6 +141,16 @@ export const router = createRouter({
 
 router.beforeEach(async (to, from,next) => {
     const token = cookies.get('task_focus_token')
+    const userStore = useUserStore()
+
+    if (userStore.showPanel.show && from.name === 'Task Detail'){
+        const obj = {
+            show: false,
+            close: null,
+            update: null,
+        }
+        userStore.setShowPanel(obj)
+    }
 
     if (to.name === 'Reset Password') return next()
 

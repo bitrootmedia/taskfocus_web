@@ -1,6 +1,6 @@
 <template>
   <nav
-      class="absolute bg-emerald-600 top-0 left-0 w-full z-10 md:flex-row md:flex-nowrap md:justify-start hidden md:flex items-center p-4"
+      class="sticky top-0 bg-emerald-600 w-full z-10 md:flex-row md:flex-nowrap md:justify-start hidden md:flex items-center p-4"
   >
     <div
         class="w-full mx-auto items-center flex justify-between md:flex-nowrap flex-wrap"
@@ -12,9 +12,27 @@
         {{ route.name || 'Dashboard' }}
       </a>
 
+
+      <div v-if="userStore.showPanel.show" class="hidden md:flex gap-x-4">
+        <button
+            @click="userStore.showPanel.update"
+            class="bg-orange-400 text-white active:bg-blueGray-600 text-md font-bold px-6 py-2 rounded shadow hover:shadow-lg outline-none focus:outline-none ease-linear transition-all duration-150"
+            type="button"
+        >
+          Save Changes
+        </button>
+        <button
+            @click="userStore.showPanel.close"
+            class="bg-red-500 text-white active:bg-blueGray-600 text-md font-bold px-6 py-2 rounded shadow hover:shadow-lg outline-none focus:outline-none ease-linear transition-all duration-150"
+            type="button"
+        >
+          Discard Changes
+        </button>
+      </div>
+
       <div class="flex items-center">
         <div>
-          <Notifications />
+          <Notifications/>
         </div>
 
         <span class="text-white font-medium mr-4 flex items-center gap-x-2">

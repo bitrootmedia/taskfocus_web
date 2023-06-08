@@ -1,6 +1,6 @@
 <template>
   <nav
-      class="md:left-0 md:block md:fixed md:top-0 md:bottom-0 md:flex-row md:flex-nowrap shadow-xl bg-white flex flex-wrap items-center justify-between relative z-10 py-4"
+      class="sticky top-0 md:static md:left-0 md:block md:fixed md:top-0 md:bottom-0 md:flex-row md:flex-nowrap shadow-xl bg-white flex flex-wrap items-center justify-between relative z-10 py-4"
       :class="{'md:w-64 px-4 sm:px-6': !closePanel, 'md:w-16 px-2': closePanel}"
   >
     <span v-if="closePanel" @click="emit('update:closePanel',false)"
@@ -336,6 +336,23 @@
           </li>
         </ul>
       </div>
+    </div>
+
+    <div v-if="userStore.showPanel.show" class="w-full flex md:hidden justify-center gap-x-4">
+      <button
+          @click="userStore.showPanel.update"
+          class="bg-orange-400 text-white active:bg-blueGray-600 text-md font-bold px-6 py-2 rounded shadow hover:shadow-lg outline-none focus:outline-none ease-linear transition-all duration-150"
+          type="button"
+      >
+        Save Changes
+      </button>
+      <button
+          @click="userStore.showPanel.close"
+          class="bg-red-500 text-white active:bg-blueGray-600 text-md font-bold px-6 py-2 rounded shadow hover:shadow-lg outline-none focus:outline-none ease-linear transition-all duration-150"
+          type="button"
+      >
+        Discard Changes
+      </button>
     </div>
   </nav>
 </template>

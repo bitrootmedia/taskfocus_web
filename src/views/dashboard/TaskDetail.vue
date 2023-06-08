@@ -331,22 +331,22 @@
           </div>
 
 
-          <div v-if="showPanel" class="flex gap-x-4">
-            <button
-                @click="updateTask"
-                class="mt-2 bg-blueGray-800 text-white active:bg-blueGray-600 text-md font-bold px-6 py-2 rounded shadow hover:shadow-lg outline-none focus:outline-none ease-linear transition-all duration-150"
-                type="button"
-            >
-              Update
-            </button>
-            <button
-                @click="resetData"
-                class="mt-2 bg-blueGray-800 text-white active:bg-blueGray-600 text-md font-bold px-6 py-2 rounded shadow hover:shadow-lg outline-none focus:outline-none ease-linear transition-all duration-150"
-                type="button"
-            >
-              Close
-            </button>
-          </div>
+          <!--          <div v-if="showPanel" class="flex gap-x-4">-->
+          <!--            <button-->
+          <!--                @click="updateTask"-->
+          <!--                class="mt-2 bg-orange-400 text-white active:bg-blueGray-600 text-md font-bold px-6 py-2 rounded shadow hover:shadow-lg outline-none focus:outline-none ease-linear transition-all duration-150"-->
+          <!--                type="button"-->
+          <!--            >-->
+          <!--              Save Changes-->
+          <!--            </button>-->
+          <!--            <button-->
+          <!--                @click="resetData"-->
+          <!--                class="mt-2 bg-red-500 text-white active:bg-blueGray-600 text-md font-bold px-6 py-2 rounded shadow hover:shadow-lg outline-none focus:outline-none ease-linear transition-all duration-150"-->
+          <!--                type="button"-->
+          <!--            >-->
+          <!--              Discard Changes-->
+          <!--            </button>-->
+          <!--          </div>-->
         </div>
       </div>
 
@@ -426,7 +426,7 @@
 </template>
 
 <script setup>
-import {computed, onMounted, ref} from "vue";
+import {computed, onBeforeUnmount, onMounted, ref, watch} from "vue";
 import {catchErrors} from "../../utils";
 import {useRoute, useRouter} from "vue-router";
 import {useTasksStore} from "../../store/tasks";
@@ -568,6 +568,18 @@ const showPanel = computed(() => {
   return arr.includes(true)
 })
 
+//Watch
+watch(showPanel, (val) => {
+  if (val) {
+    const obj = {
+      show: true,
+      close: resetData,
+      update: updateTask,
+    }
+    userStore.setShowPanel(obj)
+  }
+})
+
 
 // Methods
 const updateTaskShowData = () => {
@@ -697,8 +709,6 @@ const fetchTask = async () => {
       task.value = {...resp.data}
       form.value = {...resp.data}
 
-      console.log(resp.data, 'resp.data')
-
       if (!resp.data.eta_date) form.value.eta_date = new Date().toISOString().slice(0, 10)
       if (resp.data.responsible?.id) form.value.user = resp.data.responsible.id
       if (resp.data.responsible?.id) form.value.owner = resp.data.responsible.id
@@ -748,6 +758,8 @@ const fetchCurrentTask = async () => {
 }
 
 const resetData = () => {
+  hidePanel()
+
   isEditPanel.value = {...defaultEditValues}
   form.value = {...task.value}
 
@@ -755,6 +767,15 @@ const resetData = () => {
   if (task.value.owner?.id) form.value.owner = task.value.responsible.id
   form.value.eta_date = new Date().toISOString().slice(0, 10)
   backgroundSize.value = `${task.value.progress || 0}% 100%`
+}
+
+const hidePanel = () => {
+  const obj = {
+    show: false,
+    close: null,
+    update: null,
+  }
+  userStore.setShowPanel(obj)
 }
 
 const updateTaskOwner = async (owner) => {
@@ -792,6 +813,7 @@ const updateTask = async () => {
     await taskStore.updateTask(data)
     await toast.success("Successfully task updated");
     isEditPanel.value = {...defaultEditValues}
+    await hidePanel()
     await fetchTask()
   } catch (e) {
     catchErrors(e)
@@ -921,7 +943,15 @@ const fetchReminders = async () => {
   }
 }
 
+const routeLeave =(e)=>{
+  e.preventDefault();
+
+  if (userStore.showPanel.show) return (e.returnValue = "");
+}
+
 onMounted(() => {
+  window.addEventListener('beforeunload', routeLeave)
+
   timer.value = setInterval(() => {
     key.value += 1
   }, 15000)
@@ -939,6 +969,10 @@ onMounted(() => {
   }, 700)
 })
 
+
+onBeforeUnmount(() => {
+  window.removeEventListener('beforeunload', routeLeave)
+})
 
 // Run Functions
 const options = {

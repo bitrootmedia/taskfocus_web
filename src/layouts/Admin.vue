@@ -3,7 +3,7 @@
     <Sidebar v-model:closePanel="closePanel"/>
     <div class="relative bg-blueGray-100" :class="{'md:ml-64': !closePanel,'md:ml-16': closePanel}">
       <AdminNavbar />
-      <div class="relative pt-8 md:pt-24 pb-8 md:pb-32 h-full">
+      <div class="relative pt-6 pb-8 md:pb-6 h-full">
         <div class=" mx-auto w-full">
           <router-view :key="$route.params"/>
         </div>
