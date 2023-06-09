@@ -197,7 +197,7 @@ const fetchUser = async () => {
       await fetchUsers()
     }
   } catch (e) {
-    catchErrors(e)
+    toast.error('Please ask administrator to check your settings')
   }
 }
 

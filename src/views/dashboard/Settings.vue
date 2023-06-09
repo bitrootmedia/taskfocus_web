@@ -111,7 +111,7 @@ const changePassword = async()=>{
         new_password2: form.value.confirmPassword,
       }
       const resp = await userStore.updatePassword(data)
-      await toast.success(resp.data.detail || "Successfully loggedIn");
+      await toast.success(resp.data.detail);
       form.value = {
         password: '',
         confirmPassword: '',

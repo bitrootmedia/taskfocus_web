@@ -121,7 +121,6 @@ const signIn = async () => {
       axios.defaults.headers.common['Authorization'] = `Token ${resp.data.key}`
       const respUser = await userStore.fetchUser(resp.data.key)
       await cookies.set('task_focus_user', respUser.data)
-      await toast.success("Successfully loggedIn");
       await router.push('/dashboard')
     }
   } catch (e) {

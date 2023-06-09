@@ -365,7 +365,7 @@
 
       <ProjectsModal
           :show-modal="showModal"
-          :project-id="task.project?.id"
+          :project-id="task?.project?.id"
           :task-id="task.id"
           :btn-title="'Change project'"
           @close="showModal = false"
@@ -629,7 +629,7 @@ const assignUser = async () => {
     }
 
     await usersTasksStore.assignUserToQueue(data)
-    toast.success("Successfully assigned");
+    toast.success("Queue updated");
     updateTasksQueue()
   } catch (e) {
     catchErrors(e)
@@ -645,7 +645,7 @@ const removeUser = async () => {
       user: user.pk
     }
     await usersTasksStore.removeUserFromQueue(data)
-    toast.success("Successfully removed");
+    toast.success("Queue updated");
     updateTasksQueue()
   } catch (e) {
     catchErrors(e)
@@ -664,7 +664,9 @@ const toggleTask = async (type) => {
   try {
     if (type === 'stop') currentTask.value = null
     const resp = type === 'stop' ? await taskStore.stopTask({id: task.value.id}) : await taskStore.startTask({id: task.value.id})
-    await toast.success(resp.data.message);
+
+    const message = type !== 'stop' ? `Started working on task ${task.value.title}` : `Stopped working on task ${task.value.title}`
+    await toast.success(message);
     await fetchCurrentTask()
   } catch (e) {
     catchErrors(e)
@@ -723,7 +725,7 @@ const fetchTask = async () => {
 }
 
 const fetchProject = async () => {
-  const project = task.value.project
+  const project = task?.value.project
   if (!project) return
 
   if (!haveProjectAccessIds.value.includes(project.owner.id)) {
@@ -811,7 +813,7 @@ const updateTask = async () => {
     }
 
     await taskStore.updateTask(data)
-    await toast.success("Successfully task updated");
+    await toast.success("Task updated");
     isEditPanel.value = {...defaultEditValues}
     await hidePanel()
     await fetchTask()
@@ -881,7 +883,7 @@ const fetchTaskAccess = async () => {
 
 const fetchProjectAccess = async () => {
   try {
-    const projectId = task.value.project?.id
+    const projectId = task?.value.project?.id
     if (projectId) {
       const resp = await projectStore.fetchProjectAccess({id: projectId})
       const user = cookies.get('task_focus_user')

@@ -92,7 +92,7 @@
                       comment.task.title
                     }}</router-link></span>
 
-                  <span v-if="comment.task?.project?.id && route.name !== 'Task Detail'" class="block">Project link: <router-link
+                  <span v-if="comment.task?.project?.id && !['Project Detail','Task Detail'].includes(route.name)" class="block">Project link: <router-link
                       class="underline"
                       :to="`/dashboard/project/${comment.task?.project?.id}`">{{
                       comment.task.project.title
@@ -105,11 +105,11 @@
                       projectName
                     }}</router-link></span>
 
-                  <span v-else-if="comment.project?.id && route.name !== 'Project Detail'" class="block">Project link: <router-link
+                  <span v-else-if="comment.project?.id && !['Project Detail','Comments'].includes(route.name)" class="block">Project link: <router-link
                       class="underline"
                       :to="`/dashboard/project/${comment.project?.id}`">{{
                       comment.project.title
-                    }}</router-link></span>
+                    }}222</router-link></span>
                 </p>
               </div>
 
@@ -295,7 +295,7 @@ const updateComment = async (comment) => {
       task: props.taskId,
     }
     await commentsStore.updateComment(data)
-    await toast.success("Successfully comment updated");
+    await toast.success("Comment updated");
   } catch (e) {
     catchErrors(e)
   } finally {
@@ -357,7 +357,7 @@ const sendComment = async (e) => {
         task: props.taskId,
       }
       await commentsStore.createComments(data)
-      await toast.success("Successfully comment created");
+      await toast.success("Comment created");
       message.value = ''
       v$.value.$reset()
       await fetchComments()

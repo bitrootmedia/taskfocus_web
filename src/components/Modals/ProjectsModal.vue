@@ -77,6 +77,7 @@ import {usePaginate} from "../../composables/usePaginate";
 import {useFilter} from "../../composables/useFilter";
 import Pagination from "./../Pagination/Pagination.vue"
 import {useTasksStore} from "../../store/tasks";
+import config from "../../config";
 
 const emit = defineEmits(['close', 'update'])
 const props = defineProps({
@@ -161,7 +162,10 @@ onBeforeUnmount(() => {
 })
 
 // Composables
-const paginate = usePaginate(fetchProjects, null)
+const options = {
+  pageSize: config.PROJECT_POPUP
+}
+const paginate = usePaginate(fetchProjects, options)
 const filter = useFilter(projects, fetchProjects)
 
 fetchProjects()

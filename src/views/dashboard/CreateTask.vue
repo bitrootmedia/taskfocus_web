@@ -66,7 +66,7 @@ const createTask = async(e)=>{
       }
       const resp = await taskStore.createTask(data)
       name.value = ''
-      await toast.success("Successfully project created");
+      await toast.success("Task created");
       await router.push(`/dashboard/task/${resp.data.id}`)
     }
   }catch (e) {

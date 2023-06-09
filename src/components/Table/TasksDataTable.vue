@@ -102,10 +102,6 @@
                 </td>
 
                 <td class="border-t-0 px-3 align-middle border-l-0 border-r-0 text-xs whitespace-nowrap p-4">
-                  <span>{{ element.position || '-' }}</span>
-                </td>
-
-                <td class="border-t-0 px-3 align-middle border-l-0 border-r-0 text-xs whitespace-nowrap p-4">
                           <span v-if="element.owner?.first_name || element.owner?.last_name">{{
                               element.owner?.first_name
                             }} {{ element.owner?.last_name }}</span>
@@ -139,6 +135,9 @@
                 </td>
                 <td class="border-t-0 px-3 align-middle border-l-0 border-r-0 text-xs whitespace-nowrap p-4">
                   {{ convertDate(element.updated_at) }}
+                </td>
+                <td class="border-t-0 px-3 align-middle border-l-0 border-r-0 text-xs whitespace-nowrap p-4">
+                  <span>{{ element.position || '-' }}</span>
                 </td>
               </tr>
             </template>
@@ -221,7 +220,6 @@ const headers = computed(() => {
   const list = [
     {id: 1, label: 'Title', sorting: true, sortLabel: 'title'},
     {id: 2, label: 'Status', sorting: true, sortLabel: 'status'},
-    {id: 12, label: 'Position', sorting: true, sortLabel: 'position'},
     {id: 4, label: 'Owner', sorting: true, sortLabel: 'owner'},
     {id: 5, label: 'Responsible', sorting: true, sortLabel: 'responsible'},
     {id: 6, label: 'ETA', sorting: true, sortLabel: 'eta'},
@@ -230,6 +228,7 @@ const headers = computed(() => {
     {id: 9, label: 'Closed', sorting: true, sortLabel: 'is_closed'},
     {id: 10, label: 'Created at', sorting: true, sortLabel: 'created_at'},
     {id: 12, label: 'Updated at', sorting: true, sortLabel: 'updated_at'},
+    {id: 13, label: 'Position', sorting: true, sortLabel: 'position'},
   ]
 
   const projectObj = {id: 11, label: 'Project', sorting: true, sortLabel: 'project'}

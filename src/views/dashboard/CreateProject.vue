@@ -67,14 +67,12 @@ const createProject = async(e)=>{
     const isValid = await v$.value.$validate();
     if (isValid){
       const data = {
-        // description: description.value,
         title: name.value
       }
 
       const resp = await projectStore.createProject(data)
       name.value = ''
-      // description.value = ''
-      await toast.success("Successfully project created");
+      await toast.success("Project created");
       await router.push(`/dashboard/project/${resp.data.id}`)
     }
   }catch (e) {

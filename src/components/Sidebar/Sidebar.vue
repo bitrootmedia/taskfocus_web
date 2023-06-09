@@ -409,7 +409,7 @@ const logout = async () => {
   } finally {
     cookies.remove('token')
     cookies.remove('user')
-    toast.success("Successfully logout");
+    toast.success("See you later!");
     delete axios.defaults.headers.common['Authorization'];
     await router.push('/')
   }

@@ -84,7 +84,7 @@ const logout = async () => {
     cookies.remove('task_focus_token')
     cookies.remove('task_focus_user')
     delete axios.defaults.headers.common['Authorization'];
-    toast.success("Successfully logout");
+    toast.success("See you later!");
     await router.push('/')
   }
 }

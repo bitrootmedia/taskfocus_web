@@ -218,7 +218,7 @@ const saveFiles = async (e) => {
     const resp = await attachmentsStore.uploadAttachments(formData)
     if (resp.data.attachments.length) {
       key.value += 1
-      toast.success("Successfully created");
+      toast.success("Attachment uploaded");
       fetchAttachments()
     }
 

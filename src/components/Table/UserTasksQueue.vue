@@ -38,12 +38,12 @@
               <template #item="{element}">
                 <tr :class="{'cursor-move': !isDragDisabled}">
                   <td class="border-t-0 px-3 align-middle border-l-0 border-r-0 text-xs whitespace-nowrap p-4">
-                            <span @click.stop="toLink(`/dashboard/project/${element.task.project?.id}`)"
-                                  class="cursor-pointer">{{ element.task.project?.title || '-' }}</span>
-                  </td>
-                  <td class="border-t-0 px-3 align-middle border-l-0 border-r-0 text-xs whitespace-nowrap p-4">
                             <span @click.stop="toLink(`/dashboard/task/${element.task?.id}`)"
                                   class="cursor-pointer">{{ element.task.title || '-' }}</span>
+                  </td>
+                  <td class="border-t-0 px-3 align-middle border-l-0 border-r-0 text-xs whitespace-nowrap p-4">
+                            <span @click.stop="toLink(`/dashboard/project/${element.task.project?.id}`)"
+                                  class="cursor-pointer">{{ element.task.project?.title || '-' }}</span>
                   </td>
                 </tr>
               </template>
