@@ -108,12 +108,15 @@
     <AttachmentMediaModal
         :show-modal="popUp"
         :active="activeSrc"
+        :owner-of-media="ownerOfMedia"
         @close="popUp = false"
+        @delete="deleteMedia"
     />
   </div>
 </template>
 
 <script setup>
+import {useCookies} from "vue3-cookies";
 import Loader from './../Loader/Loader.vue'
 import DataTable from "./DataTable.vue"
 import Pagination from './../Pagination/Pagination.vue'
@@ -151,11 +154,15 @@ const props = defineProps({
 const attachmentsStore = useAttachmentsStore()
 const toast = useToast()
 const router = useRouter()
+const {cookies} = useCookies();
 
 const isDragDisabled = true
 const loading = ref(false)
 const popUp = ref(false)
-const activeSrc = ref({})
+const activeSrc = ref({
+  isAuth: false
+})
+const ownerOfMedia = ref({})
 const key = ref(0)
 const attachments = ref([])
 const files = ref([])
@@ -190,9 +197,28 @@ watch(popUp, (val) => {
 const openModal = (element) => {
   popUp.value = true
 
+  const user = cookies.get('task_focus_user')
+  if (user.pk === element.owner.id) {
+    ownerOfMedia.value = {
+      isAuth: true,
+      attachmentId: element.id
+    }
+  }
+
   activeSrc.value = {
     src: element.thumbnail_path,
     path: element.file_path,
+  }
+}
+
+const deleteMedia = async (id) => {
+  try {
+    await attachmentsStore.deleteAttachments({id})
+    popUp.value = false
+    toast.success("Attachment deleted");
+    fetchAttachments()
+  } catch (e) {
+    catchErrors()
   }
 }
 

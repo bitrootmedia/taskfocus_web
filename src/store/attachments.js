@@ -33,5 +33,9 @@ export const useAttachmentsStore = defineStore('attachments', {
                 },
             })
         },
+
+        async deleteAttachments(payload) {
+            return await axios.delete(`${config.BASE_API_URL}/attachment/${payload.id}`)
+        },
     },
 })

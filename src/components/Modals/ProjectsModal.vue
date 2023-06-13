@@ -34,14 +34,14 @@
 
             <ul v-if="projects.length">
               <li v-for="project in projects" :key="project.id" class="flex justify-between items-center gap-x-1 my-3">
-                <span class="text-lg text-blueGray-500 font-medium">{{ project.title }}</span>
+                <span class="text-lg text-blueGray-500 font-medium">{{ project?.title }}</span>
                 <button
-                    :class="{'bg-red-600': project.id === projectId, 'bg-emerald-600': project.id !== projectId}"
+                    :class="{'bg-red-600': project?.id === projectId, 'bg-emerald-600': project?.id !== projectId}"
                     class="text-white active:bg-blueGray-600 text-sm font-bold px-3 py-1 rounded shadow hover:shadow-lg outline-none focus:outline-none ease-linear transition-all duration-150"
                     type="button"
-                    @click="updateProject(project.id === projectId ? null : project.id)"
+                    @click="updateProject(project?.id === projectId ? null : project?.id)"
                 >
-                  {{ project.id === projectId ? 'Remove' : 'Select' }}
+                  {{ project?.id === projectId ? 'Remove' : 'Select' }}
                 </button>
               </li>
             </ul>

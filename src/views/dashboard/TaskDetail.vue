@@ -589,7 +589,7 @@ const updateTaskShowData = () => {
     fetchProjectAccess()
     fetchTaskAccess()
     fetchQueueAccess()
-  }, 300)
+  }, 500)
 
   setTimeout(() => {
     fetchUsers()
@@ -725,7 +725,7 @@ const fetchTask = async () => {
 }
 
 const fetchProject = async () => {
-  const project = task?.value.project
+  const project = task.value?.project
   if (!project) return
 
   if (!haveProjectAccessIds.value.includes(project.owner.id)) {
@@ -835,7 +835,6 @@ const fetchUsers = async () => {
     ]
 
     const arrIds = [...new Set([...haveTaskAccessIds.value, ...haveProjectAccessIds.value])];
-    console.log(arrIds,'arrIds')
     const tempArr = []
     resp.data.results.forEach((item) => {
       if (arrIds.includes(item.id) || item.id === task.value?.owner?.id) {
@@ -883,7 +882,7 @@ const fetchTaskAccess = async () => {
 
 const fetchProjectAccess = async () => {
   try {
-    const projectId = task?.value.project?.id
+    const projectId = task.value?.project?.id
     if (projectId) {
       const resp = await projectStore.fetchProjectAccess({id: projectId})
       const user = cookies.get('task_focus_user')
@@ -964,7 +963,7 @@ onMounted(() => {
     fetchProjectAccess()
     fetchTaskAccess()
     fetchQueueAccess()
-  }, 300)
+  }, 500)
 
   setTimeout(() => {
     showBtn.value = true
