@@ -109,7 +109,7 @@
                       class="underline"
                       :to="`/dashboard/project/${comment.project?.id}`">{{
                       comment.project.title
-                    }}222</router-link></span>
+                    }}</router-link></span>
                 </p>
               </div>
 
