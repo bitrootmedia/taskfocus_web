@@ -1,27 +1,28 @@
 <template>
-  <div ref="componentRef">
-    <div class="text-white relative mr-6 cursor-pointer" @click="show = !show">
-      <i class="fas fa-bell text-lg" :class="[mode === 'dark'? 'text-blueGray-700': 'text-blueGray-300']"></i>
-      <span
-          v-if="notificationsStore.notificationsCount"
-          class="absolute text-sm rounded-full w-4 h-4 text-white flex items-center justify-center bg-red-500 top-0 -right-3">{{
-          notificationsStore.notificationsCount
-        }}</span>
-    </div>
+  <div class="main-container">
+    <div class="content mt-4">
 
-    <div
-        class="notifications-wrapper absolute ml-4 sm:ml-0 right-4 sm:right-6 top-[65px] sm:top-[50px] w-auto sm:w-[460px] max-h-[520px] border border-blueGray-200 overflow-y-scroll bg-blueGray-100 px-6 py-6 rounded-[4px] shadow-lg"
-        v-if="show">
+      <div class="header flex items-center gap-x-6 mb-4">
+        <h2 class="font-bold text-xl block text-blueGray-700">Notifications</h2>
+      </div>
 
-      <h2 class="text-blueGray-600 text-2xl font-semibold mb-5">Notifications</h2>
 
-      <div v-if="notifications.length && notificationsStore.notificationsCount"
-           class="border border-blueGray-200 shadow-lg rounded-[4px] px-4 py-3 mb-3 bg-amber-50"
+      <Loader v-if="loading" />
+
+      <div v-else-if="!notifications.length">
+        <p class="flex text-center px-4 justify-center py-8 text-blueGray-500 text-3xl font-medium">
+          No data found
+        </p>
+      </div>
+
+      <div v-else class="border border-blueGray-200 shadow-lg rounded-[4px] px-4 py-3 mb-4"
+           :class="[`${item.status === 'UNREAD' ? 'bg-amber-50' : ''}`]"
            v-for="(item,index) in notifications"
            :key="item.id">
         <div class="flex justify-between mb-2">
           <h4 class="text-lg font-semibold text-blueGray-700">{{ item.notification.tag }}</h4>
           <button
+              v-if="item.status === 'UNREAD'"
               @click="markAsRead(item.id)"
               class="bg-yellow-600 text-white active:bg-blueGray-600 text-sm font-bold px-4 py-2 rounded shadow hover:shadow-lg outline-none focus:outline-none ease-linear transition-all duration-150"
               type="button"
@@ -58,79 +59,56 @@
         </div>
       </div>
 
-      <div class="flex items-center justify-center flex-col min-h-[200px]" v-else>
-        <h4 class="text-blueGray-600 font-semibold text-lg mt-2">No unread notifications</h4>
-      </div>
-
       <Pagination
           v-if="paginate.pagination.value.total > 1"
           :pagination="paginate.pagination.value"
           v-model:query="paginate.query.value"
       />
+
     </div>
   </div>
 </template>
 
 <script setup>
-import {ref, onMounted, onBeforeUnmount, onUnmounted} from "vue";
+import Loader from "./../../components/Loader/Loader.vue"
+import {ref} from "vue";
 import {catchErrors} from "../../utils";
-import {useNotifications} from "../../store/notifications";
+import config from "../../config";
 import {convertTimeAgo} from "../../utils";
 import {usePaginate} from "../../composables/usePaginate";
-import Pagination from './../Pagination/Pagination.vue'
-import config from "../../config"
+import {useNotifications} from "../../store/notifications";
+import Pagination from './../../components/Pagination/Pagination.vue'
 
-
-const props = defineProps({
-  mode: {
-    type: String,
-    default: ''
-  }
-})
 
 const notificationsStore = useNotifications()
 
 //State
-const componentRef = ref()
-const show = ref(false)
+const loading = ref(true)
 const readMore = ref([])
 const notifications = ref([])
-let timer = null
 
-onMounted(() => {
-  window.addEventListener('click', handleClick)
-
-  setTimeout(() => {
-    readMore.value = new Array(notifications.value.length).fill(false)
-  }, 500)
-
-  timer = setInterval(() => {
-    fetchNotifications()
-  }, 10000)
-})
-
-onBeforeUnmount(() => {
-  window.removeEventListener('click', handleClick)
-})
-
-onUnmounted(() => {
-  clearInterval(timer)
-  timer = null
-});
 
 //Methods
-const handleClick = (e) => {
-  if (!componentRef.value.contains(e.target)) {
-    show.value = false
+const readMoreText = (index) => {
+  readMore.value[index] = true
+}
+
+const markAsRead = async (id) => {
+  try {
+    loading.value = true
+    await notificationsStore.markAsRead({id})
+    await fetchNotifications(true)
+  } catch (e) {
+    catchErrors(e)
   }
 }
 
-const fetchNotifications = async () => {
+const fetchNotifications = async (isNeedUpdate = null) => {
   try {
     const options = {
       pagination: paginate.pagination.value,
       query: paginate.query.value,
-      status: 'UNREAD',
+      isNeedUpdate,
     }
 
     const resp = await notificationsStore.fetchNotifications(options)
@@ -138,28 +116,18 @@ const fetchNotifications = async () => {
     paginate.updatePagination(resp)
   } catch (e) {
     catchErrors(e)
-  }
-}
-
-const readMoreText = (index) => {
-  readMore.value[index] = true
-}
-
-const markAsRead = async (id) => {
-  try {
-    await notificationsStore.markAsRead({id})
-    await fetchNotifications()
-  } catch (e) {
-    catchErrors(e)
+  }finally {
+    loading.value = false
   }
 }
 
 // Composables
 const options = {
-  pageSize: config.NOTIFICATIONS_PANEL_SIZE
+  pageSize: config.NOTIFICATIONS_PAGE_SIZE
 }
 const paginate = usePaginate(fetchNotifications, options)
 
 fetchNotifications()
 
 </script>
+

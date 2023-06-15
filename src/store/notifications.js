@@ -22,9 +22,14 @@ export const useNotifications = defineStore('notifications', {
         async fetchNotifications(payload) {
             let url = `${config.BASE_API_URL}/notifications?`
 
+            if (payload?.status) url += `&status=${payload.status}`
             if (payload?.query) url += `&${payload.query}`
+
             const resp = await axios.get(url)
-            this.count = resp.data.count
+
+            if (payload.isNeedUpdate && this.count !== 0) this.count = this.count - 1
+            if (payload.status ) this.count = resp.data.count
+
             return resp
         },
 

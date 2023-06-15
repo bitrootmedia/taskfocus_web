@@ -26,6 +26,7 @@ import Attachments from "../views/dashboard/Attachments.vue";
 import Settings from "../views/dashboard/Settings.vue";
 import Reminders from "../views/dashboard/Reminders.vue";
 import {useUserStore} from "../store/user";
+import Notifications from "../views/dashboard/Notifications.vue";
 
 // routes
 const routes = [
@@ -129,6 +130,11 @@ const routes = [
                 path: "/dashboard/user-settings",
                 component: Settings,
                 name: 'Settings',
+            },
+            {
+                path: "/dashboard/notifications",
+                component: Notifications,
+                name: 'Notifications',
             },
         ],
     },
