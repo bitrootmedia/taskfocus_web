@@ -1,4 +1,5 @@
 import {createRouter, createWebHistory} from "vue-router";
+import config from "../config"
 import {useCookies} from "vue3-cookies";
 const {cookies} = useCookies()
 
@@ -142,6 +143,7 @@ export const router = createRouter({
 router.beforeEach(async (to, from,next) => {
     const token = cookies.get('task_focus_token')
     const userStore = useUserStore()
+    document.title = config.PROJECT_NAME || 'Task Focus';
 
     if (userStore.showPanel.show && from.name === 'Task Detail'){
         const obj = {

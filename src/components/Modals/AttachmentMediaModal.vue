@@ -6,14 +6,16 @@
       <div class="border-0 rounded-lg shadow-lg relative flex flex-col w-full outline-none focus:outline-none">
         <div class="sticky top-0 z-[2] bg-slate-400">
           <div class="flex justify-between gap-x-3 py-2 main-container">
-            <button
-                v-if="ownerOfMedia.isAuth"
-                @click="openModal(ownerOfMedia.attachmentId)"
-                class="bg-red-500 whitespace-nowrap text-white active:bg-blueGray-600 text-sm font-bold px-2 sm:px-4 py-3 rounded shadow hover:shadow-lg outline-none focus:outline-none ease-linear transition-all duration-150"
-                type="button"
-            >
-              Delete
-            </button>
+            <div>
+              <button
+                  v-if="ownerOfMedia.isAuth"
+                  @click="openModal(ownerOfMedia.attachmentId)"
+                  class="bg-red-500 whitespace-nowrap text-white active:bg-blueGray-600 text-sm font-bold px-2 sm:px-4 py-3 rounded shadow hover:shadow-lg outline-none focus:outline-none ease-linear transition-all duration-150"
+                  type="button"
+              >
+                Delete
+              </button>
+            </div>
 
 
             <div class="flex gap-x-3">
