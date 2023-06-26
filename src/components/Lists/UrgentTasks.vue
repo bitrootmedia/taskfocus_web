@@ -43,20 +43,33 @@
 import {useTasksStore} from "../../store/tasks";
 import Loader from '../Loader/Loader.vue'
 import {catchErrors} from "../../utils";
-import {ref} from "vue";
+import {computed, ref} from "vue";
 import VMdEditor, {xss} from '@kangc/v-md-editor';
 import {useRouter} from "vue-router";
+import {useCookies} from "vue3-cookies";
 
+const {cookies} = useCookies()
 const router = useRouter()
 const tasksStore = useTasksStore()
 const loading = ref(true)
 const tasks = ref([])
 
+const currentUser = computed(() => {
+  if (!cookies.get('task_focus_user')) return ''
+
+  const user = cookies.get('task_focus_user')
+
+  if (user) return user
+
+  return null
+})
+
 //Methods
 const fetchTasks = async () => {
   try {
     const options = {
-      is_urgent: true
+      is_urgent: true,
+      responsible: currentUser.value,
     }
     const resp = await tasksStore.fetchTasks(options)
     tasks.value = resp.data.results
