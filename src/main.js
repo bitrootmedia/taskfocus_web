@@ -24,5 +24,9 @@ import '@kangc/v-md-editor/lib/style/preview-html.css';
 
 
 const pinia = createPinia()
+const cookieOptions = {
+    expireTimes: "30d",
+}
 
-createApp(App).use(router).use(Toast).use(VueCookies).use(pinia).use(VMdEditor).use(VMdPreviewHtml).mount('#app')
+
+createApp(App).use(router).use(Toast).use(VueCookies,cookieOptions).use(pinia).use(VMdEditor).use(VMdPreviewHtml).mount('#app')

@@ -43,7 +43,7 @@
             <button
                 v-if="isAuthOwner && task.is_closed"
                 @click="uncloseTask"
-                class="mt-2 bg-yellow-600 whitespace-nowrap text-white active:bg-blueGray-600 text-sm font-bold px-2 sm:px-4 py-2 rounded shadow hover:shadow-lg outline-none focus:outline-none ease-linear transition-all duration-150"
+                class="mt-2 bg-blueGray-800 whitespace-nowrap text-white active:bg-blueGray-600 text-sm font-bold px-2 sm:px-4 py-2 rounded shadow hover:shadow-lg outline-none focus:outline-none ease-linear transition-all duration-150"
                 type="button"
             >
               Unclose task
@@ -52,7 +52,7 @@
             <button
                 v-else-if="isAuthOwner"
                 @click="confirmModal = true"
-                class="mt-2 bg-yellow-600 whitespace-nowrap text-white active:bg-blueGray-600 text-sm font-bold px-2 sm:px-4 py-2 rounded shadow hover:shadow-lg outline-none focus:outline-none ease-linear transition-all duration-150"
+                class="mt-2 bg-blueGray-800 whitespace-nowrap text-white active:bg-blueGray-600 text-sm font-bold px-2 sm:px-4 py-2 rounded shadow hover:shadow-lg outline-none focus:outline-none ease-linear transition-all duration-150"
                 type="button"
             >
               Close task
@@ -69,7 +69,7 @@
             <button
                 v-if="isAuthOwner"
                 @click="showModal = true"
-                class="mt-2 bg-blueGray-400 whitespace-nowrap text-white active:bg-blueGray-600 text-sm font-bold px-2 sm:px-4 py-2 rounded shadow hover:shadow-lg outline-none focus:outline-none ease-linear transition-all duration-150"
+                class="mt-2 bg-blueGray-800 whitespace-nowrap text-white active:bg-blueGray-600 text-sm font-bold px-2 sm:px-4 py-2 rounded shadow hover:shadow-lg outline-none focus:outline-none ease-linear transition-all duration-150"
                 type="button"
             >Change project
             </button>
@@ -93,7 +93,7 @@
             <button
                 v-if="showBtn"
                 @click="updateMyQueue"
-                :class="[!isAuthQueue ? 'bg-blueGray-800' : 'bg-red-800']"
+                :class="[!isAuthQueue ? 'bg-blueGray-800' : 'bg-blueGray-800']"
                 class="mt-2 whitespace-nowrap text-white active:bg-blueGray-600 text-sm font-bold px-2 sm:px-4 py-2 rounded shadow hover:shadow-lg outline-none focus:outline-none ease-linear transition-all duration-150"
                 type="button"
             >
@@ -185,7 +185,7 @@
                     </template>
 
                     <div v-else class="w-full mt-[10px]">
-                      <v-md-editor v-model="form.description" height="300px"></v-md-editor>
+                      <v-md-editor v-model="form.description" height="300px" :disabled-menus="[]" @upload-image="handleUploadImage"></v-md-editor>
                     </div>
                   </div>
                 </div>
@@ -452,6 +452,7 @@ import {usePaginate} from "../../composables/usePaginate";
 import Reminders from '../../components/Reminders/Reminders.vue'
 import config from "../../config";
 import OwnersModal from "../../components/Modals/OwnersModal.vue";
+import {useAttachmentsStore} from "../../store/attachments";
 
 // ValidationRules
 const rules = {
@@ -489,6 +490,7 @@ const defaultEditValues = {
 const taskStore = useTasksStore()
 const projectStore = useProjectStore()
 const userStore = useUserStore()
+const attachmentStore = useAttachmentsStore()
 const usersTasksStore = useUsersTasksStore()
 const route = useRoute()
 const router = useRouter()
@@ -582,6 +584,30 @@ watch(showPanel, (val) => {
 
 
 // Methods
+const handleUploadImage = async (event, insertImage, files) => {
+  try {
+    const file = files[0]
+    const formData = new FormData();
+    formData.append(file.name, file);
+
+    if (task.value.project.id) {
+      formData.append('project_id', task.value.project.id);
+    }
+    if (task.value.id) {
+      formData.append('task_id', task.value.id);
+    }
+
+    const resp = await attachmentStore.uploadAttachments(formData)
+    if (resp.data.attachments[0].file_path){
+      insertImage({
+        url: resp.data.attachments[0].file_path,
+      });
+    }
+  }catch (e) {
+    catchErrors(e)
+  }
+}
+
 const updateTaskShowData = () => {
   fetchTask()
 
