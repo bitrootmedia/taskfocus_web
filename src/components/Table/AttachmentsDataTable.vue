@@ -87,7 +87,10 @@
                       <img v-if="element.thumbnail_path" :src="element.thumbnail_path" alt="thumbnail"
                            class="cursor-pointer"
                            @click="openModal(element)">
-                      <template v-else>-</template>
+                      <img v-else-if="config.DEFAULT_THUMB" :src="config.DEFAULT_THUMB" alt="thumbnail"
+                           class="cursor-pointer"
+                           @click="openModal(element)">
+                      <span v-else>-</span>
                     </span>
                 </td>
               </tr>
@@ -124,6 +127,7 @@ import {computed, ref, watch} from "vue";
 import {catchErrors, convertDateTime} from "../../utils";
 import draggable from 'vuedraggable'
 import {useRouter} from "vue-router";
+import config from "../../config";
 import {usePaginate} from "../../composables/usePaginate";
 import {useFilter} from "../../composables/useFilter";
 import Dropzone from 'dropzone-vue';

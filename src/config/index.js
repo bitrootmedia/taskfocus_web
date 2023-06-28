@@ -12,4 +12,5 @@ export default {
     REMINDERS: import.meta.env.VITE_REMINDERS,
     REMINDERS_ALL: import.meta.env.VITE_REMINDERS_ALL,
     LOGO_URL: import.meta.env.VITE_LOGO_URL,
+    DEFAULT_THUMB: import.meta.env.VITE_DEFAULT_THUMB,
 }
