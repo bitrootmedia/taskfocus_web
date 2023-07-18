@@ -177,7 +177,8 @@
                    @click="isEditPanel.description = true">N/A</b>
 
                 <div v-else>
-                  <div @click="isEditPanel.description = true" :class="[`${!isEditPanel.description ? 'inline-flex' : 'flex w-full'}`]">
+                  <div @click="isEditPanel.description = true"
+                       :class="[`${!isEditPanel.description ? 'inline-flex' : 'flex w-full'}`]">
                     <template v-if="!isEditPanel.description" class="w-full">
                       <v-md-preview-html
                           :html="xss.process(VMdEditor.vMdParser.themeConfig.markdownParser.render(task.description))"
@@ -185,7 +186,8 @@
                     </template>
 
                     <div v-else class="w-full mt-[10px]">
-                      <v-md-editor v-model="form.description" height="300px" :disabled-menus="[]" @upload-image="handleUploadImage"></v-md-editor>
+                      <v-md-editor v-model="form.description" height="300px" :disabled-menus="[]"
+                                   @upload-image="handleUploadImage"></v-md-editor>
                     </div>
                   </div>
                 </div>
@@ -508,7 +510,6 @@ let showOwnersModal = ref(false)
 let confirmModal = ref(false)
 const task = ref(null)
 const currentTask = ref(null)
-const hasAccess = ref(false)
 const key = ref(0)
 const timer = ref(null)
 const backgroundSize = ref('0% 0%')
@@ -598,12 +599,12 @@ const handleUploadImage = async (event, insertImage, files) => {
     }
 
     const resp = await attachmentStore.uploadAttachments(formData)
-    if (resp.data.attachments[0].file_path){
+    if (resp.data.attachments[0].file_path) {
       insertImage({
         url: resp.data.attachments[0].file_path,
       });
     }
-  }catch (e) {
+  } catch (e) {
     catchErrors(e)
   }
 }
@@ -890,13 +891,10 @@ const fetchTaskAccess = async () => {
       const user = cookies.get('task_focus_user')
       const list = []
       const ids = []
+
       resp.data.results.forEach((item) => {
-        if (item.user.id !== user.pk) {
-          list.push(item)
-          ids.push(item.user.id)
-        } else {
-          hasAccess.value = true
-        }
+        list.push(item)
+        ids.push(item.user.id)
       })
       haveTaskAccess.value = list
       haveTaskAccessIds.value = ids
@@ -972,7 +970,7 @@ const fetchReminders = async () => {
   }
 }
 
-const routeLeave =(e)=>{
+const routeLeave = (e) => {
   e.preventDefault();
 
   if (userStore.showPanel.show) return (e.returnValue = "");
