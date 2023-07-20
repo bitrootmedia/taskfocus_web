@@ -90,6 +90,14 @@
                       <template v-else>-</template>
                     </span>
                 </td>
+                <td class="border-t-0 px-3 align-middle border-l-0 border-r-0 text-xs whitespace-nowrap p-4"
+                    width="15%">
+                  <button
+                      class="bg-blueGray-800 whitespace-nowrap text-white active:bg-blueGray-600 text-sm font-bold px-2 sm:px-4 py-3 rounded shadow hover:shadow-lg outline-none focus:outline-none ease-linear transition-all duration-150"
+                      type="button"
+                      @click="downloadTemplate(element.file_path)"> Download
+                  </button>
+                </td>
               </tr>
             </template>
           </draggable>
@@ -175,6 +183,7 @@ const headers = computed(() => {
     {id: 3, label: 'Task', sorting: true, sortLabel: 'task'},
     {id: 4, label: 'Title', sorting: true, sortLabel: 'title'},
     {id: 5, label: 'Thumbnail', sorting: false},
+    {id: 6, label: 'Action', sorting: false},
   ]
 
   const projectObj = {id: 7, label: 'Project', sorting: true, sortLabel: 'project'}
@@ -194,6 +203,16 @@ watch(popUp, (val) => {
 
 
 // Methods
+const downloadTemplate = async (url, title) => {
+  console.log(url,'url1111')
+
+  const link = document.createElement('a');
+  link.href = url;
+  link.target = '_blank';
+  link.download = title;
+  link.click();
+}
+
 const openModal = (element) => {
   popUp.value = true
 
