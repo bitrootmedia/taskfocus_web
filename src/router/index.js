@@ -27,6 +27,7 @@ import Settings from "../views/dashboard/Settings.vue";
 import Reminders from "../views/dashboard/Reminders.vue";
 import {useUserStore} from "../store/user";
 import Notifications from "../views/dashboard/Notifications.vue";
+import TasksTracking from "../views/dashboard/TasksTracking.vue";
 
 // routes
 const routes = [
@@ -115,6 +116,11 @@ const routes = [
                 path: "/dashboard/user-guide",
                 component: UserGuide,
                 name: 'User Guide',
+            },
+            {
+                path: "/dashboard/tasks-tracking",
+                component: TasksTracking,
+                name: 'Task Tracking',
             },
             {
                 path: "/dashboard/users-tasks",

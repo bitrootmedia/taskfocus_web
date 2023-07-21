@@ -4,6 +4,10 @@ import moment from "moment";
 const toast = useToast()
 
 
+export const convertHumanTime = (seconds)=>{
+    return moment.utc(seconds*1000).format('HH:mm:ss')
+}
+
 export const convertDate = (date) => {
     return moment(date).format("YYYY-MM-DD")
 }

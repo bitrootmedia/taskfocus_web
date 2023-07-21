@@ -362,6 +362,10 @@
       </div>
 
       <div>
+        <TrackerDataTable :key="key" :task-id="task.id" :is-task="true"/>
+      </div>
+
+      <div>
         <LogsDataTable :key="key" :task-id="task.id" :is-task="true"/>
       </div>
 
@@ -455,6 +459,7 @@ import Reminders from '../../components/Reminders/Reminders.vue'
 import config from "../../config";
 import OwnersModal from "../../components/Modals/OwnersModal.vue";
 import {useAttachmentsStore} from "../../store/attachments";
+import TrackerDataTable from "../../components/Table/TrackerDataTable.vue";
 
 // ValidationRules
 const rules = {
