@@ -3,7 +3,7 @@
     <div class="border-2 border-blueGray-300 rounded-[4px] px-4 py-4">
       <div class="text-left mb-4">
         <h4 class="text-xl font-bold inline-flex text-blueGray-800 cursor-pointer"
-            @click="toLink(`/dashboard/users-tasks/}`)">
+            @click="toLink(`/dashboard/users/}`)">
           {{ user.first_name }} {{ user.last_name }}</h4>
       </div>
 
@@ -44,6 +44,12 @@
                   <td class="border-t-0 px-3 align-middle border-l-0 border-r-0 text-xs whitespace-nowrap p-4">
                             <span @click.stop="toLink(`/dashboard/project/${element.task.project?.id}`)"
                                   class="cursor-pointer">{{ element.task.project?.title || '-' }}</span>
+                  </td>
+                  <td class="border-t-0 px-3 align-middle border-l-0 border-r-0 text-xs whitespace-nowrap p-4">
+                            <span class="cursor-pointer">{{ fullName(element.task.owner) }}</span>
+                  </td>
+                  <td class="border-t-0 px-3 align-middle border-l-0 border-r-0 text-xs whitespace-nowrap p-4">
+                    <span class="cursor-pointer">{{ element.task.status }}</span>
                   </td>
                 </tr>
               </template>
@@ -91,9 +97,18 @@ const headers = computed(() => {
   return [
     {id: 1, label: 'Task', sorting: false, sortLabel: 'task'},
     {id: 2, label: 'Project', sorting: false, sortLabel: 'project'},
+    {id: 2, label: 'Owner', sorting: false, sortLabel: 'owner'},
+    {id: 2, label: 'Status', sorting: false, sortLabel: 'status'},
   ]
 })
 
+
+// Computed
+const fullName = (owner) => {
+  if (owner.first_name || owner.last_name) return owner.first_name + ' ' + owner.last_name
+
+  return owner.username
+}
 
 // Methods
 const toLink = (link) => {

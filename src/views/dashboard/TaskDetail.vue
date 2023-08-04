@@ -199,26 +199,6 @@
             <div class="lg:w-1/2 order-2 lg:order-2 mt-3 lg:mt-0">
               <div class="mb-2 sm:mb-4">
                 <div class="text-blueGray-500">
-                  <span class="w-[80px] inline-block">ETA:</span>
-                  <b class="cursor-pointer" v-if="!isEditPanel.eta" @click="isEditPanel.eta = true">
-                    <span v-if="!task.eta_date">N/A</span>
-                    <span v-else>{{ convertDayDiff(task.eta_date) }} ({{ task.eta_date }})</span>
-                  </b>
-
-                  <div v-else class="mb-2 w-80">
-                    <input
-                        v-model="form.eta_date"
-                        type="date"
-                        class="border-0 px-3 py-3 placeholder-blueGray-300 text-blueGray-600 bg-white rounded text-sm shadow focus:outline-none focus:ring w-full ease-linear transition-all duration-150"
-                        placeholder="Eta"
-                    />
-                  </div>
-                </div>
-
-              </div>
-
-              <div class="mb-2 sm:mb-4">
-                <div class="text-blueGray-500">
                   <span class="w-[80px] inline-block">Tag:</span>
                   <b class="cursor-pointer" v-if="!isEditPanel.tag" @click="isEditPanel.tag = true">
                     <span v-if="!task.tag">N/A</span>
@@ -533,7 +513,6 @@ const isEditPanel = ref({...defaultEditValues})
 const form = ref({
   title: '',
   description: '',
-  eta_date: '',
   estimated_work_hours: '',
   status: '',
   user: '',
@@ -743,7 +722,6 @@ const fetchTask = async () => {
       task.value = {...resp.data}
       form.value = {...resp.data}
 
-      if (!resp.data.eta_date) form.value.eta_date = new Date().toISOString().slice(0, 10)
       if (resp.data.responsible?.id) form.value.user = resp.data.responsible.id
       if (resp.data.responsible?.id) form.value.owner = resp.data.responsible.id
       backgroundSize.value = `${resp.data.progress || 0}% 100%`
@@ -799,7 +777,7 @@ const resetData = () => {
 
   if (task.value.responsible?.id) form.value.user = task.value.responsible.id
   if (task.value.owner?.id) form.value.owner = task.value.responsible.id
-  form.value.eta_date = new Date().toISOString().slice(0, 10)
+
   backgroundSize.value = `${task.value.progress || 0}% 100%`
 }
 
@@ -833,7 +811,6 @@ const updateTask = async () => {
       id: task.value.id,
       title: form.value.title,
       description: form.value.description,
-      eta_date: form.value.eta_date,
       estimated_work_hours: form.value.estimated_work_hours,
       status: form.value.status,
       responsible: form.value.user,

@@ -95,7 +95,6 @@ const update = (id)=>{
 }
 
 const downloadTemplate = async (url, title) => {
-  console.log(url,'url')
 
   const link = document.createElement('a');
   link.href = url;

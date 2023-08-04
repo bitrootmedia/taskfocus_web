@@ -1,6 +1,6 @@
 <template>
   <div class="content mt-4">
-    <h2 class="font-bold text-xl block text-blueGray-700 mb-4">Tasks Tracker</h2>
+    <h2 class="font-bold text-xl block text-blueGray-700 mb-4">Time Tracker</h2>
 
 <!--    <div class="header flex flex-col md:flex-row items-baseline md:items-center justify-between mt-4 mb-4 gap-y-3">-->
 <!--      <div class="relative w-full md:w-2/4">-->

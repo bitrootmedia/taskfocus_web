@@ -114,13 +114,6 @@
                   <span v-else>{{ element.responsible?.username || '-' }}</span>
 
                 </td>
-                <td class="border-t-0 px-3 align-middle border-l-0 border-r-0 text-xs whitespace-nowrap p-4"
-                    :class="[convertDayDiffCon(element.eta_date) === '-' || +convertDayDiffCon(element.eta_date) > 2 ? '' : +convertDayDiffCon(element.eta_date) <= 0 ? 'bg-red-400' : 'bg-orange-400']">
-                  <span
-                      :class="[convertDayDiffCon(element.eta_date) === '-' || +convertDayDiffCon(element.eta_date) > 2 ? '' : +convertDayDiffCon(element.eta_date) <= 0 ? 'text-white' : 'text-white']">{{
-                      convertDayDiff(element.eta_date)
-                    }}</span>
-                </td>
                 <td class="border-t-0 px-3 align-middle border-l-0 border-r-0 text-xs whitespace-nowrap p-4">
                   <span>{{ element.tag || '-' }}</span>
                 </td>
@@ -222,7 +215,6 @@ const headers = computed(() => {
     {id: 2, label: 'Status', sorting: true, sortLabel: 'status'},
     {id: 4, label: 'Owner', sorting: true, sortLabel: 'owner'},
     {id: 5, label: 'Responsible', sorting: true, sortLabel: 'responsible'},
-    {id: 6, label: 'ETA', sorting: true, sortLabel: 'eta'},
     {id: 7, label: 'Tag', sorting: true, sortLabel: 'tag'},
     {id: 8, label: 'Progress', sorting: true, sortLabel: 'progress'},
     {id: 9, label: 'Closed', sorting: true, sortLabel: 'is_closed'},
@@ -257,7 +249,7 @@ const fetchTasks = async (label = null) => {
       query: paginate.query.value,
       search: filter.search.value,
       id: props.projectId,
-      sorting: label,
+      sorting: label || "updated_at",
       isClosed: hideClosed.value,
       responsible: showCurrentUser.value ? currentUser.value : null,
     }

@@ -24,52 +24,6 @@
                          class="underline text-blue-500">{{ userTask[Object.keys(userTask)[0]].currentTask.title }}
             </router-link>
           </p>
-
-
-          <DataTable :headers="headers">
-            <template v-slot:tableBody>
-              <tr v-if="loading">
-                <td :colspan="headers.length">
-                  <div class="flex justify-center py-1 text-blueGray-500 font-medium">
-                    <Loader/>
-                  </div>
-                </td>
-              </tr>
-
-              <template v-else>
-                <tr v-if="!userTask[Object.keys(userTask)[0]].data.length">
-                  <td :colspan="headers.length">
-                    <p class="flex text-center px-4 justify-center py-8 text-blueGray-500 font-medium">
-                      No data found
-                    </p>
-                  </td>
-                </tr>
-
-                <draggable
-                    v-else
-                    tag="tbody"
-                    :disabled="isDragDisabled"
-                    v-model="userTask[Object.keys(userTask)[0]].data"
-                    item-key="id"
-                    group="id"
-                    @change="changeDrag($event,userTask[Object.keys(userTask)[0]])"
-                >
-                  <template #item="{element}">
-                    <tr :class="{'cursor-move': !isDragDisabled}">
-                      <td class="border-t-0 px-3 align-middle border-l-0 border-r-0 text-xs whitespace-nowrap p-4">
-                      <span @click.stop="toLink(`/dashboard/task/${element.task?.id}`)"
-                            class="cursor-pointer">{{ element.task.title || '-' }}</span>
-                      </td>
-                      <td class="border-t-0 px-3 align-middle border-l-0 border-r-0 text-xs whitespace-nowrap p-4">
-                      <span @click.stop="toLink(`/dashboard/project/${element.task.project?.id}`)"
-                            class="cursor-pointer">{{ element.task.project?.title || '-' }}</span>
-                      </td>
-                    </tr>
-                  </template>
-                </draggable>
-              </template>
-            </template>
-          </DataTable>
         </div>
       </div>
     </template>
@@ -77,17 +31,13 @@
 </template>
 
 <script setup>
-import DataTable from "./../../components/Table/DataTable.vue"
 import Loader from "./../../components/Loader/Loader.vue"
-import draggable from 'vuedraggable'
 import {useUsersTasksStore} from "../../store/users-tasks";
 import {computed, ref} from "vue";
 import {useToast} from "vue-toastification";
 import {useRouter} from "vue-router";
-import {usePaginate} from "../../composables/usePaginate";
 import {catchErrors} from "../../utils";
 import {useUserStore} from "../../store/user";
-import config from "../../config"
 import {useCookies} from "vue3-cookies";
 
 const usersTasksStore = useUsersTasksStore()
@@ -98,20 +48,11 @@ const router = useRouter()
 
 
 //State
-const isDragDisabled = false
 const loading = ref(false)
 const usersTasks = ref([])
 const users = ref([])
 const userConfig = ref(null)
 
-
-// Computed
-const headers = computed(() => {
-  return [
-    {id: 2, label: 'Task', sorting: false, sortLabel: 'task'},
-    {id: 1, label: 'Project', sorting: false, sortLabel: 'project'},
-  ]
-})
 
 // Methods
 const toLink = (link) => {

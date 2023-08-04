@@ -120,12 +120,12 @@ const routes = [
             {
                 path: "/dashboard/tasks-tracking",
                 component: TasksTracking,
-                name: 'Task Tracking',
+                name: 'Time Tracker',
             },
             {
-                path: "/dashboard/users-tasks",
+                path: "/dashboard/users",
                 component: UsersTasks,
-                name: 'Users Tasks',
+                name: 'Users',
             },
             {
                 path: "/dashboard/users-tasks/:id",

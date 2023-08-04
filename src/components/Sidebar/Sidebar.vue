@@ -308,7 +308,7 @@
                     class="fas fa-calendar-day mr-2 text-sm"
                     :class="[isExactActive ? 'opacity-75' : 'text-blueGray-300']"
                 ></i>
-                {{ !closePanel ? 'Tasks Tracking' : '' }}
+                {{ !closePanel ? 'Time Tracker' : '' }}
               </a>
             </router-link>
           </li>
@@ -336,7 +336,7 @@
           </li>
 
           <li class="items-center">
-            <router-link to="/dashboard/users-tasks" exact v-slot="{ href, navigate, isActive, isExactActive }">
+            <router-link to="/dashboard/users" exact v-slot="{ href, navigate, isActive, isExactActive }">
               <a
                   :href="href"
                   @click="navigate"
@@ -349,10 +349,10 @@
                 ]"
               >
                 <i
-                    class="fas fa-list-ul mr-2 text-sm"
+                    class="fas fa-users mr-2 text-sm"
                     :class="[isExactActive ? 'opacity-75' : 'text-blueGray-300']"
                 ></i>
-                {{ !closePanel ? 'Queue' : '' }}
+                {{ !closePanel ? 'Users' : '' }}
               </a>
             </router-link>
           </li>

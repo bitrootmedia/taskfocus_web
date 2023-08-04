@@ -28,5 +28,8 @@ const cookieOptions = {
     expireTimes: "30d",
 }
 
+const toastOptions = {
+    position: "bottom-left",
+}
 
-createApp(App).use(router).use(Toast).use(VueCookies,cookieOptions).use(pinia).use(VMdEditor).use(VMdPreviewHtml).mount('#app')
+createApp(App).use(router).use(Toast,toastOptions).use(VueCookies,cookieOptions).use(pinia).use(VMdEditor).use(VMdPreviewHtml).mount('#app')

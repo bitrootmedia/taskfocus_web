@@ -204,7 +204,6 @@ watch(popUp, (val) => {
 
 // Methods
 const downloadTemplate = async (url, title) => {
-  console.log(url,'url1111')
 
   const link = document.createElement('a');
   link.href = url;
