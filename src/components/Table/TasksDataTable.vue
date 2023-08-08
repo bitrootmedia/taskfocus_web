@@ -249,7 +249,7 @@ const fetchTasks = async (label = null) => {
       query: paginate.query.value,
       search: filter.search.value,
       id: props.projectId,
-      sorting: label || "updated_at",
+      sorting: label || "-updated_at",
       isClosed: hideClosed.value,
       responsible: showCurrentUser.value ? currentUser.value : null,
     }

@@ -594,7 +594,7 @@ const handleUploadImage = async (event, insertImage, files) => {
 }
 
 const updateTaskShowData = () => {
-  fetchTask()
+  fetchTask(true)
 
   setTimeout(() => {
     fetchProjectAccess()
@@ -607,7 +607,7 @@ const updateTaskShowData = () => {
   }, 700)
 }
 const updateTasks = (owner) => {
-  fetchTask()
+  fetchTask(true)
   fetchTaskAccess()
 
   setTimeout(() => {
@@ -616,7 +616,7 @@ const updateTasks = (owner) => {
 }
 
 const updateTasksQueue = () => {
-  fetchTask()
+  fetchTask(true)
   fetchQueueAccess()
 
   setTimeout(() => {
@@ -713,11 +713,11 @@ const uncloseTask = async () => {
   }
 }
 
-const fetchTask = async () => {
+const fetchTask = async (noLoad = false) => {
   try {
     const id = route.params.id
     if (id) {
-      loading.value = true
+      if (!noLoad) loading.value = true
       const resp = await taskStore.fetchTaskById({id})
       task.value = {...resp.data}
       form.value = {...resp.data}
