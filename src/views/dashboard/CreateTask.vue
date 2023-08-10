@@ -3,25 +3,48 @@
     <h2 v-if="tempProject" class="text-md block text-blueGray-700 mb-4 sm:mb-8">Project: <b>{{ tempProject.name }}</b>
     </h2>
 
-    <form class="flex items-center items-baseline gap-x-8" @submit="createTask">
-      <div class="relative w-2/4">
-        <input
-            v-model="name"
-            type="text"
-            class="border-0 px-3 py-3 placeholder-blueGray-300 text-blueGray-600 bg-white rounded text-sm shadow focus:outline-none focus:ring w-full ease-linear transition-all duration-150"
-            placeholder="Task Name"
-        />
-        <span class="text-xs font-medium text-red-600" v-if="v$.name.$error"> {{ v$.name.$errors[0].$message }} </span>
-      </div>
+    <form @submit="createTask">
+     <div class="flex items-center items-baseline gap-x-8 mb-3">
+       <div class="relative w-2/4">
+         <input
+             v-model="name"
+             type="text"
+             class="border-0 px-3 py-3 placeholder-blueGray-300 text-blueGray-600 bg-white rounded text-sm shadow focus:outline-none focus:ring w-full ease-linear transition-all duration-150"
+             placeholder="Task Name"
+         />
+         <span class="text-xs font-medium text-red-600" v-if="v$.name.$error"> {{ v$.name.$errors[0].$message }} </span>
+       </div>
 
-      <button
-          @click="createTask"
-          :disabled="loading"
-          class="bg-blueGray-800 text-white active:bg-blueGray-600 text-sm font-bold px-6 py-3 rounded shadow hover:shadow-lg outline-none focus:outline-none ease-linear transition-all duration-150"
-          type="button"
-      >
-        Next
-      </button>
+       <button
+           @click="createTask"
+           :disabled="loading"
+           class="bg-blueGray-800 text-white active:bg-blueGray-600 text-sm font-bold px-6 py-3 rounded shadow hover:shadow-lg outline-none focus:outline-none ease-linear transition-all duration-150"
+           type="button"
+       >
+         Next
+       </button>
+     </div>
+
+      <div>
+        <div class="flex items-center">
+          <input
+              id="addQueue"
+              v-model="addQueue"
+              type="checkbox"
+              class="border-0 flex pl-8 pr-3 py-3 placeholder-blueGray-300 text-blueGray-600 rounded text-sm ease-linear transition-all duration-150 cursor-pointer"
+          />
+          <label for="addQueue" class="text-md text-blueGray-500 font-medium cursor-pointer ml-2 whitespace-nowrap">Add to my queue</label>
+        </div>
+        <div class="flex items-center">
+          <input
+              id="position"
+              v-model="position"
+              type="checkbox"
+              class="border-0 flex pl-8 pr-3 py-3 placeholder-blueGray-300 text-blueGray-600 rounded text-sm ease-linear transition-all duration-150 cursor-pointer"
+          />
+          <label for="position" class="text-md text-blueGray-500 font-medium cursor-pointer ml-2 whitespace-nowrap">Queue position {{position ? 'bottom' : 'top'}}</label>
+        </div>
+      </div>
     </form>
 
     <div class="mt-8" v-if="searchedTasks.length && name.length > 2">
@@ -107,6 +130,8 @@ const rules = {
 // State
 const loading = ref(false)
 const name = ref('')
+const addQueue = ref(false)
+const position = ref(false)
 const tempProject = ref(null)
 const searchedTasks = ref([])
 
@@ -161,7 +186,10 @@ const createTask = async (e) => {
     if (isValid) {
       const data = {
         title: name.value,
-        project: tempProject.value?.id || null
+        add_to_user_queue: addQueue.value,
+        queue_position: position.value ? 'bottom' : 'top',
+        project: tempProject.value?.id || null,
+
       }
       const resp = await taskStore.createTask(data)
       name.value = ''

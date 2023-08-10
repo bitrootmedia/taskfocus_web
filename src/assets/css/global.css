@@ -27,6 +27,11 @@
     }
 }
 
+body{
+    height: 100vh;
+    background: #f1f5f9;
+}
+
 .dropzone__error-mark{
     display: none !important;
 }

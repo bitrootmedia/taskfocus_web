@@ -49,6 +49,9 @@
                             <span class="cursor-pointer">{{ fullName(element.task.owner) }}</span>
                   </td>
                   <td class="border-t-0 px-3 align-middle border-l-0 border-r-0 text-xs whitespace-nowrap p-4">
+                    <span class="cursor-pointer">{{ fullName(element.task.responsible) }}</span>
+                  </td>
+                  <td class="border-t-0 px-3 align-middle border-l-0 border-r-0 text-xs whitespace-nowrap p-4">
                     <span class="cursor-pointer">{{ element.task.status }}</span>
                   </td>
                 </tr>
@@ -97,14 +100,17 @@ const headers = computed(() => {
   return [
     {id: 1, label: 'Task', sorting: false, sortLabel: 'task'},
     {id: 2, label: 'Project', sorting: false, sortLabel: 'project'},
-    {id: 2, label: 'Owner', sorting: false, sortLabel: 'owner'},
-    {id: 2, label: 'Status', sorting: false, sortLabel: 'status'},
+    {id: 3, label: 'Owner', sorting: false, sortLabel: 'owner'},
+    {id: 4, label: 'Responsible', sorting: false, sortLabel: 'owner'},
+    {id: 5, label: 'Status', sorting: false, sortLabel: 'status'},
   ]
 })
 
 
 // Computed
 const fullName = (owner) => {
+  if(!owner) return 'N/A'
+
   if (owner.first_name || owner.last_name) return owner.first_name + ' ' + owner.last_name
 
   return owner.username

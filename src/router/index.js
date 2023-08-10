@@ -16,7 +16,6 @@ import CreateProject from "../views/dashboard/CreateProject.vue";
 import CreateTask from "../views/dashboard/CreateTask.vue";
 import ProjectDetail from "../views/dashboard/ProjectDetail.vue";
 import TaskDetail from "../views/dashboard/TaskDetail.vue";
-import UserGuide from "../views/dashboard/UserGuide.vue";
 import UsersTasks from "../views/dashboard/UsersTasks.vue";
 import UsersTasksDetail from "../views/dashboard/UsersTasksDetail.vue";
 import Tasks from "../views/dashboard/Tasks.vue";
@@ -28,6 +27,7 @@ import Reminders from "../views/dashboard/Reminders.vue";
 import {useUserStore} from "../store/user";
 import Notifications from "../views/dashboard/Notifications.vue";
 import TasksTracking from "../views/dashboard/TasksTracking.vue";
+import axios from "axios";
 
 // routes
 const routes = [
@@ -113,11 +113,6 @@ const routes = [
                 name: 'Task Detail',
             },
             {
-                path: "/dashboard/user-guide",
-                component: UserGuide,
-                name: 'User Guide',
-            },
-            {
                 path: "/dashboard/tasks-tracking",
                 component: TasksTracking,
                 name: 'Time Tracker',
@@ -168,6 +163,13 @@ router.beforeEach(async (to, from,next) => {
 
     if (to.name === 'Reset Password') return next()
 
-    if (to.name !== 'Login' && !token) next({ name: 'Login' })
-    else next()
+    if (to.name !== 'Login' && !token) {
+        cookies.remove('task_focus_token')
+        cookies.remove('task_focus_user')
+        delete axios.defaults.headers.common['Authorization'];
+        next({ name: 'Login' })
+    }
+    else {
+        next()
+    }
 })
