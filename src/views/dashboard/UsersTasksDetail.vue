@@ -8,7 +8,7 @@
 
     <template v-else>
       <div class="content mb-8">
-        <h2 class="text-lg text-blueGray-600 font-semibold mb-2">Tasks</h2>
+        <h2 class="text-lg text-blueGray-600 font-semibold mb-2">Queue</h2>
         <DataTable :headers="headers">
           <template v-slot:tableBody>
             <tr v-if="loading">

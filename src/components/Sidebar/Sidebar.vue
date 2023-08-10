@@ -363,14 +363,14 @@
     <div v-if="userStore.showPanel.show" class="w-full flex md:hidden justify-center gap-x-4">
       <button
           @click="userStore.showPanel.update"
-          class="bg-blueGray-800 text-white active:bg-blueGray-600 text-md font-bold px-6 py-2 rounded shadow hover:shadow-lg outline-none focus:outline-none ease-linear transition-all duration-150"
+          class="bg-orange-400 text-white active:bg-blueGray-600 text-md font-bold px-6 py-2 rounded shadow hover:shadow-lg outline-none focus:outline-none ease-linear transition-all duration-150"
           type="button"
       >
         Save Changes
       </button>
       <button
           @click="userStore.showPanel.close"
-          class="bg-red-500 text-white active:bg-blueGray-600 text-md font-bold px-6 py-2 rounded shadow hover:shadow-lg outline-none focus:outline-none ease-linear transition-all duration-150"
+          class="bg-gray-600 text-white active:bg-blueGray-600 text-md font-bold px-6 py-2 rounded shadow hover:shadow-lg outline-none focus:outline-none ease-linear transition-all duration-150"
           type="button"
       >
         Discard Changes

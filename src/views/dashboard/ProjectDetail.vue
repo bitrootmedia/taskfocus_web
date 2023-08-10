@@ -5,7 +5,7 @@
       <div class="header flex flex-col md:flex-row justify-between gap-x-2 lg:gap-x-10">
         <div class="w-full md:w-2/4">
           <div>
-            <h1 v-if="!isEditTitle" class="text-3xl font-bold text-blueGray-700 mb-1 cursor-pointer"
+            <h1 v-if="!isEditTitle" class="text-3xl font-bold text-blueGray-700 mb-4 cursor-pointer"
                 @click="isEditTitle = true">{{ project.title }}</h1>
             <div v-else class="mb-2">
               <input
@@ -20,23 +20,64 @@
             </div>
           </div>
           <div class="description-panel">
-            <div v-if="!isEditDesc" class="text-blueGray-500 cursor-pointer w-fit" @click="isEditDesc = true">
-              <v-md-preview-html
-                  v-if="project.description"
-                  :html="xss.process(VMdEditor.vMdParser.themeConfig.markdownParser.render(project.description))"
-                  preview-class="vuepress-markdown-body" class="cursor-pointer">
-              </v-md-preview-html>
+            <div class="mb-2 sm:mb-4">
+              <div class="text-blueGray-500">
+                <span class="w-[80px] inline-block">Tag:</span>
+                <b class="cursor-pointer" v-if="!isEditTag" @click="isEditTag = true">
+                  <span v-if="!project.tag">N/A</span>
+                  <span v-else>{{ project.tag }}</span>
+                </b>
 
-              <span v-else>No Description</span>
+                <div v-else class="mb-2 w-80">
+                  <input
+                      v-model="form.tag"
+                      type="text"
+                      class="border-0 px-3 py-3 placeholder-blueGray-300 text-blueGray-600 bg-white rounded text-sm shadow focus:outline-none focus:ring w-full ease-linear transition-all duration-150"
+                      placeholder="Tag"
+                  />
+                </div>
+              </div>
             </div>
-            <div v-else class="mt-[10px]">
-              <div>
-                <v-md-editor v-model="form.description"></v-md-editor>
+
+            <div class="mb-2 sm:mb-4">
+              <div class="text-blueGray-500 inline-flex items-center" v-if="!isEditProgress">
+                <span class="w-[80px] inline-block">Progress:</span>
+
+                <div @click="isEditProgress = true" class="cursor-pointer flex items-center">
+                  <div class=" w-[150px] h-[20px] border-2 border-blueGray-300">
+                  <span class="progress bg-blueGray-500 block h-[16px]"
+                        :style="{width: `${project.progress || 0}%`}"></span>
+                  </div>
+                  <span class="ml-2">{{ project.progress || 0 }}%</span>
+                </div>
+              </div>
+              <div v-else class="mb-2 w-80 range-slider">
+                <input type="range" min="0" max="100" step="1" v-model="form.progress" @input="updateSlider"
+                       :style="{backgroundSize: backgroundSize}">
+                <div class="data text-blueGray-500">Progress: {{ form.progress }}/100</div>
+              </div>
+            </div>
+
+            <div class="mb-2 sm:mb-4">
+              <div v-if="!isEditDesc" class="text-blueGray-500 cursor-pointer w-fit" @click="isEditDesc = true">
+                <v-md-preview-html
+                    v-if="project.description"
+                    :html="xss.process(VMdEditor.vMdParser.themeConfig.markdownParser.render(project.description))"
+                    preview-class="vuepress-markdown-body" class="cursor-pointer">
+                </v-md-preview-html>
+
+                <span v-else>No Description</span>
+              </div>
+              <div v-else class="mt-[10px]">
+                <div>
+                  <v-md-editor v-model="form.description"></v-md-editor>
+                </div>
               </div>
             </div>
           </div>
 
-          <div v-if="isEditTitle || isEditDesc" class="flex gap-x-4">
+
+          <div v-if="isEditTitle || isEditDesc || isEditTag || isEditProgress" class="flex gap-x-4">
             <button
                 @click="updateProject"
                 class="mt-2 bg-blueGray-800 text-white active:bg-blueGray-600 text-md font-bold px-6 py-2 rounded shadow hover:shadow-lg outline-none focus:outline-none ease-linear transition-all duration-150"
@@ -171,15 +212,20 @@ const {cookies} = useCookies();
 const loading = ref(false)
 let isEditTitle = ref(false)
 let isEditDesc = ref(false)
+let isEditTag = ref(false)
+let isEditProgress = ref(false)
 let showModal = ref(false)
 let showOwnersModal = ref(false)
 const project = ref({})
 const haveProjectAccess = ref([])
 const haveProjectAccessIds = ref([])
 const users = ref([])
+const backgroundSize = ref('0% 0%')
 const form = ref({
   title: '',
   description: '',
+  tag: '',
+  progress: '',
 })
 
 const v$ = useVuelidate(rules, form)
@@ -195,6 +241,15 @@ const isAuthOwner = computed(() => {
 })
 
 // Methods
+const updateSlider = (e) => {
+  let clickedElement = e.target,
+      min = clickedElement.min,
+      max = clickedElement.max,
+      val = clickedElement.value;
+
+  backgroundSize.value = (val - min) * 100 / (max - min) + '% 100%';
+}
+
 const updateProjectOwner = async (owner) => {
   try {
     if (owner) {
@@ -215,6 +270,9 @@ const updateProjectOwner = async (owner) => {
 
 const resetData = () => {
   isEditDesc.value = isEditTitle.value = false
+  isEditTag.value = isEditTag.value = false
+  isEditProgress.value = isEditProgress.value = false
+  backgroundSize.value = `${project.value.progress || 0}% 100%`
   form.value = {...project.value}
 }
 
@@ -227,6 +285,9 @@ const fetchProject = async () => {
       project.value = resp.data
       form.value.title = resp.data.title
       form.value.description = resp.data.description
+      form.value.tag = resp.data.tag
+      form.value.progress = resp.data.progress
+      backgroundSize.value = `${resp.data.progress || 0}% 100%`
     }
   } catch (e) {
     catchErrors(e)
@@ -264,12 +325,16 @@ const updateProject = async () => {
       id: route.params.id,
       title: form.value.title,
       description: form.value.description,
+      tag: form.value.tag,
+      progress: form.value.progress || 0,
     }
     await projectStore.updateProject(data)
     await toast.success("Successfully project updated");
     await fetchProject()
     isEditTitle.value = false
     isEditDesc.value = false
+    isEditTag.value = false
+    isEditProgress.value = false
   } catch (e) {
     catchErrors(e)
   }

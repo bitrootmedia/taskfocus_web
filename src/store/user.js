@@ -51,6 +51,7 @@ export const useUserStore = defineStore('user', {
             let url = `${config.BASE_API_URL}/users?`
 
             if (payload?.query) url += `&${payload.query}`
+            if (payload?.sorting) url += `&ordering=${payload.sorting}`
 
             return await axios.get(url)
         },

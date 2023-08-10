@@ -2,7 +2,7 @@
   <div class="main-container">
     <h2 class="font-bold text-xl block text-blueGray-700 mb-4">Users</h2>
 
-      <DataTable :headers="headers">
+      <DataTable :headers="headers" @sorting="sorting">
         <template v-slot:tableBody>
           <tr v-if="loading">
             <td :colspan="headers.length">
@@ -70,8 +70,8 @@ const userConfig = ref(null)
 // Computed
 const headers = computed(() => {
   return [
-    {id: 1, label: 'Full Name', sorting: false},
-    {id: 2, label: 'Username', sorting: false},
+    {id: 1, label: 'Full Name', sorting: true, sortLabel: 'first_name'},
+    {id: 2, label: 'Username', sorting: true, sortLabel: 'username'},
   ]
 })
 
@@ -80,14 +80,20 @@ const toLink = (link) => {
   router.push(link)
 }
 
-const fetchUsers = async () => {
+const sorting = (label) => {
+  fetchUsers(label)
+}
+
+const fetchUsers = async (label = null) => {
   try {
     loading.value = true
     const options = {
       pagination: paginate.pagination.value,
       query: paginate.query.value,
+      sorting: label
     }
     const resp = await userStore.fetchUsersPage(options)
+    console.log(resp,'resp')
     users.value = resp.data.results
     paginate.updatePagination(resp)
   } catch (e) {
@@ -98,25 +104,9 @@ const fetchUsers = async () => {
 }
 
 
-const fetchUser = async () => {
-  try {
-    const id = cookies.get('task_focus_user').pk
-    if (id) {
-      const resp = await userStore.fetchCurrentUser({id})
-      if (!resp.data.config.limit_queue_view.length){
-        toast.info('Ask administrator to setup limit_queue_view config parameter')
-      }
-
-      userConfig.value = resp.data.config
-      await fetchUsers()
-    }
-  } catch (e) {
-    toast.error('Please ask administrator to check your settings')
-  }
-}
 
 // Composables
 const paginate = usePaginate(fetchUsers, null)
-fetchUser()
+fetchUsers()
 
 </script>

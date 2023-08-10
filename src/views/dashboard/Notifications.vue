@@ -2,8 +2,19 @@
   <div class="main-container">
     <div class="content mt-4">
 
-      <div class="header flex items-center gap-x-6 mb-4">
+      <div class="header mb-4">
         <h2 class="font-bold text-xl block text-blueGray-700">Notifications</h2>
+
+        <div class="flex items-center mt-4">
+          <input
+              id="hideClosed"
+              v-model="hideSeen"
+              type="checkbox"
+              class="border-0 flex pl-8 pr-3 py-3 placeholder-blueGray-300 text-blueGray-600 rounded text-sm ease-linear transition-all duration-150 cursor-pointer"
+              placeholder="Search"
+          />
+          <label for="hideClosed" class="text-md text-blueGray-500 font-medium cursor-pointer ml-2 whitespace-nowrap">Hide seen notifications</label>
+        </div>
       </div>
 
 
@@ -21,6 +32,7 @@
            :key="item.id">
         <div class="flex justify-between mb-2">
           <h4 class="text-lg font-semibold text-blueGray-700">{{ item.notification.tag }}</h4>
+
           <button
               v-if="item.status === 'UNREAD'"
               @click="markAsRead(item.id)"
@@ -71,7 +83,7 @@
 
 <script setup>
 import Loader from "./../../components/Loader/Loader.vue"
-import {ref} from "vue";
+import {ref, watch} from "vue";
 import {catchErrors} from "../../utils";
 import config from "../../config";
 import {convertTimeAgo} from "../../utils";
@@ -84,8 +96,15 @@ const notificationsStore = useNotifications()
 
 //State
 const loading = ref(true)
+const hideSeen = ref(true)
 const readMore = ref([])
 const notifications = ref([])
+
+
+//Watch
+watch(hideSeen,()=>{
+  fetchNotifications()
+})
 
 
 //Methods
@@ -108,6 +127,7 @@ const fetchNotifications = async (isNeedUpdate = null) => {
     const options = {
       pagination: paginate.pagination.value,
       query: paginate.query.value,
+      status: hideSeen.value ? 'UNREAD' : '',
       isNeedUpdate,
     }
 

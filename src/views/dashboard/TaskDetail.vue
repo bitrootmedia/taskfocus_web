@@ -34,7 +34,8 @@
             <button
                 v-if="!task?.is_closed"
                 @click="toggleTask(currentTask?.id === task?.id ? 'stop' : 'work')"
-                class="mt-2 bg-blueGray-800 whitespace-nowrap text-white active:bg-blueGray-600 text-sm font-bold px-2 sm:px-4 py-2 rounded shadow hover:shadow-lg outline-none focus:outline-none ease-linear transition-all duration-150"
+                :class="[currentTask?.id === task?.id ? 'bg-orange-400' : 'bg-blueGray-800']"
+                class="mt-2  whitespace-nowrap text-white active:bg-blueGray-600 text-sm font-bold px-2 sm:px-4 py-2 rounded shadow hover:shadow-lg outline-none focus:outline-none ease-linear transition-all duration-150"
                 type="button"
             >
               {{ currentTask?.id === task?.id ? 'Stop working on this task' : 'Work on this task' }}
@@ -52,7 +53,7 @@
             <button
                 v-else-if="isAuthOwner"
                 @click="confirmModal = true"
-                class="mt-2 bg-blueGray-800 whitespace-nowrap text-white active:bg-blueGray-600 text-sm font-bold px-2 sm:px-4 py-2 rounded shadow hover:shadow-lg outline-none focus:outline-none ease-linear transition-all duration-150"
+                class="mt-2 bg-orange-400 whitespace-nowrap text-white active:bg-blueGray-600 text-sm font-bold px-2 sm:px-4 py-2 rounded shadow hover:shadow-lg outline-none focus:outline-none ease-linear transition-all duration-150"
                 type="button"
             >
               Close task
@@ -93,7 +94,7 @@
             <button
                 v-if="showBtn"
                 @click="updateMyQueue"
-                :class="[!isAuthQueue ? 'bg-blueGray-800' : 'bg-blueGray-800']"
+                :class="[isAuthQueue ? 'bg-orange-400' : 'bg-blueGray-800']"
                 class="mt-2 whitespace-nowrap text-white active:bg-blueGray-600 text-sm font-bold px-2 sm:px-4 py-2 rounded shadow hover:shadow-lg outline-none focus:outline-none ease-linear transition-all duration-150"
                 type="button"
             >
