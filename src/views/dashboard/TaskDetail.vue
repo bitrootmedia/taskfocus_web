@@ -119,7 +119,6 @@
             />
           </div>
 
-
           <div class="flex flex-col lg:flex-row lg:gap-x-20">
             <div class="lg:w-1/2 order-1 lg:order-1">
               <div class="mb-2 sm:mb-4">
@@ -257,18 +256,11 @@
 
               <div class="mb-2 sm:mb-4">
 
+
                 <div class="text-blueGray-500 flex items-center">
                   <span class="w-[80px] inline-block">Urgent:</span>
-                  <b class="uppercase cursor-pointer ml-1" v-if="!isEditPanel.is_urgent"
-                     @click="isEditPanel.is_urgent = true">{{ task.is_urgent ? 'Yes' : 'No' }}
-                  </b>
-                  <div v-else class="ml-2">
-                    <input
-                        v-model="form.is_urgent"
-                        type="checkbox"
-                        class="cursor-pointer border-0 placeholder-blueGray-300 text-blueGray-600 bg-white rounded text-smfocus:outline-none focus:ring ease-linear transition-all duration-150"
-                    />
-                  </div>
+
+                  <Switch v-model:value="form.is_urgent"/>
                 </div>
 
               </div>
@@ -312,31 +304,12 @@
               </div>
             </div>
           </div>
-
-
-          <!--          <div v-if="showPanel" class="flex gap-x-4">-->
-          <!--            <button-->
-          <!--                @click="updateTask"-->
-          <!--                class="mt-2 bg-orange-400 text-white active:bg-blueGray-600 text-md font-bold px-6 py-2 rounded shadow hover:shadow-lg outline-none focus:outline-none ease-linear transition-all duration-150"-->
-          <!--                type="button"-->
-          <!--            >-->
-          <!--              Save Changes-->
-          <!--            </button>-->
-          <!--            <button-->
-          <!--                @click="resetData"-->
-          <!--                class="mt-2 bg-red-500 text-white active:bg-blueGray-600 text-md font-bold px-6 py-2 rounded shadow hover:shadow-lg outline-none focus:outline-none ease-linear transition-all duration-150"-->
-          <!--                type="button"-->
-          <!--            >-->
-          <!--              Discard Changes-->
-          <!--            </button>-->
-          <!--          </div>-->
         </div>
       </div>
 
       <div class="mb-10">
         <AttachmentsDataTable :task-id="task.id" :is-task="true"/>
       </div>
-
 
       <div class="mb-10">
         <CommentsDataTable :task-id="task.id" :task-name="task.title" :is-task="true"/>
@@ -442,6 +415,7 @@ import OwnersModal from "../../components/Modals/OwnersModal.vue";
 import {useAttachmentsStore} from "../../store/attachments";
 import TrackerDataTable from "../../components/Table/TrackerDataTable.vue";
 import moment from "moment";
+import Switch from '../../components/Switch/Switch.vue'
 
 // ValidationRules
 const rules = {
@@ -495,6 +469,8 @@ let showUsersModal = ref(false)
 let showUsersQueueModal = ref(false)
 let showOwnersModal = ref(false)
 let confirmModal = ref(false)
+let toggleActive = ref(false)
+let firstLoad = ref(false)
 const task = ref(null)
 const currentTask = ref(null)
 const key = ref(0)
@@ -558,6 +534,9 @@ const showPanel = computed(() => {
 })
 
 //Watch
+
+
+
 watch(showPanel, (val) => {
   if (val) {
     const obj = {
@@ -722,7 +701,10 @@ const fetchTask = async (noLoad = false) => {
       if (!noLoad) loading.value = true
       const resp = await taskStore.fetchTaskById({id})
       task.value = {...resp.data}
-      form.value = {...resp.data}
+
+      Object.keys(resp.data).forEach((key) => {
+        form.value[key] = resp.data[key]
+      })
 
       if (resp.data.responsible?.id) form.value.user = resp.data.responsible.id
       if (resp.data.responsible?.id) form.value.owner = resp.data.responsible.id
@@ -807,7 +789,9 @@ const updateTaskOwner = async (owner) => {
   }
 }
 
-const updateTask = async () => {
+const updateTask = async (noLoad) => {
+  if (!task.value.id) return
+
   try {
     const data = {
       id: task.value.id,
@@ -827,11 +811,17 @@ const updateTask = async () => {
     await toast.success("Task updated");
     isEditPanel.value = {...defaultEditValues}
     await hidePanel()
-    await fetchTask()
+    await fetchTask(noLoad)
   } catch (e) {
     catchErrors(e)
   }
 }
+
+watch(() => form.value.is_urgent, (newValue,oldValue) => {
+  if (firstLoad.value) return updateTask(true)
+
+  firstLoad.value = true
+})
 
 const fetchUsers = async () => {
   try {
@@ -948,7 +938,7 @@ const fetchReminders = async () => {
       paginate.updatePagination(resp)
 
       if (!resp.data.results.length) return taskStore.expiredRemindersCount = false
-      resp.data.results.forEach((reminder)=>{
+      resp.data.results.forEach((reminder) => {
         if (reminderCheck(reminder.reminder_date) === 'today') {
           return taskStore.expiredRemindersCount = true
         }
@@ -963,7 +953,7 @@ const fetchReminders = async () => {
   }
 }
 
-const reminderCheck = (date)=>{
+const reminderCheck = (date) => {
   const isToday = moment(0, "HH").diff(date, "days") >= 0
   const isTmr = moment(0, "HH").diff(date, "days") === -1
 
