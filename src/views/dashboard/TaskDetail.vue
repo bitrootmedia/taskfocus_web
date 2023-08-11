@@ -441,6 +441,7 @@ import config from "../../config";
 import OwnersModal from "../../components/Modals/OwnersModal.vue";
 import {useAttachmentsStore} from "../../store/attachments";
 import TrackerDataTable from "../../components/Table/TrackerDataTable.vue";
+import moment from "moment";
 
 // ValidationRules
 const rules = {
@@ -945,12 +946,31 @@ const fetchReminders = async () => {
       const resp = await taskStore.fetchReminders(options)
       reminders.value = resp.data.results
       paginate.updatePagination(resp)
+
+      if (!resp.data.results.length) return taskStore.expiredRemindersCount = false
+      resp.data.results.forEach((reminder)=>{
+        if (reminderCheck(reminder.reminder_date) === 'today') {
+          return taskStore.expiredRemindersCount = true
+        }
+
+        return taskStore.expiredRemindersCount = false
+      })
     }
   } catch (e) {
     catchErrors(e)
   } finally {
     loadingRem.value = false
   }
+}
+
+const reminderCheck = (date)=>{
+  const isToday = moment(0, "HH").diff(date, "days") >= 0
+  const isTmr = moment(0, "HH").diff(date, "days") === -1
+
+  if (isToday) return 'today'
+  if (isTmr) return 'tmr'
+
+  return ''
 }
 
 const routeLeave = (e) => {

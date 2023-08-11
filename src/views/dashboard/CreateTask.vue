@@ -4,26 +4,28 @@
     </h2>
 
     <form @submit="createTask">
-     <div class="flex items-center items-baseline gap-x-8 mb-3">
-       <div class="relative w-2/4">
-         <input
-             v-model="name"
-             type="text"
-             class="border-0 px-3 py-3 placeholder-blueGray-300 text-blueGray-600 bg-white rounded text-sm shadow focus:outline-none focus:ring w-full ease-linear transition-all duration-150"
-             placeholder="Task Name"
-         />
-         <span class="text-xs font-medium text-red-600" v-if="v$.name.$error"> {{ v$.name.$errors[0].$message }} </span>
-       </div>
+      <div class="flex items-center items-baseline gap-x-8 mb-3">
+        <div class="relative w-2/4">
+          <input
+              v-model="name"
+              type="text"
+              class="border-0 px-3 py-3 placeholder-blueGray-300 text-blueGray-600 bg-white rounded text-sm shadow focus:outline-none focus:ring w-full ease-linear transition-all duration-150"
+              placeholder="Task Name"
+          />
+          <span class="text-xs font-medium text-red-600" v-if="v$.name.$error"> {{
+              v$.name.$errors[0].$message
+            }} </span>
+        </div>
 
-       <button
-           @click="createTask"
-           :disabled="loading"
-           class="bg-blueGray-800 text-white active:bg-blueGray-600 text-sm font-bold px-6 py-3 rounded shadow hover:shadow-lg outline-none focus:outline-none ease-linear transition-all duration-150"
-           type="button"
-       >
-         Next
-       </button>
-     </div>
+        <button
+            @click="createTask"
+            :disabled="loading"
+            class="bg-blueGray-800 text-white active:bg-blueGray-600 text-sm font-bold px-6 py-3 rounded shadow hover:shadow-lg outline-none focus:outline-none ease-linear transition-all duration-150"
+            type="button"
+        >
+          Next
+        </button>
+      </div>
 
       <div>
         <div class="flex items-center">
@@ -33,16 +35,35 @@
               type="checkbox"
               class="border-0 flex pl-8 pr-3 py-3 placeholder-blueGray-300 text-blueGray-600 rounded text-sm ease-linear transition-all duration-150 cursor-pointer"
           />
-          <label for="addQueue" class="text-md text-blueGray-500 font-medium cursor-pointer ml-2 whitespace-nowrap">Add to my queue</label>
+          <label for="addQueue" class="text-md text-blueGray-500 font-medium cursor-pointer ml-2 whitespace-nowrap">Add
+            to my queue</label>
         </div>
-        <div class="flex items-center">
-          <input
-              id="position"
-              v-model="position"
-              type="checkbox"
-              class="border-0 flex pl-8 pr-3 py-3 placeholder-blueGray-300 text-blueGray-600 rounded text-sm ease-linear transition-all duration-150 cursor-pointer"
-          />
-          <label for="position" class="text-md text-blueGray-500 font-medium cursor-pointer ml-2 whitespace-nowrap">Queue position {{position ? 'bottom' : 'top'}}</label>
+        <div v-if="addQueue" class="flex items-center gap-x-6">
+          <div class="flex items-center">
+            <input
+                id="positionTop"
+                v-model="position"
+                type="radio"
+                name="position"
+                value="top"
+                class="border-0 flex pl-8 pr-3 py-3 placeholder-blueGray-300 text-blueGray-600 rounded text-sm ease-linear transition-all duration-150 cursor-pointer"
+            />
+            <label for="positionTop"
+                   class="text-md text-blueGray-500 font-medium cursor-pointer ml-2 whitespace-nowrap">Add to the top</label>
+          </div>
+
+          <div class="flex items-center">
+            <input
+                id="positionBottom"
+                v-model="position"
+                value="bottom"
+                type="radio"
+                name="position"
+                class="border-0 flex pl-8 pr-3 py-3 placeholder-blueGray-300 text-blueGray-600 rounded text-sm ease-linear transition-all duration-150 cursor-pointer"
+            />
+            <label for="positionBottom"
+                   class="text-md text-blueGray-500 font-medium cursor-pointer ml-2 whitespace-nowrap">Add to the bottom</label>
+          </div>
         </div>
       </div>
     </form>
@@ -131,7 +152,7 @@ const rules = {
 const loading = ref(false)
 const name = ref('')
 const addQueue = ref(false)
-const position = ref(false)
+const position = ref('top')
 const tempProject = ref(null)
 const searchedTasks = ref([])
 
@@ -186,11 +207,17 @@ const createTask = async (e) => {
     if (isValid) {
       const data = {
         title: name.value,
-        add_to_user_queue: addQueue.value,
-        queue_position: position.value ? 'bottom' : 'top',
         project: tempProject.value?.id || null,
 
       }
+
+      if (addQueue.value) {
+        data.add_to_user_queue = addQueue.value
+        data.queue_position = position.value
+      }
+
+      console.log(data, 'data')
+      return
       const resp = await taskStore.createTask(data)
       name.value = ''
       await toast.success("Task created");

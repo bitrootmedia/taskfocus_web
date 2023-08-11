@@ -186,7 +186,7 @@
               <a
                   :href="href"
                   @click="navigate"
-                  class="text-xs uppercase py-3 font-bold block"
+                  class="text-xs uppercase py-3 font-bold block relative"
                   :class="[
                   isExactActive
                     ? 'text-emerald-500 hover:text-emerald-600'
@@ -199,6 +199,10 @@
                     :class="[isExactActive ? 'opacity-75' : 'text-blueGray-300']"
                 ></i>
                 {{ !closePanel ? 'Reminders' : '' }}
+
+                <div v-if="taskStore.expiredRemindersCount" class="text-white absolute mr-6 cursor-pointer top-[6px] left-[96px]" >
+                  <i class="fas fa-bell text-md text-red-500" ></i>
+                </div>
               </a>
             </router-link>
           </li>
@@ -389,6 +393,8 @@ import axios from "axios";
 import config from '../../config'
 import Notifications from "../../components/Notifications/Notifications.vue";
 import {catchErrors} from "../../utils";
+import moment from "moment";
+import {useTasksStore} from "../../store/tasks";
 
 const emit = defineEmits(['update:closePanel'])
 const props = defineProps({
@@ -399,6 +405,7 @@ const props = defineProps({
 })
 
 const userStore = useUserStore()
+const taskStore = useTasksStore()
 const {cookies} = useCookies();
 const toast = useToast()
 const showMobile = ref(false)
@@ -453,6 +460,30 @@ const fetchUser = async () => {
   }
 }
 
+const fetchReminders = async()=>{
+  try {
+    const resp = await taskStore.fetchReminders()
+    resp.data.results.forEach((reminder)=>{
+      if (reminderCheck(reminder.reminder_date) === 'today') {
+        return taskStore.expiredRemindersCount = true
+      }
+    })
+  }catch (e) {
+    catchErrors(e)
+  }
+}
+
+const reminderCheck = (date)=>{
+  const isToday = moment(0, "HH").diff(date, "days") >= 0
+  const isTmr = moment(0, "HH").diff(date, "days") === -1
+
+  if (isToday) return 'today'
+  if (isTmr) return 'tmr'
+
+  return ''
+}
+
+fetchReminders()
 fetchUser()
 
 </script>

@@ -11,10 +11,13 @@ if (token) {
 
 export const useTasksStore = defineStore('tasks', {
     state: () => ({
-        tempProject: {}
+        tempProject: {},
+        expiredRemindersCount: false
     }),
 
     actions: {
+
+
         async fetchTasksTracker(payload) {
             let url = `${config.BASE_API_URL}/task-sessions?`
 
