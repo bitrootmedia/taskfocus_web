@@ -1,11 +1,18 @@
 import {useToast} from 'vue-toastification'
 import moment from "moment";
+import axios from "axios";
+import {useRouter} from "vue-router";
+import {useCookies} from "vue3-cookies";
 
 const toast = useToast()
+const {cookies} = useCookies()
+const router = useRouter()
+
+const invalidToken = 'Invalid token.'
 
 
-export const convertHumanTime = (seconds)=>{
-    return moment.utc(seconds*1000).format('HH:mm:ss')
+export const convertHumanTime = (seconds) => {
+    return moment.utc(seconds * 1000).format('HH:mm:ss')
 }
 
 export const convertDate = (date) => {
@@ -54,11 +61,22 @@ export const convertHtml = (content) => {
 
 
 export const catchErrors = (e) => {
+    if (e.response.status === 403 && e.response.data.detail === invalidToken) {
+        cookies.remove('task_focus_token')
+        cookies.remove('task_focus_user')
+        delete axios.defaults.headers.common['Authorization'];
+        toast.error(invalidToken);
+        setTimeout(()=>{
+            window.location = '/'
+        },500)
+        return
+    }
+
     if (e.response?.data?.non_field_errors && e.response?.data?.non_field_errors[0]) {
         return toast.error(e.response?.data?.non_field_errors[0]);
     }
 
-    if (e.response?.data?.detail){
+    if (e.response?.data?.detail) {
         return toast.error(e.response.data.detail);
     }
 

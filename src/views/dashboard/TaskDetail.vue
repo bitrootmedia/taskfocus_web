@@ -889,16 +889,16 @@ const fetchProjectAccess = async () => {
       const list = []
       const ids = []
       resp.data.results.forEach((item) => {
-        if (item.user.id !== user.pk) {
+        // if (item.user.id !== user.pk) {
           list.push(item)
           ids.push(item.user.id)
-        }
+        // }
       })
 
       haveProjectAccess.value = list
       haveProjectAccessIds.value = ids
 
-      await fetchProject()
+      // await fetchProject()
     }
   } catch (e) {
     catchErrors(e)
