@@ -2,18 +2,6 @@
   <div class="content mt-4">
     <h2 class="font-bold text-xl block text-blueGray-700 mb-4">Time Tracker</h2>
 
-<!--    <div class="header flex flex-col md:flex-row items-baseline md:items-center justify-between mt-4 mb-4 gap-y-3">-->
-<!--      <div class="relative w-full md:w-2/4">-->
-<!--        <i class="fas fa-search mr-2 text-sm text-blueGray-300 absolute top-[12px] left-[8px]"/>-->
-<!--        <input-->
-<!--            v-model="filter.search.value"-->
-<!--            type="text"-->
-<!--            class="border-0 pl-8 pr-3 py-3 placeholder-blueGray-300 text-blueGray-600 bg-white rounded text-sm shadow focus:outline-none focus:ring w-full ease-linear transition-all duration-150"-->
-<!--            placeholder="Search"-->
-<!--        />-->
-<!--      </div>-->
-<!--    </div>-->
-
     <DataTable :headers="headers">
       <template v-slot:tableBody>
         <tr v-if="loading">
@@ -60,10 +48,19 @@
                   {{ element.stopped_at ? convertDateTime(element.stopped_at) : '-' }}
                 </td>
                 <td class="border-t-0 px-3 align-middle border-l-0 border-r-0 text-xs whitespace-nowrap p-4"
-                    width="30%">
-                  <span class="truncate block w-[150px] md:w-[300px]">
+                    >
+                  <span class="truncate block">
                     {{convertHumanTime(element.total_time)}}
                   </span>
+                </td>
+                <td v-if="canEdit" class="border-t-0 px-3 align-middle border-l-0 border-r-0 text-xs whitespace-nowrap p-4"
+                    >
+                  <button
+                      class="bg-blueGray-800 whitespace-nowrap text-white active:bg-blueGray-600 text-sm font-bold px-2 sm:px-4 py-2 rounded shadow hover:shadow-lg outline-none focus:outline-none ease-linear transition-all duration-150"
+                      type="button"
+                      @click="openModal(element)"
+                     > Edit
+                  </button>
                 </td>
               </tr>
             </template>
@@ -76,6 +73,15 @@
         v-if="paginate.pagination.value.total > 1 && !loading"
         :pagination="paginate.pagination.value"
         v-model:query="paginate.query.value"
+    />
+
+
+    <TimeTrackerModal
+        :show-modal="showEditModal"
+        :task="current"
+        :btn-title="'Edit'"
+        @close="showEditModal = false"
+        @update="fetchTasksTracker"
     />
   </div>
 </template>
@@ -94,11 +100,16 @@ import {useToast} from "vue-toastification";
 import {useTasksStore} from "../../store/tasks";
 import {useFilter} from "../../composables/useFilter";
 import {convertHumanTime} from "../../utils";
+import TimeTrackerModal from '../Modals/TimeTrackerModal.vue'
 
 const props = defineProps({
   taskId: {
     type: String,
     default: ''
+  },
+  canEdit: {
+    type: Boolean,
+    default: false
   },
 })
 
@@ -109,6 +120,8 @@ const router = useRouter()
 
 const isDragDisabled = true
 const loading = ref(false)
+const showEditModal = ref(false)
+const current = ref(null)
 const tasks = ref([])
 
 
@@ -122,13 +135,19 @@ const headers = computed(() => {
   ]
 
   const taskObj = {id: 5, label: 'Task', sorting: false}
+  const taskEdit = {id: 6, label: 'Action', sorting: false}
   if (!props.taskId) list.splice(1, 0, taskObj)
+
+  if (props.canEdit) list.splice(4, 0, taskEdit)
 
   return list
 })
 
 // Methods
-
+const openModal = (item)=>{
+  current.value = item
+  showEditModal.value = true
+}
 
 const fetchTasksTracker = async (label = null) => {
   try {

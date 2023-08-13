@@ -316,7 +316,7 @@
       </div>
 
       <div>
-        <TrackerDataTable :key="key" :task-id="task.id" :is-task="true"/>
+        <TrackerDataTable :key="keyTracker" :task-id="task.id" :is-task="true" :can-edit="true"/>
       </div>
 
       <div>
@@ -474,6 +474,7 @@ let firstLoad = ref(false)
 const task = ref(null)
 const currentTask = ref(null)
 const key = ref(0)
+const keyTracker = ref(0)
 const timer = ref(null)
 const backgroundSize = ref('0% 0%')
 const reminders = ref([])
@@ -660,6 +661,7 @@ const toggleTask = async (type) => {
     const message = type !== 'stop' ? `Started working on task ${task.value.title}` : `Stopped working on task ${task.value.title}`
     await toast.success(message);
     await fetchCurrentTask()
+    keyTracker.value += 1
   } catch (e) {
     catchErrors(e)
   }

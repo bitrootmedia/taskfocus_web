@@ -216,8 +216,6 @@ const createTask = async (e) => {
         data.queue_position = position.value
       }
 
-      console.log(data, 'data')
-      return
       const resp = await taskStore.createTask(data)
       name.value = ''
       await toast.success("Task created");

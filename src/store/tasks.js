@@ -16,8 +16,6 @@ export const useTasksStore = defineStore('tasks', {
     }),
 
     actions: {
-
-
         async fetchTasksTracker(payload) {
             let url = `${config.BASE_API_URL}/task-sessions?`
 
@@ -26,6 +24,12 @@ export const useTasksStore = defineStore('tasks', {
             if (payload?.sorting) url += `&ordering=${payload.sorting}`
             if (payload?.search) url += `&title=${payload.search}`
             return await axios.get(url)
+        },
+
+        async updateTimeTracker(payload) {
+            const id = payload.id
+            delete payload.id
+            return await axios.patch(`${config.BASE_API_URL}/task-session/${id}`,payload)
         },
 
         async fetchTasks(payload) {
