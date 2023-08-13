@@ -151,23 +151,13 @@
               <div class="mb-2 sm:mb-4">
                 <div class="text-blueGray-500">
                   Responsible: &nbsp;
-                  <b class="cursor-pointer" @click="isEditPanel.user = true" v-if="!isEditPanel.user">
-                <span v-if="task.responsible?.first_name || task.responsible?.last_name"> {{
-                    task.responsible?.first_name
-                  }} {{ task.responsible?.last_name }}</span>
-                    <span v-else-if="task.responsible?.username"> {{ task.responsible?.username }}</span>
-                    <span v-else>N/A</span>
+                  <b class="cursor-pointer" @click="showResponsiblesModal = true">
+                    <span v-if="task.responsible?.first_name || task.responsible?.last_name"> {{
+                        task.responsible?.first_name
+                      }} {{ task.responsible?.last_name }}</span>
+                        <span v-else-if="task.responsible?.username"> {{ task.responsible?.username }}</span>
+                        <span v-else>N/A</span>
                   </b>
-
-                  <div v-else class="mb-2 w-80">
-                    <select v-model="form.user" placeholder="Select User"
-                            class="border-0 px-3 py-3 placeholder-blueGray-300 text-blueGray-600 bg-white rounded text-sm shadow focus:outline-none focus:ring w-full ease-linear transition-all duration-150"
-                    >
-                      <option :value="user.id" v-for="(user) in users" :key="user.id">{{ user.first_name }}
-                        {{ user.last_name }}
-                      </option>
-                    </select>
-                  </div>
                 </div>
               </div>
 
@@ -354,6 +344,15 @@
           @update="updateTaskOwner"
       />
 
+      <ResponsiblesModal
+          :show-modal="showResponsiblesModal"
+          :task="task"
+          :users="users"
+          :btn-title="'Change Owners'"
+          @close="showResponsiblesModal = false"
+          @update="updateResponsibles"
+      />
+
 
       <UserQueueModal
           :show-modal="showUsersQueueModal"
@@ -393,7 +392,6 @@ import {useTasksStore} from "../../store/tasks";
 import Loader from "./../../components/Loader/Loader.vue"
 import {required, helpers} from "@vuelidate/validators";
 import {useVuelidate} from "@vuelidate/core";
-import {convertDayDiff} from "../../utils";
 import ProjectsModal from "../../components/Modals/ProjectsModal.vue";
 import AttachmentsDataTable from "../../components/Table/AttachmentsDataTable.vue";
 import CommentsDataTable from "../../components/Table/CommentsDataTable.vue";
@@ -416,6 +414,7 @@ import {useAttachmentsStore} from "../../store/attachments";
 import TrackerDataTable from "../../components/Table/TrackerDataTable.vue";
 import moment from "moment";
 import Switch from '../../components/Switch/Switch.vue'
+import ResponsiblesModal from './../../components/Modals/ResponsiblesModal.vue'
 
 // ValidationRules
 const rules = {
@@ -467,6 +466,7 @@ const showModal = ref(false)
 let showReminderModal = ref(false)
 let showUsersModal = ref(false)
 let showUsersQueueModal = ref(false)
+let showResponsiblesModal = ref(false)
 let showOwnersModal = ref(false)
 let confirmModal = ref(false)
 let toggleActive = ref(false)
@@ -515,8 +515,12 @@ const isAuthQueue = computed(() => {
 const isAuthProjectOwner = computed(() => {
   if (!cookies.get('task_focus_user')) return ''
 
+  if (!task.value.project) return false
+
   const user = cookies.get('task_focus_user')
-  return haveProjectAccessIds.value.includes(user.pk)
+  const projectOwnerId = task.value.project.owner.id
+
+  return user.pk === projectOwnerId
 })
 
 const isAuthOwner = computed(() => {
@@ -627,6 +631,11 @@ const assignUser = async () => {
   } catch (e) {
     catchErrors(e)
   }
+}
+
+const updateResponsibles = (userId)=>{
+  form.value.user =  userId
+  updateTask(true)
 }
 
 const removeUser = async () => {
@@ -888,6 +897,7 @@ const fetchProjectAccess = async () => {
       const user = cookies.get('task_focus_user')
       const list = []
       const ids = []
+
       resp.data.results.forEach((item) => {
         // if (item.user.id !== user.pk) {
           list.push(item)
@@ -898,7 +908,7 @@ const fetchProjectAccess = async () => {
       haveProjectAccess.value = list
       haveProjectAccessIds.value = ids
 
-      // await fetchProject()
+      await fetchProject()
     }
   } catch (e) {
     catchErrors(e)
@@ -982,7 +992,7 @@ onMounted(() => {
     fetchProjectAccess()
     fetchTaskAccess()
     fetchQueueAccess()
-  }, 500)
+  }, 600)
 
   setTimeout(() => {
     showBtn.value = true

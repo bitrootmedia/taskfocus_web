@@ -7,7 +7,7 @@
         <!--header-->
         <div class="flex items-center justify-between p-5 border-b border-solid border-blueGray-200 rounded-t">
           <h3 class="text-3xl font-semibold">
-            Select new owner
+            Select Responsible
           </h3>
 
           <div>
