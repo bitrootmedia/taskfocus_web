@@ -25,8 +25,10 @@
             class="md:block text-left md:pb-2 text-blueGray-600 mr-0 inline-block whitespace-nowrap text-sm uppercase font-bold p-4 px-0"
             to="/"
         >
-          <img v-if="config.LOGO_URL && closePanel" :src="config.LOGO_URL" alt="thumbnail">
-          <span v-else-if="!closePanel">{{config.PROJECT_NAME}}</span>
+          <img src="/public/logo.png" alt="thumbnail" class="w-[140px]">
+
+          <!--          <img v-if="config.LOGO_URL && closePanel" :src="config.LOGO_URL" alt="thumbnail">-->
+<!--          <span v-else-if="!closePanel">{{config.PROJECT_NAME}}</span>-->
         </router-link>
 
         <button
@@ -367,14 +369,14 @@
     <div v-if="userStore.showPanel.show" class="w-full flex md:hidden justify-center gap-x-4">
       <button
           @click="userStore.showPanel.update"
-          class="bg-orange-400 text-white active:bg-blueGray-600 text-md font-bold px-6 py-2 rounded shadow hover:shadow-lg outline-none focus:outline-none ease-linear transition-all duration-150"
+          class="whitespace-nowrap bg-orange-400 text-white active:bg-blueGray-600 text-md font-bold px-6 py-2 rounded shadow hover:shadow-lg outline-none focus:outline-none ease-linear transition-all duration-150"
           type="button"
       >
         Save Changes
       </button>
       <button
           @click="userStore.showPanel.close"
-          class="bg-gray-600 text-white active:bg-blueGray-600 text-md font-bold px-6 py-2 rounded shadow hover:shadow-lg outline-none focus:outline-none ease-linear transition-all duration-150"
+          class="whitespace-nowrap bg-gray-600 text-white active:bg-blueGray-600 text-md font-bold px-6 py-2 rounded shadow hover:shadow-lg outline-none focus:outline-none ease-linear transition-all duration-150"
           type="button"
       >
         Discard Changes

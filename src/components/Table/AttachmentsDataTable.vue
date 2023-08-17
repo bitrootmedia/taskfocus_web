@@ -10,7 +10,6 @@
           :key="key"
           :maxFiles="Number(10000000000)"
           ref="dropZoneRef"
-          :url="false"
           :uploadOnDrop="true"
           :multipleUpload="true"
           @sending="saveFiles"

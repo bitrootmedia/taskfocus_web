@@ -109,6 +109,10 @@
             </button>
           </div>
 
+          <div v-if="task?.is_closed && !isAuthOwner" class="mb-4">
+            <p class="font-bold text-lg text-red-500">THIS TASK IS CLOSED</p>
+          </div>
+
           <div class="mb-5" v-if="reminders?.length">
             <Reminders
                 :paginate="paginate"
@@ -539,9 +543,6 @@ const showPanel = computed(() => {
 })
 
 //Watch
-
-
-
 watch(showPanel, (val) => {
   if (val) {
     const obj = {

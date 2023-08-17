@@ -59,6 +59,14 @@
             </div>
 
             <div class="mb-2 sm:mb-4">
+              <div class="text-blueGray-500 inline-flex items-center">
+                <span class="w-[80px] inline-block">Closed:</span>
+
+                <Switch v-model:value="form.is_closed"/>
+              </div>
+            </div>
+
+            <div class="mb-2 sm:mb-4">
               <div v-if="!isEditDesc" class="text-blueGray-500 cursor-pointer w-fit" @click="isEditDesc = true">
                 <v-md-preview-html
                     v-if="project.description"
@@ -178,7 +186,7 @@
 
 <script setup>
 import {useRoute, useRouter} from 'vue-router'
-import {computed, ref} from "vue";
+import {computed, ref, watch} from "vue";
 import {catchErrors} from "../../utils";
 import {useProjectStore} from "../../store/project";
 import Loader from "./../../components/Loader/Loader.vue"
@@ -194,6 +202,7 @@ import CommentsDataTable from "../../components/Table/CommentsDataTable.vue";
 import LogsDataTable from "../../components/Table/LogsDataTable.vue";
 import VMdEditor, {xss} from '@kangc/v-md-editor';
 import OwnersModal from '../../components/Modals/OwnersModal.vue'
+import Switch from '../../components/Switch/Switch.vue'
 
 // ValidationRules
 const rules = {
@@ -216,6 +225,7 @@ let isEditTag = ref(false)
 let isEditProgress = ref(false)
 let showModal = ref(false)
 let showOwnersModal = ref(false)
+let firstLoad = ref(false)
 const project = ref({})
 const haveProjectAccess = ref([])
 const haveProjectAccessIds = ref([])
@@ -226,9 +236,18 @@ const form = ref({
   description: '',
   tag: '',
   progress: '',
+  is_closed: '',
 })
 
 const v$ = useVuelidate(rules, form)
+
+
+// Watch
+watch(() => form.value.is_closed, (newValue,oldValue) => {
+  if (firstLoad.value) return updateProject()
+
+  firstLoad.value = true
+})
 
 
 // Computed
@@ -283,10 +302,11 @@ const fetchProject = async () => {
       loading.value = true
       const resp = await projectStore.fetchProjectById({id})
       project.value = resp.data
-      form.value.title = resp.data.title
-      form.value.description = resp.data.description
-      form.value.tag = resp.data.tag
-      form.value.progress = resp.data.progress
+
+      Object.keys(resp.data).forEach((key) => {
+        form.value[key] = resp.data[key]
+      })
+
       backgroundSize.value = `${resp.data.progress || 0}% 100%`
     }
   } catch (e) {
@@ -326,6 +346,7 @@ const updateProject = async () => {
       title: form.value.title,
       description: form.value.description,
       tag: form.value.tag,
+      is_closed: form.value.is_closed,
       progress: form.value.progress || 0,
     }
     await projectStore.updateProject(data)
