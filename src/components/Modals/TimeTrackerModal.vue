@@ -71,7 +71,7 @@
 </template>
 
 <script setup>
-import {catchErrors, convertDateTime} from "../../utils";
+import {catchErrors, convertDateTimezone} from "../../utils";
 import {onBeforeUnmount, onMounted, ref, watch} from "vue";
 import Loader from "./../../components/Loader/Loader.vue"
 import {useTasksStore} from "../../store/tasks";
@@ -113,8 +113,8 @@ const form = ref({
 
 watch(() => props.showModal, (val) => {
   if (val) {
-    form.value.startedDate = convertDateTime(props.task.started_at)
-    form.value.stoppedDate = convertDateTime(props.task.stopped_at)
+    form.value.startedDate = convertDateTimezone(props.task.started_at)
+    form.value.stoppedDate = convertDateTimezone(props.task.stopped_at)
   }
 })
 

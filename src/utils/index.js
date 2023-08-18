@@ -12,7 +12,8 @@ const invalidToken = 'Invalid token.'
 
 
 export const convertHumanTime = (seconds) => {
-    return moment.utc(seconds * 1000).format('HH:mm:ss')
+    seconds = parseInt(seconds)
+    return Math.floor(moment.duration(seconds, 'seconds').asHours()) + 'h ' + moment.duration(seconds, 'seconds').minutes() + 'm ' + moment.duration(seconds, 'seconds').seconds() + 's';
 }
 
 export const convertDate = (date) => {
@@ -20,8 +21,11 @@ export const convertDate = (date) => {
 }
 
 export const convertDateTime = (date) => {
-    console.log(date,'date')
     return moment(date).format("YYYY-MM-DD HH:mm:ss")
+}
+
+export const convertDateTimezone = (date) => {
+    return moment(date).zone('+0000').format("YYYY-MM-DD HH:mm:ss")
 }
 
 export const convertTimeAgo = (date) => {
@@ -67,9 +71,9 @@ export const catchErrors = (e) => {
         cookies.remove('task_focus_user')
         delete axios.defaults.headers.common['Authorization'];
         toast.error(invalidToken);
-        setTimeout(()=>{
+        setTimeout(() => {
             window.location = '/'
-        },500)
+        }, 500)
         return
     }
 

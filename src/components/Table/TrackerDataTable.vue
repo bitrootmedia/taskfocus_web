@@ -42,10 +42,10 @@
                   <span v-else>-</span>
                 </td>
                 <td class="border-t-0 px-3 align-middle border-l-0 border-r-0 text-xs whitespace-nowrap p-4">
-                  {{ element.started_at ? convertDateTime(element.started_at) : '' }}
+                  {{ element.started_at ? convertDateTimezone(element.started_at) : '' }}
                 </td>
                 <td class="border-t-0 px-3 align-middle border-l-0 border-r-0 text-xs whitespace-nowrap p-4">
-                  {{ element.stopped_at ? convertDateTime(element.stopped_at) : '-' }}
+                  {{ element.stopped_at ? convertDateTimezone(element.stopped_at) : '-' }}
                 </td>
                 <td class="border-t-0 px-3 align-middle border-l-0 border-r-0 text-xs whitespace-nowrap p-4"
                     >
@@ -93,7 +93,7 @@ import Pagination from './../Pagination/Pagination.vue'
 import {computed, ref} from "vue";
 import {catchErrors} from "../../utils";
 import draggable from 'vuedraggable'
-import {convertDateTime} from "../../utils";
+import {convertDateTimezone} from "../../utils";
 import {useRouter} from "vue-router";
 import {usePaginate} from "../../composables/usePaginate";
 import {useToast} from "vue-toastification";
