@@ -304,6 +304,10 @@
       </div>
 
       <div class="mb-10">
+        <UrgentTasksDataTable :key="keyUrgent"/>
+      </div>
+
+      <div class="mb-10">
         <AttachmentsDataTable :task-id="task.id" :is-task="true"/>
       </div>
 
@@ -421,6 +425,7 @@ import TrackerDataTable from "../../components/Table/TrackerDataTable.vue";
 import moment from "moment";
 import Switch from '../../components/Switch/Switch.vue'
 import ResponsiblesModal from './../../components/Modals/ResponsiblesModal.vue'
+import UrgentTasksDataTable from "../../components/Table/UrgentTasksDataTable.vue";
 
 // ValidationRules
 const rules = {
@@ -481,6 +486,7 @@ const task = ref(null)
 const currentTask = ref(null)
 const key = ref(0)
 const keyTracker = ref(0)
+const keyUrgent = ref(0)
 const timer = ref(null)
 const backgroundSize = ref('0% 0%')
 const reminders = ref([])
@@ -556,6 +562,11 @@ watch(showPanel, (val) => {
   }
 })
 
+watch(() => form.value.is_urgent, (newValue,oldValue) => {
+  if (firstLoad.value) return updateTask(true)
+
+  firstLoad.value = true
+})
 
 // Methods
 const bgConvert = (progress)=>{
@@ -837,16 +848,13 @@ const updateTask = async (noLoad) => {
     isEditPanel.value = {...defaultEditValues}
     await hidePanel()
     await fetchTask(noLoad)
+    setTimeout(()=>{
+      keyUrgent.value += 1
+    },200)
   } catch (e) {
     catchErrors(e)
   }
 }
-
-watch(() => form.value.is_urgent, (newValue,oldValue) => {
-  if (firstLoad.value) return updateTask(true)
-
-  firstLoad.value = true
-})
 
 const fetchUsers = async () => {
   try {

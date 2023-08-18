@@ -7,6 +7,11 @@
     <Loader v-if="loading"/>
 
     <template v-else>
+
+      <div class="mb-8">
+        <UrgentTasksDataTable :is-task="true" :user-id="route.params.id"/>
+      </div>
+
       <div class="content mb-8">
         <h2 class="text-lg text-blueGray-600 font-semibold mb-2">Queue</h2>
         <DataTable :headers="headers">
@@ -166,6 +171,7 @@ import {useRoute, useRouter} from 'vue-router'
 import {useUsersTasksStore} from "../../store/users-tasks";
 import Loader from '../../components/Loader/Loader.vue'
 import DataTable from '../../components/Table/DataTable.vue'
+import UrgentTasksDataTable from '../../components/Table/UrgentTasksDataTable.vue'
 import Pagination from "./../../components/Pagination/Pagination.vue"
 import {usePaginate} from "../../composables/usePaginate";
 import draggable from 'vuedraggable'
