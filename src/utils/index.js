@@ -20,6 +20,7 @@ export const convertDate = (date) => {
 }
 
 export const convertDateTime = (date) => {
+    console.log(date,'date')
     return moment(date).format("YYYY-MM-DD HH:mm:ss")
 }
 

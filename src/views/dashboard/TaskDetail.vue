@@ -283,11 +283,13 @@
                   <span class="w-[80px] inline-block">Progress:</span>
 
                   <div @click="isEditPanel.progress = true" class="cursor-pointer flex items-center">
-                    <div class=" w-[150px] h-[20px] border-2 border-blueGray-300">
-                  <span class="progress bg-blueGray-500 block h-[16px]"
-                        :style="{width: `${task.progress || 0}%`}"></span>
+                    <div class=" w-[150px] h-[18px] bg-blueGray-200 rounded-md">
+                  <span class="progress block h-[18px] rounded-md flex items-center justify-center"
+                        :style="{width: `${task.progress || 0}%`, background: `${bgConvert(task.progress)}`}">
+
+                     <span class="text-[#fff] text-sm font-semibold" v-if="task.progress > 15">{{ task.progress || 0 }}%</span>
+                  </span>
                     </div>
-                    <span class="ml-2">{{ task.progress || 0 }}%</span>
                   </div>
                 </div>
                 <div v-else class="mb-2 w-80 range-slider">
@@ -556,6 +558,17 @@ watch(showPanel, (val) => {
 
 
 // Methods
+const bgConvert = (progress)=>{
+  if (progress < 25) return '#ACDF87'
+
+  if (progress < 50) return '#68BB59'
+
+  if (progress < 75) return '#5d9410'
+
+  if (progress >= 75) return '#3b831c'
+}
+
+
 const handleUploadImage = async (event, insertImage, files) => {
   try {
     const file = files[0]
