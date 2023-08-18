@@ -298,8 +298,10 @@ const changeDrag = async (e) => {
     const data = {
       id: e.moved.element.id,
       task_above_id: aboveItemId,
-      user_task_queue_id: belowItemId,
     }
+
+    if (props.projectId) data.project_id = props.projectId
+    else data.user_task_queue_id = belowItemId
 
     await tasksStore.updateOrder(data)
   } catch (e) {
