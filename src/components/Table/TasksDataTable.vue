@@ -12,24 +12,111 @@
         Create Task
       </button>
 
-      <div class="w-full flex gap-x-6">
-        <div class="relative w-full md:w-2/4">
-          <i class="fas fa-search mr-2 text-sm text-blueGray-300 absolute top-[12px] left-[8px]"/>
-          <input
-              v-model="filter.search.value"
-              type="text"
-              class="border-0 pl-8 pr-3 py-3 placeholder-blueGray-300 text-blueGray-600 bg-white rounded text-sm shadow focus:outline-none focus:ring w-full ease-linear transition-all duration-150"
-              placeholder="Search"
-          />
+      <div class="flex items-center flex-wrap gap-x-4 gap-y-3">
+        <div class="flex gap-x-6">
+          <div class="relative w-full ">
+            <i class="fas fa-search mr-2 text-sm text-blueGray-300 absolute top-[12px] left-[8px]"/>
+            <input
+                v-model="filter.search.value"
+                type="text"
+                class="border-0 pl-8 pr-3 py-3 placeholder-blueGray-300 text-blueGray-600 bg-white rounded text-sm shadow focus:outline-none focus:ring w-full ease-linear transition-all duration-150"
+                placeholder="Search by title"
+            />
+          </div>
+
+        </div>
+
+        <div>
+          <select v-model="form.status"
+                  class="border-0 px-3 py-3 text-blueGray-600 bg-white rounded text-sm shadow focus:outline-none focus:ring w-full ease-linear transition-all duration-150"
+          >
+            <option class="" value="" disabled selected>Select Status</option>
+            <option :value="status.label" v-for="(status) in statuses" :key="status.id">
+              {{ status.label }}
+            </option>
+          </select>
+        </div>
+
+        <div class="flex gap-x-6">
+          <div class="relative w-full ">
+            <i class="fas fa-search mr-2 text-sm text-blueGray-300 absolute top-[12px] left-[8px]"/>
+            <input
+                v-model="filter.projectSearch.value"
+                type="text"
+                class="border-0 pl-8 pr-3 py-3 placeholder-blueGray-300 text-blueGray-600 bg-white rounded text-sm shadow focus:outline-none focus:ring w-full ease-linear transition-all duration-150"
+                placeholder="Search by project"
+            />
+          </div>
+
+        </div>
+
+        <div>
+          <select v-model="form.owner"
+                  class="border-0 px-3 py-3 text-blueGray-600 bg-white rounded text-sm shadow focus:outline-none focus:ring w-full ease-linear transition-all duration-150"
+          >
+            <option class="" value="" disabled selected>Select Owner</option>
+            <option :value="user.id" v-for="(user) in users" :key="user.id">
+              {{user.first_name ? `${user.first_name} ${user.last_name}` : `${user.username}`}}
+            </option>
+          </select>
+        </div>
+
+        <div>
+          <select v-model="form.responsibleUser"
+                  class="border-0 px-3 py-3 text-blueGray-600 bg-white rounded text-sm shadow focus:outline-none focus:ring w-full ease-linear transition-all duration-150"
+          >
+            <option class="" value="" disabled selected>Select Responsible</option>
+            <option :value="user.id" v-for="(user) in users" :key="user.id">
+              {{user.first_name ? `${user.first_name} ${user.last_name}` : `${user.username}`}}
+            </option>
+          </select>
+        </div>
+
+        <div class="flex gap-x-6">
+          <div class="relative w-full ">
+            <i class="fas fa-search mr-2 text-sm text-blueGray-300 absolute top-[12px] left-[8px]"/>
+            <input
+                v-model="filter.tagSearch.value"
+                type="text"
+                class="border-0 pl-8 pr-3 py-3 placeholder-blueGray-300 text-blueGray-600 bg-white rounded text-sm shadow focus:outline-none focus:ring w-full ease-linear transition-all duration-150"
+                placeholder="Search by tag"
+            />
+          </div>
+
+        </div>
+
+        <div class="flex gap-x-6">
+          <div class="relative w-full ">
+            <i class="fas fa-search mr-2 text-sm text-blueGray-300 absolute top-[12px] left-[8px]"/>
+            <input
+                v-model="form.createdAt"
+                type="date"
+                class="border-0 pl-8 pr-3 py-3 placeholder-blueGray-300 text-blueGray-600 bg-white rounded text-sm shadow focus:outline-none focus:ring w-full ease-linear transition-all duration-150"
+                placeholder="Search by created at"
+            />
+          </div>
+        </div>
+
+        <div class="flex gap-x-6">
+          <div class="relative w-full ">
+            <i class="fas fa-search mr-2 text-sm text-blueGray-300 absolute top-[12px] left-[8px]"/>
+            <input
+                v-model="form.updatedAt"
+                type="date"
+                class="border-0 pl-8 pr-3 py-3 placeholder-blueGray-300 text-blueGray-600 bg-white rounded text-sm shadow focus:outline-none focus:ring w-full ease-linear transition-all duration-150"
+                placeholder="Search by updated at"
+            />
+          </div>
         </div>
 
       </div>
+
 
       <div>
         <div class="inline-flex items-center mr-6">
           <input
               id="hideClosed"
-              v-model="hideClosed"
+              v-model="form.hideClosed"
               type="checkbox"
               class="border-0 flex pl-8 pr-3 py-3 placeholder-blueGray-300 text-blueGray-600 rounded text-sm ease-linear transition-all duration-150 cursor-pointer"
               placeholder="Search"
@@ -38,10 +125,10 @@
             closed tasks</label>
         </div>
 
-        <div class="inline-flex items-center">
+        <div class="inline-flex items-center mr-6">
           <input
               id="showCurrentUser"
-              v-model="showCurrentUser"
+              v-model="form.showCurrentUser"
               type="checkbox"
               class="border-0 flex pl-8 pr-3 py-3 placeholder-blueGray-300 text-blueGray-600 rounded text-sm ease-linear transition-all duration-150 cursor-pointer"
               placeholder="Search"
@@ -49,6 +136,22 @@
           <label for="showCurrentUser"
                  class="text-md text-blueGray-500 font-medium cursor-pointer ml-2 whitespace-nowrap">Just mine</label>
         </div>
+
+        <div class="inline-flex items-center mr-6">
+          <input
+              id="urgent"
+              v-model="form.isUrgent"
+              type="checkbox"
+              class="border-0 flex pl-8 pr-3 py-3 placeholder-blueGray-300 text-blueGray-600 rounded text-sm ease-linear transition-all duration-150 cursor-pointer"
+              placeholder="Search"
+          />
+          <label for="urgent"
+                 class="text-md text-blueGray-500 font-medium cursor-pointer ml-2 whitespace-nowrap">Urgent tasks</label>
+        </div>
+      </div>
+
+      <div>
+        <span class="underline text-blueGray-500 cursor-pointer font-medium text-sm" @click="clearFilters">Clear all filters</span>
       </div>
     </div>
 
@@ -160,6 +263,29 @@ import {useRouter} from "vue-router";
 import {usePaginate} from "../../composables/usePaginate";
 import {useFilter} from "../../composables/useFilter";
 import {useCookies} from "vue3-cookies";
+import {useUserStore} from "../../store/user";
+
+const statuses = [
+  {id: 0, label: 'NONE'},
+  {id: 1, label: 'ON HOLD'},
+  {id: 2, label: 'OPEN'},
+  {id: 3, label: 'IN PROGRESS'},
+  {id: 4, label: 'IDEA'},
+  {id: 5, label: 'TO VERIFY'},
+  {id: 6, label: 'BLOCKER'},
+  {id: 7, label: 'DONE'}
+]
+
+const defaultValues = {
+  hideClosed: true,
+  showCurrentUser: false,
+  isUrgent: false,
+  status: '',
+  owner: '',
+  responsibleUser: '',
+  createdAt: '',
+  updatedAt: '',
+}
 
 const props = defineProps({
   projectId: {
@@ -181,15 +307,16 @@ const props = defineProps({
 })
 
 const tasksStore = useTasksStore()
+const usersStore = useUserStore()
 const router = useRouter()
 const {cookies} = useCookies();
 
 const isDragDisabled = false
 const loading = ref(false)
 const tasks = ref([])
+const users = ref([])
 const tempData = ref([])
-const hideClosed = ref(true)
-const showCurrentUser = ref(false)
+const form = ref({...defaultValues})
 
 
 // Watch
@@ -199,11 +326,7 @@ watch(() => props.haveProjectAccessIds, (newValue, oldValue) => {
   }
 })
 
-watch(hideClosed, (newValue, oldValue) => {
-  fetchTasks()
-})
-
-watch(showCurrentUser, (newValue, oldValue) => {
+watch(form.value, (newValue, oldValue) => {
   fetchTasks()
 })
 
@@ -248,10 +371,18 @@ const fetchTasks = async (label = null) => {
       pagination: paginate.pagination.value,
       query: paginate.query.value,
       search: filter.search.value,
+      tag: filter.tagSearch.value,
+      projectSearch: filter.projectSearch.value,
       id: props.projectId,
       sorting: label || "-updated_at",
-      isClosed: hideClosed.value,
-      responsible: showCurrentUser.value ? currentUser.value : null,
+      isClosed: form.value.hideClosed,
+      is_urgent: form.value.isUrgent,
+      status: form.value.status,
+      owner: form.value.owner,
+      responsibleUser: form.value.responsibleUser,
+      createdAt: form.value.createdAt,
+      updatedAt: form.value.updatedAt,
+      responsible: form.value.showCurrentUser ? currentUser.value : null,
     }
     const resp = await tasksStore.fetchTasks(options)
     tasks.value = resp.data.results
@@ -261,6 +392,21 @@ const fetchTasks = async (label = null) => {
     catchErrors(e)
   } finally {
     loading.value = false
+  }
+}
+
+const fetchUsers = async () => {
+  try {
+    const resp = await usersStore.fetchUsers()
+    users.value.push({
+      id: 0,
+      first_name: 'None',
+      last_name: '',
+      username: '',
+    })
+    users.value = [...users.value,...resp.data.results]
+  } catch (e) {
+    catchErrors(e)
   }
 }
 
@@ -309,6 +455,11 @@ const changeDrag = async (e) => {
   }
 }
 
+const clearFilters = ()=>{
+  form.value = {...defaultValues}
+  filter.resetAll()
+}
+
 const sorting = (label) => {
   fetchTasks(label)
 }
@@ -333,5 +484,6 @@ const filter = useFilter(tasks, fetchTasks)
 
 // Run Functions
 fetchTasks()
+fetchUsers()
 
 </script>

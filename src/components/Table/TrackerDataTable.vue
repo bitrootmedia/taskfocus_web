@@ -107,6 +107,10 @@ const props = defineProps({
     type: String,
     default: ''
   },
+  userId: {
+    type: String,
+    default: ''
+  },
   canEdit: {
     type: Boolean,
     default: false
@@ -158,6 +162,11 @@ const fetchTasksTracker = async (label = null) => {
       search: filter.search.value,
       id: props.taskId
     }
+
+    if (props.userId){
+      options.responsible = props.userId
+    }
+
     const resp = await tasksStore.fetchTasksTracker(options)
     tasks.value = resp.data.results
     paginate.updatePagination(resp)
