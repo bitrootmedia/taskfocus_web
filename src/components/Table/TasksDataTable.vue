@@ -20,7 +20,7 @@
                 v-model="filter.search.value"
                 type="text"
                 class="border-0 pl-8 pr-3 py-3 placeholder-blueGray-300 text-blueGray-600 bg-white rounded text-sm shadow focus:outline-none focus:ring w-full ease-linear transition-all duration-150"
-                placeholder="Search by title"
+                placeholder="Search by task"
             />
           </div>
 
@@ -89,10 +89,12 @@
           <div class="relative w-full ">
             <i class="fas fa-search mr-2 text-sm text-blueGray-300 absolute top-[12px] left-[8px]"/>
             <input
-                v-model="form.createdAt"
-                type="date"
+                v-model="form.createdAtAfter"
+                :type="typeAfter"
+                @focus="typeAfter='date'"
+                @blur="typeAfter='text'"
                 class="border-0 pl-8 pr-3 py-3 placeholder-blueGray-300 text-blueGray-600 bg-white rounded text-sm shadow focus:outline-none focus:ring w-full ease-linear transition-all duration-150"
-                placeholder="Search by created at"
+                placeholder="Created at after"
             />
           </div>
         </div>
@@ -101,10 +103,11 @@
           <div class="relative w-full ">
             <i class="fas fa-search mr-2 text-sm text-blueGray-300 absolute top-[12px] left-[8px]"/>
             <input
-                v-model="form.updatedAt"
-                type="date"
+                v-model="form.createdAtBefore"
+                :type="typeBefore"
+                @focus="typeBefore='date'"
                 class="border-0 pl-8 pr-3 py-3 placeholder-blueGray-300 text-blueGray-600 bg-white rounded text-sm shadow focus:outline-none focus:ring w-full ease-linear transition-all duration-150"
-                placeholder="Search by updated at"
+                placeholder="Created at before"
             />
           </div>
         </div>
@@ -283,8 +286,8 @@ const defaultValues = {
   status: '',
   owner: '',
   responsibleUser: '',
-  createdAt: '',
-  updatedAt: '',
+  createdAtAfter: '',
+  createdAtBefore: '',
 }
 
 const props = defineProps({
@@ -313,10 +316,21 @@ const {cookies} = useCookies();
 
 const isDragDisabled = false
 const loading = ref(false)
+const typeAfter = ref('text')
+const typeBefore = ref('text')
 const tasks = ref([])
 const users = ref([])
 const tempData = ref([])
-const form = ref({...defaultValues})
+const form = ref({
+  hideClosed: true,
+  showCurrentUser: false,
+  isUrgent: false,
+  status: '',
+  owner: '',
+  responsibleUser: '',
+  createdAtAfter: '',
+  createdAtBefore: '',
+})
 
 
 // Watch
@@ -326,9 +340,9 @@ watch(() => props.haveProjectAccessIds, (newValue, oldValue) => {
   }
 })
 
-watch(form.value, (newValue, oldValue) => {
+watch(()=>form.value, (newValue, oldValue) => {
   fetchTasks()
-})
+},{ deep: true })
 
 
 // Computed
@@ -380,8 +394,8 @@ const fetchTasks = async (label = null) => {
       status: form.value.status,
       owner: form.value.owner,
       responsibleUser: form.value.responsibleUser,
-      createdAt: form.value.createdAt,
-      updatedAt: form.value.updatedAt,
+      createdAtAfter: form.value.createdAtAfter,
+      createdAtBefore: form.value.createdAtBefore,
       responsible: form.value.showCurrentUser ? currentUser.value : null,
     }
     const resp = await tasksStore.fetchTasks(options)
@@ -456,7 +470,16 @@ const changeDrag = async (e) => {
 }
 
 const clearFilters = ()=>{
-  form.value = {...defaultValues}
+  form.value = {
+    hideClosed: true,
+    showCurrentUser: false,
+    isUrgent: false,
+    status: '',
+    owner: '',
+    responsibleUser: '',
+    createdAtAfter: '',
+    createdAtBefore: '',
+}
   filter.resetAll()
 }
 
