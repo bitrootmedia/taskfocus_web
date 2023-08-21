@@ -23,6 +23,8 @@ export const useTasksStore = defineStore('tasks', {
             if (payload?.query) url += `&${payload.query}`
             if (payload?.sorting) url += `&ordering=${payload.sorting}`
             if (payload?.search) url += `&title=${payload.search}`
+            if (payload?.user) url += `&user=${payload.user}`
+
             return await axios.get(url)
         },
 
@@ -36,13 +38,20 @@ export const useTasksStore = defineStore('tasks', {
             let url = `${config.BASE_API_URL}/tasks?`
 
             if (payload?.is_urgent) url += `is_urgent=true`
-            if (payload?.id) url += `project=${payload.id}`
+            if (payload?.id) url += `&project=${payload.id}`
             if (payload?.query) url += `&${payload.query}`
             if (payload?.sorting) url += `&ordering=${payload.sorting}`
             if (payload?.search) url += `&title=${payload.search}`
+            if (payload?.tag) url += `&tag=${payload.tag}`
+            if (payload?.projectSearch) url += `&project__title=${payload.projectSearch}`
             if (payload?.isClosed) url += `&is_closed=false`
             if (payload?.responsible) url += `&responsible=${payload.responsible.pk}`
+            if (payload?.responsibleUser) url += `&responsible=${payload.responsibleUser}`
             if (payload?.userId) url += `&user=${payload.userId}`
+            if (payload?.owner) url += `&owner=${payload.owner}`
+            if (payload?.createdAtAfter) url += `&created_at_after=${payload.createdAtAfter}`
+            if (payload?.createdAtBefore) url += `&created_at_before=${payload.createdAtBefore}`
+            if (payload.status && payload.status !== 'NONE') url += `&status=${payload.status}`
 
             return await axios.get(url)
         },

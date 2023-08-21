@@ -4,12 +4,25 @@
     <h2 class="text-xl font-bold inline-flex text-blueGray-800 mb-6" v-if="currentUser">{{ currentUser.first_name }}
       {{ currentUser.last_name }}</h2>
 
+    <div v-if="currentTask" class="working-task mt-4">
+      Currently working on:
+      <span class="underline cursor-pointer text-blue-500" @click="toLinkPage('task')">{{ currentTask.title }}</span>
+      <template v-if="currentTask.project?.title">
+        in project
+        <span class="underline cursor-pointer text-blue-500" @click="toLink('project')">{{currentTask.project.title}}</span>
+      </template>
+    </div>
+
     <Loader v-if="loading"/>
 
     <template v-else>
 
       <div class="mb-8">
         <UrgentTasksDataTable :is-task="true" :user-id="route.params.id"/>
+      </div>
+
+      <div  class="mb-8">
+        <TrackerDataTable :hide-create="true" :user-id="currentUser.id"/>
       </div>
 
       <div class="content mb-8">
@@ -172,6 +185,7 @@ import {useUsersTasksStore} from "../../store/users-tasks";
 import Loader from '../../components/Loader/Loader.vue'
 import DataTable from '../../components/Table/DataTable.vue'
 import UrgentTasksDataTable from '../../components/Table/UrgentTasksDataTable.vue'
+import TrackerDataTable from '../../components/Table/TrackerDataTable.vue'
 import Pagination from "./../../components/Pagination/Pagination.vue"
 import {usePaginate} from "../../composables/usePaginate";
 import draggable from 'vuedraggable'
@@ -196,6 +210,7 @@ const userTasks = ref([])
 const projectsAccess = ref([])
 const tasksAccess = ref([])
 const currentUser = ref(null)
+const currentTask = ref(null)
 
 
 // Computed
@@ -220,6 +235,10 @@ const headersTask = computed(() => {
 
 
 // Methods
+const toLinkPage = (type)=>{
+  if (type === 'task') return router.push(`/dashboard/task/${task.value.id}`)
+  else return router.push(`/dashboard/project/${task.value.project.id}`)
+}
 const toLink = (link) => {
   router.push(link)
 }
@@ -339,6 +358,17 @@ const fetchProjectAccess = async () => {
   }
 }
 
+const fetchCurrentTask = async()=>{
+  try{
+    const resp = await tasksStore.fetchWorkingTask()
+    if (resp.data && Object.keys(resp.data).length){
+      currentTask.value = resp.data
+    }
+  }catch (e) {
+    catchErrors(e)
+  }
+}
+
 // Composables
 const options = {
   pageSize: config.USER_TASKS_QUEUES_LIST
@@ -351,4 +381,5 @@ fetchUsersTask()
 fetchUser()
 fetchTasksAccess()
 fetchProjectAccess()
+fetchCurrentTask()
 </script>

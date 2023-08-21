@@ -2,7 +2,7 @@
   <div class="content mt-4">
     <h2 class="font-bold text-xl block text-blueGray-700 mb-4">Time Tracker</h2>
 
-    <DataTable :headers="headers">
+    <DataTable :headers="headers" @sorting="sorting">
       <template v-slot:tableBody>
         <tr v-if="loading">
           <td :colspan="headers.length">
@@ -107,6 +107,10 @@ const props = defineProps({
     type: String,
     default: ''
   },
+  userId: {
+    type: String,
+    default: ''
+  },
   canEdit: {
     type: Boolean,
     default: false
@@ -128,13 +132,13 @@ const tasks = ref([])
 // Computed
 const headers = computed(() => {
   const list = [
-    {id: 1, label: 'User', sorting: false},
-    {id: 2, label: 'Task started',  sorting: false},
-    {id: 3, label: 'Task stopped',  sorting: false},
-    {id: 4, label: 'Total time', sorting: false},
+    {id: 1, label: 'User', sorting: true, sortLabel: 'user'},
+    {id: 2, label: 'Task started', sorting: true, sortLabel: 'started_at'},
+    {id: 3, label: 'Task stopped', sorting: true, sortLabel: 'stopped_at'},
+    {id: 4, label: 'Total time', sorting: true, sortLabel: 'total_time'},
   ]
 
-  const taskObj = {id: 5, label: 'Task', sorting: false}
+  const taskObj = {id: 5, label: 'Task', sorting: true, sortLabel: 'task'}
   const taskEdit = {id: 6, label: 'Action', sorting: false}
   if (!props.taskId) list.splice(1, 0, taskObj)
 
@@ -156,8 +160,12 @@ const fetchTasksTracker = async (label = null) => {
       pagination: paginate.pagination.value,
       query: paginate.query.value,
       search: filter.search.value,
+      sorting: label || "-updated_at",
       id: props.taskId
     }
+
+    if (props.userId) options.user = props.userId
+
     const resp = await tasksStore.fetchTasksTracker(options)
     tasks.value = resp.data.results
     paginate.updatePagination(resp)
@@ -170,6 +178,10 @@ const fetchTasksTracker = async (label = null) => {
 
 const toLink = (item) => {
   router.push(`/dashboard/task/${item.id}`)
+}
+
+const sorting = (label) => {
+  fetchTasksTracker(label)
 }
 
 // Composables
