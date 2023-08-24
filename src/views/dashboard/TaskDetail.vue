@@ -109,7 +109,7 @@
             </button>
           </div>
 
-          <div v-if="task?.is_closed && !isAuthOwner" class="mb-4">
+          <div v-if="task?.is_closed" class="mb-4">
             <p class="font-bold text-lg text-red-500">THIS TASK IS CLOSED</p>
           </div>
 

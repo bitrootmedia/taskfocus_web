@@ -24,11 +24,14 @@ export const useNotifications = defineStore('notifications', {
 
             if (payload?.status) url += `&status=${payload.status}`
             if (payload?.query) url += `&${payload.query}`
+            if (payload?.id) url += `&id=${payload.id}`
 
             const resp = await axios.get(url)
 
-            if (payload.isNeedUpdate && this.count !== 0) this.count = this.count - 1
-            if (payload.status ) this.count = resp.data.count
+            if (!payload?.id){
+                if (payload.isNeedUpdate && this.count !== 0) this.count = this.count - 1
+                if (payload.status ) this.count = resp.data.count
+            }
 
             return resp
         },
