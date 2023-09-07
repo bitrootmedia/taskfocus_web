@@ -9,6 +9,7 @@
       <Dropzone
           :key="key"
           :maxFiles="Number(10000000000)"
+          :maxFileSize="200000000"
           ref="dropZoneRef"
           :uploadOnDrop="true"
           :multipleUpload="true"
@@ -250,6 +251,8 @@ const saveFiles = async (e) => {
     for (var i = 0; i < e.length; i++) {
       formData.append(e[i].name, e[i]);
     }
+
+    console.log(e,'e')
 
     if (props.projectId) {
       formData.append('project_id', props.projectId);
