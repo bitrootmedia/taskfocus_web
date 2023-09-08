@@ -56,6 +56,7 @@
                 <td v-if="canEdit" class="border-t-0 px-3 align-middle border-l-0 border-r-0 text-xs whitespace-nowrap p-4"
                     >
                   <button
+                      v-if="isOwner(element)"
                       class="bg-blueGray-800 whitespace-nowrap text-white active:bg-blueGray-600 text-sm font-bold px-2 sm:px-4 py-2 rounded shadow hover:shadow-lg outline-none focus:outline-none ease-linear transition-all duration-150"
                       type="button"
                       @click="openModal(element)"
@@ -101,6 +102,7 @@ import {useTasksStore} from "../../store/tasks";
 import {useFilter} from "../../composables/useFilter";
 import {convertHumanTime} from "../../utils";
 import TimeTrackerModal from '../Modals/TimeTrackerModal.vue'
+import {useCookies} from "vue3-cookies";
 
 const props = defineProps({
   taskId: {
@@ -121,10 +123,11 @@ const props = defineProps({
 const tasksStore = useTasksStore()
 const toast = useToast()
 const router = useRouter()
+const {cookies} = useCookies();
 
 const isDragDisabled = true
 const loading = ref(false)
-const showEditModal = ref(false)
+let showEditModal = ref(false)
 const current = ref(null)
 const tasks = ref([])
 
@@ -147,7 +150,16 @@ const headers = computed(() => {
   return list
 })
 
+
 // Methods
+const isOwner = (element)=>{
+  if (!cookies.get('task_focus_user')) return ''
+
+  const user = cookies.get('task_focus_user')
+
+  return element.user.id === user.pk
+}
+
 const openModal = (item)=>{
   current.value = item
   showEditModal.value = true

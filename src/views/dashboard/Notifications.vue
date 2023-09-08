@@ -5,7 +5,7 @@
       <div class="header mb-4">
         <h2 class="font-bold text-xl block text-blueGray-700">Notifications</h2>
 
-        <div class="flex items-center mt-4">
+        <div v-if="!route.query.id" class="flex items-center mt-4">
           <input
               id="hideClosed"
               v-model="hideSeen"
@@ -90,9 +90,11 @@ import {convertTimeAgo} from "../../utils";
 import {usePaginate} from "../../composables/usePaginate";
 import {useNotifications} from "../../store/notifications";
 import Pagination from './../../components/Pagination/Pagination.vue'
+import {useRoute} from "vue-router";
 
 
 const notificationsStore = useNotifications()
+const route = useRoute()
 
 //State
 const loading = ref(true)
@@ -103,7 +105,9 @@ const notifications = ref([])
 
 //Watch
 watch(hideSeen,()=>{
-  fetchNotifications()
+  if (!route.query.id){
+    fetchNotifications()
+  }
 })
 
 
@@ -128,8 +132,11 @@ const fetchNotifications = async (isNeedUpdate = null) => {
       pagination: paginate.pagination.value,
       query: paginate.query.value,
       status: hideSeen.value ? 'UNREAD' : '',
+      id: route.query?.id || null,
       isNeedUpdate,
     }
+
+    if (route.query?.id) delete options.status
 
     const resp = await notificationsStore.fetchNotifications(options)
     notifications.value = resp.data.results
