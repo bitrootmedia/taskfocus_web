@@ -107,6 +107,13 @@
                 type="button"
             >Add Reminder
             </button>
+
+            <button
+                @click="generateTag"
+                class="mt-2 bg-blueGray-800 whitespace-nowrap text-white active:bg-blueGray-600 text-sm font-bold px-2 sm:px-4 py-2 rounded shadow hover:shadow-lg outline-none focus:outline-none ease-linear transition-all duration-150"
+                type="button"
+            >Tag ID Generator
+            </button>
           </div>
 
           <div v-if="task?.is_closed" class="mb-4">
@@ -572,6 +579,13 @@ const bgConvert = (progress)=>{
   if (progress < 75) return '#5d9410'
 
   if (progress >= 75) return '#3b831c'
+}
+
+const generateTag = ()=>{
+  const tag = Math.random().toString(36).slice(2, 7).toUpperCase();
+  navigator.clipboard.writeText(tag)
+
+  toast.success("New tag id generated and copied");
 }
 
 
