@@ -36,6 +36,7 @@
           <button
               v-if="item.status === 'UNREAD'"
               @click="markAsRead(item.id)"
+              :disabled="loading"
               class="bg-yellow-600 text-white active:bg-blueGray-600 text-sm font-bold px-4 py-2 rounded shadow hover:shadow-lg outline-none focus:outline-none ease-linear transition-all duration-150"
               type="button"
           >

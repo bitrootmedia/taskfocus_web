@@ -34,6 +34,7 @@
             <button
                 v-if="!task?.is_closed"
                 @click="toggleTask(currentTask?.id === task?.id ? 'stop' : 'work')"
+                :disabled="btnLoad"
                 :class="[currentTask?.id === task?.id ? 'bg-orange-400' : 'bg-blueGray-800']"
                 class="mt-2  whitespace-nowrap text-white active:bg-blueGray-600 text-sm font-bold px-2 sm:px-4 py-2 rounded shadow hover:shadow-lg outline-none focus:outline-none ease-linear transition-all duration-150"
                 type="button"
@@ -44,6 +45,7 @@
             <button
                 v-if="isAuthOwner && task.is_closed"
                 @click="uncloseTask"
+                :disabled="btnLoad"
                 class="mt-2 bg-blueGray-800 whitespace-nowrap text-white active:bg-blueGray-600 text-sm font-bold px-2 sm:px-4 py-2 rounded shadow hover:shadow-lg outline-none focus:outline-none ease-linear transition-all duration-150"
                 type="button"
             >
@@ -94,6 +96,7 @@
             <button
                 v-if="showBtn"
                 @click="updateMyQueue"
+                :disabled="btnLoad"
                 :class="[isAuthQueue ? 'bg-orange-400' : 'bg-blueGray-800']"
                 class="mt-2 whitespace-nowrap text-white active:bg-blueGray-600 text-sm font-bold px-2 sm:px-4 py-2 rounded shadow hover:shadow-lg outline-none focus:outline-none ease-linear transition-all duration-150"
                 type="button"
@@ -110,6 +113,7 @@
 
             <button
                 @click="generateTag"
+                :disabled="btnLoad"
                 class="mt-2 bg-blueGray-800 whitespace-nowrap text-white active:bg-blueGray-600 text-sm font-bold px-2 sm:px-4 py-2 rounded shadow hover:shadow-lg outline-none focus:outline-none ease-linear transition-all duration-150"
                 type="button"
             >Tag ID Generator
@@ -473,6 +477,7 @@ const router = useRouter()
 const toast = useToast()
 const {cookies} = useCookies();
 
+const btnLoad = ref(false)
 const loading = ref(false)
 const loadingRem = ref(false)
 const showBtn = ref(false)
@@ -653,6 +658,7 @@ const updateMyQueue = () => {
 
 const assignUser = async () => {
   try {
+    btnLoad.value = true
     const user = cookies.get('task_focus_user')
     const data = {
       task: task.value.id,
@@ -664,6 +670,8 @@ const assignUser = async () => {
     updateTasksQueue()
   } catch (e) {
     catchErrors(e)
+  }finally {
+    btnLoad.value = false
   }
 }
 
@@ -674,6 +682,7 @@ const updateResponsibles = (userId)=>{
 
 const removeUser = async () => {
   try {
+    btnLoad.value = true
     const user = cookies.get('task_focus_user')
 
     const data = {
@@ -685,6 +694,8 @@ const removeUser = async () => {
     updateTasksQueue()
   } catch (e) {
     catchErrors(e)
+  }finally {
+    btnLoad.value = false
   }
 }
 
@@ -698,6 +709,7 @@ const updateSlider = (e) => {
 }
 const toggleTask = async (type) => {
   try {
+    btnLoad.value = true
     if (type === 'stop') currentTask.value = null
     const resp = type === 'stop' ? await taskStore.stopTask({id: task.value.id}) : await taskStore.startTask({id: task.value.id})
 
@@ -707,6 +719,8 @@ const toggleTask = async (type) => {
     keyTracker.value += 1
   } catch (e) {
     catchErrors(e)
+  }finally {
+    btnLoad.value = false
   }
 }
 
@@ -731,11 +745,14 @@ const closeTask = async (notes) => {
 
 const uncloseTask = async () => {
   try {
+    btnLoad.value = true
     const resp = await taskStore.unCloseTask({id: task.value.id})
     await toast.success(resp.data.message);
     await fetchTask()
   } catch (e) {
     catchErrors(e)
+  }finally {
+    btnLoad.value = false
   }
 }
 

@@ -56,6 +56,7 @@
             <div class="relative w-full">
               <button
                   @click="updateTracker"
+                  :disabled="btnLoad"
                   class="mt-2 bg-blueGray-800 whitespace-nowrap text-white active:bg-blueGray-600 text-sm font-bold px-2 sm:px-4 py-2 rounded shadow hover:shadow-lg outline-none focus:outline-none ease-linear transition-all duration-150"
                   type="button"
               >
@@ -78,6 +79,7 @@ import {useTasksStore} from "../../store/tasks";
 import {useCookies} from "vue3-cookies";
 import {useToast} from "vue-toastification";
 
+const btnLoad = ref(false);
 const checkIn = ref(null);
 const checkOut = ref(null);
 
@@ -121,6 +123,7 @@ watch(() => props.showModal, (val) => {
 // Methods
 const updateTracker = async () => {
   try {
+    btnLoad.value = true
     const data = {
       id: props.task.id,
       stopped_at: form.value.stoppedDate,
@@ -134,6 +137,8 @@ const updateTracker = async () => {
 
   } catch (e) {
     catchErrors(e)
+  }finally {
+    btnLoad.value = false
   }
 }
 

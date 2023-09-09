@@ -23,6 +23,7 @@
           <h4 class="text-lg font-semibold text-blueGray-700">{{ item.notification.tag }}</h4>
           <button
               @click="markAsRead(item.id)"
+              :disabled="btnLoad"
               class="bg-yellow-600 text-white active:bg-blueGray-600 text-sm font-bold px-4 py-2 rounded shadow hover:shadow-lg outline-none focus:outline-none ease-linear transition-all duration-150"
               type="button"
           >
@@ -92,6 +93,7 @@ const notificationsStore = useNotifications()
 
 //State
 const componentRef = ref()
+const btnLoad = ref(false)
 const show = ref(false)
 const readMore = ref([])
 const notifications = ref([])
@@ -147,10 +149,13 @@ const readMoreText = (index) => {
 
 const markAsRead = async (id) => {
   try {
+    btnLoad.value = true
     await notificationsStore.markAsRead({id})
     await fetchNotifications()
   } catch (e) {
     catchErrors(e)
+  }finally {
+    btnLoad.value = false
   }
 }
 

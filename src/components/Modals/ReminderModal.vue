@@ -77,6 +77,7 @@
             <div class="relative w-full">
               <button
                   @click="createReminder"
+                  :disabled="btnLoad"
                   class="mt-2 bg-blueGray-800 whitespace-nowrap text-white active:bg-blueGray-600 text-sm font-bold px-2 sm:px-4 py-2 rounded shadow hover:shadow-lg outline-none focus:outline-none ease-linear transition-all duration-150"
                   type="button"
               >
@@ -101,6 +102,7 @@ import {useToast} from "vue-toastification";
 import {required} from "@vuelidate/validators";
 import {useVuelidate} from "@vuelidate/core";
 
+const btnLoad = ref(false);
 const checkIn = ref(null);
 const checkOut = ref(null);
 
@@ -166,6 +168,7 @@ const createReminder = async () => {
     const isValid = await v$.value.$validate();
 
     if (isValid) {
+      btnLoad.value = true
       const data = {
         task: props.task.id,
         reminder_date: form.value.date,
@@ -180,6 +183,8 @@ const createReminder = async () => {
     }
   } catch (e) {
     catchErrors(e)
+  }finally {
+    btnLoad.value = false
   }
 }
 
