@@ -28,6 +28,7 @@
                     :class="{'bg-red-600': haveTaskAccessIds.includes(user.id), 'bg-emerald-600':!haveTaskAccessIds.includes(user.id)}"
                     class="text-white active:bg-blueGray-600 text-sm font-bold px-3 py-1 rounded shadow hover:shadow-lg outline-none focus:outline-none ease-linear transition-all duration-150"
                     type="button"
+                    :disabled="btnLoad"
                     @click="haveTaskAccessIds.includes(user.id) ? removeUser(user) : assignUser(user)"
                 >
                   {{ haveTaskAccessIds.includes(user.id) ? 'Remove' : 'Assign' }}
@@ -85,6 +86,7 @@ const {cookies} = useCookies();
 const toast = useToast()
 
 // State
+const btnLoad = ref(false)
 const loading = ref(false)
 const componentModalRef = ref()
 
@@ -92,6 +94,7 @@ const componentModalRef = ref()
 // Methods
 const assignUser = async (user) => {
   try {
+    btnLoad.value = true
     const data = {
       task: props.task.id,
       user: user.id
@@ -102,17 +105,22 @@ const assignUser = async (user) => {
     emit('update')
   } catch (e) {
     catchErrors(e)
+  }finally {
+    btnLoad.value = false
   }
 }
 
 const removeUser = async (user)=>{
   try {
+    btnLoad.value = true
     const findItem = props.haveTaskAccess.find((item)=>item.user.id === user.id)
     await taskStore.removeUserFromTask({id: findItem.id})
     toast.success("Successfully removed");
     emit('update')
   } catch (e) {
     catchErrors(e)
+  }finally {
+    btnLoad.value = false
   }
 }
 

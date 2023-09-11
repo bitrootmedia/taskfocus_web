@@ -88,6 +88,7 @@
           <div v-if="isEditTitle || isEditDesc || isEditTag || isEditProgress" class="flex gap-x-4">
             <button
                 @click="updateProject"
+                :disabled="btnLoad"
                 class="mt-2 bg-blueGray-800 text-white active:bg-blueGray-600 text-md font-bold px-6 py-2 rounded shadow hover:shadow-lg outline-none focus:outline-none ease-linear transition-all duration-150"
                 type="button"
             >
@@ -218,6 +219,7 @@ const userStore = useUserStore()
 const {cookies} = useCookies();
 
 // State
+const btnLoad = ref(false)
 const loading = ref(false)
 let isEditTitle = ref(false)
 let isEditDesc = ref(false)
@@ -341,6 +343,7 @@ const fetchProjectAccess = async () => {
 
 const updateProject = async () => {
   try {
+    btnLoad.value = true
     const data = {
       id: route.params.id,
       title: form.value.title,
@@ -358,6 +361,8 @@ const updateProject = async () => {
     isEditProgress.value = false
   } catch (e) {
     catchErrors(e)
+  }finally {
+    btnLoad.value = false
   }
 }
 

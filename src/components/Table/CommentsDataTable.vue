@@ -27,6 +27,7 @@
         <div class="mt-3 flex gap-x-2">
           <button
               @click="sendComment"
+              :disabled="btnLoad"
               class="bg-blueGray-800 text-white active:bg-blueGray-600 text-sm font-bold px-6 py-3 rounded shadow hover:shadow-lg outline-none focus:outline-none ease-linear transition-all duration-150"
               type="submit"
           >
@@ -128,6 +129,7 @@
                 <div v-if="editCommentsIds.includes(comment.id)" class="flex gap-x-3">
                   <button
                       @click="updateComment(comment)"
+                      :disabled="btnLoad"
                       class="bg-blueGray-800 text-white active:bg-blueGray-600 text-sm font-bold px-3 py-1 rounded shadow hover:shadow-lg outline-none focus:outline-none ease-linear transition-all duration-150"
                       type="button"
                   >
@@ -227,6 +229,7 @@ const router = useRouter()
 const route = useRoute()
 const {cookies} = useCookies();
 
+const btnLoad = ref(false)
 const loading = ref(false)
 let writeComment = ref(false)
 const domain = ref(null)
@@ -288,6 +291,7 @@ const resetEditComment = (comment) => {
 
 const updateComment = async (comment) => {
   try {
+    btnLoad.value = true
     const data = {
       id: comment.id,
       content: comment.content,
@@ -331,6 +335,7 @@ const fetchComments = async (label = null) => {
     catchErrors(e)
   } finally {
     loading.value = false
+    btnLoad.value = false
   }
 }
 
@@ -351,6 +356,7 @@ const sendComment = async (e) => {
   try {
     const isValid = await v$.value.$validate();
     if (isValid) {
+      btnLoad.value = true
       const data = {
         content: message.value,
         project: props.projectId,
@@ -366,6 +372,7 @@ const sendComment = async (e) => {
     catchErrors(e)
   } finally {
     writeComment.value = false
+    btnLoad.value = false
   }
 }
 
