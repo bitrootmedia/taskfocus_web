@@ -90,18 +90,33 @@
                       <template v-else>-</template>
                     </span>
                 </td>
-                <td class="border-t-0 px-3 align-middle border-l-0 border-r-0 text-xs whitespace-nowrap p-4"
+                <td class="border-t-0 px-3 align-middle border-l-0 border-r-0 text-xs whitespace-nowrap flex p-4 gap-x-2"
                     width="15%">
                   <button
                       class="bg-blueGray-800 whitespace-nowrap text-white active:bg-blueGray-600 text-sm font-bold px-2 sm:px-4 py-3 rounded shadow hover:shadow-lg outline-none focus:outline-none ease-linear transition-all duration-150"
                       type="button"
                       @click="downloadTemplate(element.file_path)"> Download
                   </button>
+                  <button
+                      v-if="isMediaOwner(element)"
+                      @click="openDeleteModal(element.id)"
+                      class="bg-red-500 whitespace-nowrap text-white active:bg-blueGray-600 text-sm font-bold px-2 sm:px-4 py-3 rounded shadow hover:shadow-lg outline-none focus:outline-none ease-linear transition-all duration-150"
+                      type="button"
+                  >
+                    Delete
+                  </button>
                 </td>
               </tr>
             </template>
           </draggable>
         </template>
+
+        <ConfirmDeleteModal
+            :show-modal="confirmModal"
+            :active-id="activeId"
+            @close="confirmModal = false"
+            @update="updateDeleteMedia"
+        />
 
 
       </template>
@@ -139,6 +154,7 @@ import 'dropzone-vue/dist/dropzone-vue.common.css';
 import {useToast} from "vue-toastification";
 import {useAttachmentsStore} from "../../store/attachments";
 import AttachmentMediaModal from "../Modals/AttachmentMediaModal.vue";
+import ConfirmDeleteModal from './../Modals/ConfirmDeleteModal.vue'
 
 const props = defineProps({
   projectId: {
@@ -166,6 +182,8 @@ const {cookies} = useCookies();
 
 const isDragDisabled = true
 const loading = ref(false)
+const confirmModal = ref(false)
+const activeId = ref(null)
 const popUp = ref(false)
 const activeSrc = ref({
   isAuth: false
@@ -203,13 +221,32 @@ watch(popUp, (val) => {
 
 
 // Methods
-const downloadTemplate = async (url, title) => {
+const openDeleteModal = (id) => {
+  confirmModal.value = true
+  activeId.value = id
+}
 
+const downloadTemplate = async (url, title) => {
   const link = document.createElement('a');
   link.href = url;
   link.target = '_blank';
   link.download = title;
   link.click();
+}
+
+const isMediaOwner = (media)=>{
+  const user = cookies.get('task_focus_user')
+  return user.pk === media?.owner?.id
+}
+
+const updateDeleteMedia = async(id)=>{
+  try{
+    await deleteMedia(id)
+  }catch (e) {}
+  finally {
+    activeId.value = null
+    confirmModal.value = false
+  }
 }
 
 const openModal = (element) => {
@@ -251,8 +288,6 @@ const saveFiles = async (e) => {
     for (var i = 0; i < e.length; i++) {
       formData.append(e[i].name, e[i]);
     }
-
-    console.log(e,'e')
 
     if (props.projectId) {
       formData.append('project_id', props.projectId);
