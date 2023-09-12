@@ -121,8 +121,10 @@ const updateUsers = async () => {
 
 
 const update = async (user) => {
-  emit('update', user.id)
-  emit('close')
+  await emit('update', user.id)
+  setTimeout(()=>{
+     emit('close')
+  },500)
 }
 
 const handleClick = (e) => {
