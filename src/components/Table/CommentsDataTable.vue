@@ -24,6 +24,7 @@
           </v-md-editor>
         </div>
 
+
         <div class="mt-3 flex gap-x-2">
           <button
               @click="sendComment"
@@ -119,9 +120,7 @@
                              height="300px">
                 </v-md-editor>
 
-                <v-md-preview-html v-else
-                                   :html="xss.process(VMdEditor.vMdParser.themeConfig.markdownParser.render(comment.content))"
-                                   preview-class="vuepress-markdown-body"></v-md-preview-html>
+                <v-md-preview v-else :text="comment.content"></v-md-preview>
               </div>
 
             <div class="flex gap-x-3 items-center mt-2">
@@ -179,7 +178,7 @@ import {useCommentsStore} from "../../store/comments";
 import {useToast} from "vue-toastification";
 import {useVuelidate} from '@vuelidate/core'
 import {required} from '@vuelidate/validators'
-import VMdEditor, {xss} from '@kangc/v-md-editor';
+import VMdEditor from '@kangc/v-md-editor';
 import {useCookies} from "vue3-cookies";
 import config from '../../config'
 import {watch} from "vue";
@@ -254,7 +253,6 @@ const reply = (comment)=>{
   const textarea = document.getElementsByTagName('textarea')
   if (textarea) textarea[0].focus()
 }
-
 
 const editComment = (comment) => {
   editCommentsIds.value = [...editCommentsIds.value, comment.id]
@@ -362,6 +360,7 @@ const sendComment = async (e) => {
         project: props.projectId,
         task: props.taskId,
       }
+
       await commentsStore.createComments(data)
       await toast.success("Comment created");
       message.value = ''

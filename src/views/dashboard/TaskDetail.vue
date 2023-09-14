@@ -185,9 +185,7 @@
                   <div @click="isEditPanel.description = true"
                        :class="[`${!isEditPanel.description ? 'inline-flex' : 'flex w-full'}`]">
                     <template v-if="!isEditPanel.description" class="w-full">
-                      <v-md-preview-html
-                          :html="xss.process(VMdEditor.vMdParser.themeConfig.markdownParser.render(task.description))"
-                          preview-class="vuepress-markdown-body" class="cursor-pointer"></v-md-preview-html>
+                      <v-md-preview :text="task.description" class="cursor-pointer"></v-md-preview>
                     </template>
 
                     <div v-else class="w-full mt-[10px]">
@@ -419,7 +417,7 @@ import {useUserStore} from "../../store/user";
 import {useCookies} from "vue3-cookies";
 import UserTaskModal from "../../components/Modals/UserTaskModal.vue";
 import ConfirmCloseModal from "../../components/Modals/ConfirmCloseModal.vue";
-import VMdEditor, {xss} from '@kangc/v-md-editor';
+import VMdEditor from '@kangc/v-md-editor';
 import {useProjectStore} from "../../store/project";
 import UserQueueModal from "../../components/Modals/UserQueueModal.vue";
 import {useUsersTasksStore} from "../../store/users-tasks";
