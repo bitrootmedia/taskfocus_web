@@ -248,6 +248,8 @@ const fetchUser = async () => {
     if (id) {
       const resp = await userStore.fetchCurrentUser({id})
       currentUser.value = resp.data
+
+      await fetchCurrentTask()
     }
   } catch (e) {
     catchErrors(e)
@@ -360,7 +362,7 @@ const fetchProjectAccess = async () => {
 
 const fetchCurrentTask = async()=>{
   try{
-    const resp = await tasksStore.fetchWorkingTask()
+    const resp = await tasksStore.fetchWorkingTask({id: currentUser.value.id})
     if (resp.data && Object.keys(resp.data).length){
       currentTask.value = resp.data
     }
@@ -381,5 +383,4 @@ fetchUsersTask()
 fetchUser()
 fetchTasksAccess()
 fetchProjectAccess()
-fetchCurrentTask()
 </script>

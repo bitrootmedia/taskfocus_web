@@ -68,12 +68,7 @@
 
             <div class="mb-2 sm:mb-4">
               <div v-if="!isEditDesc" class="text-blueGray-500 cursor-pointer w-fit" @click="isEditDesc = true">
-                <v-md-preview-html
-                    v-if="project.description"
-                    :html="xss.process(VMdEditor.vMdParser.themeConfig.markdownParser.render(project.description))"
-                    preview-class="vuepress-markdown-body" class="cursor-pointer">
-                </v-md-preview-html>
-
+                <v-md-preview v-if="project.description" :text="project.description" class="cursor-pointer"></v-md-preview>
                 <span v-else>No Description</span>
               </div>
               <div v-else class="mt-[10px]">
@@ -201,7 +196,7 @@ import TasksDataTable from "../../components/Table/TasksDataTable.vue";
 import AttachmentsDataTable from "../../components/Table/AttachmentsDataTable.vue";
 import CommentsDataTable from "../../components/Table/CommentsDataTable.vue";
 import LogsDataTable from "../../components/Table/LogsDataTable.vue";
-import VMdEditor, {xss} from '@kangc/v-md-editor';
+import VMdEditor from '@kangc/v-md-editor';
 import OwnersModal from '../../components/Modals/OwnersModal.vue'
 import Switch from '../../components/Switch/Switch.vue'
 
