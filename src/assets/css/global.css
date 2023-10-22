@@ -153,6 +153,7 @@ tr:nth-child(odd) {
 
 .description-panel .v-md-editor-preview{
     width: fit-content;
+    word-break: break-all;
 }
 
 .description-panel .github-markdown-body{
