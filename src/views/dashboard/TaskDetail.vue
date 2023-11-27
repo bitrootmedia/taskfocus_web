@@ -327,7 +327,8 @@
       <UserTaskModal
           :show-modal="showUsersModal"
           :task="task"
-          :users="usersList"
+          :users="usersQueue"
+          :all-users="usersList"
           :have-task-access="haveTaskAccess"
           :have-task-access-ids="haveTaskAccessIds"
           :btn-title="'Manage Task Users'"
