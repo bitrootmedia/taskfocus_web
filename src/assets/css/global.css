@@ -149,6 +149,19 @@ tr:nth-child(odd) {
     padding: 8px 16px!important;
     background-color: transparent !important;
     color: #64748B !important;
+    max-width: 480px;
+}
+@media (max-width: 991px) {
+    .github-markdown-body{
+        width: auto;
+        max-width: 380px;
+    }
+}
+@media (max-width: 500px) {
+    .github-markdown-body{
+        width: auto;
+        max-width: 260px;
+    }
 }
 
 .description-panel .v-md-editor-preview{
@@ -157,7 +170,6 @@ tr:nth-child(odd) {
 }
 
 .description-panel .github-markdown-body{
-    margin-top: 10px;
     padding: 16px 24px!important;
     background-color: #ffffe0 !important;
     width: fit-content;
