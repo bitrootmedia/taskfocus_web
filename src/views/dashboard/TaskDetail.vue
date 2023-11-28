@@ -176,7 +176,30 @@
                 </div>
               </div>
 
+              <div class="text-blueGray-500 description-panel mb-2 sm:mb-4">
+                Description:
+                <b v-if="!task.description && !isEditPanel.description" class="cursor-pointer"
+                   @click="isEditPanel.description = true">N/A</b>
+
+                <div v-else>
+                  <div @click="isEditPanel.description = true"
+                       :class="[`${!isEditPanel.description ? 'inline-flex' : 'flex w-full'}`]">
+                    <template v-if="!isEditPanel.description" class="w-full">
+                      <v-md-preview :text="task.description" class="cursor-pointer"></v-md-preview>
+                    </template>
+
+                    <div v-else class="w-full mt-[10px]">
+                      <v-md-editor v-model="form.description" height="300px" :disabled-menus="[]"
+                                   @upload-image="handleUploadImage"></v-md-editor>
+                    </div>
+                  </div>
+                </div>
+
+
+              </div>
+
               <FormList
+                  v-if="isAuthOwner"
                   :key="keyList"
                   :task-id="task.id"
                   v-model="form.blocks"

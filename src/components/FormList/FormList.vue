@@ -16,7 +16,7 @@
 
   <div class="form">
     <div class="">
-      <div class="form-version mb-8">
+      <div class="form-version mb-8" v-if="formList.length">
         <draggable
             :list="formList"
             item-key="name"
@@ -108,39 +108,17 @@
                   </div>
 
                   <div class="flex items-center" v-for="(el,i) in element.elements" :key="`${index}-${i}`">
-                    <svg v-if="el.checked" width="24px" height="24px" viewBox="0 0 24 24" version="1.1"
-                         xmlns="http://www.w3.org/2000/svg"
-                         xmlns:xlink="http://www.w3.org/1999/xlink" fill="#c8e6c9" stroke="#c8e6c9">
-                      <g id="SVGRepo_bgCarrier" stroke-width="0"></g>
-                      <g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g>
-                      <g id="SVGRepo_iconCarrier">
-                        <g id="🔍-Product-Icons" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
-                          <g id="ic_fluent_checkbox_checked_24_regular" fill="#c8e6c9" fill-rule="nonzero">
-                            <path
-                                d="M18.25,3 C19.7687831,3 21,4.23121694 21,5.75 L21,18.25 C21,19.7687831 19.7687831,21 18.25,21 L5.75,21 C4.23121694,21 3,19.7687831 3,18.25 L3,5.75 C3,4.23121694 4.23121694,3 5.75,3 L18.25,3 Z M18.25,4.5 L5.75,4.5 C5.05964406,4.5 4.5,5.05964406 4.5,5.75 L4.5,18.25 C4.5,18.9403559 5.05964406,19.5 5.75,19.5 L18.25,19.5 C18.9403559,19.5 19.5,18.9403559 19.5,18.25 L19.5,5.75 C19.5,5.05964406 18.9403559,4.5 18.25,4.5 Z M10,14.4393398 L16.4696699,7.96966991 C16.7625631,7.6767767 17.2374369,7.6767767 17.5303301,7.96966991 C17.7965966,8.23593648 17.8208027,8.65260016 17.6029482,8.94621165 L17.5303301,9.03033009 L10.5303301,16.0303301 C10.2640635,16.2965966 9.84739984,16.3208027 9.55378835,16.1029482 L9.46966991,16.0303301 L6.46966991,13.0303301 C6.1767767,12.7374369 6.1767767,12.2625631 6.46966991,11.9696699 C6.73593648,11.7034034 7.15260016,11.6791973 7.44621165,11.8970518 L7.53033009,11.9696699 L10,14.4393398 L16.4696699,7.96966991 L10,14.4393398 Z"
-                                id="🎨Color"></path>
-                          </g>
-                        </g>
-                      </g>
-                    </svg>
-                    <svg v-else width="24px" height="24px" viewBox="0 0 24 24" version="1.1" xmlns="http://www.w3.org/2000/svg"
-                         xmlns:xlink="http://www.w3.org/1999/xlink" fill="#ababab" stroke="#ababab">
-                      <g id="SVGRepo_bgCarrier" stroke-width="0"></g>
-                      <g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g>
-                      <g id="SVGRepo_iconCarrier">
-                        <g id="🔍-Product-Icons" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
-                          <g id="ic_fluent_checkbox_unchecked_24_regular" fill="#ababab" fill-rule="nonzero">
-                            <path
-                                d="M5.75,3 L18.25,3 C19.7687831,3 21,4.23121694 21,5.75 L21,18.25 C21,19.7687831 19.7687831,21 18.25,21 L5.75,21 C4.23121694,21 3,19.7687831 3,18.25 L3,5.75 C3,4.23121694 4.23121694,3 5.75,3 Z M5.75,4.5 C5.05964406,4.5 4.5,5.05964406 4.5,5.75 L4.5,18.25 C4.5,18.9403559 5.05964406,19.5 5.75,19.5 L18.25,19.5 C18.9403559,19.5 19.5,18.9403559 19.5,18.25 L19.5,5.75 C19.5,5.05964406 18.9403559,4.5 18.25,4.5 L5.75,4.5 Z"
-                                id="🎨Color"></path>
-                          </g>
-                        </g>
-                      </g>
-                    </svg>
+                    <input
+                        id="hideClosed1"
+                        v-model="el.checked"
+                        @change="editItem(index)"
+                        type="checkbox"
+                        class="border-0 flex pl-8 pr-3 py-3 placeholder-blueGray-300 text-blueGray-600 rounded text-sm ease-linear transition-all duration-150"
+                    />
 
-                    <span class="text-md text-blueGray-500 font-medium ml-2 whitespace-nowrap">
+                    <label class="text-md text-blueGray-500 font-medium ml-2 whitespace-nowrap">
                       {{ el.label }}
-                    </span>
+                    </label>
                   </div>
                 </div>
               </template>
@@ -149,7 +127,7 @@
                 <button type="button" class="text-white cursor-pointer" @click="editItem(index)">
                   <i class="fas fa-pen-square text-xl text-blueGray-500"></i>
                 </button>
-                <button type="button" class="text-white cursor-pointer" @click="removeFormItem(index)">
+                <button v-if="editLists[index]" type="button" class="text-white cursor-pointer" @click="removeFormItem(index)">
                   <i class="fas fa-window-close text-xl text-red-500"></i>
                 </button>
               </div>
@@ -251,7 +229,9 @@ const addNewForm = (version) => {
   }
 
   editLists.value = [...editLists.value, true]
-  formList.value.push(obj[version])
+  console.log(formList.value,'formList.value')
+  if (!formList.value.length) formList.value = [obj[version]]
+  else formList.value.push(obj[version])
   emit('edit')
 }
 
@@ -311,5 +291,4 @@ onMounted(() => {
 .handle {
   cursor: move;
 }
-
 </style>
