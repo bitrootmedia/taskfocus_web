@@ -64,9 +64,10 @@
 
 
               <template v-else-if="element.type === 'checklist'">
-                <div v-if="editLists[index]" class="form-group mb-4">
+                <form v-if="editLists[index]" class="form-group mb-4" @keypress="pressEnter($event,index)">
                   <div class="flex gap-x-2 items-start">
                     <input
+                        :id="`title-input-${index}`"
                         v-model="element.title"
                         type="text"
                         class="border-0 px-3 py-3 placeholder-blueGray-300 text-blueGray-600 bg-white rounded text-sm shadow focus:outline-none focus:ring w-full ease-linear transition-all duration-150"
@@ -82,12 +83,12 @@
 
                   <div class="flex items-center mt-4" v-for="(el,i) in element.elements" :key="`${index}-${i}`">
                     <input
-                        id="hideClosed"
+                        :id="`${el.label}-${i}`"
                         v-model="el.checked"
                         type="checkbox"
                         class="border-0 flex pl-8 pr-3 py-3 placeholder-blueGray-300 text-blueGray-600 rounded text-sm ease-linear transition-all duration-150 cursor-pointer"
                     />
-                    <label for="hideClosed"
+                    <label :for="`${el.label}-${i}`"
                            class="text-md text-blueGray-500 font-medium cursor-pointer ml-2 whitespace-nowrap">
                       <input
                           v-model="el.label"
@@ -100,7 +101,7 @@
                       <i class="fas fa-window-close text-md text-red-500"></i>
                     </button>
                   </div>
-                </div>
+                </form>
 
                 <div v-else class="form-group mb-4">
                   <div class="flex gap-x-2 items-start">
@@ -109,14 +110,14 @@
 
                   <div class="flex items-center" v-for="(el,i) in element.elements" :key="`${index}-${i}`">
                     <input
-                        id="hideClosed1"
+                        :id="`${el.label}-${i}`"
                         v-model="el.checked"
                         @change="editItem(index)"
                         type="checkbox"
                         class="border-0 flex pl-8 pr-3 py-3 placeholder-blueGray-300 text-blueGray-600 rounded text-sm ease-linear transition-all duration-150"
                     />
 
-                    <label class="text-md text-blueGray-500 font-medium ml-2 whitespace-nowrap">
+                    <label :for="`${el.label}-${i}`" class="text-md text-blueGray-500 font-medium ml-2 whitespace-nowrap">
                       {{ el.label }}
                     </label>
                   </div>
@@ -180,6 +181,13 @@ watch(formList, (val) => {
 
 
 //Methods
+const pressEnter = (e,index)=>{
+  if (e.keyCode === 13){
+    addNewCheckboxItem(index)
+  }
+
+}
+
 const changeDrag = () => {
   emit('edit')
 }
@@ -194,6 +202,11 @@ const addNewCheckboxItem = (index) => {
 const editItem = (index) => {
   editLists.value[index] = !editLists.value[index]
   emit('edit')
+
+  setTimeout(()=>{
+    const title = document.getElementById(`title-input-${index}`)
+    title.focus()
+  },100)
 }
 
 const removeCheckboxItem = (checklistIndex, elementIndex) => {
@@ -229,10 +242,18 @@ const addNewForm = (version) => {
   }
 
   editLists.value = [...editLists.value, true]
-  console.log(formList.value,'formList.value')
+
   if (!formList.value.length) formList.value = [obj[version]]
   else formList.value.push(obj[version])
   emit('edit')
+
+  setTimeout(()=>{
+    if (version === 'checklist'){
+      const title = document.getElementById(`title-input-${formList.value.length - 1}`)
+      title.focus()
+    }
+
+  },100)
 }
 
 const saveFiles = async (e, index) => {

@@ -835,6 +835,8 @@ const resetData = () => {
   if (task.value.owner?.id) form.value.owner = task.value.responsible.id
 
   backgroundSize.value = `${task.value.progress || 0}% 100%`
+
+  fetchTask()
 }
 
 const hidePanel = () => {
