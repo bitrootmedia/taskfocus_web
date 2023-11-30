@@ -149,30 +149,37 @@ tr:nth-child(odd) {
     padding: 8px 16px!important;
     background-color: transparent !important;
     color: #64748B !important;
-    max-width: 480px;
+    /*max-width: 480px;*/
 }
 @media (max-width: 991px) {
     .github-markdown-body{
         width: auto;
-        max-width: 380px;
     }
 }
 @media (max-width: 500px) {
     .github-markdown-body{
         width: auto;
-        max-width: 260px;
     }
 }
 
-.description-panel .v-md-editor-preview{
-    width: fit-content;
+.description-panel .v-md-editor-preview {
     word-break: break-all;
+    width: 95%;
+}
+
+@media (max-width: 991px) {
+    .description-panel .v-md-editor-preview{
+        width: 90%;
+    }
+    .description-panel .v-md-editor-preview{
+        width: 85%;
+    }
 }
 
 .description-panel .github-markdown-body{
     padding: 16px 24px!important;
     background-color: #ffffe0 !important;
-    width: fit-content;
+    width: 100%;
     border-radius: 6px;
     color: #64748B !important;
 }
