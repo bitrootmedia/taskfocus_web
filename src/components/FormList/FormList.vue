@@ -64,7 +64,7 @@
 
 
               <template v-else-if="element.type === 'checklist'">
-                <form v-if="editLists[index]" class="form-group mb-4" @keypress="pressEnter($event,index)">
+                <form v-if="editLists[index]" class="form-group mb-4" @keypress="pressEnter($event,index)" :id="`check-${index}`">
                   <div class="flex gap-x-2 items-start">
                     <input
                         :id="`title-input-${index}`"
@@ -108,7 +108,7 @@
                     <span class="text-blueGray-500 font-medium text-lg">{{ element.title }}</span>
                   </div>
 
-                  <div class="flex items-center" v-for="(el,i) in element.elements" :key="`${index}-${i}`">
+                  <div class="flex items-center mb-2" v-for="(el,i) in element.elements" :key="`${index}-${i}`">
                     <input
                         :id="`${el.label}-${i}`"
                         v-model="el.checked"
@@ -197,6 +197,13 @@ const addNewCheckboxItem = (index) => {
     label: "",
     checked: false,
   })
+
+  setTimeout(()=>{
+    const form = document.getElementById(`check-${index}`)
+    const inputs = form.querySelectorAll('input')
+    const lastItem = inputs[inputs.length - 1]
+    lastItem.focus()
+  },100)
 }
 
 const editItem = (index) => {
@@ -204,8 +211,10 @@ const editItem = (index) => {
   emit('edit')
 
   setTimeout(()=>{
-    const title = document.getElementById(`title-input-${index}`)
-    title.focus()
+    const form = document.getElementById(`check-${index}`)
+    const inputs = form.querySelectorAll('input')
+    const lastItem = inputs[inputs.length - 1]
+    lastItem.focus()
   },100)
 }
 
@@ -249,8 +258,12 @@ const addNewForm = (version) => {
 
   setTimeout(()=>{
     if (version === 'checklist'){
-      const title = document.getElementById(`title-input-${formList.value.length - 1}`)
-      title.focus()
+      setTimeout(()=>{
+        const form = document.getElementById(`check-${formList.value.length - 1}`)
+        const inputs = form.querySelectorAll('input')
+        const lastItem = inputs[inputs.length - 1]
+        lastItem.focus()
+      },100)
     }
 
   },100)
