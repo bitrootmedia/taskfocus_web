@@ -3,7 +3,7 @@
     <div class="content mt-4">
       <h2 class="font-bold text-xl block text-blueGray-700 mb-6">Settings</h2>
 
-      <div class="passwords-wrapper w-[500px]">
+      <div class="passwords-wrapper w-full sm:w-[500px]">
         <h2 class="font-bold text-md block text-blueGray-700 mb-3">Change Password</h2>
         <form @keypress="enterIn">
           <div class="relative w-full mb-3">

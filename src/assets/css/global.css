@@ -139,7 +139,7 @@ input[type=range]:focus::-ms-fill-upper {
 
 tbody tr:hover{
     background-color: #e1e1e1;
-}
+}.github-markdown-body
 
 tr:nth-child(odd) {
     background-color: #f2f2f2;
@@ -159,6 +159,9 @@ tr:nth-child(odd) {
 @media (max-width: 500px) {
     .github-markdown-body{
         width: auto;
+    }
+    .github-markdown-body p{
+        word-break: break-all;
     }
 }
 
