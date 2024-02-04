@@ -23,7 +23,8 @@
           <div v-else class="content">
             <ul>
               <li v-for="user in users" :key="user.id" class="flex justify-between items-center gap-x-1 my-3">
-                <span class="text-lg text-blueGray-500 font-medium">{{ user.first_name }} {{ user.last_name }}</span>
+                <span class="text-lg text-blueGray-500 font-medium" v-if="user.first_name || user.last_name">{{ user.first_name }} {{ user.last_name }}</span>
+                <span class="text-lg text-blueGray-500 font-medium" v-else>{{ user.username }}</span>
                 <button
                     class="bg-emerald-600 text-white active:bg-blueGray-600 text-sm font-bold px-3 py-1 rounded shadow hover:shadow-lg outline-none focus:outline-none ease-linear transition-all duration-150"
                     type="button"

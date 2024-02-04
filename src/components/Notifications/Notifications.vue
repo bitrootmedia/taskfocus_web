@@ -10,7 +10,7 @@
     </div>
 
     <div
-        class="notifications-wrapper absolute ml-4 sm:ml-0 right-4 sm:right-6 top-[65px] sm:top-[50px] w-auto sm:w-[460px] max-h-[520px] border border-blueGray-200 overflow-y-scroll bg-blueGray-100 px-6 py-6 rounded-[4px] shadow-lg"
+        class="notifications-wrapper absolute ml-4 sm:ml-0 right-4 sm:right-6 top-[80px] sm:top-[50px] w-[355px] sm:w-[460px] max-h-[520px] border border-blueGray-200 overflow-y-scroll bg-blueGray-100 px-6 py-6 rounded-[4px] shadow-lg"
         v-if="show">
 
       <h2 class="text-blueGray-600 text-2xl font-semibold mb-5">Notifications</h2>

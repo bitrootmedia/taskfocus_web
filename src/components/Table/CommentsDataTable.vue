@@ -48,20 +48,23 @@
         v$.message.$errors[0].$message
       }} </span>
 
-        <div v-if="showSearch" class="header flex flex-col md:flex-row items-baseline md:items-center justify-between mt-4 mb-4 gap-y-3">
-          <div class="relative w-full md:w-2/4">
-            <i class="fas fa-search mr-2 text-sm text-blueGray-300 absolute top-[12px] left-[8px]"/>
-            <input
-                v-model="filter.search.value"
-                type="text"
-                class="border-0 pl-8 pr-3 py-3 placeholder-blueGray-300 text-blueGray-600 bg-white rounded text-sm shadow focus:outline-none focus:ring w-full ease-linear transition-all duration-150"
-                placeholder="Search"
-            />
-          </div>
-        </div>
+    <div v-if="showSearch"
+         class="header flex flex-col md:flex-row items-baseline md:items-center justify-between mt-4 mb-4 gap-y-3">
+      <div class="relative w-full md:w-2/4">
+        <i class="fas fa-search mr-2 text-sm text-blueGray-300 absolute top-[12px] left-[8px]"/>
+        <input
+            v-model="filter.search.value"
+            type="text"
+            class="border-0 pl-8 pr-3 py-3 placeholder-blueGray-300 text-blueGray-600 bg-white rounded text-sm shadow focus:outline-none focus:ring w-full ease-linear transition-all duration-150"
+            placeholder="Search"
+        />
+      </div>
+    </div>
 
     <div class="comments mt-3">
-      <ul>
+      <Loader v-if="loading"/>
+
+      <ul v-else>
         <li v-for="comment in comments" :key="comment.id" class="mb-4">
           <div class="flex gap-x-2 items-start">
              <span class="font-medium mr-3 flex items-center gap-x-2">
@@ -76,7 +79,8 @@
                         comment.author?.first_name
                       }} {{ comment.author?.last_name }}
                     </b>
-                    <span class="text-sm text-blueGray-500 cursor-pointer underline" @click="reply(comment)">(@{{ comment.author?.username }})</span>
+                    <span class="text-sm text-blueGray-500 cursor-pointer underline"
+                          @click="reply(comment)">(@{{ comment.author?.username }})</span>
                   </div>
 
                   <span class="text-sm ml-2 text-blueGray-500">{{ convertDateTime(comment.created_at) }}</span>
@@ -94,7 +98,8 @@
                       comment.task.title
                     }}</router-link></span>
 
-                  <span v-if="comment.task?.project?.id && !['Project Detail','Task Detail'].includes(route.name)" class="block">Project link: <router-link
+                  <span v-if="comment.task?.project?.id && !['Project Detail','Task Detail'].includes(route.name)"
+                        class="block">Project link: <router-link
                       class="underline"
                       :to="`/dashboard/project/${comment.task?.project?.id}`">{{
                       comment.task.project.title
@@ -107,7 +112,8 @@
                       projectName
                     }}</router-link></span>
 
-                  <span v-else-if="comment.project?.id && !['Project Detail','Comments'].includes(route.name)" class="block">Project link: <router-link
+                  <span v-else-if="comment.project?.id && !['Project Detail','Comments'].includes(route.name)"
+                        class="block">Project link: <router-link
                       class="underline"
                       :to="`/dashboard/project/${comment.project?.id}`">{{
                       comment.project.title
@@ -123,33 +129,33 @@
                 <v-md-preview v-else :text="comment.content"></v-md-preview>
               </div>
 
-            <div class="flex gap-x-3 items-center mt-2">
-              <template v-if="isAuthOwner(comment)">
-                <div v-if="editCommentsIds.includes(comment.id)" class="flex gap-x-3">
-                  <button
-                      @click="updateComment(comment)"
-                      :disabled="btnLoad"
-                      class="bg-blueGray-800 text-white active:bg-blueGray-600 text-sm font-bold px-3 py-1 rounded shadow hover:shadow-lg outline-none focus:outline-none ease-linear transition-all duration-150"
-                      type="button"
-                  >
-                    Update
-                  </button>
-                  <button
-                      @click="resetEditComment(comment)"
-                      class="bg-blueGray-800 text-white active:bg-blueGray-600 text-sm font-bold px-3 py-1 rounded shadow hover:shadow-lg outline-none focus:outline-none ease-linear transition-all duration-150"
-                      type="button"
-                  >
-                    Reset
-                  </button>
-                </div>
-                <span class="underline text-blueGray-500 text-sm cursor-pointer"
-                      v-else
-                      @click="editComment(comment)">Edit</span>
-              </template>
+              <div class="flex gap-x-3 items-center mt-2">
+                <template v-if="isAuthOwner(comment)">
+                  <div v-if="editCommentsIds.includes(comment.id)" class="flex gap-x-3">
+                    <button
+                        @click="updateComment(comment)"
+                        :disabled="btnLoad"
+                        class="bg-blueGray-800 text-white active:bg-blueGray-600 text-sm font-bold px-3 py-1 rounded shadow hover:shadow-lg outline-none focus:outline-none ease-linear transition-all duration-150"
+                        type="button"
+                    >
+                      Update
+                    </button>
+                    <button
+                        @click="resetEditComment(comment)"
+                        class="bg-blueGray-800 text-white active:bg-blueGray-600 text-sm font-bold px-3 py-1 rounded shadow hover:shadow-lg outline-none focus:outline-none ease-linear transition-all duration-150"
+                        type="button"
+                    >
+                      Reset
+                    </button>
+                  </div>
+                  <span class="underline text-blueGray-500 text-sm cursor-pointer"
+                        v-else
+                        @click="editComment(comment)">Edit</span>
+                </template>
 
-              <span class="underline text-blueGray-500 text-sm cursor-pointer"
-                    @click="reply(comment)">Reply</span>
-            </div>
+                <span class="underline text-blueGray-500 text-sm cursor-pointer"
+                      @click="reply(comment)">Reply</span>
+              </div>
 
             </div>
           </div>
@@ -183,7 +189,7 @@ import {useCookies} from "vue3-cookies";
 import config from '../../config'
 import {watch} from "vue";
 import {useAttachmentsStore} from "../../store/attachments";
-
+import Loader from './../Loader/Loader.vue'
 
 const props = defineProps({
   projectId: {
@@ -246,7 +252,7 @@ watch(editCommentsIds, (val) => {
 })
 
 // Methods
-const reply = (comment)=>{
+const reply = (comment) => {
   writeComment.value = true
   message.value = `@${comment.author.username} `
 
@@ -259,27 +265,27 @@ const editComment = (comment) => {
 }
 
 const handleUploadImage = async (event, insertImage, files) => {
- try {
-   const file = files[0]
-   const formData = new FormData();
-   formData.append(file.name, file);
+  try {
+    const file = files[0]
+    const formData = new FormData();
+    formData.append(file.name, file);
 
-   if (props.projectId) {
-     formData.append('project_id', props.projectId);
-   }
-   if (props.taskId) {
-     formData.append('task_id', props.taskId);
-   }
+    if (props.projectId) {
+      formData.append('project_id', props.projectId);
+    }
+    if (props.taskId) {
+      formData.append('task_id', props.taskId);
+    }
 
-   const resp = await attachmentsStore.uploadAttachments(formData)
-   if (resp.data.attachments[0].file_path){
-     insertImage({
-       url: resp.data.attachments[0].file_path,
-     });
-   }
- }catch (e) {
-   catchErrors(e)
- }
+    const resp = await attachmentsStore.uploadAttachments(formData)
+    if (resp.data.attachments[0].file_path) {
+      insertImage({
+        url: resp.data.attachments[0].file_path,
+      });
+    }
+  } catch (e) {
+    catchErrors(e)
+  }
 }
 
 const resetEditComment = (comment) => {

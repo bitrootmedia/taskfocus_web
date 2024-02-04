@@ -21,8 +21,16 @@
           <Loader v-if="loading"/>
 
           <div v-else class="content">
+            <button
+                class="active:bg-blueGray-600 text-sm font-bold px-3 py-1 rounded shadow hover:shadow-lg outline-none focus:outline-none ease-linear transition-all duration-150"
+                type="button"
+                @click="showAll = !showAll"
+            >
+              {{showAll ? 'Hide all users' : 'Show all users'}}
+            </button>
+
             <ul>
-              <li v-for="user in users" :key="user.id" class="flex justify-between items-center gap-x-1 my-3">
+              <li v-for="user in listOfUsers" :key="user.id" class="flex justify-between items-center gap-x-1 my-3">
                 <span class="text-lg text-blueGray-500 font-medium">{{ user.first_name }} {{ user.last_name }}</span>
                 <button
                     :class="{'bg-red-600': haveTaskAccessIds.includes(user.id), 'bg-emerald-600':!haveTaskAccessIds.includes(user.id)}"
@@ -45,7 +53,7 @@
 
 <script setup>
 import {catchErrors} from "../../utils";
-import {onBeforeUnmount, onMounted, ref} from "vue";
+import {computed, onBeforeUnmount, onMounted, ref} from "vue";
 import Loader from "./../../components/Loader/Loader.vue"
 import {useTasksStore} from "../../store/tasks";
 import {useCookies} from "vue3-cookies";
@@ -74,6 +82,10 @@ const props = defineProps({
     type: Array,
     default: () => []
   },
+  allUsers: {
+    type: Array,
+    default: () => []
+  },
   btnTitle: {
     type: String,
     default: ''
@@ -86,10 +98,14 @@ const {cookies} = useCookies();
 const toast = useToast()
 
 // State
+const showAll = ref(false)
 const btnLoad = ref(false)
 const loading = ref(false)
 const componentModalRef = ref()
 
+const listOfUsers = computed(()=>{
+  return showAll.value ? props.allUsers : props.users
+})
 
 // Methods
 const assignUser = async (user) => {

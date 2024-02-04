@@ -1,178 +1,192 @@
 <template>
   <div class="main-container">
-
-    <h2 class="text-xl font-bold inline-flex text-blueGray-800 mb-6" v-if="currentUser">{{ currentUser.first_name }}
+    <h2 class="text-xl font-bold flex text-blueGray-800 mb-6" v-if="currentUser">{{ currentUser.first_name }}
       {{ currentUser.last_name }}</h2>
 
-    <div v-if="currentTask" class="working-task mt-4">
-      Currently working on:
-      <span class="underline cursor-pointer text-blue-500" @click="toLinkPage('task')">{{ currentTask.title }}</span>
-      <template v-if="currentTask.project?.title">
-        in project
-        <span class="underline cursor-pointer text-blue-500" @click="toLink('project')">{{currentTask.project.title}}</span>
-      </template>
-    </div>
+
+    <ul class="inline-flex align-center border border-blueGray-500 rounded-md overflow-hidden">
+      <li v-for="tab in tabs" :key="tab.id"
+          @click="activeTab = tab.id" class="font-bold text-blueGray-500 text-lg cursor-pointer px-4 py-2"
+          :class="{'border-b border-blueGray-800 bg-blueGray-200': activeTab === tab.id}">
+        {{ tab.label }}
+      </li>
+    </ul>
+
 
     <Loader v-if="loading"/>
 
     <template v-else>
 
-      <div class="mb-8">
-        <UrgentTasksDataTable :is-task="true" :user-id="route.params.id"/>
-      </div>
+      <template v-if="activeTab === 1">
+        <div v-if="currentTask" class="working-task mt-4">
+          Currently working on:
+          <span class="underline cursor-pointer text-blue-500" @click="toLinkPage('task')">{{
+              currentTask.title
+            }}</span>
+          <template v-if="currentTask.project?.title">
+            in project
+            <span class="underline cursor-pointer text-blue-500"
+                  @click="toLinkPage('project')">{{ currentTask.project.title }}</span>
+          </template>
+        </div>
+        <div class="mb-8">
+          <UrgentTasksDataTable :is-task="true" :user-id="route.params.id"/>
+        </div>
+        <div class="content mb-8">
+          <h2 class="font-bold text-xl block text-blueGray-700 mb-4">Queue</h2>
+          <DataTable :headers="headers">
+            <template v-slot:tableBody>
+              <tr v-if="loading">
+                <td :colspan="headers.length">
+                  <div class="flex justify-center py-1 text-blueGray-500 font-medium">
+                    <Loader/>
+                  </div>
+                </td>
+              </tr>
 
-      <div  class="mb-8">
+              <template v-else>
+                <tr v-if="!userTasks.length">
+                  <td :colspan="headers.length">
+                    <p class="flex justify-center py-8 px- text-blueGray-500 font-medium">
+                      No data found
+                    </p>
+                  </td>
+                </tr>
+
+                <draggable
+                    v-else
+                    tag="tbody"
+                    :disabled="isDragDisabled"
+                    v-model="userTasks"
+                    item-key="id"
+                    group="id"
+                    @change="changeDrag"
+                >
+                  <template #item="{element}">
+                    <tr :class="{'cursor-move': !isDragDisabled}">
+                      <td class="border-t-0 px-3 align-middle border-l-0 border-r-0 text-xs whitespace-nowrap p-4">
+                      <span @click.stop="toLink(`/dashboard/task/${element.task?.id}`)"
+                            class="cursor-pointer">{{ element.task.title || '-' }}</span>
+                      </td>
+                      <td class="border-t-0 px-3 align-middle border-l-0 border-r-0 text-xs whitespace-nowrap p-4">
+                      <span @click.stop="toLink(`/dashboard/project/${element.task.project?.id}`)"
+                            class="cursor-pointer">{{ element.task.project?.title || '-' }}</span>
+                      </td>
+                    </tr>
+                  </template>
+                </draggable>
+              </template>
+            </template>
+          </DataTable>
+          <Pagination
+              v-if="paginate.pagination.value.total > 1 && !loading"
+              :pagination="paginate.pagination.value"
+              v-model:query="paginate.query.value"
+          />
+        </div>
+      </template>
+
+      <div class="mb-8" v-else-if="activeTab === 2">
         <TrackerDataTable :hide-create="true" :user-id="currentUser.id"/>
       </div>
 
-      <div class="content mb-8">
-        <h2 class="text-lg text-blueGray-600 font-semibold mb-2">Queue</h2>
-        <DataTable :headers="headers">
-          <template v-slot:tableBody>
-            <tr v-if="loading">
-              <td :colspan="headers.length">
-                <div class="flex justify-center py-1 text-blueGray-500 font-medium">
-                  <Loader/>
-                </div>
-              </td>
-            </tr>
-
-            <template v-else>
-              <tr v-if="!userTasks.length">
-                <td :colspan="headers.length">
-                  <p class="flex justify-center py-8 px- text-blueGray-500 font-medium">
-                    No data found
-                  </p>
-                </td>
-              </tr>
-
-              <draggable
-                  v-else
-                  tag="tbody"
-                  :disabled="isDragDisabled"
-                  v-model="userTasks"
-                  item-key="id"
-                  group="id"
-                  @change="changeDrag"
-              >
-                <template #item="{element}">
-                  <tr :class="{'cursor-move': !isDragDisabled}">
-                    <td class="border-t-0 px-3 align-middle border-l-0 border-r-0 text-xs whitespace-nowrap p-4">
-                      <span @click.stop="toLink(`/dashboard/task/${element.task?.id}`)"
-                            class="cursor-pointer">{{ element.task.title || '-' }}</span>
-                    </td>
-                    <td class="border-t-0 px-3 align-middle border-l-0 border-r-0 text-xs whitespace-nowrap p-4">
-                      <span @click.stop="toLink(`/dashboard/project/${element.task.project?.id}`)"
-                            class="cursor-pointer">{{ element.task.project?.title || '-' }}</span>
-                    </td>
-                  </tr>
-                </template>
-              </draggable>
-            </template>
-          </template>
-        </DataTable>
-        <Pagination
-            v-if="paginate.pagination.value.total > 1 && !loading"
-            :pagination="paginate.pagination.value"
-            v-model:query="paginate.query.value"
-        />
-      </div>
-
-      <div class="accesses mb-8">
-        <h2 class="text-lg text-blueGray-600 font-semibold mb-2">Project Access</h2>
-        <DataTable :headers="headersProject">
-          <template v-slot:tableBody>
-            <tr v-if="loading">
-              <td :colspan="headersProject.length">
-                <div class="flex justify-center py-1 text-blueGray-500 font-medium">
-                  <Loader/>
-                </div>
-              </td>
-            </tr>
-
-            <template v-else>
-              <tr v-if="!projectsAccess.length">
+      <template v-else-if="activeTab === 3">
+        <div class="accesses mt-4 mb-8">
+          <h2 class="font-bold text-xl block text-blueGray-700 mb-4">Project Access</h2>
+          <DataTable :headers="headersProject">
+            <template v-slot:tableBody>
+              <tr v-if="loading">
                 <td :colspan="headersProject.length">
-                  <p class="flex justify-center py-8 px- text-blueGray-500 font-medium">
-                    No data found
-                  </p>
+                  <div class="flex justify-center py-1 text-blueGray-500 font-medium">
+                    <Loader/>
+                  </div>
                 </td>
               </tr>
 
-              <draggable
-                  v-else
-                  tag="tbody"
-                  :disabled="true"
-                  v-model="projectsAccess"
-                  item-key="id"
-                  group="id"
-              >
-                <template #item="{element}">
-                  <tr :class="{'cursor-move': false}">
-                    <td class="border-t-0 px-3 align-middle border-l-0 border-r-0 text-xs whitespace-nowrap p-4">
+              <template v-else>
+                <tr v-if="!projectsAccess.length">
+                  <td :colspan="headersProject.length">
+                    <p class="flex justify-center py-8 px- text-blueGray-500 font-medium">
+                      No data found
+                    </p>
+                  </td>
+                </tr>
+
+                <draggable
+                    v-else
+                    tag="tbody"
+                    :disabled="true"
+                    v-model="projectsAccess"
+                    item-key="id"
+                    group="id"
+                >
+                  <template #item="{element}">
+                    <tr :class="{'cursor-move': false}">
+                      <td class="border-t-0 px-3 align-middle border-l-0 border-r-0 text-xs whitespace-nowrap p-4">
                       <span @click.stop="toLink(`/dashboard/project/${element.id}`)"
                             class="cursor-pointer">{{ element.title || '-' }}</span>
-                    </td>
-                  </tr>
-                </template>
-              </draggable>
+                      </td>
+                    </tr>
+                  </template>
+                </draggable>
+              </template>
             </template>
-          </template>
-        </DataTable>
-        <Pagination
-            v-if="paginateProject.pagination.value.total > 1 && !loading"
-            :pagination="paginateProject.pagination.value"
-            v-model:query="paginateProject.query.value"
-        />
-      </div>
+          </DataTable>
+          <Pagination
+              v-if="paginateProject.pagination.value.total > 1 && !loading"
+              :pagination="paginateProject.pagination.value"
+              v-model:query="paginateProject.query.value"
+          />
+        </div>
 
-      <div class="accesses ">
-        <h2 class="text-lg text-blueGray-600 font-semibold mb-2">Tasks Access</h2>
-        <DataTable :headers="headersTask">
-          <template v-slot:tableBody>
-            <tr v-if="loading">
-              <td :colspan="headersTask.length">
-                <div class="flex justify-center py-1 text-blueGray-500 font-medium">
-                  <Loader/>
-                </div>
-              </td>
-            </tr>
-
-            <template v-else>
-              <tr v-if="!tasksAccess.length">
+        <div class="accesses">
+          <h2 class="font-bold text-xl block text-blueGray-700 mb-4">Tasks Access</h2>
+          <DataTable :headers="headersTask">
+            <template v-slot:tableBody>
+              <tr v-if="loading">
                 <td :colspan="headersTask.length">
-                  <p class="flex justify-center py-8 px- text-blueGray-500 font-medium">
-                    No data found
-                  </p>
+                  <div class="flex justify-center py-1 text-blueGray-500 font-medium">
+                    <Loader/>
+                  </div>
                 </td>
               </tr>
 
-              <draggable
-                  v-else
-                  tag="tbody"
-                  :disabled="true"
-                  v-model="tasksAccess"
-                  item-key="id"
-                  group="id"
-              >
-                <template #item="{element}">
-                  <tr :class="{'cursor-move': false}">
-                    <td class="border-t-0 px-3 align-middle border-l-0 border-r-0 text-xs whitespace-nowrap p-4">
+              <template v-else>
+                <tr v-if="!tasksAccess.length">
+                  <td :colspan="headersTask.length">
+                    <p class="flex justify-center py-8 px- text-blueGray-500 font-medium">
+                      No data found
+                    </p>
+                  </td>
+                </tr>
+
+                <draggable
+                    v-else
+                    tag="tbody"
+                    :disabled="true"
+                    v-model="tasksAccess"
+                    item-key="id"
+                    group="id"
+                >
+                  <template #item="{element}">
+                    <tr :class="{'cursor-move': false}">
+                      <td class="border-t-0 px-3 align-middle border-l-0 border-r-0 text-xs whitespace-nowrap p-4">
                       <span @click.stop="toLink(`/dashboard/task/${element.id}`)"
                             class="cursor-pointer">{{ element.title || '-' }}</span>
-                    </td>
-                  </tr>
-                </template>
-              </draggable>
+                      </td>
+                    </tr>
+                  </template>
+                </draggable>
+              </template>
             </template>
-          </template>
-        </DataTable>
-        <Pagination
-            v-if="paginateTask.pagination.value.total > 1 && !loading"
-            :pagination="paginateTask.pagination.value"
-            v-model:query="paginateTask.query.value"
-        />
-      </div>
+          </DataTable>
+          <Pagination
+              v-if="paginateTask.pagination.value.total > 1 && !loading"
+              :pagination="paginateTask.pagination.value"
+              v-model:query="paginateTask.query.value"
+          />
+        </div>
+      </template>
     </template>
   </div>
 </template>
@@ -211,9 +225,17 @@ const projectsAccess = ref([])
 const tasksAccess = ref([])
 const currentUser = ref(null)
 const currentTask = ref(null)
+const activeTab = ref(1)
 
 
 // Computed
+const tabs = computed(() => {
+  return [
+    {id: 1, label: 'Tasks'},
+    {id: 2, label: 'Time Tracker'},
+    {id: 3, label: 'Access'},
+  ]
+})
 const headers = computed(() => {
   return [
     {id: 2, label: 'Task', sorting: false, sortLabel: 'task'},
@@ -235,9 +257,9 @@ const headersTask = computed(() => {
 
 
 // Methods
-const toLinkPage = (type)=>{
-  if (type === 'task') return router.push(`/dashboard/task/${task.value.id}`)
-  else return router.push(`/dashboard/project/${task.value.project.id}`)
+const toLinkPage = (type) => {
+  if (type === 'task') return router.push(`/dashboard/task/${currentTask.value.id}`)
+  else return router.push(`/dashboard/project/${currentTask.value.project.id}`)
 }
 const toLink = (link) => {
   router.push(link)
@@ -262,7 +284,7 @@ const changeDrag = async (e) => {
     let aboveItemId = null
     let belowItemId = null
 
-    if (+newIndex > +oldIndex){
+    if (+newIndex > +oldIndex) {
       // top-bottom
       if (newIndex !== 0) {
         const findItem = tempData.value.find((item, index) => index === newIndex)
@@ -273,7 +295,7 @@ const changeDrag = async (e) => {
         const nextItem = tempData.value.find((item, index) => index === newIndex + 1)
         belowItemId = nextItem?.id
       }
-    }else {
+    } else {
       // bottom-top
       if (newIndex !== 0) {
         const findItem = tempData.value.find((item, index) => index === newIndex - 1)
@@ -360,13 +382,13 @@ const fetchProjectAccess = async () => {
   }
 }
 
-const fetchCurrentTask = async()=>{
-  try{
+const fetchCurrentTask = async () => {
+  try {
     const resp = await tasksStore.fetchWorkingTask({id: currentUser.value.id})
-    if (resp.data && Object.keys(resp.data).length){
+    if (resp.data && Object.keys(resp.data).length) {
       currentTask.value = resp.data
     }
-  }catch (e) {
+  } catch (e) {
     catchErrors(e)
   }
 }

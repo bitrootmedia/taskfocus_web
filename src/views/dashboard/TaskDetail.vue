@@ -170,13 +170,13 @@
                     <span v-if="task.responsible?.first_name || task.responsible?.last_name"> {{
                         task.responsible?.first_name
                       }} {{ task.responsible?.last_name }}</span>
-                        <span v-else-if="task.responsible?.username"> {{ task.responsible?.username }}</span>
-                        <span v-else>N/A</span>
+                    <span v-else-if="task.responsible?.username"> {{ task.responsible?.username }}</span>
+                    <span v-else>N/A</span>
                   </b>
                 </div>
               </div>
 
-              <div class="text-blueGray-500 description-panel">
+              <div class="text-blueGray-500 description-panel mb-2 sm:mb-4">
                 Description:
                 <b v-if="!task.description && !isEditPanel.description" class="cursor-pointer"
                    @click="isEditPanel.description = true">N/A</b>
@@ -197,6 +197,14 @@
 
 
               </div>
+
+              <FormList
+                  v-if="isAuthOwner"
+                  :key="keyList"
+                  :task-id="task.id"
+                  v-model="form.blocks"
+                  @edit="isEditPanel.blocks = true"
+              />
             </div>
 
             <div class="lg:w-1/2 order-2 lg:order-2 mt-3 lg:mt-0">
@@ -296,7 +304,9 @@
                   <span class="progress block h-[18px] rounded-md flex items-center justify-center"
                         :style="{width: `${task.progress || 0}%`, background: `${bgConvert(task.progress)}`}">
 
-                     <span class="text-[#fff] text-sm font-semibold" v-if="task.progress > 15">{{ task.progress || 0 }}%</span>
+                     <span class="text-[#fff] text-sm font-semibold" v-if="task.progress > 15">{{
+                         task.progress || 0
+                       }}%</span>
                   </span>
                     </div>
                   </div>
@@ -340,7 +350,8 @@
       <UserTaskModal
           :show-modal="showUsersModal"
           :task="task"
-          :users="usersList"
+          :users="usersQueue"
+          :all-users="usersList"
           :have-task-access="haveTaskAccess"
           :have-task-access-ids="haveTaskAccessIds"
           :btn-title="'Manage Task Users'"
@@ -431,6 +442,7 @@ import TrackerDataTable from "../../components/Table/TrackerDataTable.vue";
 import moment from "moment";
 import Switch from '../../components/Switch/Switch.vue'
 import ResponsiblesModal from './../../components/Modals/ResponsiblesModal.vue'
+import FormList from './../../components/FormList/FormList.vue'
 
 // ValidationRules
 const rules = {
@@ -462,6 +474,7 @@ const defaultEditValues = {
   position: false,
   owner: false,
   estimated_work_hours: false,
+  blocks: false
 }
 
 // State
@@ -475,6 +488,7 @@ const router = useRouter()
 const toast = useToast()
 const {cookies} = useCookies();
 
+const keyList = ref(0)
 const btnLoad = ref(false)
 const loading = ref(false)
 const loadingRem = ref(false)
@@ -517,6 +531,7 @@ const form = ref({
   tag: '',
   is_urgent: '',
   position: '',
+  blocks: [],
 })
 
 const v$ = useVuelidate(rules, form)
@@ -567,24 +582,21 @@ watch(showPanel, (val) => {
   }
 })
 
-watch(() => form.value.is_urgent, (newValue,oldValue) => {
+watch(() => form.value.is_urgent, (newValue, oldValue) => {
   if (firstLoad.value) return updateTask(true)
 
   firstLoad.value = true
 })
 
 // Methods
-const bgConvert = (progress)=>{
+const bgConvert = (progress) => {
   if (progress < 25) return '#ACDF87'
-
   if (progress < 50) return '#68BB59'
-
   if (progress < 75) return '#5d9410'
-
   if (progress >= 75) return '#3b831c'
 }
 
-const generateTag = ()=>{
+const generateTag = () => {
   const tag = Math.random().toString(36).slice(2, 7).toUpperCase();
   navigator.clipboard.writeText(tag)
 
@@ -668,13 +680,13 @@ const assignUser = async () => {
     updateTasksQueue()
   } catch (e) {
     catchErrors(e)
-  }finally {
+  } finally {
     btnLoad.value = false
   }
 }
 
-const updateResponsibles = (userId)=>{
-  form.value.user =  userId
+const updateResponsibles = (userId) => {
+  form.value.user = userId
   updateTask(true)
 }
 
@@ -692,7 +704,7 @@ const removeUser = async () => {
     updateTasksQueue()
   } catch (e) {
     catchErrors(e)
-  }finally {
+  } finally {
     btnLoad.value = false
   }
 }
@@ -717,7 +729,7 @@ const toggleTask = async (type) => {
     keyTracker.value += 1
   } catch (e) {
     catchErrors(e)
-  }finally {
+  } finally {
     btnLoad.value = false
   }
 }
@@ -749,7 +761,7 @@ const uncloseTask = async () => {
     await fetchTask()
   } catch (e) {
     catchErrors(e)
-  }finally {
+  } finally {
     btnLoad.value = false
   }
 }
@@ -823,6 +835,8 @@ const resetData = () => {
   if (task.value.owner?.id) form.value.owner = task.value.responsible.id
 
   backgroundSize.value = `${task.value.progress || 0}% 100%`
+
+  fetchTask()
 }
 
 const hidePanel = () => {
@@ -865,10 +879,12 @@ const updateTask = async (noLoad) => {
       tag: form.value.tag,
       is_urgent: form.value.is_urgent,
       position: form.value.position,
+      blocks: form.value.blocks,
     }
 
     await taskStore.updateTask(data)
     await toast.success("Task updated");
+    keyList.value += 1
     isEditPanel.value = {...defaultEditValues}
     await hidePanel()
     await fetchTask(noLoad)
@@ -943,8 +959,8 @@ const fetchProjectAccess = async () => {
 
       resp.data.results.forEach((item) => {
         // if (item.user.id !== user.pk) {
-          list.push(item)
-          ids.push(item.user.id)
+        list.push(item)
+        ids.push(item.user.id)
         // }
       })
 
