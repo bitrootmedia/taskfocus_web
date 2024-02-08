@@ -199,7 +199,6 @@
               </div>
 
               <FormList
-                  v-if="isAuthOwner"
                   :key="keyList"
                   :task-id="task.id"
                   v-model="form.blocks"
@@ -327,6 +326,10 @@
       </div>
 
       <div class="mb-10">
+        <NotesDataTable :task-id="task.id" />
+      </div>
+
+      <div class="mb-10">
         <CommentsDataTable :task-id="task.id" :task-name="task.title" :is-task="true"/>
       </div>
 
@@ -443,6 +446,7 @@ import moment from "moment";
 import Switch from '../../components/Switch/Switch.vue'
 import ResponsiblesModal from './../../components/Modals/ResponsiblesModal.vue'
 import FormList from './../../components/FormList/FormList.vue'
+import NotesDataTable from "../../components/Table/NotesDataTable.vue"
 
 // ValidationRules
 const rules = {
