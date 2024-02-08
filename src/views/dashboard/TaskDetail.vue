@@ -199,7 +199,6 @@
               </div>
 
               <FormList
-                  v-if="isAuthOwner"
                   :key="keyList"
                   :task-id="task.id"
                   v-model="form.blocks"
