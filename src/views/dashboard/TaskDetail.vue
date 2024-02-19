@@ -135,7 +135,7 @@
           </div>
 
           <div class="flex flex-col lg:flex-row lg:gap-x-20">
-            <div class="lg:w-1/2 order-1 lg:order-1">
+            <div class="w-full">
               <div class="mb-2 sm:mb-4">
                 <div class="flex gap-x-1">
                   <span class="text-blueGray-500 whitespace-nowrap">Task Access: &nbsp;</span>
@@ -176,37 +176,6 @@
                 </div>
               </div>
 
-              <div class="text-blueGray-500 description-panel mb-2 sm:mb-4">
-                Description:
-                <b v-if="!task.description && !isEditPanel.description" class="cursor-pointer"
-                   @click="isEditPanel.description = true">N/A</b>
-
-                <div v-else>
-                  <div @click="isEditPanel.description = true"
-                       :class="[`${!isEditPanel.description ? 'inline-flex' : 'flex w-full'}`]">
-                    <template v-if="!isEditPanel.description" class="w-full">
-                      <v-md-preview :text="task.description" class="cursor-pointer"></v-md-preview>
-                    </template>
-
-                    <div v-else class="w-full mt-[10px]">
-                      <v-md-editor v-model="form.description" height="300px" :disabled-menus="[]"
-                                   @upload-image="handleUploadImage"></v-md-editor>
-                    </div>
-                  </div>
-                </div>
-
-
-              </div>
-
-              <FormList
-                  :key="keyList"
-                  :task-id="task.id"
-                  v-model="form.blocks"
-                  @edit="isEditPanel.blocks = true"
-              />
-            </div>
-
-            <div class="lg:w-1/2 order-2 lg:order-2 mt-3 lg:mt-0">
               <div class="mb-2 sm:mb-4">
                 <div class="text-blueGray-500">
                   <span class="w-[80px] inline-block">Tag:</span>
@@ -221,27 +190,6 @@
                         type="text"
                         class="border-0 px-3 py-3 placeholder-blueGray-300 text-blueGray-600 bg-white rounded text-sm shadow focus:outline-none focus:ring w-full ease-linear transition-all duration-150"
                         placeholder="Tag"
-                    />
-                  </div>
-                </div>
-              </div>
-
-              <div class="mb-2 sm:mb-4">
-                <div class="text-blueGray-500">
-                  <span class="w-[80px] inline-block">Est Hours:</span>
-                  <b class="cursor-pointer" v-if="!isEditPanel.estimated_work_hours"
-                     @click="isEditPanel.estimated_work_hours = true">
-                    <span v-if="!task.estimated_work_hours">N/A</span>
-                    <span v-else>{{ task.estimated_work_hours }}</span>
-                  </b>
-
-                  <div v-else class="mb-2 w-80">
-                    <input
-                        v-model="form.estimated_work_hours"
-                        type="number"
-                        patern="[0-9]"
-                        class="border-0 px-3 py-3 placeholder-blueGray-300 text-blueGray-600 bg-white rounded text-sm shadow focus:outline-none focus:ring w-full ease-linear transition-all duration-150"
-                        placeholder="Est Hours"
                     />
                   </div>
                 </div>
@@ -316,6 +264,35 @@
                   <div class="data text-blueGray-500">Progress: {{ form.progress }}/100</div>
                 </div>
               </div>
+
+              <div class="text-blueGray-500 description-panel mb-2 sm:mb-4" v-if="task.description">
+                Description:
+                <b v-if="!task.description && !isEditPanel.description" class="cursor-pointer"
+                   @click="isEditPanel.description = true">N/A</b>
+
+                <div v-else>
+                  <div @click="isEditPanel.description = true"
+                       :class="[`${!isEditPanel.description ? 'inline-flex' : 'flex w-full'}`]">
+                    <template v-if="!isEditPanel.description" class="w-full">
+                      <v-md-preview :text="task.description" class="cursor-pointer"></v-md-preview>
+                    </template>
+
+                    <div v-else class="w-full mt-[10px]">
+                      <v-md-editor v-model="form.description" height="350px" :disabled-menus="[]"
+                                   @upload-image="handleUploadImage"></v-md-editor>
+                    </div>
+                  </div>
+                </div>
+
+
+              </div>
+
+              <FormList
+                  :key="keyList"
+                  :task-id="task.id"
+                  v-model="form.blocks"
+                  @edit="isEditPanel.blocks = true"
+              />
             </div>
           </div>
         </div>
@@ -326,7 +303,7 @@
       </div>
 
       <div class="mb-10">
-        <NotesDataTable :task-id="task.id" />
+        <NotesDataTable :task-id="task.id"/>
       </div>
 
       <div class="mb-10">

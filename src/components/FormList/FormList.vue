@@ -1,17 +1,23 @@
 <template>
-  <div class="flex gap-x-4 mb-8">
-    <button type="button" class="text-white mr-6 cursor-pointer hover-text" @click="addNewForm('markdown')">
-      <i class="fas fa-microchip text-md text-blueGray-800"></i>
-      <span class="tooltip-text">Create markdown!</span>
-    </button>
-    <button type="button" class="text-white mr-6 cursor-pointer hover-text" @click="addNewForm('image')">
-      <i class="fas fa-file text-md text-blueGray-800"></i>
-      <span class="tooltip-text">Create image!</span>
-    </button>
-    <button type="button" class="text-white mr-6 cursor-pointer hover-text" @click="addNewForm('checklist')">
-      <i class="fas fa-sitemap text-md text-blueGray-800"></i>
-      <span class="tooltip-text">Create checklist!</span>
-    </button>
+  <div class="flex align-center mb-8">
+    <div class="text-blueGray-500 inline-flex items-center">
+      <span class="w-[80px] inline-block">Blocks:</span>
+    </div>
+
+    <div class="flex gap-x-4">
+      <button type="button" class="text-white mr-6 cursor-pointer hover-text" @click="addNewForm('markdown')">
+        <i class="fas fa-microchip text-md text-blueGray-800"></i>
+        <span class="tooltip-text">Create markdown!</span>
+      </button>
+      <button type="button" class="text-white mr-6 cursor-pointer hover-text" @click="addNewForm('image')">
+        <i class="fas fa-file text-md text-blueGray-800"></i>
+        <span class="tooltip-text">Create image!</span>
+      </button>
+      <button type="button" class="text-white mr-6 cursor-pointer hover-text" @click="addNewForm('checklist')">
+        <i class="fas fa-sitemap text-md text-blueGray-800"></i>
+        <span class="tooltip-text">Create checklist!</span>
+      </button>
+    </div>
   </div>
 
   <div class="form">
@@ -32,7 +38,7 @@
               </button>
 
               <template v-if="element.type === 'markdown'">
-                <v-md-editor v-if="editLists[index]" v-model="element.content" height="230px"
+                <v-md-editor v-if="editLists[index]" v-model="element.content" height="270px"
                              :disabled-menus="[]"/>
 
                 <v-md-preview v-else :text="element.content" class="cursor-pointer"></v-md-preview>
