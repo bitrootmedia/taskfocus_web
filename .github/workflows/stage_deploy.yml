@@ -15,8 +15,10 @@ jobs:
         with:
           node-version: "18.x"
 
+      - name: Checkout repo
+        uses: actions/checkout@master
+
       - name: Install dependencies
-      - uses: actions/checkout@master
         run: npm install
 
       - name: .env setup
