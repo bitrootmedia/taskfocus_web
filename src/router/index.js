@@ -10,6 +10,7 @@ import Admin from "../layouts/Admin.vue";
 // views for Auth layout
 import Login from "../views/auth/Login.vue";
 import ResetPassword from "../views/auth/ResetPassword.vue";
+import NewPassword from "../views/auth/NewPassword.vue";
 import Dashboard from "../views/dashboard/Dashboard.vue";
 import ProjectList from "../views/dashboard/ProjectList.vue";
 import CreateProject from "../views/dashboard/CreateProject.vue";
@@ -44,6 +45,11 @@ const routes = [
                 path: "/reset-password",
                 component: ResetPassword,
                 name: 'Reset Password'
+            },
+            {
+                path: "/reset-password-confirm/:id/:token",
+                component: NewPassword,
+                name: 'New Password'
             },
         ],
         beforeEnter: (to, from,next) => {
@@ -161,7 +167,7 @@ router.beforeEach(async (to, from,next) => {
         userStore.setShowPanel(obj)
     }
 
-    if (to.name === 'Reset Password') return next()
+    if (['Reset Password','New Password'].includes(to.name)) return next()
 
     if (to.name !== 'Login' && !token) {
         cookies.remove('task_focus_token')
