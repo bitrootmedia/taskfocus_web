@@ -24,7 +24,7 @@ jobs:
       - name: .env setup
         run: echo "$STAGE_ENV_FILE" > .env
         env:
-          ENV_FILE: ${{ vars.STAGE_ENV_FILE }}
+          STAGE_ENV_FILE: ${{ vars.STAGE_ENV_FILE }}
 
       - name: Build
         run: npm run build
