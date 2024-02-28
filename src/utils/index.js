@@ -85,6 +85,12 @@ export const catchErrors = (e) => {
         return toast.error(e.response.data.detail);
     }
 
+    if (typeof e.response?.data === 'object' && Object.keys(e.response?.data).length) {
+        return Object.keys(e.response?.data).forEach((i) => {
+            toast.error(`${i}: ${e.response?.data[i]}`);
+        })
+    }
+
     if (e?.message) return toast.error(e.message);
 
     return toast.error('Something went wrong')

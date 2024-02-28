@@ -2,7 +2,7 @@
   <div>
     <Sidebar v-model:closePanel="closePanel"/>
     <div class="relative bg-blueGray-100" :class="{'md:ml-64': !closePanel,'md:ml-16': closePanel}">
-      <AdminNavbar />
+      <AdminNavbar/>
       <div class="relative pt-6 pb-8 md:pb-6 h-full">
         <div class=" mx-auto w-full">
           <router-view :key="$route.params"/>
@@ -15,9 +15,18 @@
 <script setup>
 import AdminNavbar from "../components/Navbars/AdminNavbar.vue";
 import Sidebar from "../components/Sidebar/Sidebar.vue";
-import {ref} from "vue";
+import {onMounted, ref, watch} from "vue";
 
 const closePanel = ref(false)
 
+//Watch
+watch(closePanel, (newVal) => {
+  localStorage.setItem('isClosed', newVal)
+})
+
+onMounted(() => {
+  closePanel.value = localStorage.getItem('isClosed') === 'true'
+  console.log(closePanel.value,'00000000')
+})
 </script>
 
