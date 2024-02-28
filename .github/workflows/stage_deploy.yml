@@ -22,9 +22,9 @@ jobs:
         run: npm install
 
       - name: .env setup
-        run: echo "$ENV_FILE" > .env
+        run: echo "$STAGE_ENV_FILE" > .env
         env:
-          ENV_FILE: ${{ vars.ENV_FILE }}
+          ENV_FILE: ${{ vars.STAGE_ENV_FILE }}
 
       - name: Build
         run: npm run build
