@@ -36,6 +36,7 @@ jobs:
           username: ${{ secrets.STAGE_USERNAME }}
           key: ${{ secrets.STAGE_KEY }}
           port: ${{ secrets.STAGE_PORT }}
+          overwrite: true
           source: "dist/*"
           target: "/home/deploy/www/web/"
           strip_components: 1
