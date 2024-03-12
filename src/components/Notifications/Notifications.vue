@@ -1,7 +1,11 @@
 <template>
   <div ref="componentRef">
-    <div class="text-white relative mr-6 cursor-pointer" @click="show = !show">
-      <i class="fas fa-bell text-lg" :class="[mode === 'dark'? 'text-blueGray-700': 'text-blueGray-300']"></i>
+    <div class="text-white relative mr-4 cursor-pointer" @click="show = !show">
+      <IconWrapper>
+        <template #icon>
+          <BellIcon />
+        </template>
+      </IconWrapper>
       <span
           v-if="notificationsStore.notificationsCount"
           class="absolute text-sm rounded-full w-4 h-4 text-white flex items-center justify-center bg-red-500 top-0 -right-3">{{
@@ -10,7 +14,7 @@
     </div>
 
     <div
-        class="notifications-wrapper absolute ml-4 sm:ml-0 right-4 sm:right-6 top-[80px] sm:top-[50px] w-[355px] sm:w-[460px] max-h-[520px] border border-blueGray-200 overflow-y-scroll bg-blueGray-100 px-6 py-6 rounded-[4px] shadow-lg"
+        class="notifications-wrapper absolute ml-4 sm:ml-0 right-4 sm:right-6 top-[80px] sm:top-[65px] w-[355px] sm:w-[460px] max-h-[520px] border border-blueGray-200 overflow-y-scroll bg-blueGray-100 px-6 py-6 rounded-[4px] shadow-lg"
         v-if="show">
 
       <h2 class="text-blueGray-600 text-2xl font-semibold mb-5">Notifications</h2>
@@ -80,6 +84,8 @@ import {convertTimeAgo} from "../../utils";
 import {usePaginate} from "../../composables/usePaginate";
 import Pagination from './../Pagination/Pagination.vue'
 import config from "../../config"
+import BellIcon from "../Svg/BellIcon.vue";
+import IconWrapper from "../Svg/IconWrapper/IconWrapper.vue";
 
 
 const props = defineProps({

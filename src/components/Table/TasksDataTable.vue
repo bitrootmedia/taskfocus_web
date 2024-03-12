@@ -1,255 +1,265 @@
 <template>
-  <div class="content mt-4">
-    <h2 class="font-bold text-xl block text-blueGray-700 mb-4">Tasks</h2>
+  <div class="content">
+    <div class="bg-white border-b border-[#E5E7E7] px-6 py-6 mb-[30px]">
+      <div class="header flex flex-col justify-between mb-5 gap-y-3">
+        <div class="flex items-center gap-x-4 gap-y-3">
+          <div class="flex gap-x-6 w-full">
+            <div class="relative w-full">
+              <SearchIcon class="fas fa-search mr-2 text-sm text-blueGray-300 absolute top-1 left-2"/>
+              <input
+                  v-model="filter.search.value"
+                  type="text"
+                  class="pl-9 pr-3 py-[5px] placeholder-[#797A7B] text-[#797A7B] bg-white border border-[#CBD2E0] rounded text-sm focus:outline-none focus:ring w-full ease-linear transition-all duration-150"
+                  placeholder="Search by task"
+              />
+            </div>
 
-    <div class="header flex flex-col justify-between mb-4 gap-y-3">
-      <button
-          v-if="!hideCreate"
-          @click="createTask"
-          class="whitespace-nowrap w-fit bg-blueGray-800 text-white active:bg-blueGray-600 text-sm font-bold px-6 py-3 rounded shadow hover:shadow-lg outline-none focus:outline-none ease-linear transition-all duration-150"
-          type="button"
-      >
-        Create Task
-      </button>
-
-      <div class="flex items-center flex-wrap gap-x-4 gap-y-3">
-        <div class="flex gap-x-6">
-          <div class="relative w-full ">
-            <i class="fas fa-search mr-2 text-sm text-blueGray-300 absolute top-[12px] left-[8px]"/>
-            <input
-                v-model="filter.search.value"
-                type="text"
-                class="border-0 pl-8 pr-3 py-3 placeholder-blueGray-300 text-blueGray-600 bg-white rounded text-sm shadow focus:outline-none focus:ring w-full ease-linear transition-all duration-150"
-                placeholder="Search by task"
-            />
           </div>
 
-        </div>
-
-        <div>
-          <select v-model="form.status"
-                  class="border-0 px-3 py-3 text-blueGray-600 bg-white rounded text-sm shadow focus:outline-none focus:ring w-full ease-linear transition-all duration-150"
+          <button
+              @click="router.push('/dashboard/create-task')"
+              class="bg-white flex items-center justify-center gap-x-1 px-3 py-[3px] border border-[#CBD2E0] rounded hover:shadow-lg outline-none focus:outline-none ease-linear transition-all duration-150"
+              type="button"
           >
-            <option class="" value="" disabled selected>Select Status</option>
-            <option :value="status.label" v-for="(status) in statuses" :key="status.id">
-              {{ status.label }}
-            </option>
-          </select>
-        </div>
+            <FilterIcon />
+          </button>
 
-        <div class="flex gap-x-6">
-          <div class="relative w-full ">
-            <i class="fas fa-search mr-2 text-sm text-blueGray-300 absolute top-[12px] left-[8px]"/>
-            <input
-                v-model="filter.projectSearch.value"
-                type="text"
-                class="border-0 pl-8 pr-3 py-3 placeholder-blueGray-300 text-blueGray-600 bg-white rounded text-sm shadow focus:outline-none focus:ring w-full ease-linear transition-all duration-150"
-                placeholder="Search by project"
-            />
-          </div>
-
-        </div>
-
-        <div>
-          <select v-model="form.owner"
-                  class="border-0 px-3 py-3 text-blueGray-600 bg-white rounded text-sm shadow focus:outline-none focus:ring w-full ease-linear transition-all duration-150"
+          <button
+              @click="router.push('/dashboard/create-task')"
+              class="whitespace-nowrap bg-orange-c flex items-center justify-center gap-x-1 px-3 py-1 text-[13px] font-medium rounded hover:shadow-lg outline-none focus:outline-none ease-linear transition-all duration-150"
+              type="button"
           >
-            <option class="" value="" disabled selected>Select Owner</option>
-            <option :value="user.id" v-for="(user) in users" :key="user.id">
-              {{user.first_name ? `${user.first_name} ${user.last_name}` : `${user.username}`}}
-            </option>
-          </select>
+            New task
+            <PlusIcon />
+          </button>
         </div>
 
-        <div>
-          <select v-model="form.responsibleUser"
-                  class="border-0 px-3 py-3 text-blueGray-600 bg-white rounded text-sm shadow focus:outline-none focus:ring w-full ease-linear transition-all duration-150"
-          >
-            <option class="" value="" disabled selected>Select Responsible</option>
-            <option :value="user.id" v-for="(user) in users" :key="user.id">
-              {{user.first_name ? `${user.first_name} ${user.last_name}` : `${user.username}`}}
-            </option>
-          </select>
-        </div>
 
-        <div class="flex gap-x-6">
-          <div class="relative w-full ">
-            <i class="fas fa-search mr-2 text-sm text-blueGray-300 absolute top-[12px] left-[8px]"/>
-            <input
-                v-model="filter.tagSearch.value"
-                type="text"
-                class="border-0 pl-8 pr-3 py-3 placeholder-blueGray-300 text-blueGray-600 bg-white rounded text-sm shadow focus:outline-none focus:ring w-full ease-linear transition-all duration-150"
-                placeholder="Search by tag"
-            />
+        <div class="hidden">
+          <div>
+            <select v-model="form.status"
+                    class="border-0 px-3 py-3 text-blueGray-600 bg-white rounded text-sm shadow focus:outline-none focus:ring w-full ease-linear transition-all duration-150"
+            >
+              <option class="" value="" disabled selected>Select Status</option>
+              <option :value="status.label" v-for="(status) in statuses" :key="status.id">
+                {{ status.label }}
+              </option>
+            </select>
           </div>
 
-        </div>
+          <div class="flex gap-x-6">
+            <div class="relative w-full ">
+              <i class="fas fa-search mr-2 text-sm text-blueGray-300 absolute top-[12px] left-[8px]"/>
+              <input
+                  v-model="filter.projectSearch.value"
+                  type="text"
+                  class="border-0 pl-8 pr-3 py-3 placeholder-blueGray-300 text-blueGray-600 bg-white rounded text-sm shadow focus:outline-none focus:ring w-full ease-linear transition-all duration-150"
+                  placeholder="Search by project"
+              />
+            </div>
 
-        <div class="flex gap-x-6">
-          <div class="relative w-full ">
-            <i class="fas fa-search mr-2 text-sm text-blueGray-300 absolute top-[12px] left-[8px]"/>
-            <input
-                v-model="form.createdAtAfter"
-                :type="typeAfter"
-                @focus="typeAfter='date'"
-                @blur="typeAfter='text'"
-                class="border-0 pl-8 pr-3 py-3 placeholder-blueGray-300 text-blueGray-600 bg-white rounded text-sm shadow focus:outline-none focus:ring w-full ease-linear transition-all duration-150"
-                placeholder="Created at after"
-            />
           </div>
-        </div>
 
-        <div class="flex gap-x-6">
-          <div class="relative w-full ">
-            <i class="fas fa-search mr-2 text-sm text-blueGray-300 absolute top-[12px] left-[8px]"/>
-            <input
-                v-model="form.createdAtBefore"
-                :type="typeBefore"
-                @focus="typeBefore='date'"
-                class="border-0 pl-8 pr-3 py-3 placeholder-blueGray-300 text-blueGray-600 bg-white rounded text-sm shadow focus:outline-none focus:ring w-full ease-linear transition-all duration-150"
-                placeholder="Created at before"
-            />
+          <div>
+            <select v-model="form.owner"
+                    class="border-0 px-3 py-3 text-blueGray-600 bg-white rounded text-sm shadow focus:outline-none focus:ring w-full ease-linear transition-all duration-150"
+            >
+              <option class="" value="" disabled selected>Select Owner</option>
+              <option :value="user.id" v-for="(user) in users" :key="user.id">
+                {{user.first_name ? `${user.first_name} ${user.last_name}` : `${user.username}`}}
+              </option>
+            </select>
           </div>
-        </div>
 
-      </div>
+          <div>
+            <select v-model="form.responsibleUser"
+                    class="border-0 px-3 py-3 text-blueGray-600 bg-white rounded text-sm shadow focus:outline-none focus:ring w-full ease-linear transition-all duration-150"
+            >
+              <option class="" value="" disabled selected>Select Responsible</option>
+              <option :value="user.id" v-for="(user) in users" :key="user.id">
+                {{user.first_name ? `${user.first_name} ${user.last_name}` : `${user.username}`}}
+              </option>
+            </select>
+          </div>
 
+          <div class="flex gap-x-6">
+            <div class="relative w-full ">
+              <i class="fas fa-search mr-2 text-sm text-blueGray-300 absolute top-[12px] left-[8px]"/>
+              <input
+                  v-model="filter.tagSearch.value"
+                  type="text"
+                  class="border-0 pl-8 pr-3 py-3 placeholder-blueGray-300 text-blueGray-600 bg-white rounded text-sm shadow focus:outline-none focus:ring w-full ease-linear transition-all duration-150"
+                  placeholder="Search by tag"
+              />
+            </div>
 
-      <div>
-        <div class="inline-flex items-center mr-6">
-          <input
-              id="hideClosed"
-              v-model="form.hideClosed"
-              type="checkbox"
-              class="border-0 flex pl-8 pr-3 py-3 placeholder-blueGray-300 text-blueGray-600 rounded text-sm ease-linear transition-all duration-150 cursor-pointer"
-              placeholder="Search"
-          />
-          <label for="hideClosed" class="text-md text-blueGray-500 font-medium cursor-pointer ml-2 whitespace-nowrap">Hide
-            closed tasks</label>
-        </div>
+          </div>
 
-        <div class="inline-flex items-center mr-6">
-          <input
-              id="showCurrentUser"
-              v-model="form.showCurrentUser"
-              type="checkbox"
-              class="border-0 flex pl-8 pr-3 py-3 placeholder-blueGray-300 text-blueGray-600 rounded text-sm ease-linear transition-all duration-150 cursor-pointer"
-              placeholder="Search"
-          />
-          <label for="showCurrentUser"
-                 class="text-md text-blueGray-500 font-medium cursor-pointer ml-2 whitespace-nowrap">Just mine</label>
-        </div>
+          <div class="flex gap-x-6">
+            <div class="relative w-full ">
+              <i class="fas fa-search mr-2 text-sm text-blueGray-300 absolute top-[12px] left-[8px]"/>
+              <input
+                  v-model="form.createdAtAfter"
+                  :type="typeAfter"
+                  @focus="typeAfter='date'"
+                  @blur="typeAfter='text'"
+                  class="border-0 pl-8 pr-3 py-3 placeholder-blueGray-300 text-blueGray-600 bg-white rounded text-sm shadow focus:outline-none focus:ring w-full ease-linear transition-all duration-150"
+                  placeholder="Created at after"
+              />
+            </div>
+          </div>
 
-        <div class="inline-flex items-center mr-6">
-          <input
-              id="urgent"
-              v-model="form.isUrgent"
-              type="checkbox"
-              class="border-0 flex pl-8 pr-3 py-3 placeholder-blueGray-300 text-blueGray-600 rounded text-sm ease-linear transition-all duration-150 cursor-pointer"
-              placeholder="Search"
-          />
-          <label for="urgent"
-                 class="text-md text-blueGray-500 font-medium cursor-pointer ml-2 whitespace-nowrap">Urgent tasks</label>
+          <div class="flex gap-x-6">
+            <div class="relative w-full ">
+              <i class="fas fa-search mr-2 text-sm text-blueGray-300 absolute top-[12px] left-[8px]"/>
+              <input
+                  v-model="form.createdAtBefore"
+                  :type="typeBefore"
+                  @focus="typeBefore='date'"
+                  class="border-0 pl-8 pr-3 py-3 placeholder-blueGray-300 text-blueGray-600 bg-white rounded text-sm shadow focus:outline-none focus:ring w-full ease-linear transition-all duration-150"
+                  placeholder="Created at before"
+              />
+            </div>
+          </div>
         </div>
       </div>
 
-      <div>
-        <span class="underline text-blueGray-500 cursor-pointer font-medium text-sm" @click="clearFilters">Clear all filters</span>
+      <div class="actions flex flex-wrap justify-between items-center">
+        <div class="flex flex-wrap">
+          <div class="inline-flex items-center gap-x-1 mr-4">
+            <input
+                id="hideClosed"
+                v-model="form.hideClosed"
+                type="checkbox"
+                class="accent-green-c w-4 h-4 border-0 flex pl-8 pr-3 py-3 rounded text-sm ease-linear transition-all duration-150 cursor-pointer"
+            />
+            <label for="hideClosed" class="text-sm text-[#474D66] cursor-pointer whitespace-nowrap">Hide closed tasks</label>
+          </div>
+
+          <div class="inline-flex items-center gap-x-1 mr-4">
+            <input
+                id="showCurrentUser"
+                v-model="form.showCurrentUser"
+                type="checkbox"
+                class="accent-green-c w-4 h-4 border-0 flex rounded text-sm ease-linear transition-all duration-150 cursor-pointer"
+            />
+            <label for="showCurrentUser"
+                   class="text-sm text-[#474D66] cursor-pointer whitespace-nowrap">Just mine</label>
+          </div>
+
+          <div class="inline-flex items-center gap-x-1 mr-4">
+            <input
+                id="urgent"
+                v-model="form.isUrgent"
+                type="checkbox"
+                class="accent-green-c w-4 h-4 border-0 flex rounded text-sm ease-linear transition-all duration-150 cursor-pointer"
+            />
+            <label for="urgent"
+                   class="text-sm text-[#474D66] cursor-pointer whitespace-nowrap">Urgent tasks</label>
+          </div>
+        </div>
+
+        <div class="flex">
+          <span class="underline text-black cursor-pointer font-semibold text-sm" @click="clearFilters">Clear all filters</span>
+        </div>
       </div>
     </div>
 
-    <DataTable :headers="headers" @sorting="sorting">
-      <template v-slot:tableBody>
 
-        <tr v-if="loading">
-          <td :colspan="headers.length">
-            <div class="flex justify-center py-1 text-blueGray-500 font-medium">
-              <Loader/>
-            </div>
-          </td>
-        </tr>
+    <div class="main-container ">
+      <DataTable :headers="headers" @sorting="sorting">
+        <template v-slot:tableBody>
 
-        <template v-else>
-          <tr v-if="!tasks.length">
+          <tr v-if="loading">
             <td :colspan="headers.length">
-              <p class="flex text-center px-4 justify-center py-8 text-blueGray-500 font-medium">
-                No data found
-              </p>
+              <div class="flex justify-center py-1 text-blueGray-500 font-medium">
+                <Loader/>
+              </div>
             </td>
           </tr>
 
-          <draggable
-              v-else
-              tag="tbody"
-              :disabled="isDragDisabled"
-              v-model="tasks"
-              item-key="id"
-              group="id"
-              @change="changeDrag"
-          >
-            <template #item="{element}">
-              <tr :class="{'cursor-move': !isDragDisabled}">
-                <td class="border-t-0 px-3 align-middle border-l-0 border-r-0 text-xs whitespace-nowrap p-4">
+          <template v-else>
+            <tr v-if="!tasks.length">
+              <td :colspan="headers.length">
+                <p class="flex text-center px-4 justify-center py-8 text-blueGray-500 font-medium">
+                  No data found
+                </p>
+              </td>
+            </tr>
+
+            <draggable
+                v-else
+                tag="tbody"
+                :disabled="isDragDisabled"
+                v-model="tasks"
+                item-key="id"
+                group="id"
+                @change="changeDrag"
+            >
+              <template #item="{element}">
+                <tr :class="{'cursor-move': !isDragDisabled}">
+                  <td class="border-t-0 px-3 align-middle border-l-0 border-r-0 text-xs whitespace-nowrap p-4">
                    <span v-if="element.title" class="cursor-pointer" @click="toLink(element)">{{
                        element.title
                      }}</span>
-                  <span v-else>-</span>
-                </td>
-                <td class="border-t-0 px-3 align-middle border-l-0 border-r-0 text-xs whitespace-nowrap p-4">
-                  <span>{{ element.status || '-' }}</span>
-                </td>
+                    <span v-else>-</span>
+                  </td>
+                  <td class="border-t-0 px-3 align-middle border-l-0 border-r-0 text-xs whitespace-nowrap p-4">
+                    <span>{{ element.status || '-' }}</span>
+                  </td>
 
-                <td class="border-t-0 px-3 align-middle border-l-0 border-r-0 text-xs whitespace-nowrap p-4"
-                    v-if="hideCreate">
+                  <td class="border-t-0 px-3 align-middle border-l-0 border-r-0 text-xs whitespace-nowrap p-4"
+                      v-if="hideCreate">
                    <span v-if="element.project?.title" class="cursor-pointer" @click="toLink(element.project,true)">{{
                        element.project.title
                      }}</span>
-                  <span v-else>-</span>
-                </td>
+                    <span v-else>-</span>
+                  </td>
 
-                <td class="border-t-0 px-3 align-middle border-l-0 border-r-0 text-xs whitespace-nowrap p-4">
+                  <td class="border-t-0 px-3 align-middle border-l-0 border-r-0 text-xs whitespace-nowrap p-4">
                           <span v-if="element.owner?.first_name || element.owner?.last_name">{{
                               element.owner?.first_name
                             }} {{ element.owner?.last_name }}</span>
-                  <span v-else>{{ element.owner?.username }}</span>
-                </td>
-                <td class="border-t-0 px-3 align-middle border-l-0 border-r-0 text-xs whitespace-nowrap p-4">
+                    <span v-else>{{ element.owner?.username }}</span>
+                  </td>
+                  <td class="border-t-0 px-3 align-middle border-l-0 border-r-0 text-xs whitespace-nowrap p-4">
                           <span v-if="element.responsible?.first_name || element.responsible?.last_name">{{
                               element.responsible?.first_name
                             }} {{ element.responsible?.last_name }}</span>
-                  <span v-else>{{ element.responsible?.username || '-' }}</span>
+                    <span v-else>{{ element.responsible?.username || '-' }}</span>
 
-                </td>
-                <td class="border-t-0 px-3 align-middle border-l-0 border-r-0 text-xs whitespace-nowrap p-4">
-                  <span>{{ element.tag || '-' }}</span>
-                </td>
-                <td class="border-t-0 px-3 align-middle border-l-0 border-r-0 text-xs whitespace-nowrap p-4">
-                  <span>{{ element.progress || 0 }}%</span>
-                </td>
-                <td class="border-t-0 px-3 align-middle border-l-0 border-r-0 text-xs whitespace-nowrap p-4">
-                  <span class="block">{{ element.is_closed ? 'Yes' : 'No' }}</span>
-                </td>
-                <td class="border-t-0 px-3 align-middle border-l-0 border-r-0 text-xs whitespace-nowrap p-4">
-                  {{ convertDate(element.created_at) }}
-                </td>
-                <td class="border-t-0 px-3 align-middle border-l-0 border-r-0 text-xs whitespace-nowrap p-4">
-                  {{ convertDate(element.updated_at) }}
-                </td>
-                <td class="border-t-0 px-3 align-middle border-l-0 border-r-0 text-xs whitespace-nowrap p-4">
-                  <span>{{ element.position || '-' }}</span>
-                </td>
-              </tr>
-            </template>
-          </draggable>
+                  </td>
+                  <td class="border-t-0 px-3 align-middle border-l-0 border-r-0 text-xs whitespace-nowrap p-4">
+                    <span>{{ element.tag || '-' }}</span>
+                  </td>
+                  <td class="border-t-0 px-3 align-middle border-l-0 border-r-0 text-xs whitespace-nowrap p-4">
+                    <TableProgressbar :progress="element.progress"/>
+                  </td>
+                  <td class="border-t-0 px-3 align-middle border-l-0 border-r-0 text-xs whitespace-nowrap p-4">
+                    <span class="block">{{ element.is_closed ? 'Yes' : 'No' }}</span>
+                  </td>
+                  <td class="border-t-0 px-3 align-middle border-l-0 border-r-0 text-xs whitespace-nowrap p-4">
+                    {{ convertDate(element.created_at) }}
+                  </td>
+                  <td class="border-t-0 px-3 align-middle border-l-0 border-r-0 text-xs whitespace-nowrap p-4">
+                    {{ convertDate(element.updated_at) }}
+                  </td>
+                  <td class="border-t-0 px-3 align-middle text-xs whitespace-nowrap p-4">
+                    <span>{{ element.position || '-' }}</span>
+                  </td>
+                </tr>
+              </template>
+            </draggable>
+          </template>
         </template>
-      </template>
-    </DataTable>
+      </DataTable>
 
-    <Pagination
-        v-if="paginate.pagination.value.total > 1 && !loading"
-        :pagination="paginate.pagination.value"
-        v-model:query="paginate.query.value"
-    />
+      <Pagination
+          v-if="paginate.pagination.value.total > 1 && !loading"
+          :pagination="paginate.pagination.value"
+          v-model:query="paginate.query.value"
+      />
+    </div>
   </div>
 </template>
 
@@ -267,6 +277,11 @@ import {usePaginate} from "../../composables/usePaginate";
 import {useFilter} from "../../composables/useFilter";
 import {useCookies} from "vue3-cookies";
 import {useUserStore} from "../../store/user";
+import PlusIcon from "../Svg/PlusIcon.vue";
+import FilterIcon from "../Svg/FilterIcon.vue";
+import SearchIcon from "../Svg/SearchIcon.vue";
+import TableProgressbar from "../app/TableProgressbar.vue";
+
 
 const statuses = [
   {id: 0, label: 'NONE'},

@@ -1,22 +1,22 @@
 <template>
   <div class="data-table-wrapper">
     <div
-        class="relative flex flex-col min-w-0 break-words w-full mb-6 shadow-lg rounded"
+        class="relative flex flex-col min-w-0 break-words w-full mb-6"
     >
-      <div class="block w-full overflow-x-auto pb-10 md:pb-0">
-        <table class="items-center w-full bg-transparent border-collapse">
+      <div class="block w-full overflow-x-auto pb-10 md:pb-0 border border-[#E5E7E7] rounded-[10px]">
+        <table class="items-center w-full bg-white border-collapse rounded-[10px]">
           <thead>
           <tr>
             <th
                 v-for="header in headers" :key="header.id"
-                class="px-3 h-[54px] align-middle border border-solid py-3 text-xs bg-blueGray-50 text-blueGray-500 border-blueGray-100 uppercase border-l-0 border-r-0 whitespace-nowrap font-semibold text-left"
+                class="px-3 h-[54px] align-middle border border-solid py-3 text-xs bg-white border-[#E5E7E7] border-t-0 border-l-0 border-r-0 whitespace-nowrap font-semibold text-left"
             >
-              <div :class="{'flex gap-x-1 items-center justify-between': header.sorting}">
+              <div :class="{'flex gap-x-1 items-center': header.sorting}">
                 {{ header.label }}
 
-                <span class="flex flex-col h-[20px] text-blueGray-300 hover:text-blueGray-600 cursor-pointer" v-if="header.sorting" @click="sortTitle(header)">
-                  <i class="fas fa-sort-up text-sm h-[2px]" :class="{'text-blueGray-600': order === true && active === header.sortLabel}"/>
-                  <i class="fas fa-sort-down text-sm h-[2px]" :class="{'text-blueGray-600': order === false && active === header.sortLabel}"/>
+                <span class="flex flex-col h-[20px] text-[#797A7B] hover:text-[#3b3a3a] cursor-pointer" v-if="header.sorting" @click="sortTitle(header)">
+                  <i class="fas fa-sort-up text-sm h-[2px]" :class="{'text-[#3b3a3a]': order === true && active === header.sortLabel}"/>
+                  <i class="fas fa-sort-down text-sm h-[2px]" :class="{'text-[#3b3a3a]': order === false && active === header.sortLabel}"/>
               </span>
               </div>
             </th>

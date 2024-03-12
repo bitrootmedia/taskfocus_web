@@ -1,12 +1,12 @@
 <template>
   <nav
-      class="sticky top-0 bg-emerald-600 w-full z-10 md:flex-row md:flex-nowrap md:justify-start hidden md:flex items-center p-4"
+      class="sticky top-0 bg-white border-b border-[#E5E7E7] w-full z-10 md:flex-row md:flex-nowrap md:justify-start hidden md:flex items-center pl-[50px] pr-4 pt-[30px] pb-[27px]"
   >
     <div
         class="w-full mx-auto items-center flex justify-between md:flex-nowrap flex-wrap"
     >
       <a
-          class="text-white text-sm uppercase hidden md:inline-block font-semibold"
+          class="text-black text-[22px] uppercase hidden md:inline-block font-semibold"
           href="javascript:void(0)"
       >
         {{ route.name || 'Dashboard' }}
@@ -35,11 +35,22 @@
           <Notifications/>
         </div>
 
-        <span class="text-white font-medium mr-4 flex items-center gap-x-2">
-          <i class="fas fa-user-circle text-blueGray-300 text-lg"></i>
+        <span class="text-black text-sm mr-4 flex items-center gap-x-2">
+           <IconWrapper>
+            <template #icon>
+              <UserIcon/>
+            </template>
+          </IconWrapper>
           {{ fullName }}
         </span>
-        <span class="cursor-pointer text-white font-medium" @click="logout">Logout</span>
+        <span class="cursor-pointer text-black text-sm flex items-center gap-x-2" @click="logout">
+           <IconWrapper>
+            <template #icon>
+              <LogoutIcon/>
+            </template>
+          </IconWrapper>
+          Logout
+        </span>
       </div>
 
     </div>
@@ -55,6 +66,9 @@ import {useRoute, useRouter} from "vue-router";
 import {computed} from "vue";
 import axios from "axios";
 import Notifications from "../../components/Notifications/Notifications.vue";
+import IconWrapper from "../Svg/IconWrapper/IconWrapper.vue";
+import UserIcon from "../Svg/UserIcon.vue";
+import LogoutIcon from "../Svg/LogoutIcon.vue";
 
 const userStore = useUserStore()
 const {cookies} = useCookies();
