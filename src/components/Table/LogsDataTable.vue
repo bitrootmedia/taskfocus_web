@@ -2,13 +2,13 @@
   <div class="content mt-4">
     <h2 class="font-bold text-xl block text-blueGray-700 mb-4">Logs</h2>
 
-    <div class="header flex flex-col md:flex-row items-baseline md:items-center justify-between mt-4 mb-4 gap-y-3">
-      <div class="relative w-full md:w-2/4">
-        <i class="fas fa-search mr-2 text-sm text-blueGray-300 absolute top-[12px] left-[8px]"/>
+    <div class="header flex flex-col md:flex-row w-full sm:w-[250px] items-baseline md:items-center justify-between mt-4 mb-4 gap-y-3">
+      <div class="relative w-full">
+        <SearchIcon class="fas fa-search mr-2 text-sm text-blueGray-300 absolute top-1 left-2"/>
         <input
             v-model="filter.search.value"
             type="text"
-            class="border-0 pl-8 pr-3 py-3 placeholder-blueGray-300 text-blueGray-600 bg-white rounded text-sm shadow focus:outline-none focus:ring w-full ease-linear transition-all duration-150"
+            class="pl-9 pr-3 py-[5px] placeholder-[#797A7B] text-[#797A7B] bg-white border border-[#CBD2E0] rounded-[6px] text-sm focus:outline-none focus:ring w-full ease-linear transition-all duration-150"
             placeholder="Search"
         />
       </div>
@@ -101,6 +101,7 @@ import {usePaginate} from "../../composables/usePaginate";
 import {useFilter} from "../../composables/useFilter";
 import {useToast} from "vue-toastification";
 import {useLogsStore} from "../../store/logs";
+import SearchIcon from "../Svg/SearchIcon.vue";
 
 const props = defineProps({
   projectId: {

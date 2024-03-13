@@ -17,6 +17,7 @@ module.exports = {
       ...colors,
       'orange-c': '#F8D487',
       'orange-c-600': '#e3b349',
+      'orange-c-900': '#F3AE1B',
       'green-c': '#349C91',
       'light-c': '#797A7B',
       'light-bg-c': '#E5E7E7',

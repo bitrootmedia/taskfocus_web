@@ -196,10 +196,7 @@
                      closePanel ? 'text-center pl-[38px]' : 'pl-4 md:pl-[50px]'
                 ]"
               >
-                <i
-                    class="fas fa-comments mr-2 text-sm"
-                    :class="[isExactActive ? 'opacity-75' : 'text-blueGray-300']"
-                ></i>
+                <CommentsIcon :isExactActive="isExactActive"/>
                 {{ !closePanel ? 'Comments' : '' }}
               </a>
             </router-link>
@@ -218,10 +215,7 @@
                      closePanel ? 'text-center pl-[38px]' : 'pl-4 md:pl-[50px]'
                 ]"
               >
-                <i
-                    class="fas fa-images mr-2 text-sm"
-                    :class="[isExactActive ? 'opacity-75' : 'text-blueGray-300']"
-                ></i>
+                <AttachmentsIcon :isExactActive="isExactActive"/>
                 {{ !closePanel ? 'Attachments' : '' }}
               </a>
             </router-link>
@@ -259,10 +253,7 @@
                      closePanel ? 'text-center pl-[38px]' : 'pl-4 md:pl-[50px]'
                 ]"
               >
-                <i
-                    class="fas fa-bug mr-2 text-sm"
-                    :class="[isExactActive ? 'opacity-75' : 'text-blueGray-300']"
-                ></i>
+                <LogsIcon :isExactActive="isExactActive"/>
                 {{ !closePanel ? 'Logs' : '' }}
               </a>
             </router-link>
@@ -281,10 +272,7 @@
                      closePanel ? 'text-center pl-[38px]' : 'pl-4 md:pl-[50px]'
                 ]"
               >
-                <i
-                    class="fas fa-calendar-day mr-2 text-sm"
-                    :class="[isExactActive ? 'opacity-75' : 'text-blueGray-300']"
-                ></i>
+                <TimeTrackerIcon :isExactActive="isExactActive"/>
                 {{ !closePanel ? 'Time Tracker' : '' }}
               </a>
             </router-link>
@@ -366,6 +354,10 @@ import RemindersIcon from "../Svg/RemindersIcon.vue";
 import NotificationsIcon from "../Svg/NotificationsIcon.vue";
 import UsersIcon from "../Svg/UsersIcon.vue";
 import SettingsIcon from "../Svg/SettingsIcon.vue";
+import LogsIcon from "../Svg/LogsIcon.vue";
+import CommentsIcon from "../Svg/CommentsIcon.vue";
+import AttachmentsIcon from "../Svg/AttachmentsIcon.vue";
+import TimeTrackerIcon from "../Svg/TimeTrackerIcon.vue";
 import {catchErrors} from "../../utils";
 import moment from "moment";
 import {useTasksStore} from "../../store/tasks";

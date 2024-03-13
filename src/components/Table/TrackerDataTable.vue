@@ -37,8 +37,11 @@
                     }} {{ element.user?.last_name }}</span>
                   <span v-else>{{ element.user?.username }}</span>
                 </td>
-                <td class="border-t-0 px-3 align-middle border-l-0 border-r-0 text-xs whitespace-nowrap p-4" v-if="!taskId">
-                  <span v-if="element.task" class="cursor-pointer" @click="toLink(element.task)">{{ element.task.title }}</span>
+                <td class="border-t-0 px-3 align-middle border-l-0 border-r-0 text-xs whitespace-nowrap p-4"
+                    v-if="!taskId">
+                  <span v-if="element.task" class="cursor-pointer" @click="toLink(element.task)">{{
+                      element.task.title
+                    }}</span>
                   <span v-else>-</span>
                 </td>
                 <td class="border-t-0 px-3 align-middle border-l-0 border-r-0 text-xs whitespace-nowrap p-4">
@@ -48,20 +51,15 @@
                   {{ element.stopped_at ? convertDateTimezone(element.stopped_at) : '-' }}
                 </td>
                 <td class="border-t-0 px-3 align-middle border-l-0 border-r-0 text-xs whitespace-nowrap p-4"
-                    >
+                >
                   <span class="truncate block">
-                    {{convertHumanTime(element.total_time)}}
+                    {{ convertHumanTime(element.total_time) }}
                   </span>
                 </td>
-                <td v-if="canEdit" class="border-t-0 px-3 align-middle border-l-0 border-r-0 text-xs whitespace-nowrap p-4"
-                    >
-                  <button
-                      v-if="isOwner(element)"
-                      class="bg-blueGray-800 whitespace-nowrap text-white active:bg-blueGray-600 text-sm font-bold px-2 sm:px-4 py-2 rounded shadow hover:shadow-lg outline-none focus:outline-none ease-linear transition-all duration-150"
-                      type="button"
-                      @click="openModal(element)"
-                     > Edit
-                  </button>
+                <td v-if="canEdit"
+                    class="border-t-0 px-3 align-middle border-l-0 border-r-0 text-xs whitespace-nowrap p-4"
+                >
+                  <Button v-if="isOwner(element)" label="Edit" version="white" size="small" @on-click="openModal(element)"/>
                 </td>
               </tr>
             </template>
@@ -103,6 +101,7 @@ import {useFilter} from "../../composables/useFilter";
 import {convertHumanTime} from "../../utils";
 import TimeTrackerModal from '../Modals/TimeTrackerModal.vue'
 import {useCookies} from "vue3-cookies";
+import Button from "../Button/Button.vue";
 
 const props = defineProps({
   taskId: {
@@ -152,7 +151,7 @@ const headers = computed(() => {
 
 
 // Methods
-const isOwner = (element)=>{
+const isOwner = (element) => {
   if (!cookies.get('task_focus_user')) return ''
 
   const user = cookies.get('task_focus_user')
@@ -160,7 +159,7 @@ const isOwner = (element)=>{
   return element.user.id === user.pk
 }
 
-const openModal = (item)=>{
+const openModal = (item) => {
   current.value = item
   showEditModal.value = true
 }

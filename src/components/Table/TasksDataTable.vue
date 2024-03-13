@@ -2,14 +2,14 @@
   <div class="content">
     <div class="bg-white border-b border-[#E5E7E7] px-6 py-6 mb-[30px]">
       <div class="header flex flex-col justify-between mb-5 gap-y-3">
-        <div class="flex items-center gap-x-4 gap-y-3">
+        <div class="flex items-center gap-x-3 gap-y-3">
           <div class="flex gap-x-6 w-full">
             <div class="relative w-full">
               <SearchIcon class="fas fa-search mr-2 text-sm text-blueGray-300 absolute top-1 left-2"/>
               <input
                   v-model="filter.search.value"
                   type="text"
-                  class="pl-9 pr-3 py-[5px] placeholder-[#797A7B] text-[#797A7B] bg-white border border-[#CBD2E0] rounded text-sm focus:outline-none focus:ring w-full ease-linear transition-all duration-150"
+                  class="pl-9 pr-3 py-[5px] placeholder-[#797A7B] text-[#797A7B] bg-white border border-[#CBD2E0] rounded-[6px] text-sm focus:outline-none focus:ring w-full ease-linear transition-all duration-150"
                   placeholder="Search by task"
               />
             </div>
@@ -17,8 +17,8 @@
           </div>
 
           <button
-              @click="router.push('/dashboard/create-task')"
-              class="bg-white flex items-center justify-center gap-x-1 px-3 py-[3px] border border-[#CBD2E0] rounded hover:shadow-lg outline-none focus:outline-none ease-linear transition-all duration-150"
+              @click="showFilters = !showFilters"
+              class="bg-white flex items-center justify-center gap-x-1 px-3 py-[3px] border border-[#CBD2E0] rounded-[6px] outline-none focus:outline-none ease-linear transition-all duration-150"
               type="button"
           >
             <FilterIcon />
@@ -26,7 +26,7 @@
 
           <button
               @click="router.push('/dashboard/create-task')"
-              class="whitespace-nowrap bg-orange-c flex items-center justify-center gap-x-1 px-3 py-1 text-[13px] font-medium rounded hover:shadow-lg outline-none focus:outline-none ease-linear transition-all duration-150"
+              class="whitespace-nowrap bg-orange-c flex items-center justify-center gap-x-1 px-3 py-1 text-[13px] font-medium rounded-[6px] hover:bg-orange-c-900 outline-none focus:outline-none ease-linear transition-all duration-150"
               type="button"
           >
             New task
@@ -35,10 +35,10 @@
         </div>
 
 
-        <div class="hidden">
-          <div>
+        <div v-if="showFilters" class="flex gap-3 flex-wrap">
+          <div class="w-[250px]">
             <select v-model="form.status"
-                    class="border-0 px-3 py-3 text-blueGray-600 bg-white rounded text-sm shadow focus:outline-none focus:ring w-full ease-linear transition-all duration-150"
+                    class="pl-3 pr-8 py-[5px] placeholder-[#797A7B] text-[#797A7B] bg-white border border-[#CBD2E0] rounded-[6px] text-sm focus:outline-none focus:ring w-full ease-linear transition-all duration-150"
             >
               <option class="" value="" disabled selected>Select Status</option>
               <option :value="status.label" v-for="(status) in statuses" :key="status.id">
@@ -47,22 +47,22 @@
             </select>
           </div>
 
-          <div class="flex gap-x-6">
+          <div class="flex gap-x-6 w-[250px]">
             <div class="relative w-full ">
-              <i class="fas fa-search mr-2 text-sm text-blueGray-300 absolute top-[12px] left-[8px]"/>
+              <SearchIcon class="fas fa-search mr-2 text-sm text-blueGray-300 absolute top-1 left-2"/>
               <input
                   v-model="filter.projectSearch.value"
                   type="text"
-                  class="border-0 pl-8 pr-3 py-3 placeholder-blueGray-300 text-blueGray-600 bg-white rounded text-sm shadow focus:outline-none focus:ring w-full ease-linear transition-all duration-150"
+                  class="pl-9 pr-3 py-[5px] placeholder-[#797A7B] text-[#797A7B] bg-white border border-[#CBD2E0] rounded-[6px] text-sm focus:outline-none focus:ring w-full ease-linear transition-all duration-150"
                   placeholder="Search by project"
               />
             </div>
 
           </div>
 
-          <div>
+          <div class="w-[250px]">
             <select v-model="form.owner"
-                    class="border-0 px-3 py-3 text-blueGray-600 bg-white rounded text-sm shadow focus:outline-none focus:ring w-full ease-linear transition-all duration-150"
+                    class="pl-3 pr-8 py-[5px] placeholder-[#797A7B] text-[#797A7B] bg-white border border-[#CBD2E0] rounded-[6px] text-sm focus:outline-none focus:ring w-full ease-linear transition-all duration-150"
             >
               <option class="" value="" disabled selected>Select Owner</option>
               <option :value="user.id" v-for="(user) in users" :key="user.id">
@@ -71,9 +71,9 @@
             </select>
           </div>
 
-          <div>
+          <div class="w-[250px]">
             <select v-model="form.responsibleUser"
-                    class="border-0 px-3 py-3 text-blueGray-600 bg-white rounded text-sm shadow focus:outline-none focus:ring w-full ease-linear transition-all duration-150"
+                    class="pl-3 pr-8 py-[5px] placeholder-[#797A7B] text-[#797A7B] bg-white border border-[#CBD2E0] rounded-[6px] text-sm focus:outline-none focus:ring w-full ease-linear transition-all duration-150"
             >
               <option class="" value="" disabled selected>Select Responsible</option>
               <option :value="user.id" v-for="(user) in users" :key="user.id">
@@ -82,41 +82,41 @@
             </select>
           </div>
 
-          <div class="flex gap-x-6">
+          <div class="flex gap-x-6 w-[250px]">
             <div class="relative w-full ">
-              <i class="fas fa-search mr-2 text-sm text-blueGray-300 absolute top-[12px] left-[8px]"/>
+              <SearchIcon class="fas fa-search mr-2 text-sm text-blueGray-300 absolute top-1 left-2"/>
               <input
                   v-model="filter.tagSearch.value"
                   type="text"
-                  class="border-0 pl-8 pr-3 py-3 placeholder-blueGray-300 text-blueGray-600 bg-white rounded text-sm shadow focus:outline-none focus:ring w-full ease-linear transition-all duration-150"
+                  class="pl-9 pr-3 py-[5px] placeholder-[#797A7B] text-[#797A7B] bg-white border border-[#CBD2E0] rounded-[6px] text-sm focus:outline-none focus:ring w-full ease-linear transition-all duration-150"
                   placeholder="Search by tag"
               />
             </div>
 
           </div>
 
-          <div class="flex gap-x-6">
+          <div class="flex gap-x-6 w-[250px]">
             <div class="relative w-full ">
-              <i class="fas fa-search mr-2 text-sm text-blueGray-300 absolute top-[12px] left-[8px]"/>
+              <SearchIcon class="fas fa-search mr-2 text-sm text-blueGray-300 absolute top-1 left-2"/>
               <input
                   v-model="form.createdAtAfter"
                   :type="typeAfter"
                   @focus="typeAfter='date'"
                   @blur="typeAfter='text'"
-                  class="border-0 pl-8 pr-3 py-3 placeholder-blueGray-300 text-blueGray-600 bg-white rounded text-sm shadow focus:outline-none focus:ring w-full ease-linear transition-all duration-150"
+                  class="pl-9 pr-3 py-[5px] placeholder-[#797A7B] text-[#797A7B] bg-white border border-[#CBD2E0] rounded-[6px] text-sm focus:outline-none focus:ring w-full ease-linear transition-all duration-150"
                   placeholder="Created at after"
               />
             </div>
           </div>
 
-          <div class="flex gap-x-6">
+          <div class="flex gap-x-6 w-[250px]">
             <div class="relative w-full ">
-              <i class="fas fa-search mr-2 text-sm text-blueGray-300 absolute top-[12px] left-[8px]"/>
+              <SearchIcon class="fas fa-search mr-2 text-sm text-blueGray-300 absolute top-1 left-2"/>
               <input
                   v-model="form.createdAtBefore"
                   :type="typeBefore"
                   @focus="typeBefore='date'"
-                  class="border-0 pl-8 pr-3 py-3 placeholder-blueGray-300 text-blueGray-600 bg-white rounded text-sm shadow focus:outline-none focus:ring w-full ease-linear transition-all duration-150"
+                  class="pl-9 pr-3 py-[5px] placeholder-[#797A7B] text-[#797A7B] bg-white border border-[#CBD2E0] rounded-[6px] text-sm focus:outline-none focus:ring w-full ease-linear transition-all duration-150"
                   placeholder="Created at before"
               />
             </div>
@@ -131,7 +131,7 @@
                 id="hideClosed"
                 v-model="form.hideClosed"
                 type="checkbox"
-                class="accent-green-c w-4 h-4 border-0 flex pl-8 pr-3 py-3 rounded text-sm ease-linear transition-all duration-150 cursor-pointer"
+                class="accent-green-c w-4 h-4 border-0 flex pl-8 pr-3 py-3 rounded-[6px] text-sm ease-linear transition-all duration-150 cursor-pointer"
             />
             <label for="hideClosed" class="text-sm text-[#474D66] cursor-pointer whitespace-nowrap">Hide closed tasks</label>
           </div>
@@ -141,7 +141,7 @@
                 id="showCurrentUser"
                 v-model="form.showCurrentUser"
                 type="checkbox"
-                class="accent-green-c w-4 h-4 border-0 flex rounded text-sm ease-linear transition-all duration-150 cursor-pointer"
+                class="accent-green-c w-4 h-4 border-0 flex rounded-[6px] text-sm ease-linear transition-all duration-150 cursor-pointer"
             />
             <label for="showCurrentUser"
                    class="text-sm text-[#474D66] cursor-pointer whitespace-nowrap">Just mine</label>
@@ -152,7 +152,7 @@
                 id="urgent"
                 v-model="form.isUrgent"
                 type="checkbox"
-                class="accent-green-c w-4 h-4 border-0 flex rounded text-sm ease-linear transition-all duration-150 cursor-pointer"
+                class="accent-green-c w-4 h-4 border-0 flex rounded-[6px] text-sm ease-linear transition-all duration-150 cursor-pointer"
             />
             <label for="urgent"
                    class="text-sm text-[#474D66] cursor-pointer whitespace-nowrap">Urgent tasks</label>
@@ -330,6 +330,7 @@ const router = useRouter()
 const {cookies} = useCookies();
 
 const isDragDisabled = false
+const showFilters = ref(true)
 const loading = ref(false)
 const typeAfter = ref('text')
 const typeBefore = ref('text')
