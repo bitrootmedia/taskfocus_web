@@ -2,7 +2,7 @@
   <button
       class="w-fit inline-flex items-center gap-x-1 whitespace-nowrap px-[15px] outline-none focus:outline-none ease-linear transition-all duration-150"
       :class="{
-          'btn-white bg-white border border-[#E5E7E7] text-black-c hover:bg-black-c hover:text-white': version === 'white',
+          'btn-white bg-white border border-[#E5E7E7] text-black-c hover:bg-black-c hover:text-white h-8': version === 'white',
           'btn-green bg-green-c text-white hover:bg-black-c hover:text-white h-8': version === 'green',
           'border border-orange-c text-black-c bg-orange-c hover:bg-orange-c-900 h-8': version === 'yellow',
           'border border-[#E5E7E7] hover:bg-black-c hover:text-white h-8': version === 'gray',
@@ -14,7 +14,7 @@
           'py-2': !icon,
       }"
       :disabled="disabled"
-      type="button"
+      :type="type"
       @click="clickHandler"
   >
     <slot name="left-icon"></slot>
@@ -51,6 +51,10 @@ const props = defineProps({
   disabled: {
     type: Boolean,
     default: false
+  },
+  type: {
+    type: String,
+    default: 'button'
   },
 })
 

@@ -319,21 +319,19 @@
       </div>
     </div>
 
-    <div v-if="userStore.showPanel.show" class="w-full flex md:hidden justify-center gap-x-4">
-      <button
-          @click="userStore.showPanel.update"
-          class="whitespace-nowrap bg-orange-400 text-white active:bg-blueGray-600 text-md font-bold px-6 py-2 rounded shadow hover:shadow-lg outline-none focus:outline-none ease-linear transition-all duration-150"
-          type="button"
-      >
-        Save Changes
-      </button>
-      <button
-          @click="userStore.showPanel.close"
-          class="whitespace-nowrap bg-gray-600 text-white active:bg-blueGray-600 text-md font-bold px-6 py-2 rounded shadow hover:shadow-lg outline-none focus:outline-none ease-linear transition-all duration-150"
-          type="button"
-      >
-        Discard Changes
-      </button>
+    <div v-if="userStore.showPanel.show" class="w-full flex md:hidden justify-center gap-x-4 mt-4 pb-1">
+      <Button
+          @on-click="userStore.showPanel.update"
+          label="Save Changes"
+          size="medium"
+          version="green"
+      />
+      <Button
+          @on-click="userStore.showPanel.close"
+          label="Discard Changes"
+          size="medium"
+          version="white"
+      />
     </div>
   </nav>
 </template>
@@ -361,6 +359,7 @@ import TimeTrackerIcon from "../Svg/TimeTrackerIcon.vue";
 import {catchErrors} from "../../utils";
 import moment from "moment";
 import {useTasksStore} from "../../store/tasks";
+import Button from '../Button/Button.vue'
 
 const emit = defineEmits(['update:closePanel'])
 const props = defineProps({

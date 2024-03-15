@@ -1,8 +1,8 @@
 <template>
   <div class="content mt-4">
-    <h2 class="font-bold text-xl block text-blueGray-700 mb-4">Logs</h2>
+    <h2 class="font-semibold text-lg text-black-c block mb-[10px]">Logs</h2>
 
-    <div class="header flex flex-col md:flex-row w-full sm:w-[250px] items-baseline md:items-center justify-between mt-4 mb-4 gap-y-3">
+    <div class="header flex flex-col md:flex-row w-full sm:w-[250px] items-baseline md:items-center justify-between mb-[10px] gap-y-3">
       <div class="relative w-full">
         <SearchIcon class="fas fa-search mr-2 text-sm text-blueGray-300 absolute top-1 left-2"/>
         <input

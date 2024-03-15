@@ -14,20 +14,18 @@
 
 
       <div v-if="userStore.showPanel.show" class="hidden md:flex gap-x-4">
-        <button
-            @click="userStore.showPanel.update"
-            class="whitespace-nowrap bg-orange-400 text-white active:bg-blueGray-600 text-md font-bold px-6 py-2 rounded shadow hover:shadow-lg outline-none focus:outline-none ease-linear transition-all duration-150"
-            type="button"
-        >
-          Save Changes
-        </button>
-        <button
-            @click="userStore.showPanel.close"
-            class="whitespace-nowrap bg-gray-600 text-white active:bg-blueGray-600 text-md font-bold px-6 py-2 rounded shadow hover:shadow-lg outline-none focus:outline-none ease-linear transition-all duration-150"
-            type="button"
-        >
-          Discard Changes
-        </button>
+        <Button
+            @on-click="userStore.showPanel.update"
+            label="Save Changes"
+            size="medium"
+            version="green"
+        />
+        <Button
+            @on-click="userStore.showPanel.close"
+            label="Discard Changes"
+            size="medium"
+            version="gray"
+        />
       </div>
 
       <div class="flex items-center">
@@ -69,6 +67,7 @@ import Notifications from "../../components/Notifications/Notifications.vue";
 import IconWrapper from "../Svg/IconWrapper/IconWrapper.vue";
 import UserIcon from "../Svg/UserIcon.vue";
 import LogoutIcon from "../Svg/LogoutIcon.vue";
+import Button from '../Button/Button.vue'
 
 const userStore = useUserStore()
 const {cookies} = useCookies();

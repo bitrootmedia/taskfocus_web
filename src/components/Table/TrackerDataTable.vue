@@ -1,6 +1,6 @@
 <template>
   <div class="content mt-4">
-    <h2 class="font-bold text-xl block text-blueGray-700 mb-4">Time Tracker</h2>
+    <h2 class="font-semibold text-lg text-black-c block mb-[10px]">Time Tracker</h2>
 
     <DataTable :headers="headers" @sorting="sorting">
       <template v-slot:tableBody>

@@ -49,7 +49,7 @@
               rounded
           />
           <Button
-              @on-click="showReminderModal"
+              @on-click="showReminderModal = true"
               label="Add Reminder"
               size="medium"
               version="gray"
@@ -186,77 +186,72 @@
                 </div>
 
                 <div class="flex flex-col sm:flex-row sm:items-center flex-wrap gap-y-2 gap-x-12 mb-2">
-                  <div>
+                  <div class="flex items-center gap-x-1">
+                    <span class="text-sm text-light-c">Responsible:</span>
                     <div class="flex items-center gap-x-1">
-                      <span class="text-sm text-light-c">Responsible:</span>
-                      <b class="cursor-pointer" @click="showResponsiblesModal = true">
-                      <span v-if="task.responsible?.first_name || task.responsible?.last_name"
-                            class="text-sm text-black-c font-semibold"> {{
-                          task.responsible?.first_name
-                        }} {{ task.responsible?.last_name }}
-                      </span>
-                        <span v-else-if="task.responsible?.username"
-                              class="text-sm text-black-c font-semibold"> {{ task.responsible?.username }}</span>
-                        <span v-else class="text-sm text-black-c font-semibold">N/A</span>
-                      </b>
+                        <span v-if="task.responsible?.first_name || task.responsible?.last_name"
+                              class="text-sm text-black-c font-semibold"> {{
+                            task.responsible?.first_name
+                          }} {{ task.responsible?.last_name }}
+                        </span>
+                      <span v-else-if="task.responsible?.username"
+                            class="text-sm text-black-c font-semibold"> {{ task.responsible?.username }}</span>
+                      <span v-else class="text-sm text-black-c font-semibold">N/A</span>
+
+                      <PencilSmallIcon class="cursor-pointer" @click="showResponsiblesModal = true"/>
                     </div>
                   </div>
 
-                  <div>
-                    <div class="flex items-center gap-x-1">
-                      <span class="inline-block text-sm text-light-c">Tag:</span>
-                      <b class="cursor-pointer" @click="isEditPanel.tag = true" v-if="!isEditPanel.tag">
-                        <span v-if="!task.tag" class="text-sm text-black-c font-semibold">N/A</span>
-                        <span v-else class="text-sm text-black-c font-semibold">{{ task.tag }}</span>
-                      </b>
-
-                      <input
-                          v-else
-                          v-model="form.tag"
-                          type="text"
-                          class="px-3 py-[5px] w-full sm:w-[150px] placeholder-[#797A7B] text-[#797A7B] bg-white border border-[#CBD2E0] rounded-[6px] text-sm focus:outline-none focus:ring ease-linear transition-all duration-150"
-                          placeholder="Tag"
-                      />
+                  <div class="flex items-center gap-x-1">
+                    <span class="inline-block text-sm text-light-c">Tag:</span>
+                    <div class="flex items-center gap-x-1" v-if="!isEditPanel.tag">
+                      <span v-if="!task.tag" class="text-sm text-black-c font-semibold">N/A</span>
+                      <span v-else class="text-sm text-black-c font-semibold">{{ task.tag }}</span>
+                      <PencilSmallIcon class="cursor-pointer" @click="isEditPanel.tag = true"/>
                     </div>
+
+                    <input
+                        v-else
+                        v-model="form.tag"
+                        type="text"
+                        class="px-3 py-[5px] w-full sm:w-[150px] placeholder-[#797A7B] text-[#797A7B] bg-white border border-[#CBD2E0] rounded-[6px] text-sm focus:outline-none focus:ring ease-linear transition-all duration-150"
+                        placeholder="Tag"
+                    />
                   </div>
 
-                  <div>
-                    <div class="flex items-center gap-x-1">
-                      <span class="inline-block text-sm text-light-c">Status:</span>
-                      <b v-if="!isEditPanel.status" class="uppercase cursor-pointer text-sm text-black-c font-semibold"
-                         @click="isEditPanel.status = true">{{ task.status || 'N/A' }}
-                      </b>
-                      <select v-else v-model="form.status" placeholder="Select User"
-                              class="pl-3 pr-8 py-[5px] placeholder-[#797A7B] text-[#797A7B] bg-white border border-[#CBD2E0] rounded-[6px] text-sm focus:outline-none focus:ring w-full ease-linear transition-all duration-150"
-                      >
-                        <option :value="item[0]" v-for="(item) in dictionary" :key="item[0]">{{ item[1] }}</option>
-                      </select>
+                  <div class="flex items-center gap-x-1">
+                    <span class="inline-block text-sm text-light-c">Status:</span>
+                    <div v-if="!isEditPanel.status" class="uppercase text-sm text-black-c font-semibold flex items-center gap-x-1">
+                      <span>{{ task.status || 'N/A' }}</span>
+                      <PencilSmallIcon class="cursor-pointer" @click="isEditPanel.status = true"/>
                     </div>
+                    <select v-else v-model="form.status" placeholder="Select User"
+                            class="pl-3 pr-8 py-[5px] placeholder-[#797A7B] text-[#797A7B] bg-white border border-[#CBD2E0] rounded-[6px] text-sm focus:outline-none focus:ring w-full ease-linear transition-all duration-150"
+                    >
+                      <option :value="item[0]" v-for="(item) in dictionary" :key="item[0]">{{ item[1] }}</option>
+                    </select>
                   </div>
 
-                  <div>
-                    <div class="flex items-center gap-x-1">
-                      <span class="inline-block text-sm text-light-c">Position:</span>
-                      <b v-if="!isEditPanel.position"
-                         class="uppercase cursor-pointer text-sm text-black-c font-semibold"
-                         @click="isEditPanel.position = true">{{ task.position || 'N/A' }}
-                      </b>
-                      <input
-                          v-else
-                          v-model="form.position"
-                          type="number"
-                          class="px-3 py-[5px] w-full sm:w-[150px] placeholder-[#797A7B] text-[#797A7B] bg-white border border-[#CBD2E0] rounded-[6px] text-sm focus:outline-none focus:ring ease-linear transition-all duration-150"
-                          placeholder="Position"
-                      />
+                  <div class="flex items-center gap-x-1">
+                    <span class="inline-block text-sm text-light-c">Position:</span>
+                    <div v-if="!isEditPanel.position"
+                       class="uppercase cursor-pointer text-sm text-black-c font-semibold flex items-center gap-x-1">
+                        <span>{{ task.position || 'N/A' }}</span>
+                      <PencilSmallIcon class="cursor-pointer" @click="isEditPanel.position = true"/>
                     </div>
+                    <input
+                        v-else
+                        v-model="form.position"
+                        type="number"
+                        class="px-3 py-[5px] w-full sm:w-[150px] placeholder-[#797A7B] text-[#797A7B] bg-white border border-[#CBD2E0] rounded-[6px] text-sm focus:outline-none focus:ring ease-linear transition-all duration-150"
+                        placeholder="Position"
+                    />
                   </div>
 
-                  <div>
-                    <div class="flex items-center gap-x-1">
-                      <span class="inline-block text-sm text-light-c">Urgent:</span>
+                  <div class="flex items-center gap-x-1">
+                    <span class="inline-block text-sm text-light-c">Urgent:</span>
 
-                      <Switch v-model:value="form.is_urgent"/>
-                    </div>
+                    <Switch v-model:value="form.is_urgent"/>
                   </div>
                 </div>
 
@@ -435,6 +430,7 @@ import NotesDataTable from "../../components/Table/NotesDataTable.vue"
 import Button from "../../components/Button/Button.vue";
 import CloseIcon from "../../components/Svg/CloseIcon.vue";
 import PencilIcon from "../../components/Svg/PencilIcon.vue";
+import PencilSmallIcon from "../../components/Svg/PencilSmallIcon.vue";
 
 // ValidationRules
 const rules = {

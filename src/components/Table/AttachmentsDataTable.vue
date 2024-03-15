@@ -1,11 +1,11 @@
 <template>
   <div class="content mt-4">
 
-    <div class="header flex items-center gap-x-6 mb-4">
-      <h2 class="font-bold text-xl block text-blueGray-700">Attachments</h2>
+    <div class="header flex items-center gap-x-6 mb-3">
+      <h2 class="font-semibold text-lg text-black-c block">Attachments</h2>
     </div>
 
-    <div class="cursor-pointer w-full md:w-[500px] mb-4" v-if="!hideCreate">
+    <div class="cursor-pointer w-full md:w-[250px] mb-4" v-if="!hideCreate">
       <Dropzone
           :key="key"
           :maxFiles="Number(10000000000)"

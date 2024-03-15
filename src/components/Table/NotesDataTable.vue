@@ -1,6 +1,6 @@
 <template>
   <div class="content mt-4">
-    <h2 class="font-bold text-xl block text-blueGray-700 mb-4">My Notes</h2>
+    <h2 class="font-semibold text-lg text-black-c block mb-3">Notes</h2>
 
     <form v-if="!hideCreate" @submit="sendNote">
 
@@ -10,7 +10,6 @@
           class="text-white w-full sm:w-1/2 hover:bg-gray-100 text-sm px-6 py-3 rounded cursor-pointer shadow outline-none focus:outline-none ease-linear transition-all duration-150"
           placeholder="Write a note..."
       />
-
 
       <div class="w-full items-center gap-x-6" v-else>
         <div class="w-full sm:w-1/2">
