@@ -5,17 +5,24 @@
       <h2 class="font-semibold text-lg text-black-c block">Attachments</h2>
     </div>
 
-    <div class="cursor-pointer w-full md:w-[250px] mb-4" v-if="!hideCreate">
-      <Dropzone
-          :key="key"
-          :maxFiles="Number(10000000000)"
-          :maxFileSize="200000000"
-          ref="dropZoneRef"
-          :uploadOnDrop="true"
-          :multipleUpload="true"
-          @sending="saveFiles"
-          :parallelUpload="6"
-      />
+    <div class="cursor-pointer w-full md:w-[250px] mb-4 relative" v-if="!hideCreate">
+      <div class="flex items-center gap-x-2 px-3 py-[6px] bg-white rounded-[8px] cursor-pointer w-[250px]">
+        <PaperClipIcon/>
+        <span class="text-sm text-black">Add attachments</span>
+      </div>
+
+      <div class="absolute w-[250px] h-9 top-0">
+        <Dropzone
+            :key="key"
+            :maxFiles="Number(10000000000)"
+            :maxFileSize="200000000"
+            ref="dropZoneRef"
+            :uploadOnDrop="true"
+            :multipleUpload="true"
+            @sending="saveFiles"
+            :parallelUpload="6"
+        />
+      </div>
     </div>
 
 
@@ -155,6 +162,8 @@ import {useToast} from "vue-toastification";
 import {useAttachmentsStore} from "../../store/attachments";
 import AttachmentMediaModal from "../Modals/AttachmentMediaModal.vue";
 import ConfirmDeleteModal from './../Modals/ConfirmDeleteModal.vue'
+import PaperClipIcon from "../Svg/PaperClipIcon.vue";
+
 
 const props = defineProps({
   projectId: {

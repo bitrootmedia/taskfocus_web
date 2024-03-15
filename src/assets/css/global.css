@@ -296,3 +296,9 @@ select {
     height: 32px;
 }
 
+.dropzone__box{
+    height: 36px;
+    min-height: 36px;
+    opacity: 0;
+}
+

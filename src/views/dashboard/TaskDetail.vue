@@ -221,7 +221,8 @@
 
                   <div class="flex items-center gap-x-1">
                     <span class="inline-block text-sm text-light-c">Status:</span>
-                    <div v-if="!isEditPanel.status" class="uppercase text-sm text-black-c font-semibold flex items-center gap-x-1">
+                    <div v-if="!isEditPanel.status"
+                         class="uppercase text-sm text-black-c font-semibold flex items-center gap-x-1">
                       <span>{{ task.status || 'N/A' }}</span>
                       <PencilSmallIcon class="cursor-pointer" @click="isEditPanel.status = true"/>
                     </div>
@@ -235,8 +236,8 @@
                   <div class="flex items-center gap-x-1">
                     <span class="inline-block text-sm text-light-c">Position:</span>
                     <div v-if="!isEditPanel.position"
-                       class="uppercase cursor-pointer text-sm text-black-c font-semibold flex items-center gap-x-1">
-                        <span>{{ task.position || 'N/A' }}</span>
+                         class="uppercase cursor-pointer text-sm text-black-c font-semibold flex items-center gap-x-1">
+                      <span>{{ task.position || 'N/A' }}</span>
                       <PencilSmallIcon class="cursor-pointer" @click="isEditPanel.position = true"/>
                     </div>
                     <input
@@ -279,15 +280,41 @@
               </div>
             </div>
 
-            <!--            <div>-->
-            <!--              <FormList-->
-            <!--                  :key="keyList"-->
-            <!--                  :task-id="task.id"-->
-            <!--                  v-model="form.blocks"-->
-            <!--                  @edit="isEditPanel.blocks = true"-->
-            <!--              />-->
-            <!--            </div>-->
+            <div class="flex align-center mt-4">
+              <div class="flex gap-x-4">
+                <div
+                    class="w-[224px] border border-light-bg-c bg-white rounded-[6px] px-3 py-2 h-8 flex items-center gap-x-2 cursor-pointer"
+                    @click="addNewForm('markdown')">
+                  <MarkdownIcon/>
+                  <span class="tooltip-text text-[13px] font-semibold text-black-c">Create markdown</span>
+                </div>
+
+                <div
+                    class="w-[224px] border border-light-bg-c bg-white rounded-[6px] px-3 py-2 h-8 flex items-center gap-x-2 cursor-pointer"
+                    @click="addNewForm('checklist')">
+                  <ChecklistIcon/>
+                  <span class="tooltip-text text-[13px] font-semibold text-black-c">Create checklist</span>
+                </div>
+
+                <div
+                    class="w-[224px] border border-light-bg-c bg-white rounded-[6px] px-3 py-2 h-8 flex items-center gap-x-2 cursor-pointer"
+                    @click="addNewForm('image')">
+                  <ImageIcon/>
+                  <span class="tooltip-text text-[13px] font-semibold text-black-c">Add image</span>
+                </div>
+              </div>
+            </div>
           </div>
+        </div>
+
+        <div class="mt-6">
+          <FormList
+              :block-name="blockName"
+              :key="keyList"
+              :task-id="task.id"
+              v-model="form.blocks"
+              @edit="isEditPanel.blocks = true"
+          />
         </div>
 
         <div class="mb-5" v-if="reminders?.length">
@@ -431,6 +458,9 @@ import Button from "../../components/Button/Button.vue";
 import CloseIcon from "../../components/Svg/CloseIcon.vue";
 import PencilIcon from "../../components/Svg/PencilIcon.vue";
 import PencilSmallIcon from "../../components/Svg/PencilSmallIcon.vue";
+import MarkdownIcon from "../../components/Svg/MarkdownIcon.vue";
+import ImageIcon from "../../components/Svg/ImageIcon.vue";
+import ChecklistIcon from "../../components/Svg/ChecklistIcon.vue";
 
 // ValidationRules
 const rules = {
@@ -490,6 +520,7 @@ let showOwnersModal = ref(false)
 let confirmModal = ref(false)
 let toggleActive = ref(false)
 let firstLoad = ref(false)
+const blockName = ref('')
 const task = ref(null)
 const currentTask = ref(null)
 const key = ref(0)
@@ -577,6 +608,10 @@ watch(() => form.value.is_urgent, (newValue, oldValue) => {
 })
 
 // Methods
+const addNewForm = (name)=>{
+  blockName.value = name
+}
+
 const bgConvert = (progress) => {
   return '#349C91'
 

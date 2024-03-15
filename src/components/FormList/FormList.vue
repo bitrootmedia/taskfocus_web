@@ -1,25 +1,4 @@
 <template>
-  <div class="flex align-center mb-8">
-    <div class="text-blueGray-500 inline-flex items-center">
-      <span class="w-[80px] inline-block">Blocks:</span>
-    </div>
-
-    <div class="flex gap-x-4">
-      <button type="button" class="text-white mr-6 cursor-pointer hover-text" @click="addNewForm('markdown')">
-        <i class="fas fa-microchip text-md text-blueGray-800"></i>
-        <span class="tooltip-text">Create markdown!</span>
-      </button>
-      <button type="button" class="text-white mr-6 cursor-pointer hover-text" @click="addNewForm('image')">
-        <i class="fas fa-file text-md text-blueGray-800"></i>
-        <span class="tooltip-text">Create image!</span>
-      </button>
-      <button type="button" class="text-white mr-6 cursor-pointer hover-text" @click="addNewForm('checklist')">
-        <i class="fas fa-sitemap text-md text-blueGray-800"></i>
-        <span class="tooltip-text">Create checklist!</span>
-      </button>
-    </div>
-  </div>
-
   <div class="form">
     <div class="">
       <div class="form-version mb-8" v-if="formList.length">
@@ -34,7 +13,7 @@
           <template #item="{ element, index }">
             <div class="list-group-item flex items-start gap-x-4 mb-6 description-panel">
               <button type="button" class="text-white cursor-pointer handle">
-                <i class="fas fa-grip-vertical text-xl text-blueGray-400"></i>
+                <DragIcon />
               </button>
 
               <template v-if="element.type === 'markdown'">
@@ -155,6 +134,7 @@ import 'dropzone-vue/dist/dropzone-vue.common.css';
 import {catchErrors} from "../../utils";
 import {useAttachmentsStore} from "../../store/attachments";
 import draggable from 'vuedraggable'
+import DragIcon from "../Svg/DragIcon.vue";
 
 const emit = defineEmits(['update:modelValue', 'edit'])
 const props = defineProps({
@@ -163,6 +143,10 @@ const props = defineProps({
     default: () => []
   },
   taskId: {
+    type: String,
+    default: ''
+  },
+  blockName: {
     type: String,
     default: ''
   },
@@ -179,6 +163,9 @@ const dragging = ref(false)
 
 
 //Watch
+watch(()=>props.blockName,(val)=>{
+  if (val) addNewForm(val)
+})
 watch(formList, (val) => {
   emit('update:modelValue', formList.value)
 },

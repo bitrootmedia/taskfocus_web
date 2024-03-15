@@ -324,13 +324,13 @@
           @on-click="userStore.showPanel.update"
           label="Save Changes"
           size="medium"
-          version="green"
+          version="yellow"
       />
       <Button
           @on-click="userStore.showPanel.close"
           label="Discard Changes"
           size="medium"
-          version="white"
+          version="green"
       />
     </div>
   </nav>
