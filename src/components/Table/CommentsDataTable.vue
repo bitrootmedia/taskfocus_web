@@ -4,12 +4,19 @@
 
     <form v-if="!hideCreate" @submit="sendComment">
 
-      <input
-          v-if="!writeComment"
-          @click="writeComment = true"
-          class="text-white w-full sm:w-1/2 hover:bg-gray-100 text-sm px-6 py-3 rounded cursor-pointer shadow outline-none focus:outline-none ease-linear transition-all duration-150"
-          placeholder="Write a comment..."
-      />
+      <div v-if="!writeComment" class="flex items-center gap-x-2 px-3 py-[11px] bg-white rounded-[8px] cursor-pointer"
+           @click="writeComment = true">
+
+          <PlusIcon :size="20"/>
+
+        <span class="text-sm text-black">Add comment</span>
+      </div>
+      <!--      <input-->
+      <!--          v-if="!writeComment"-->
+      <!--          @click="writeComment = true"-->
+      <!--          class="text-white w-full sm:w-1/2 hover:bg-gray-100 text-sm px-6 py-3 rounded cursor-pointer shadow outline-none focus:outline-none ease-linear transition-all duration-150"-->
+      <!--          placeholder="Write a comment..."-->
+      <!--      />-->
 
 
       <div class="w-full items-center gap-x-6" v-else>
@@ -190,6 +197,7 @@ import config from '../../config'
 import {watch} from "vue";
 import {useAttachmentsStore} from "../../store/attachments";
 import Loader from './../Loader/Loader.vue'
+import PlusIcon from "../Svg/PlusIcon.vue";
 
 const props = defineProps({
   projectId: {

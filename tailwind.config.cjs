@@ -15,6 +15,7 @@ module.exports = {
   theme: {
     colors: {
       ...colors,
+      'black-c': '#182128',
       'orange-c': '#F8D487',
       'orange-c-600': '#e3b349',
       'orange-c-900': '#F3AE1B',

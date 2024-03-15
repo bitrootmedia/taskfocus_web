@@ -330,7 +330,7 @@ const router = useRouter()
 const {cookies} = useCookies();
 
 const isDragDisabled = false
-const showFilters = ref(true)
+const showFilters = ref(false)
 const loading = ref(false)
 const typeAfter = ref('text')
 const typeBefore = ref('text')

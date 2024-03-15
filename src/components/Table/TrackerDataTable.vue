@@ -59,7 +59,13 @@
                 <td v-if="canEdit"
                     class="border-t-0 px-3 align-middle border-l-0 border-r-0 text-xs whitespace-nowrap p-4"
                 >
-                  <Button v-if="isOwner(element)" label="Edit" version="white" size="small" @on-click="openModal(element)"/>
+                  <Button v-if="isOwner(element)" label="Edit" version="white" size="small"
+                          @on-click="openModal(element)"/>
+                  <!--                  <Button v-if="isOwner(element)" label="Download" version="white" size="small" @on-click="openModal(element)" :icon="true">-->
+                  <!--                    <template #left-icon>-->
+                  <!--                      <DownloadIcon />-->
+                  <!--                    </template>-->
+                  <!--                  </Button>-->
                 </td>
               </tr>
             </template>
@@ -102,6 +108,7 @@ import {convertHumanTime} from "../../utils";
 import TimeTrackerModal from '../Modals/TimeTrackerModal.vue'
 import {useCookies} from "vue3-cookies";
 import Button from "../Button/Button.vue";
+import DownloadIcon from "../Svg/DownloadIcon.vue";
 
 const props = defineProps({
   taskId: {
