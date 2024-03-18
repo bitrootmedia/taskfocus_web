@@ -37,32 +37,56 @@
                     <v-md-preview v-else :text="element.content" class="cursor-pointer"></v-md-preview>
                   </div>
                 </div>
-
-
               </template>
 
               <template v-else-if="element.type === 'image'">
-                <div v-if="editLists[index]" class="cursor-pointer w-full md:w-[500px] mb-4">
-                  <Dropzone
-                      :maxFiles="Number(1)"
-                      :maxFileSize="200000000"
-                      ref="dropZoneRef"
-                      :uploadOnDrop="true"
-                      :multipleUpload="false"
-                      :multiple="1"
-                      @sending="saveFiles($event,index)"
-                      :parallelUpload="1"
-                  />
-                  <input
-                      v-model="element.path"
-                      disabled
-                      type="text"
-                      class="mt-2 border-0 px-3 py-3 placeholder-blueGray-300 cursor-not-allowed text-blueGray-600 bg-white rounded text-sm shadow focus:outline-none focus:ring w-full ease-linear transition-all duration-150"
-                      placeholder="Image Path"
-                  />
-                </div>
+                <div class="form-group mb-4 bg-white rounded-[10px] w-full">
+                  <div class="header flex items-center justify-between border-b border-light-bg-c px-3 pt-3 pb-2">
+                    <div class="flex gap-x-2 items-center">
+                      <ImageIcon />
+                      <span class="text-black font-medium text-lg">Images</span>
+                    </div>
 
-                <img v-else :src="element.path" alt="upload-img" class="w-[250px] h-[150px] object-cover">
+                    <div class="actions flex gap-x-1 items-center">
+                      <EditIcon class="cursor-pointer" @click="editItem(index)"/>
+                      <TrashIcon class="cursor-pointer" @click="removeFormItem(index)"></TrashIcon>
+                    </div>
+                  </div>
+
+                  <div class="content px-3 pb-3 pt-2">
+                    <div v-if="editLists[index]" class="cursor-pointer w-full md:w-[500px] mb-4">
+                      <div class="inline-flex items-center gap-x-1 mr-4">
+                        <div class="flex items-center gap-x-2 px-3 py-[6px] bg-white rounded-[8px] cursor-pointer w-[250px] shadow">
+                          <PaperClipIcon/>
+                          <span class="text-sm text-black">Add attachments</span>
+                        </div>
+
+                        <div class="absolute w-[250px] h-9 top-0">
+                          <Dropzone
+                              :maxFiles="Number(1)"
+                              :maxFileSize="200000000"
+                              ref="dropZoneRef"
+                              :uploadOnDrop="true"
+                              :multipleUpload="false"
+                              :multiple="1"
+                              @sending="saveFiles($event,index)"
+                              :parallelUpload="1"
+                          />
+                        </div>
+                      </div>
+
+                      <input
+                          v-model="element.path"
+                          disabled
+                          type="text"
+                          class="mt-2 border-0 px-3 py-3 placeholder-blueGray-300 cursor-not-allowed text-blueGray-600 bg-white rounded text-sm shadow focus:outline-none focus:ring w-full ease-linear transition-all duration-150"
+                          placeholder="Image Path"
+                      />
+                    </div>
+
+                    <img v-else :src="element.path" alt="upload-img" class="w-[250px] h-[150px] object-cover">
+                  </div>
+                </div>
               </template>
 
               <template v-else-if="element.type === 'checklist'">
@@ -96,7 +120,6 @@
                             size="medium"
                         />
                       </div>
-
 
                       <div class="flex items-center mt-4" v-for="(el,i) in element.elements" :key="`${index}-${i}`">
                         <input
@@ -158,6 +181,8 @@ import ChecklistIcon from "../Svg/ChecklistIcon.vue";
 import EditIcon from "../Svg/EditIcon.vue";
 import TrashIcon from "../Svg/TrashIcon.vue";
 import MarkdownIcon from "../Svg/MarkdownIcon.vue";
+import ImageIcon from "../Svg/ImageIcon.vue";
+import PaperClipIcon from "../Svg/PaperClipIcon.vue";
 import Button from '../Button/Button.vue'
 
 const emit = defineEmits(['update:modelValue', 'edit'])
