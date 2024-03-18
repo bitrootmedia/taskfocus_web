@@ -22,6 +22,8 @@ module.exports = {
       'green-c': '#349C91',
       'light-c': '#797A7B',
       'light-bg-c': '#E5E7E7',
+      'notes-c': '#FDEBAB',
+      'red-c': '#E44B2A',
     },
     extend: {
       minHeight: {

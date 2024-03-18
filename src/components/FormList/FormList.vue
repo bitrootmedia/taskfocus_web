@@ -49,74 +49,77 @@
 
 
               <template v-else-if="element.type === 'checklist'">
-                <form v-if="editLists[index]" class="form-group mb-4" @keypress="pressEnter($event,index)" :id="`check-${index}`">
-                  <div class="flex gap-x-2 items-start">
-                    <input
-                        :id="`title-input-${index}`"
-                        v-model="element.title"
-                        type="text"
-                        class="border-0 px-3 py-3 placeholder-blueGray-300 text-blueGray-600 bg-white rounded text-sm shadow focus:outline-none focus:ring w-full ease-linear transition-all duration-150"
-                        placeholder="Checklist Title"
-                    />
+                <div class="form-group mb-4 bg-white rounded-[10px] w-full">
+                  <div class="header flex items-center justify-between border-b border-light-bg-c px-3 pt-3 pb-2">
+                    <div class="flex gap-x-2 items-center">
+                      <ChecklistIcon />
+                      <span class="text-black font-medium text-lg">Checklist</span>
+                    </div>
+
+                    <div class="actions flex gap-x-1 items-center">
+                      <EditIcon class="cursor-pointer" @click="editItem(index)"/>
+                      <TrashIcon class="cursor-pointer" @click="removeFormItem(index)"></TrashIcon>
+                    </div>
                   </div>
 
-                  <button type="button"
-                          class="bg-blueGray-800 mt-1 text-white active:bg-blueGray-600 text-xs font-bold px-2 py-1 rounded shadow hover:shadow-lg outline-none focus:outline-none ease-linear transition-all duration-150"
-                          @click="addNewCheckboxItem(index)">
-                    Add New
-                  </button>
+                  <div v-if="editLists[index]" class="content px-3 pb-3 pt-2">
+                    <form class="form-group" @keypress="pressEnter($event,index)" :id="`check-${index}`">
+                      <div class="flex gap-x-2 items-start">
+                        <input
+                            :id="`title-input-${index}`"
+                            v-model="element.title"
+                            type="text"
+                            class="w-[250px] pl-3 pr-3 py-[5px] placeholder-[#797A7B] text-[#797A7B] bg-white border border-[#CBD2E0] rounded-[6px] text-sm focus:outline-none focus:ring ease-linear transition-all duration-150"
+                            placeholder="Checklist Title"
+                        />
+                        <Button
+                            @on-click="addNewCheckboxItem(index)"
+                            :label="'Add New'"
+                            version="yellow"
+                            size="medium"
+                        />
+                      </div>
 
-                  <div class="flex items-center mt-4" v-for="(el,i) in element.elements" :key="`${index}-${i}`">
-                    <input
-                        :id="`${el.label}-${i}`"
-                        v-model="el.checked"
-                        type="checkbox"
-                        class="border-0 flex pl-8 pr-3 py-3 placeholder-blueGray-300 text-blueGray-600 rounded text-sm ease-linear transition-all duration-150 cursor-pointer"
-                    />
-                    <label :for="`${el.label}-${i}`"
-                           class="text-md text-blueGray-500 font-medium cursor-pointer ml-2 whitespace-nowrap">
+
+                      <div class="flex items-center mt-4" v-for="(el,i) in element.elements" :key="`${index}-${i}`">
+                        <input
+                            :id="`${el.label}-${i}`"
+                            v-model="el.checked"
+                            type="checkbox"
+                            class="accent-green-c w-4 h-4 border-0 flex pl-8 pr-3 py-3 rounded-[6px] text-sm ease-linear transition-all duration-150 cursor-pointer"
+                        />
+                        <label :for="`${el.label}-${i}`"
+                               class="text-md text-blueGray-500 font-medium cursor-pointer ml-2 whitespace-nowrap">
+                          <input
+                              v-model="el.label"
+                              type="text"
+                              class="w-[200px] pl-3 pr-3 py-[5px] placeholder-[#797A7B] text-[#797A7B] bg-white border border-[#CBD2E0] rounded-[6px] text-sm focus:outline-none focus:ring ease-linear transition-all duration-150"
+                              placeholder="Checkbox Title"
+                          />
+                        </label>
+                        <TrashIcon class="cursor-pointer ml-1" @click="removeCheckboxItem(index,i)"></TrashIcon>
+                      </div>
+                    </form>
+                  </div>
+
+                  <div v-else class="content px-3 pb-3 pt-2">
+                    <span class="text-black-c font-medium text-md mb-2 block">{{ element.title }}</span>
+                    <div class="flex items-center mb-3 gap-x-2" v-for="(el,i) in element.elements" :key="`${index}-${i}`">
                       <input
-                          v-model="el.label"
-                          type="text"
-                          class="border-0 px-3 py-1 placeholder-blueGray-300 text-blueGray-600 bg-white rounded text-sm shadow focus:outline-none focus:ring w-full ease-linear transition-all duration-150"
-                          placeholder="Checkbox Title"
+                          :id="`${el.label}-${i}`"
+                          v-model="el.checked"
+                          @change="editItem(index)"
+                          type="checkbox"
+                          class="accent-green-c w-3 h-3 border-0 flex pl-8 pr-3 py-3 rounded-[6px] text-sm ease-linear transition-all duration-150 cursor-pointer"
                       />
-                    </label>
-                    <button type="button" class="text-white ml-2 cursor-pointer" @click="removeCheckboxItem(index,i)">
-                      <i class="fas fa-window-close text-md text-red-500"></i>
-                    </button>
-                  </div>
-                </form>
 
-                <div v-else class="form-group mb-4">
-                  <div class="flex gap-x-2 items-start">
-                    <span class="text-blueGray-500 font-medium text-lg">{{ element.title }}</span>
-                  </div>
-
-                  <div class="flex items-center mb-2" v-for="(el,i) in element.elements" :key="`${index}-${i}`">
-                    <input
-                        :id="`${el.label}-${i}`"
-                        v-model="el.checked"
-                        @change="editItem(index)"
-                        type="checkbox"
-                        class="border-0 flex pl-8 pr-3 py-3 placeholder-blueGray-300 text-blueGray-600 rounded text-sm ease-linear transition-all duration-150"
-                    />
-
-                    <label :for="`${el.label}-${i}`" class="text-md text-blueGray-500 font-medium ml-2 whitespace-nowrap">
-                      {{ el.label }}
-                    </label>
+                      <label :for="`${el.label}-${i}`" class="text-xs text-black-c cursor-pointer whitespace-nowrap">
+                        {{ el.label }}
+                      </label>
+                    </div>
                   </div>
                 </div>
               </template>
-
-              <div class="actions mr-6 flex gap-x-2">
-                <button type="button" class="text-white cursor-pointer" @click="editItem(index)">
-                  <i class="fas fa-pen-square text-xl text-blueGray-500"></i>
-                </button>
-                <button v-if="editLists[index]" type="button" class="text-white cursor-pointer" @click="removeFormItem(index)">
-                  <i class="fas fa-window-close text-xl text-red-500"></i>
-                </button>
-              </div>
             </div>
           </template>
         </draggable>
@@ -135,6 +138,10 @@ import {catchErrors} from "../../utils";
 import {useAttachmentsStore} from "../../store/attachments";
 import draggable from 'vuedraggable'
 import DragIcon from "../Svg/DragIcon.vue";
+import ChecklistIcon from "../Svg/ChecklistIcon.vue";
+import EditIcon from "../Svg/EditIcon.vue";
+import TrashIcon from "../Svg/TrashIcon.vue";
+import Button from '../Button/Button.vue'
 
 const emit = defineEmits(['update:modelValue', 'edit'])
 const props = defineProps({
