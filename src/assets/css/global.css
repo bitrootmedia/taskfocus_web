@@ -175,14 +175,17 @@ tr:nth-child(odd) {
     font-style: normal !important;
     font-weight: 400 !important;
     line-height: normal !important;
-    /*max-width: 480px;*/
+    font-family: "Inter", sans-serif !important;
+    max-width: 724px;
 }
 
 @media (max-width: 991px) {
     .github-markdown-body {
-        width: auto;
+        width: 100%;
+        max-width: 100%;
     }
 }
+
 
 @media (max-width: 500px) {
     .github-markdown-body {
@@ -196,22 +199,10 @@ tr:nth-child(odd) {
 
 .description-panel .v-md-editor-preview {
     word-break: break-all;
-    width: 95%;
-}
-
-@media (max-width: 991px) {
-    .description-panel .v-md-editor-preview {
-        width: 90%;
-    }
-
-    .description-panel .v-md-editor-preview {
-        width: 85%;
-    }
 }
 
 .description-panel .github-markdown-body {
-    padding: 16px 24px !important;
-    background-color: #ffffe0 !important;
+    padding: 0 !important;
     width: 100%;
     border-radius: 6px;
     color: #000 !important;

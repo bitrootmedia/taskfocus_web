@@ -280,8 +280,8 @@
               </div>
             </div>
 
-            <div class="flex align-center mt-4">
-              <div class="flex gap-x-4">
+            <div class="flex align-center mt-4 flex-wrap">
+              <div class="flex gap-x-4 gap-y-2 flex align-center mt-4 flex-wrap">
                 <div
                     class="w-[224px] border border-light-bg-c bg-white rounded-[6px] px-3 py-2 h-8 flex items-center gap-x-2 cursor-pointer"
                     @click="addNewForm('markdown')">

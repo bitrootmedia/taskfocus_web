@@ -99,19 +99,19 @@
                 </td>
                 <td class="border-t-0 px-3 align-middle border-l-0 border-r-0 text-xs whitespace-nowrap flex p-4 gap-x-2"
                     width="15%">
-                  <button
-                      class="bg-blueGray-800 whitespace-nowrap text-white active:bg-blueGray-600 text-sm font-bold px-2 sm:px-4 py-3 rounded shadow hover:shadow-lg outline-none focus:outline-none ease-linear transition-all duration-150"
-                      type="button"
-                      @click="downloadTemplate(element.file_path)"> Download
-                  </button>
-                  <button
+                  <Button
+                      @on-click="downloadTemplate(element.file_path)"
+                      :label="'Download'"
+                      version="yellow"
+                      size="medium"
+                  />
+                  <Button
                       v-if="isMediaOwner(element)"
-                      @click="openDeleteModal(element.id)"
-                      class="bg-red-500 whitespace-nowrap text-white active:bg-blueGray-600 text-sm font-bold px-2 sm:px-4 py-3 rounded shadow hover:shadow-lg outline-none focus:outline-none ease-linear transition-all duration-150"
-                      type="button"
-                  >
-                    Delete
-                  </button>
+                      @on-click="openDeleteModal(element.id)"
+                      :label="'Delete'"
+                      version="green"
+                      size="medium"
+                  />
                 </td>
               </tr>
             </template>
@@ -163,6 +163,7 @@ import {useAttachmentsStore} from "../../store/attachments";
 import AttachmentMediaModal from "../Modals/AttachmentMediaModal.vue";
 import ConfirmDeleteModal from './../Modals/ConfirmDeleteModal.vue'
 import PaperClipIcon from "../Svg/PaperClipIcon.vue";
+import Button from '../Button/Button.vue'
 
 
 const props = defineProps({

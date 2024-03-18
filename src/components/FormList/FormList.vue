@@ -17,10 +17,28 @@
               </button>
 
               <template v-if="element.type === 'markdown'">
-                <v-md-editor v-if="editLists[index]" v-model="element.content" height="270px"
-                             :disabled-menus="[]"/>
+                <div class="form-group mb-4 bg-white rounded-[10px] w-full">
+                  <div class="header flex items-center justify-between border-b border-light-bg-c px-3 pt-3 pb-2">
+                    <div class="flex gap-x-2 items-center">
+                      <MarkdownIcon />
+                      <span class="text-black font-medium text-lg">Markdown</span>
+                    </div>
 
-                <v-md-preview v-else :text="element.content" class="cursor-pointer"></v-md-preview>
+                    <div class="actions flex gap-x-1 items-center">
+                      <EditIcon class="cursor-pointer" @click="editItem(index)"/>
+                      <TrashIcon class="cursor-pointer" @click="removeFormItem(index)"></TrashIcon>
+                    </div>
+                  </div>
+
+                  <div class="content px-3 pb-3 pt-2">
+                    <v-md-editor v-if="editLists[index]" v-model="element.content" height="270px"
+                                 :disabled-menus="[]"/>
+
+                    <v-md-preview v-else :text="element.content" class="cursor-pointer"></v-md-preview>
+                  </div>
+                </div>
+
+
               </template>
 
               <template v-else-if="element.type === 'image'">
@@ -46,7 +64,6 @@
 
                 <img v-else :src="element.path" alt="upload-img" class="w-[250px] h-[150px] object-cover">
               </template>
-
 
               <template v-else-if="element.type === 'checklist'">
                 <div class="form-group mb-4 bg-white rounded-[10px] w-full">
@@ -101,7 +118,6 @@
                       </div>
                     </form>
                   </div>
-
                   <div v-else class="content px-3 pb-3 pt-2">
                     <span class="text-black-c font-medium text-md mb-2 block">{{ element.title }}</span>
                     <div class="flex items-center mb-3 gap-x-2" v-for="(el,i) in element.elements" :key="`${index}-${i}`">
@@ -141,6 +157,7 @@ import DragIcon from "../Svg/DragIcon.vue";
 import ChecklistIcon from "../Svg/ChecklistIcon.vue";
 import EditIcon from "../Svg/EditIcon.vue";
 import TrashIcon from "../Svg/TrashIcon.vue";
+import MarkdownIcon from "../Svg/MarkdownIcon.vue";
 import Button from '../Button/Button.vue'
 
 const emit = defineEmits(['update:modelValue', 'edit'])
