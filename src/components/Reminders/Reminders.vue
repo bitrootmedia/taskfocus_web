@@ -3,43 +3,44 @@
     <Loader v-if="loading"/>
 
     <div v-else class="reminders">
-      <div class="header flex items-center gap-x-6 mb-4">
-        <h2 class="font-bold text-xl block text-blueGray-700">Reminders</h2>
+      <div class="header flex items-center gap-x-6 mb-3">
+        <h2 class="font-semibold text-lg text-black-c block">Reminders</h2>
       </div>
 
       <ul>
         <li v-for="reminder in reminders" :key="reminder.id"
-            class="w-full lg:w-[700px] mb-3 border border-blueGray-300 rounded-[4px] px-4 py-3"
+            class="w-full mb-3 rounded-[10px]"
             :class="[reminderCheck(reminder.reminder_date) === 'today' ? 'bg-red-100' : reminderCheck(reminder.reminder_date) === 'tmr' ? 'bg-orange-100' : '']"
         >
-          <div class="flex items-center justify-between">
-            <span class="text-blueGray-700 font-semibold">{{ convertDateTime(reminder.reminder_date) }}</span>
+          <div class="header flex items-center justify-between border-b border-light-bg-c px-3 pt-3 pb-2">
+            <div class="flex items-center">
+              <span class="text-black-c text-sm font-semibold mr-1">{{ fullName(reminder) }}</span>
+              <span class="text-black-c text-sm mr-2">({{ userName(reminder) }})</span>
+              <span class="text-black-c text-sm font-semibold">{{ convertDateTime(reminder.reminder_date) }}</span>
+            </div>
 
-            <button
+            <Button
                 v-if="!hide"
-                @click="close(reminder)"
-                class="bg-red-400 whitespace-nowrap text-white active:bg-blueGray-600 text-sm font-bold px-2 sm:px-4 py-2 rounded shadow hover:shadow-lg outline-none focus:outline-none ease-linear transition-all duration-150"
-                type="button"
-            >
-              Close
-            </button>
+                @on-click="close(reminder)"
+                :label="'Delete'"
+                version="red"
+                size="medium"
+            />
           </div>
 
-
-          <div>
-            <div class="mt-2">
-              <span class="text-blueGray-400 font-semibold block mb-2">User: {{ fullName(reminder) }}</span>
-              <div class="mb-2 text-sm text-blueGray-500">
+          <div class="mt-2 px-3 pb-3">
+            <div class="mb-2 text-sm text-blueGray-500">
               <span v-if="showLinks && reminder.task?.id" class="block">Task link: <router-link
                   class="underline"
                   :to="`/dashboard/task/${reminder.task.id}`">{{ reminder.task.title }}</router-link></span>
-                <span v-if="showLinks && reminder.task?.project?.id" class="block">Project link: <router-link
-                    class="underline"
-                    :to="`/dashboard/project/${reminder.task.project.id}`">{{ reminder.task.project.title }}</router-link></span>
-              </div>
-
-              <p class="text-blueGray-500 ">{{ reminder.message }}</p>
+              <span v-if="showLinks && reminder.task?.project?.id" class="block">Project link: <router-link
+                  class="underline"
+                  :to="`/dashboard/project/${reminder.task.project.id}`">{{
+                  reminder.task.project.title
+                }}</router-link></span>
             </div>
+
+            <p class="text-black-c text-sm w-full md:w-[720px]">{{ reminder.message }}</p>
           </div>
         </li>
       </ul>
@@ -61,6 +62,7 @@ import Loader from '../Loader/Loader.vue'
 import {useTasksStore} from "../../store/tasks";
 import {useToast} from "vue-toastification";
 import moment from "moment";
+import Button from '../Button/Button.vue'
 
 const emit = defineEmits(['update'])
 const props = defineProps({
@@ -102,6 +104,13 @@ const fullName = (reminder) => {
   return ''
 }
 
+const userName = (reminder) => {
+  const findItem = props.users.find((item) => item.id === reminder.user)
+  if (findItem) return findItem.username
+
+  return ''
+}
+
 const close = async (reminder) => {
   try {
     await taskStore.closeReminder({id: reminder.id})
@@ -112,7 +121,7 @@ const close = async (reminder) => {
   }
 }
 
-const reminderCheck = (date)=>{
+const reminderCheck = (date) => {
   const isToday = moment(0, "HH").diff(date, "days") >= 0
   const isTmr = moment(0, "HH").diff(date, "days") === -1
 
