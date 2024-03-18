@@ -301,4 +301,7 @@ select {
     min-height: 36px;
     opacity: 0;
 }
+input{
+    color: #182128 !important;
+}
 
