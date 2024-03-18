@@ -10,9 +10,9 @@
       <ul>
         <li v-for="reminder in reminders" :key="reminder.id"
             class="w-full mb-3 rounded-[10px]"
-            :class="[reminderCheck(reminder.reminder_date) === 'today' ? 'bg-red-100' : reminderCheck(reminder.reminder_date) === 'tmr' ? 'bg-orange-100' : '']"
+            :class="[reminderCheck(reminder.reminder_date) === 'today' ? 'bg-red-light-c' : reminderCheck(reminder.reminder_date) === 'tmr' ? 'bg-orange-c' : '']"
         >
-          <div class="header flex items-center justify-between border-b border-light-bg-c px-3 pt-3 pb-2">
+          <div class="header flex items-center justify-between border-b border-[#7b797938] px-3 pt-3 pb-2">
             <div class="flex items-center">
               <span class="text-black-c text-sm font-semibold mr-1">{{ fullName(reminder) }}</span>
               <span class="text-black-c text-sm mr-2">({{ userName(reminder) }})</span>
@@ -23,13 +23,13 @@
                 v-if="!hide"
                 @on-click="close(reminder)"
                 :label="'Delete'"
-                version="red"
+                version="red-small"
                 size="medium"
             />
           </div>
 
           <div class="mt-2 px-3 pb-3">
-            <div class="mb-2 text-sm text-blueGray-500">
+            <div class="mb-2 text-xs text-black-c">
               <span v-if="showLinks && reminder.task?.id" class="block">Task link: <router-link
                   class="underline"
                   :to="`/dashboard/task/${reminder.task.id}`">{{ reminder.task.title }}</router-link></span>

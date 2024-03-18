@@ -4,7 +4,8 @@
       :class="{
           'btn-white bg-white border border-[#E5E7E7] text-black-c hover:bg-black-c hover:text-white h-8': version === 'white',
           'btn-green bg-green-c text-white hover:bg-black-c hover:text-white h-8': version === 'green',
-          'btn-green bg-red-c text-white hover:bg-black-c hover:text-white h-6': version === 'red',
+          'btn-green bg-red-c text-white hover:bg-black-c hover:text-white h-8': version === 'red',
+          'btn-green bg-red-c text-white hover:bg-black-c hover:text-white h-6': version === 'red-small',
           'border border-orange-c text-black-c bg-orange-c hover:bg-orange-c-900 h-8': version === 'yellow',
           'border border-[#E5E7E7] hover:bg-black-c hover:text-white h-8': version === 'gray',
           'rounded-[6px]': !rounded,

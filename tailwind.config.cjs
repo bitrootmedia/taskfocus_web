@@ -24,6 +24,7 @@ module.exports = {
       'light-bg-c': '#E5E7E7',
       'notes-c': '#FDEBAB',
       'red-c': '#E44B2A',
+      'red-light-c': 'rgba(228, 75, 42, 0.20)',
     },
     extend: {
       minHeight: {

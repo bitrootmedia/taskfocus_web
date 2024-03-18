@@ -1,6 +1,7 @@
 <template>
   <nav
-      class="sticky top-0 md:static md:left-0 pt-[10px] md:block md:fixed md:top-0 md:bottom-0 md:flex-row md:flex-nowrap shadow-xl bg-[#182128] flex flex-wrap items-center justify-between relative z-10 pb-[10px] md:pb-0 px-4 md:px-0"
+      id="sidebar"
+      class="z-[2] sticky top-0 md:static md:left-0 pt-[10px] md:block md:fixed md:top-0 md:bottom-0 md:flex-row md:flex-nowrap shadow-xl bg-[#182128] flex flex-wrap items-center justify-between relative pb-[10px] md:pb-0 px-4 md:px-0"
       :class="{'md:w-[312px]': !closePanel, 'md:w-[100px]': closePanel}"
   >
     <span @click="emit('update:closePanel',!closePanel)"
