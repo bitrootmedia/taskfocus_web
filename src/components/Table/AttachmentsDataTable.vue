@@ -97,21 +97,28 @@
                       <template v-else>-</template>
                     </span>
                 </td>
-                <td class="border-t-0 px-3 align-middle border-l-0 border-r-0 text-xs whitespace-nowrap flex p-4 gap-x-2"
+                <td class="border-t-0 px-3 border-l-0 border-r-0 text-xs whitespace-nowrap p-4 "
                     width="15%">
-                  <Button
-                      @on-click="downloadTemplate(element.file_path)"
-                      :label="'Download'"
-                      version="yellow"
-                      size="medium"
-                  />
-                  <Button
-                      v-if="isMediaOwner(element)"
-                      @on-click="openDeleteModal(element.id)"
-                      :label="'Delete'"
-                      version="green"
-                      size="medium"
-                  />
+                  <div class="flex gap-x-2 items-center">
+                    <Button
+                        @on-click="downloadTemplate(element.file_path)"
+                        :label="'Download'"
+                        version="white"
+                        size="medium"
+                    >
+                      <template #left-icon>
+                        <DownloadIcon />
+                      </template>
+
+                    </Button>
+                    <Button
+                        v-if="isMediaOwner(element)"
+                        @on-click="openDeleteModal(element.id)"
+                        :label="'Delete'"
+                        version="white"
+                        size="medium"
+                    />
+                  </div>
                 </td>
               </tr>
             </template>
@@ -163,6 +170,7 @@ import {useAttachmentsStore} from "../../store/attachments";
 import AttachmentMediaModal from "../Modals/AttachmentMediaModal.vue";
 import ConfirmDeleteModal from './../Modals/ConfirmDeleteModal.vue'
 import PaperClipIcon from "../Svg/PaperClipIcon.vue";
+import DownloadIcon from "../Svg/DownloadIcon.vue";
 import Button from '../Button/Button.vue'
 
 

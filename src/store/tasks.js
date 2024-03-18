@@ -71,6 +71,10 @@ export const useTasksStore = defineStore('tasks', {
             return await axios.get(`${config.BASE_API_URL}/task/${payload.id}`)
         },
 
+        async fetchTaskTime(payload){
+            return await axios.get(`${config.BASE_API_URL}/task-total-time/${payload.id}`)
+        },
+
         async updateTaskOwner(payload) {
             const id = payload.id
             delete payload.id

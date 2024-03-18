@@ -84,7 +84,7 @@
                       />
                     </div>
 
-                    <img v-else :src="element.path" alt="upload-img" class="w-[250px] h-[150px] object-cover">
+                    <img v-else :src="element.path" alt="upload-img" class="w-[120px] h-[120px] object-cover">
                   </div>
                 </div>
               </template>

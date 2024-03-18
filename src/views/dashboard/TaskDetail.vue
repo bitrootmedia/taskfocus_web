@@ -142,7 +142,8 @@
                   </div>
                 </div>
 
-                <h3 class="text-[22px] text-black-c font-semibold mr-6">07hs 29m </h3>
+                <h3 class="text-[22px] text-black-c font-semibold mr-6" v-if="currentTaskTotalTime">
+                  {{ currentTaskTotalTime?.hours || '00' }}hs {{ currentTaskTotalTime?.minutes || "00" }}m </h3>
 
                 <Button
                     v-if="!task?.is_closed"
@@ -281,7 +282,7 @@
             </div>
 
             <div class="flex align-center mt-4 flex-wrap">
-              <div class="flex gap-x-4 gap-y-2 flex align-center mt-4 flex-wrap">
+              <div class="flex gap-x-4 gap-y-2 flex align-center flex-wrap">
                 <div
                     class="w-[224px] border border-light-bg-c bg-white rounded-[6px] px-3 py-2 h-8 flex items-center gap-x-2 cursor-pointer"
                     @click="addNewForm('markdown')">
@@ -522,6 +523,7 @@ let toggleActive = ref(false)
 let firstLoad = ref(false)
 const blockName = ref('')
 const task = ref(null)
+const currentTaskTotalTime = ref(null)
 const currentTask = ref(null)
 const key = ref(0)
 const keyTracker = ref(0)
@@ -608,7 +610,7 @@ watch(() => form.value.is_urgent, (newValue, oldValue) => {
 })
 
 // Methods
-const addNewForm = (name)=>{
+const addNewForm = (name) => {
   blockName.value = name
 }
 
@@ -806,6 +808,8 @@ const fetchTask = async (noLoad = false) => {
       if (resp.data.responsible?.id) form.value.user = resp.data.responsible.id
       if (resp.data.responsible?.id) form.value.owner = resp.data.responsible.id
       backgroundSize.value = `${resp.data.progress || 0}% 100%`
+
+      await fetchTaskTotalTime()
     }
 
   } catch (e) {
@@ -1013,6 +1017,15 @@ const fetchQueueAccess = async () => {
       haveQueueAccess.value = list
       haveQueueAccessIds.value = ids
     }
+  } catch (e) {
+    catchErrors(e)
+  }
+}
+
+const fetchTaskTotalTime = async () => {
+  try {
+    const resp = await taskStore.fetchTaskTime({id: task.value.id})
+    currentTaskTotalTime.value = resp.data.total_time
   } catch (e) {
     catchErrors(e)
   }

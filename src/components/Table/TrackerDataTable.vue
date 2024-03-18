@@ -61,11 +61,6 @@
                 >
                   <Button v-if="isOwner(element)" label="Edit" version="white" size="small"
                           @on-click="openModal(element)"/>
-                  <!--                  <Button v-if="isOwner(element)" label="Download" version="white" size="small" @on-click="openModal(element)" :icon="true">-->
-                  <!--                    <template #left-icon>-->
-                  <!--                      <DownloadIcon />-->
-                  <!--                    </template>-->
-                  <!--                  </Button>-->
                 </td>
               </tr>
             </template>
