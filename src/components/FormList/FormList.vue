@@ -110,7 +110,7 @@
                             :id="`title-input-${index}`"
                             v-model="element.title"
                             type="text"
-                            class="w-[250px] pl-3 pr-3 py-[5px] placeholder-[#797A7B] bg-white border border-[#CBD2E0] rounded-[6px] text-sm focus:outline-none focus:ring ease-linear transition-all duration-150"
+                            class="w-[250px] pl-3 pr-3 py-[5px] placeholder-[#797A7B] bg-white border border-light-bg-c rounded-[6px] text-sm focus:outline-none focus:ring ease-linear transition-all duration-150"
                             placeholder="Checklist Title"
                         />
                         <Button
@@ -133,7 +133,7 @@
                           <input
                               v-model="el.label"
                               type="text"
-                              class="w-[200px] pl-3 pr-3 py-[5px] placeholder-[#797A7B] bg-white border border-[#CBD2E0] rounded-[6px] text-sm focus:outline-none focus:ring ease-linear transition-all duration-150"
+                              class="w-[200px] pl-3 pr-3 py-[5px] placeholder-[#797A7B] bg-white border border-light-bg-c rounded-[6px] text-sm focus:outline-none focus:ring ease-linear transition-all duration-150"
                               placeholder="Checkbox Title"
                           />
                         </label>
@@ -360,8 +360,8 @@ onMounted(() => {
 }
 
 .ghost {
-  opacity: 0.5;
-  background: #c8ebfb;
+  opacity: 0.2;
+  background: rgba(248, 212, 135, 0.5);
 }
 
 .handle {

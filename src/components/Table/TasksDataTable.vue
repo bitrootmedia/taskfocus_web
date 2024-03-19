@@ -9,7 +9,7 @@
               <input
                   v-model="filter.search.value"
                   type="text"
-                  class="pl-9 pr-3 py-[5px] placeholder-[#797A7B] text-[#797A7B] bg-white border border-[#CBD2E0] rounded-[6px] text-sm focus:outline-none focus:ring w-full ease-linear transition-all duration-150"
+                  class="pl-9 pr-3 py-[5px] placeholder-[#797A7B] text-[#797A7B] bg-white border border-light-bg-c rounded-[6px] text-sm focus:outline-none focus:ring w-full ease-linear transition-all duration-150"
                   placeholder="Search by task"
               />
             </div>
@@ -18,7 +18,7 @@
 
           <button
               @click="showFilters = !showFilters"
-              class="bg-white flex items-center justify-center gap-x-1 px-3 py-[3px] border border-[#CBD2E0] rounded-[6px] outline-none focus:outline-none ease-linear transition-all duration-150"
+              class="bg-white flex items-center justify-center gap-x-1 px-3 py-[3px] border border-light-bg-c rounded-[6px] outline-none focus:outline-none ease-linear transition-all duration-150"
               type="button"
           >
             <FilterIcon />
@@ -38,7 +38,7 @@
         <div v-if="showFilters" class="flex gap-3 flex-wrap">
           <div class="w-[250px]">
             <select v-model="form.status"
-                    class="pl-3 pr-8 py-[5px] placeholder-[#797A7B] text-[#797A7B] bg-white border border-[#CBD2E0] rounded-[6px] text-sm focus:outline-none focus:ring w-full ease-linear transition-all duration-150"
+                    class="pl-3 pr-8 py-[5px] placeholder-[#797A7B] text-[#797A7B] bg-white border border-light-bg-c rounded-[6px] text-sm focus:outline-none focus:ring w-full ease-linear transition-all duration-150"
             >
               <option class="" value="" disabled selected>Select Status</option>
               <option :value="status.label" v-for="(status) in statuses" :key="status.id">
@@ -53,7 +53,7 @@
               <input
                   v-model="filter.projectSearch.value"
                   type="text"
-                  class="pl-9 pr-3 py-[5px] placeholder-[#797A7B] text-[#797A7B] bg-white border border-[#CBD2E0] rounded-[6px] text-sm focus:outline-none focus:ring w-full ease-linear transition-all duration-150"
+                  class="pl-9 pr-3 py-[5px] placeholder-[#797A7B] text-[#797A7B] bg-white border border-light-bg-c rounded-[6px] text-sm focus:outline-none focus:ring w-full ease-linear transition-all duration-150"
                   placeholder="Search by project"
               />
             </div>
@@ -62,7 +62,7 @@
 
           <div class="w-[250px]">
             <select v-model="form.owner"
-                    class="pl-3 pr-8 py-[5px] placeholder-[#797A7B] text-[#797A7B] bg-white border border-[#CBD2E0] rounded-[6px] text-sm focus:outline-none focus:ring w-full ease-linear transition-all duration-150"
+                    class="pl-3 pr-8 py-[5px] placeholder-[#797A7B] text-[#797A7B] bg-white border border-light-bg-c rounded-[6px] text-sm focus:outline-none focus:ring w-full ease-linear transition-all duration-150"
             >
               <option class="" value="" disabled selected>Select Owner</option>
               <option :value="user.id" v-for="(user) in users" :key="user.id">
@@ -73,7 +73,7 @@
 
           <div class="w-[250px]">
             <select v-model="form.responsibleUser"
-                    class="pl-3 pr-8 py-[5px] placeholder-[#797A7B] text-[#797A7B] bg-white border border-[#CBD2E0] rounded-[6px] text-sm focus:outline-none focus:ring w-full ease-linear transition-all duration-150"
+                    class="pl-3 pr-8 py-[5px] placeholder-[#797A7B] text-[#797A7B] bg-white border border-light-bg-c rounded-[6px] text-sm focus:outline-none focus:ring w-full ease-linear transition-all duration-150"
             >
               <option class="" value="" disabled selected>Select Responsible</option>
               <option :value="user.id" v-for="(user) in users" :key="user.id">
@@ -88,7 +88,7 @@
               <input
                   v-model="filter.tagSearch.value"
                   type="text"
-                  class="pl-9 pr-3 py-[5px] placeholder-[#797A7B] text-[#797A7B] bg-white border border-[#CBD2E0] rounded-[6px] text-sm focus:outline-none focus:ring w-full ease-linear transition-all duration-150"
+                  class="pl-9 pr-3 py-[5px] placeholder-[#797A7B] text-[#797A7B] bg-white border border-light-bg-c rounded-[6px] text-sm focus:outline-none focus:ring w-full ease-linear transition-all duration-150"
                   placeholder="Search by tag"
               />
             </div>
@@ -103,7 +103,7 @@
                   :type="typeAfter"
                   @focus="typeAfter='date'"
                   @blur="typeAfter='text'"
-                  class="pl-9 pr-3 py-[5px] placeholder-[#797A7B] text-[#797A7B] bg-white border border-[#CBD2E0] rounded-[6px] text-sm focus:outline-none focus:ring w-full ease-linear transition-all duration-150"
+                  class="pl-9 pr-3 py-[5px] placeholder-[#797A7B] text-[#797A7B] bg-white border border-light-bg-c rounded-[6px] text-sm focus:outline-none focus:ring w-full ease-linear transition-all duration-150"
                   placeholder="Created at after"
               />
             </div>
@@ -116,7 +116,7 @@
                   v-model="form.createdAtBefore"
                   :type="typeBefore"
                   @focus="typeBefore='date'"
-                  class="pl-9 pr-3 py-[5px] placeholder-[#797A7B] text-[#797A7B] bg-white border border-[#CBD2E0] rounded-[6px] text-sm focus:outline-none focus:ring w-full ease-linear transition-all duration-150"
+                  class="pl-9 pr-3 py-[5px] placeholder-[#797A7B] text-[#797A7B] bg-white border border-light-bg-c rounded-[6px] text-sm focus:outline-none focus:ring w-full ease-linear transition-all duration-150"
                   placeholder="Created at before"
               />
             </div>
@@ -181,7 +181,7 @@
           <template v-else>
             <tr v-if="!tasks.length">
               <td :colspan="headers.length">
-                <p class="flex text-center px-4 justify-center py-8 text-blueGray-500 font-medium">
+                <p class="flex text-center px-4 justify-center py-8 text-black-c font-medium">
                   No data found
                 </p>
               </td>

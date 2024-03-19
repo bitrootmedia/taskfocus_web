@@ -215,7 +215,7 @@
                         v-else
                         v-model="form.tag"
                         type="text"
-                        class="px-3 py-[5px] w-full sm:w-[150px] placeholder-[#797A7B] text-[#797A7B] bg-white border border-[#CBD2E0] rounded-[6px] text-sm focus:outline-none focus:ring ease-linear transition-all duration-150"
+                        class="px-3 py-[5px] w-full sm:w-[150px] placeholder-[#797A7B] text-[#797A7B] bg-white border border-light-bg-c rounded-[6px] text-sm focus:outline-none focus:ring ease-linear transition-all duration-150"
                         placeholder="Tag"
                     />
                   </div>
@@ -228,7 +228,7 @@
                       <PencilSmallIcon class="cursor-pointer" @click="isEditPanel.status = true"/>
                     </div>
                     <select v-else v-model="form.status" placeholder="Select User"
-                            class="pl-3 pr-8 py-[5px] placeholder-[#797A7B] text-[#797A7B] bg-white border border-[#CBD2E0] rounded-[6px] text-sm focus:outline-none focus:ring w-full ease-linear transition-all duration-150"
+                            class="pl-3 pr-8 py-[5px] placeholder-[#797A7B] text-[#797A7B] bg-white border border-light-bg-c rounded-[6px] text-sm focus:outline-none focus:ring w-full ease-linear transition-all duration-150"
                     >
                       <option :value="item[0]" v-for="(item) in dictionary" :key="item[0]">{{ item[1] }}</option>
                     </select>
@@ -245,7 +245,7 @@
                         v-else
                         v-model="form.position"
                         type="number"
-                        class="px-3 py-[5px] w-full sm:w-[150px] placeholder-[#797A7B] text-[#797A7B] bg-white border border-[#CBD2E0] rounded-[6px] text-sm focus:outline-none focus:ring ease-linear transition-all duration-150"
+                        class="px-3 py-[5px] w-full sm:w-[150px] placeholder-[#797A7B] text-[#797A7B] bg-white border border-light-bg-c rounded-[6px] text-sm focus:outline-none focus:ring ease-linear transition-all duration-150"
                         placeholder="Position"
                     />
                   </div>

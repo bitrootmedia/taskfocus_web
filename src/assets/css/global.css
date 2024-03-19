@@ -37,7 +37,7 @@ body {
 
 body {
     height: 100vh;
-    background: #f1f5f9;
+    background: #f6f6f6;
 }
 
 .dropzone__error-mark {
@@ -271,21 +271,21 @@ table tbody tr:last-child{
     border-bottom: none;
 }
 
-select {
-    -webkit-appearance: none;
-    -moz-appearance: none;
-    background: transparent;
-    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none'> <path d='M18 9L12 15L6 9' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/> </svg>");
-    background-repeat: no-repeat;
-    background-position-x: 95%;
-    background-position-y: 5px;
-    border: 1px solid #dfdfdf;
-    border-radius: 2px;
-    padding: 1rem;
-    padding-right: 40px;
-    right: 15px;
-    height: 32px;
-}
+/*select {*/
+/*    -webkit-appearance: none;*/
+/*    -moz-appearance: none;*/
+/*    background: transparent;*/
+/*    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none'> <path d='M18 9L12 15L6 9' stroke='#797A7B' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/> </svg>");*/
+/*    background-repeat: no-repeat;*/
+/*    background-position-x: 95%;*/
+/*    background-position-y: 5px;*/
+/*    border: 1px solid #dfdfdf;*/
+/*    border-radius: 2px;*/
+/*    padding: 1rem;*/
+/*    padding-right: 40px;*/
+/*    right: 15px;*/
+/*    height: 32px;*/
+/*}*/
 
 .dropzone__box{
     height: 36px;

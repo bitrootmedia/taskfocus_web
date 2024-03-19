@@ -45,7 +45,7 @@
           <template v-else>
             <tr v-if="!projects.length">
               <td :colspan="headers.length">
-                <p class="flex text-center px-4 justify-center py-8 text-blueGray-500 font-medium">
+                <p class="flex text-center px-4 justify-center py-8 text-black-c font-medium">
                   No data found
                 </p>
               </td>

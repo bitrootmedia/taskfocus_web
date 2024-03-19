@@ -21,7 +21,7 @@
       <Loader v-if="loading" />
 
       <div v-else-if="!notifications.length">
-        <p class="flex text-center px-4 justify-center py-8 text-blueGray-500 text-3xl font-medium">
+        <p class="flex text-center px-4 justify-center py-8 text-black-c text-3xl font-medium">
           No data found
         </p>
       </div>

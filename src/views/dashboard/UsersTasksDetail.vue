@@ -47,7 +47,7 @@
               <template v-else>
                 <tr v-if="!userTasks.length">
                   <td :colspan="headers.length">
-                    <p class="flex justify-center py-8 px- text-blueGray-500 font-medium">
+                    <p class="flex justify-center py-8 px- text-black-c font-medium">
                       No data found
                     </p>
                   </td>
@@ -106,7 +106,7 @@
               <template v-else>
                 <tr v-if="!projectsAccess.length">
                   <td :colspan="headersProject.length">
-                    <p class="flex justify-center py-8 px- text-blueGray-500 font-medium">
+                    <p class="flex justify-center py-8 px- text-black-c font-medium">
                       No data found
                     </p>
                   </td>
@@ -154,7 +154,7 @@
               <template v-else>
                 <tr v-if="!tasksAccess.length">
                   <td :colspan="headersTask.length">
-                    <p class="flex justify-center py-8 px- text-blueGray-500 font-medium">
+                    <p class="flex justify-center py-8 px- text-black-c font-medium">
                       No data found
                     </p>
                   </td>
