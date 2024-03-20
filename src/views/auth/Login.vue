@@ -130,11 +130,5 @@ const signIn = async () => {
   }
 }
 
-const test = ()=>{
-  console.log('test')
-}
-
-test()
-
 </script>
 
