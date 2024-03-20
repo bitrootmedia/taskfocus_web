@@ -11,9 +11,15 @@ if (token) {
 
 export const useTasksStore = defineStore('tasks', {
     state: () => ({
+        task: {},
         tempProject: {},
         expiredRemindersCount: false
     }),
+
+    getters: {
+        currentTask: (state) => state.task,
+    },
+
 
     actions: {
         async fetchTasksTracker(payload) {
@@ -68,7 +74,9 @@ export const useTasksStore = defineStore('tasks', {
         },
 
         async fetchTaskById(payload){
-            return await axios.get(`${config.BASE_API_URL}/task/${payload.id}`)
+            const resp = await axios.get(`${config.BASE_API_URL}/task/${payload.id}`)
+            this.task = resp.data
+            return resp
         },
 
         async fetchTaskTime(payload){

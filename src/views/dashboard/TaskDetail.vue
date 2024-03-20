@@ -1,425 +1,408 @@
 <template>
-  <div>
-    <Loader v-if="loading"/>
+  <Loader v-if="loading"/>
 
-    <div v-else>
-      <div
-          class="py-[29px] px-6 actions mb-6 flex justify-between flex-col sm:flex-row gap-x-6 bg-white border-b border-light-bg-c">
+  <div v-else class="flex">
+    <div class="left-side pt-6">
+      <div>
+        <!--      <div-->
+        <!--          class="py-[29px] px-6 actions mb-6 flex justify-between flex-col sm:flex-row gap-x-6 bg-white border-b border-light-bg-c">-->
 
-        <div class="flex flex-wrap gap-1 sm:gap-2">
-          <Button
-              v-if="isAuthOwner || isAuthProjectOwner"
-              @on-click="showOwnersModal = true"
-              label="Change Owner"
-              size="medium"
-              version="gray"
-              rounded
-          />
-          <Button
-              v-if="isAuthOwner"
-              @on-click="showModal = true"
-              label="Change Project"
-              size="medium"
-              version="gray"
-              rounded
-          />
-          <Button
-              v-if="isAuthOwner"
-              @on-click="showUsersModal = true"
-              label="Manage Task Users"
-              size="medium"
-              version="gray"
-              rounded
-          />
-          <Button
-              v-if="isAuthOwner"
-              @on-click="showUsersQueueModal = true"
-              label="Queue"
-              size="medium"
-              version="gray"
-              rounded
-          />
-          <Button
-              v-if="showBtn"
-              @on-click="updateMyQueue"
-              :label="!isAuthQueue ? 'Add to my queue' : 'Remove from my queue'"
-              size="medium"
-              :disabled="btnLoad"
-              version="gray"
-              rounded
-          />
-          <Button
-              @on-click="showReminderModal = true"
-              label="Add Reminder"
-              size="medium"
-              version="gray"
-              rounded
-          />
-          <Button
-              @on-click="generateTag"
-              :disabled="btnLoad"
-              label="Tag ID Generator"
-              size="medium"
-              version="gray"
-              rounded
-          />
-        </div>
+        <!--        <div class="flex flex-wrap gap-1 sm:gap-2">-->
+        <!--          <Button-->
+        <!--              v-if="isAuthOwner || isAuthProjectOwner"-->
+        <!--              @on-click="showOwnersModal = true"-->
+        <!--              label="Change Owner"-->
+        <!--              size="medium"-->
+        <!--              version="gray"-->
+        <!--              rounded-->
+        <!--          />-->
+        <!--          <Button-->
+        <!--              v-if="isAuthOwner"-->
+        <!--              @on-click="showModal = true"-->
+        <!--              label="Change Project"-->
+        <!--              size="medium"-->
+        <!--              version="gray"-->
+        <!--              rounded-->
+        <!--          />-->
+        <!--          <Button-->
+        <!--              v-if="isAuthOwner"-->
+        <!--              @on-click="showUsersModal = true"-->
+        <!--              label="Manage Task Users"-->
+        <!--              size="medium"-->
+        <!--              version="gray"-->
+        <!--              rounded-->
+        <!--          />-->
+        <!--          <Button-->
+        <!--              v-if="isAuthOwner"-->
+        <!--              @on-click="showUsersQueueModal = true"-->
+        <!--              label="Queue"-->
+        <!--              size="medium"-->
+        <!--              version="gray"-->
+        <!--              rounded-->
+        <!--          />-->
+        <!--          <Button-->
+        <!--              v-if="showBtn"-->
+        <!--              @on-click="updateMyQueue"-->
+        <!--              :label="!isAuthQueue ? 'Add to my queue' : 'Remove from my queue'"-->
+        <!--              size="medium"-->
+        <!--              :disabled="btnLoad"-->
+        <!--              version="gray"-->
+        <!--              rounded-->
+        <!--          />-->
+        <!--          <Button-->
+        <!--              @on-click="showReminderModal = true"-->
+        <!--              label="Add Reminder"-->
+        <!--              size="medium"-->
+        <!--              version="gray"-->
+        <!--              rounded-->
+        <!--          />-->
+        <!--          <Button-->
+        <!--              @on-click="generateTag"-->
+        <!--              :disabled="btnLoad"-->
+        <!--              label="Tag ID Generator"-->
+        <!--              size="medium"-->
+        <!--              version="gray"-->
+        <!--              rounded-->
+        <!--          />-->
+        <!--        </div>-->
 
-        <div class="mt-1 sm:mt-0">
-          <Button
-              v-if="isAuthOwner && task.is_closed"
-              @on-click="uncloseTask"
-              :disabled="btnLoad"
-              label="Reopen Task"
-              size="medium"
-              version="green"
+        <!--        <div class="mt-1 sm:mt-0">-->
+        <!--          <Button-->
+        <!--              v-if="isAuthOwner && task.is_closed"-->
+        <!--              @on-click="uncloseTask"-->
+        <!--              :disabled="btnLoad"-->
+        <!--              label="Reopen Task"-->
+        <!--              size="medium"-->
+        <!--              version="green"-->
+        <!--          />-->
+
+        <!--          <Button-->
+        <!--              v-else-if="isAuthOwner"-->
+        <!--              @on-click="confirmModal = true"-->
+        <!--              label="Close Task"-->
+        <!--              size="medium"-->
+        <!--              version="green"-->
+        <!--          >-->
+        <!--            <template #right-icon>-->
+        <!--              <CloseIcon/>-->
+        <!--            </template>-->
+        <!--          </Button>-->
+        <!--        </div>-->
+        <!--      </div>-->
+
+        <div class="main-container pb-8">
+          <div>
+            <FormList
+                :block-name="blockName"
+                :key="keyList"
+                :task-id="task.id"
+                v-model="form.blocks"
+                @edit="isEditPanel.blocks = true"
+            />
+          </div>
+
+          <div class="mb-5" v-if="reminders?.length">
+            <Reminders
+                :paginate="paginate"
+                :reminders="reminders"
+                :loading="loadingRem"
+                :users="users"
+                @update="fetchReminders"
+            />
+          </div>
+
+          <div class="mb-10">
+            <NotesDataTable :task-id="task.id"/>
+          </div>
+
+          <div class="mb-10">
+            <CommentsDataTable :task-id="task.id" :task-name="task.title" :is-task="true"/>
+          </div>
+
+          <div class="mb-10">
+            <AttachmentsDataTable :task-id="task.id" :is-task="true"/>
+          </div>
+
+          <div>
+            <TrackerDataTable :key="keyTracker" :task-id="task.id" :is-task="true" :can-edit="true"/>
+          </div>
+
+          <div>
+            <LogsDataTable :key="key" :task-id="task.id" :is-task="true"/>
+          </div>
+
+          <ProjectsModal
+              :show-modal="showModal"
+              :project-id="task?.project?.id"
+              :task-id="task.id"
+              :btn-title="'Change project'"
+              @close="showModal = false"
+              @update="updateTaskShowData"
           />
 
-          <Button
-              v-else-if="isAuthOwner"
-              @on-click="confirmModal = true"
-              label="Close Task"
-              size="medium"
-              version="green"
-          >
-            <template #right-icon>
-              <CloseIcon/>
-            </template>
-          </Button>
+          <UserTaskModal
+              :show-modal="showUsersModal"
+              :task="task"
+              :users="usersQueue"
+              :all-users="usersList"
+              :have-task-access="haveTaskAccess"
+              :have-task-access-ids="haveTaskAccessIds"
+              :btn-title="'Manage Task Users'"
+              @close="showUsersModal = false"
+              @update="updateTasks"
+          />
+
+          <OwnersModal
+              :show-modal="showOwnersModal"
+              :task="task"
+              :users="usersList"
+              :have-task-access="haveTaskAccess"
+              :have-task-access-ids="haveTaskAccessIds"
+              :btn-title="'Change Owners'"
+              @close="showOwnersModal = false"
+              @update="updateTaskOwner"
+          />
+
+          <ResponsiblesModal
+              :show-modal="showResponsiblesModal"
+              :task="task"
+              :users="users"
+              :btn-title="'Change Owners'"
+              @close="showResponsiblesModal = false"
+              @update-users="fetchUsers"
+              @update="updateResponsibles"
+          />
+
+
+          <UserQueueModal
+              :show-modal="showUsersQueueModal"
+              :task="task"
+              :users="usersQueue"
+              :have-task-access="haveQueueAccess"
+              :have-task-access-ids="haveQueueAccessIds"
+              :btn-title="'Queue'"
+              @close="showUsersQueueModal = false"
+              @update="updateTasksQueue"
+          />
+
+          <ReminderModal
+              :show-modal="showReminderModal"
+              :task="task"
+              :users="usersQueue"
+              :btn-title="'Add Reminder'"
+              @close="showReminderModal = false"
+              @update="fetchReminders"
+          />
+
+
+          <ConfirmCloseModal
+              :show-modal="confirmModal"
+              @close="confirmModal = false"
+              @update="closeTask"
+          />
         </div>
       </div>
+    </div>
 
-      <div class="main-container">
-        <div>
-          <div class="w-full bg-white rounded-[10px] pt-6 pb-3 px-6">
-            <div class="flex flex-col xl:flex-row justify-between xl:items-center pb-6 mb-3 border-b border-light-bg-c">
-              <div class="flex justify-between sm:justify-start gap-x-4 sm:gap-x-10 items-center flex-wrap">
-                <div>
-                  <div class="flex items-center gap-x-1" v-if="!isEditPanel.title">
-                    <h1 class="text-[22px] font-semibold text-black-c">
-                      {{ task?.title }}
-                    </h1>
-                    <PencilIcon class="cursor-pointer" @click="isEditPanel.title = true"/>
-                  </div>
-                  <div v-else class="mb-2">
-                    <input
-                        v-model="form.title"
-                        type="text"
-                        class=" border-0 px-3 py-3 placeholder-blueGray-300 text-blueGray-600 bg-white rounded text-sm shadow focus:outline-none focus:ring w-full ease-linear transition-all duration-150"
-                        placeholder="Project Title"
-                    />
-                    <span class="text-xs font-medium text-red-600" v-if="v$.title.$error"> {{
-                        v$.title.$errors[0].$message
-                      }} </span>
-                  </div>
-                </div>
+    <div class="right-side bg-white">
+      <div class="w-full bg-white rounded-[10px] pt-6 pb-3 px-6">
+        <div class="flex flex-col pb-6 mb-3 border-b border-light-bg-c">
+          <div class="flex gap-x-4 sm:gap-x-10 items-center flex-wrap">
+            <div class="flex items-center gap-x-2" v-if="task?.project?.id">
+              <span class="text-sm text-light-c whitespace-nowrap">In project:</span>
+              <h2 class="text-md font-semibold text-black-c cursor-pointer lg:whitespace-nowrap"
+                  @click="router.push(`/dashboard/project/${task.project.id}`)">
+                {{ task.project?.title }}</h2>
+            </div>
+          </div>
 
-                <div class="flex items-center gap-x-2" v-if="task?.project?.id">
-                  <span class="text-sm text-light-c whitespace-nowrap">In project:</span>
-                  <h2 class="text-md font-semibold text-black-c cursor-pointer lg:whitespace-nowrap"
-                      @click="router.push(`/dashboard/project/${task.project.id}`)">
-                    {{ task.project?.title }}</h2>
-                </div>
-              </div>
+          <div class="flex sm:items-center flex-wrap flex-col sm:flex-row">
+<!--            <div class="mr-[50px]">-->
+<!--              <div class="inline-flex items-center" v-if="!isEditPanel.progress">-->
+<!--                <span class="inline-block text-light-c text-sm mr-2">Progress:</span>-->
 
-              <div class="flex sm:items-center flex-wrap flex-col sm:flex-row">
-                <div class="mr-[50px]">
-                  <div class="inline-flex items-center" v-if="!isEditPanel.progress">
-                    <span class="inline-block text-light-c text-sm mr-2">Progress:</span>
+<!--                <div @click="isEditPanel.progress = true" class="cursor-pointer flex items-center">-->
+<!--                  <div class="w-[153px] h-2 bg-blueGray-200 rounded-md">-->
+<!--                        <span class="progress block h-2 rounded-md flex items-center justify-center"-->
+<!--                              :style="{width: `${task.progress || 0}%`, background: `${bgConvert(task.progress)}`}">-->
+<!--                        </span>-->
+<!--                  </div>-->
+<!--                </div>-->
+<!--              </div>-->
+<!--              <div v-else class="w-[250px] range-slider">-->
+<!--                <input type="range" min="0" max="100" step="1" v-model="form.progress" @input="updateSlider"-->
+<!--                       :style="{backgroundSize: backgroundSize}">-->
+<!--                <div class="data text-light-c text-sm">Progress: {{ form.progress }}/100</div>-->
+<!--              </div>-->
+<!--            </div>-->
 
-                    <div @click="isEditPanel.progress = true" class="cursor-pointer flex items-center">
-                      <div class="w-[153px] h-2 bg-blueGray-200 rounded-md">
-                        <span class="progress block h-2 rounded-md flex items-center justify-center"
-                              :style="{width: `${task.progress || 0}%`, background: `${bgConvert(task.progress)}`}">
-                        </span>
-                      </div>
-                    </div>
-                  </div>
-                  <div v-else class="w-[250px] range-slider">
-                    <input type="range" min="0" max="100" step="1" v-model="form.progress" @input="updateSlider"
-                           :style="{backgroundSize: backgroundSize}">
-                    <div class="data text-light-c text-sm">Progress: {{ form.progress }}/100</div>
-                  </div>
-                </div>
+            <h3 class="text-[22px] text-black-c font-semibold mr-6" v-if="currentTaskTotalTime">
+              {{ currentTaskTotalTime?.hours || '00' }}hs {{ currentTaskTotalTime?.minutes || "00" }}m </h3>
 
-                <h3 class="text-[22px] text-black-c font-semibold mr-6" v-if="currentTaskTotalTime">
-                  {{ currentTaskTotalTime?.hours || '00' }}hs {{ currentTaskTotalTime?.minutes || "00" }}m </h3>
+            <Button
+                v-if="!task?.is_closed"
+                @on-click="toggleTask(currentTask?.id === task?.id ? 'stop' : 'work')"
+                :disabled="btnLoad"
+                :label="currentTask?.id === task?.id ? 'Stop working on this task' : 'Work on this task'"
+                version="yellow"
+                size="medium"
+            />
+          </div>
+        </div>
 
-                <Button
-                    v-if="!task?.is_closed"
-                    @on-click="toggleTask(currentTask?.id === task?.id ? 'stop' : 'work')"
-                    :disabled="btnLoad"
-                    :label="currentTask?.id === task?.id ? 'Stop working on this task' : 'Work on this task'"
-                    version="yellow"
-                    size="medium"
-                />
+        <div class="flex flex-col lg:flex-row lg:gap-x-20">
+          <div class="w-full">
+            <div class="mb-2">
+              <div class="flex gap-x-1 flex-wrap">
+                <span class="text-sm text-light-c whitespace-nowrap">Task Access:</span>
+
+                <ul class="flex gap-x-2 flex-wrap">
+                  <li class="text-sm text-black-c font-semibold">
+                    {{ task.owner?.first_name }} {{
+                      task.owner?.last_name
+                    }}(owner){{ haveTaskAccess.length || haveProjectAccess.length ? ',' : '' }}
+                  </li>
+
+                  <li v-if="haveProjectAccess.length" v-for="(item,index) in haveProjectAccess" :key="item.user.id"
+                      class="text-sm text-black-c font-semibold">
+                    {{ item.user.first_name }} {{ item.user.last_name }}<span
+                      class="text-sm text-black-c font-semibold">(project)</span><span
+                      v-if="haveTaskAccessIds.length || index !== haveProjectAccess.length - 1">,</span>
+                  </li>
+
+                  <li v-if="haveTaskAccess.length" v-for="(item,index) in haveTaskAccess" :key="item.user.id"
+                      class="text-sm text-black-c font-semibold">
+                    {{ item.user.first_name }} {{ item.user.last_name }}<span
+                      class="text-sm text-black-c font-semibold">(task)</span><span
+                      v-if="index !== haveTaskAccess.length - 1">,</span>
+                  </li>
+                </ul>
               </div>
             </div>
 
-            <div class="flex flex-col lg:flex-row lg:gap-x-20">
-              <div class="w-full">
-                <div class="mb-2">
-                  <div class="flex gap-x-1 flex-wrap">
-                    <span class="text-sm text-light-c whitespace-nowrap">Task Access:</span>
-
-                    <ul class="flex gap-x-2 flex-wrap">
-                      <li class="text-sm text-black-c font-semibold">
-                        {{ task.owner?.first_name }} {{
-                          task.owner?.last_name
-                        }}(owner){{ haveTaskAccess.length || haveProjectAccess.length ? ',' : '' }}
-                      </li>
-
-                      <li v-if="haveProjectAccess.length" v-for="(item,index) in haveProjectAccess" :key="item.user.id"
-                          class="text-sm text-black-c font-semibold">
-                        {{ item.user.first_name }} {{ item.user.last_name }}<span
-                          class="text-sm text-black-c font-semibold">(project)</span><span
-                          v-if="haveTaskAccessIds.length || index !== haveProjectAccess.length - 1">,</span>
-                      </li>
-
-                      <li v-if="haveTaskAccess.length" v-for="(item,index) in haveTaskAccess" :key="item.user.id"
-                          class="text-sm text-black-c font-semibold">
-                        {{ item.user.first_name }} {{ item.user.last_name }}<span
-                          class="text-sm text-black-c font-semibold">(task)</span><span
-                          v-if="index !== haveTaskAccess.length - 1">,</span>
-                      </li>
-                    </ul>
-                  </div>
-                </div>
-
-                <div class="flex flex-col sm:flex-row sm:items-center flex-wrap gap-y-2 gap-x-12 mb-2">
-                  <div class="flex items-center gap-x-1">
-                    <span class="text-sm text-light-c">Responsible:</span>
-                    <div class="flex items-center gap-x-1">
+            <div class="flex flex-col sm:flex-row sm:items-center flex-wrap gap-y-2 gap-x-12 mb-2">
+              <div class="flex items-center gap-x-1">
+                <span class="text-sm text-light-c">Responsible:</span>
+                <div class="flex items-center gap-x-1">
                         <span v-if="task.responsible?.first_name || task.responsible?.last_name"
                               class="text-sm text-black-c font-semibold"> {{
                             task.responsible?.first_name
                           }} {{ task.responsible?.last_name }}
                         </span>
-                      <span v-else-if="task.responsible?.username"
-                            class="text-sm text-black-c font-semibold"> {{ task.responsible?.username }}</span>
-                      <span v-else class="text-sm text-black-c font-semibold">N/A</span>
+                  <span v-else-if="task.responsible?.username"
+                        class="text-sm text-black-c font-semibold"> {{ task.responsible?.username }}</span>
+                  <span v-else class="text-sm text-black-c font-semibold">N/A</span>
 
-                      <PencilSmallIcon class="cursor-pointer" @click="showResponsiblesModal = true"/>
-                    </div>
-                  </div>
+                  <PencilSmallIcon class="cursor-pointer" @click="showResponsiblesModal = true"/>
+                </div>
+              </div>
 
-                  <div class="flex items-center gap-x-1">
-                    <span class="inline-block text-sm text-light-c">Tag:</span>
-                    <div class="flex items-center gap-x-1" v-if="!isEditPanel.tag">
-                      <span v-if="!task.tag" class="text-sm text-black-c font-semibold">N/A</span>
-                      <span v-else class="text-sm text-black-c font-semibold">{{ task.tag }}</span>
-                      <PencilSmallIcon class="cursor-pointer" @click="isEditPanel.tag = true"/>
-                    </div>
-
-                    <input
-                        v-else
-                        v-model="form.tag"
-                        type="text"
-                        class="px-3 py-[5px] w-full sm:w-[150px] placeholder-[#797A7B] text-[#797A7B] bg-white border border-light-bg-c rounded-[6px] text-sm focus:outline-none focus:ring ease-linear transition-all duration-150"
-                        placeholder="Tag"
-                    />
-                  </div>
-
-                  <div class="flex items-center gap-x-1">
-                    <span class="inline-block text-sm text-light-c">Status:</span>
-                    <div v-if="!isEditPanel.status"
-                         class="uppercase text-sm text-black-c font-semibold flex items-center gap-x-1">
-                      <span>{{ task.status || 'N/A' }}</span>
-                      <PencilSmallIcon class="cursor-pointer" @click="isEditPanel.status = true"/>
-                    </div>
-                    <select v-else v-model="form.status" placeholder="Select User"
-                            class="pl-3 pr-8 py-[5px] placeholder-[#797A7B] text-[#797A7B] bg-white border border-light-bg-c rounded-[6px] text-sm focus:outline-none focus:ring w-full ease-linear transition-all duration-150"
-                    >
-                      <option :value="item[0]" v-for="(item) in dictionary" :key="item[0]">{{ item[1] }}</option>
-                    </select>
-                  </div>
-
-                  <div class="flex items-center gap-x-1">
-                    <span class="inline-block text-sm text-light-c">Position:</span>
-                    <div v-if="!isEditPanel.position"
-                         class="uppercase cursor-pointer text-sm text-black-c font-semibold flex items-center gap-x-1">
-                      <span>{{ task.position || 'N/A' }}</span>
-                      <PencilSmallIcon class="cursor-pointer" @click="isEditPanel.position = true"/>
-                    </div>
-                    <input
-                        v-else
-                        v-model="form.position"
-                        type="number"
-                        class="px-3 py-[5px] w-full sm:w-[150px] placeholder-[#797A7B] text-[#797A7B] bg-white border border-light-bg-c rounded-[6px] text-sm focus:outline-none focus:ring ease-linear transition-all duration-150"
-                        placeholder="Position"
-                    />
-                  </div>
-
-                  <div class="flex items-center gap-x-1">
-                    <span class="inline-block text-sm text-light-c">Urgent:</span>
-
-                    <Switch v-model:value="form.is_urgent"/>
-                  </div>
+              <div class="flex items-center gap-x-1">
+                <span class="inline-block text-sm text-light-c">Tag:</span>
+                <div class="flex items-center gap-x-1" v-if="!isEditPanel.tag">
+                  <span v-if="!task.tag" class="text-sm text-black-c font-semibold">N/A</span>
+                  <span v-else class="text-sm text-black-c font-semibold">{{ task.tag }}</span>
+                  <PencilSmallIcon class="cursor-pointer" @click="isEditPanel.tag = true"/>
                 </div>
 
-                <div class="text-blueGray-500 description-panel mt-2" v-if="task.description">
-                  Description:
-                  <b v-if="!task.description && !isEditPanel.description" class="cursor-pointer"
-                     @click="isEditPanel.description = true">N/A</b>
+                <input
+                    v-else
+                    v-model="form.tag"
+                    type="text"
+                    class="px-3 py-[5px] w-full sm:w-[150px] placeholder-[#797A7B] text-[#797A7B] bg-white border border-light-bg-c rounded-[6px] text-sm focus:outline-none focus:ring ease-linear transition-all duration-150"
+                    placeholder="Tag"
+                />
+              </div>
 
-                  <div v-else>
-                    <div @click="isEditPanel.description = true"
-                         :class="[`${!isEditPanel.description ? 'inline-flex' : 'flex w-full'}`]">
-                      <template v-if="!isEditPanel.description" class="w-full">
-                        <v-md-preview :text="task.description" class="cursor-pointer"></v-md-preview>
-                      </template>
-
-                      <div v-else class="w-full mt-[10px]">
-                        <v-md-editor v-model="form.description" height="350px" :disabled-menus="[]"
-                                     @upload-image="handleUploadImage"></v-md-editor>
-                      </div>
-                    </div>
-                  </div>
-
-
+              <div class="flex items-center gap-x-1">
+                <span class="inline-block text-sm text-light-c">Status:</span>
+                <div v-if="!isEditPanel.status"
+                     class="uppercase text-sm text-black-c font-semibold flex items-center gap-x-1">
+                  <span>{{ task.status || 'N/A' }}</span>
+                  <PencilSmallIcon class="cursor-pointer" @click="isEditPanel.status = true"/>
                 </div>
+                <select v-else v-model="form.status" placeholder="Select User"
+                        class="pl-3 pr-8 py-[5px] placeholder-[#797A7B] text-[#797A7B] bg-white border border-light-bg-c rounded-[6px] text-sm focus:outline-none focus:ring w-full ease-linear transition-all duration-150"
+                >
+                  <option :value="item[0]" v-for="(item) in dictionary" :key="item[0]">{{ item[1] }}</option>
+                </select>
+              </div>
+
+              <div class="flex items-center gap-x-1">
+                <span class="inline-block text-sm text-light-c">Position:</span>
+                <div v-if="!isEditPanel.position"
+                     class="uppercase cursor-pointer text-sm text-black-c font-semibold flex items-center gap-x-1">
+                  <span>{{ task.position || 'N/A' }}</span>
+                  <PencilSmallIcon class="cursor-pointer" @click="isEditPanel.position = true"/>
+                </div>
+                <input
+                    v-else
+                    v-model="form.position"
+                    type="number"
+                    class="px-3 py-[5px] w-full sm:w-[150px] placeholder-[#797A7B] text-[#797A7B] bg-white border border-light-bg-c rounded-[6px] text-sm focus:outline-none focus:ring ease-linear transition-all duration-150"
+                    placeholder="Position"
+                />
+              </div>
+
+              <div class="flex items-center gap-x-1">
+                <span class="inline-block text-sm text-light-c">Urgent:</span>
+
+                <Switch v-model:value="form.is_urgent"/>
               </div>
             </div>
 
-            <div class="flex align-center mt-4 flex-wrap">
-              <div class="flex gap-x-4 gap-y-2 flex align-center flex-wrap">
-                <div
-                    class="w-[224px] border border-light-bg-c bg-white rounded-[6px] px-3 py-2 h-8 flex items-center gap-x-2 cursor-pointer"
-                    @click="addNewForm('markdown')">
-                  <MarkdownIcon/>
-                  <span class="tooltip-text text-[13px] font-semibold text-black-c">Create markdown</span>
-                </div>
+            <div class="text-blueGray-500 description-panel mt-2" v-if="task.description">
+              Description:
+              <b v-if="!task.description && !isEditPanel.description" class="cursor-pointer"
+                 @click="isEditPanel.description = true">N/A</b>
 
-                <div
-                    class="w-[224px] border border-light-bg-c bg-white rounded-[6px] px-3 py-2 h-8 flex items-center gap-x-2 cursor-pointer"
-                    @click="addNewForm('checklist')">
-                  <ChecklistIcon/>
-                  <span class="tooltip-text text-[13px] font-semibold text-black-c">Create checklist</span>
-                </div>
+              <div v-else>
+                <div @click="isEditPanel.description = true"
+                     :class="[`${!isEditPanel.description ? 'inline-flex' : 'flex w-full'}`]">
+                  <template v-if="!isEditPanel.description" class="w-full">
+                    <v-md-preview :text="task.description" class="cursor-pointer"></v-md-preview>
+                  </template>
 
-                <div
-                    class="w-[224px] border border-light-bg-c bg-white rounded-[6px] px-3 py-2 h-8 flex items-center gap-x-2 cursor-pointer"
-                    @click="addNewForm('image')">
-                  <ImageIcon/>
-                  <span class="tooltip-text text-[13px] font-semibold text-black-c">Add image</span>
+                  <div v-else class="w-full mt-[10px]">
+                    <v-md-editor v-model="form.description" height="350px" :disabled-menus="[]"
+                                 @upload-image="handleUploadImage"></v-md-editor>
+                  </div>
                 </div>
               </div>
+
+
             </div>
           </div>
         </div>
 
-        <div class="mt-6">
-          <FormList
-              :block-name="blockName"
-              :key="keyList"
-              :task-id="task.id"
-              v-model="form.blocks"
-              @edit="isEditPanel.blocks = true"
-          />
+        <div class="flex align-center mt-4 flex-wrap">
+          <div class="flex gap-x-4 gap-y-2 flex align-center flex-wrap">
+            <div
+                class="w-[224px] border border-light-bg-c bg-white rounded-[6px] px-3 py-2 h-8 flex items-center gap-x-2 cursor-pointer"
+                @click="addNewForm('markdown')">
+              <MarkdownIcon/>
+              <span class="tooltip-text text-[13px] font-semibold text-black-c">Create markdown</span>
+            </div>
+
+            <div
+                class="w-[224px] border border-light-bg-c bg-white rounded-[6px] px-3 py-2 h-8 flex items-center gap-x-2 cursor-pointer"
+                @click="addNewForm('checklist')">
+              <ChecklistIcon/>
+              <span class="tooltip-text text-[13px] font-semibold text-black-c">Create checklist</span>
+            </div>
+
+            <div
+                class="w-[224px] border border-light-bg-c bg-white rounded-[6px] px-3 py-2 h-8 flex items-center gap-x-2 cursor-pointer"
+                @click="addNewForm('image')">
+              <ImageIcon/>
+              <span class="tooltip-text text-[13px] font-semibold text-black-c">Add image</span>
+            </div>
+          </div>
         </div>
-
-        <div class="mb-5" v-if="reminders?.length">
-          <Reminders
-              :paginate="paginate"
-              :reminders="reminders"
-              :loading="loadingRem"
-              :users="users"
-              @update="fetchReminders"
-          />
-        </div>
-
-        <div class="mb-10">
-          <NotesDataTable :task-id="task.id"/>
-        </div>
-
-        <div class="mb-10">
-          <CommentsDataTable :task-id="task.id" :task-name="task.title" :is-task="true"/>
-        </div>
-
-        <div class="mb-10">
-          <AttachmentsDataTable :task-id="task.id" :is-task="true"/>
-        </div>
-
-        <div>
-          <TrackerDataTable :key="keyTracker" :task-id="task.id" :is-task="true" :can-edit="true"/>
-        </div>
-
-        <div>
-          <LogsDataTable :key="key" :task-id="task.id" :is-task="true"/>
-        </div>
-
-        <ProjectsModal
-            :show-modal="showModal"
-            :project-id="task?.project?.id"
-            :task-id="task.id"
-            :btn-title="'Change project'"
-            @close="showModal = false"
-            @update="updateTaskShowData"
-        />
-
-        <UserTaskModal
-            :show-modal="showUsersModal"
-            :task="task"
-            :users="usersQueue"
-            :all-users="usersList"
-            :have-task-access="haveTaskAccess"
-            :have-task-access-ids="haveTaskAccessIds"
-            :btn-title="'Manage Task Users'"
-            @close="showUsersModal = false"
-            @update="updateTasks"
-        />
-
-        <OwnersModal
-            :show-modal="showOwnersModal"
-            :task="task"
-            :users="usersList"
-            :have-task-access="haveTaskAccess"
-            :have-task-access-ids="haveTaskAccessIds"
-            :btn-title="'Change Owners'"
-            @close="showOwnersModal = false"
-            @update="updateTaskOwner"
-        />
-
-        <ResponsiblesModal
-            :show-modal="showResponsiblesModal"
-            :task="task"
-            :users="users"
-            :btn-title="'Change Owners'"
-            @close="showResponsiblesModal = false"
-            @update-users="fetchUsers"
-            @update="updateResponsibles"
-        />
-
-
-        <UserQueueModal
-            :show-modal="showUsersQueueModal"
-            :task="task"
-            :users="usersQueue"
-            :have-task-access="haveQueueAccess"
-            :have-task-access-ids="haveQueueAccessIds"
-            :btn-title="'Queue'"
-            @close="showUsersQueueModal = false"
-            @update="updateTasksQueue"
-        />
-
-        <ReminderModal
-            :show-modal="showReminderModal"
-            :task="task"
-            :users="usersQueue"
-            :btn-title="'Add Reminder'"
-            @close="showReminderModal = false"
-            @update="fetchReminders"
-        />
-
-
-        <ConfirmCloseModal
-            :show-modal="confirmModal"
-            @close="confirmModal = false"
-            @update="closeTask"
-        />
       </div>
     </div>
   </div>
+
 </template>
 
 <script setup>
@@ -1114,3 +1097,17 @@ fetchDictionary()
 fetchCurrentTask()
 fetchReminders()
 </script>
+
+<style scoped>
+.left-side{
+  width: calc(100% - 252px);
+}
+.right-side{
+  width: 252px;
+}
+
+.right-side > div{
+  position: sticky;
+  top: 91px;
+}
+</style>

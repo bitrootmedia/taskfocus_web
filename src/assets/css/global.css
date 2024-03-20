@@ -295,4 +295,7 @@ table tbody tr:last-child{
 input{
     color: #182128 !important;
 }
+[contenteditable] {
+    outline: 0 solid transparent;
+}
 

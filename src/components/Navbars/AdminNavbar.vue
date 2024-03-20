@@ -6,12 +6,14 @@
         class="w-full mx-auto items-center flex justify-between md:flex-nowrap flex-wrap"
     >
       <a
+          v-if="route.name !== 'Task Detail'"
           class="text-black text-[22px] uppercase hidden md:inline-block font-semibold"
           href="javascript:void(0)"
       >
         {{ route.name || 'Dashboard' }}
       </a>
 
+      <div v-else class="cursor-pointer inline-flex" contenteditable="true" @input="saveData($event)">{{ taskTitle }}</div>
 
       <div v-if="userStore.showPanel.show" class="hidden md:flex gap-x-4">
         <Button
@@ -61,19 +63,31 @@ import {useUserStore} from "../../store/user";
 import {useCookies} from "vue3-cookies";
 import {useToast} from "vue-toastification";
 import {useRoute, useRouter} from "vue-router";
-import {computed} from "vue";
+import {computed, ref, watch} from "vue";
 import axios from "axios";
 import Notifications from "../../components/Notifications/Notifications.vue";
 import IconWrapper from "../Svg/IconWrapper/IconWrapper.vue";
 import UserIcon from "../Svg/UserIcon.vue";
 import LogoutIcon from "../Svg/LogoutIcon.vue";
 import Button from '../Button/Button.vue'
+import {useTasksStore} from "../../store/tasks";
+import {catchErrors} from "../../utils";
 
 const userStore = useUserStore()
+const taskStore = useTasksStore()
 const {cookies} = useCookies();
 const toast = useToast()
 const router = useRouter()
 const route = useRoute()
+const taskTitle = ref('')
+
+
+//Watch
+watch(taskStore.$state,(val)=>{
+  if (Object.keys(val.task).length){
+    taskTitle.value = val.task.title
+  }
+})
 
 
 // Computed
@@ -89,6 +103,25 @@ const fullName = computed(() => {
 
 
 // Methods
+const updateTask = async (title) => {
+  try {
+    const data = {
+      id: taskStore.$state.task.id,
+      title: title,
+    }
+
+    await taskStore.updateTask(data)
+    await toast.success("Task title updated");
+  } catch (e) {
+    catchErrors(e)
+  }
+}
+
+const saveData = async(e)=>{
+  taskTitle.value = e.target.innerHTML
+  await updateTask(e.target.innerHTML)
+}
+
 const logout = async () => {
   try {
     await userStore.logout()
