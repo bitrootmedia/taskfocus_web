@@ -1,7 +1,7 @@
 <template>
   <Loader v-if="loading"/>
 
-  <div v-else class="flex">
+  <div v-else class="flex flex-col sm:flex-row">
     <div class="left-side pt-6">
       <div>
         <div class="main-container pb-8">
@@ -147,7 +147,7 @@
                 <span class="inline-block text-light-c text-sm mr-2">Progress:</span>
 
                 <div class="cursor-pointer flex items-center">
-                  <div class="w-[120px] h-2 bg-blueGray-200 rounded-md">
+                  <div class="w-[180px] sm:w-[120px] h-2 bg-blueGray-200 rounded-md">
                         <span class="progress block h-2 rounded-md flex items-center justify-center"
                               :style="{width: `${task.progress || 0}%`, background: `${bgConvert(task.progress)}`}">
                         </span>
@@ -156,7 +156,7 @@
 
                 <PencilSmallIcon class="cursor-pointer ml-1" @click="isEditPanel.progress = true"/>
               </div>
-              <div v-else class="w-[224px] range-slider">
+              <div v-else class="w-[250px] range-slider">
                 <input type="range" min="0" max="100" step="1" v-model="form.progress" @input="updateSlider"
                        :style="{backgroundSize: backgroundSize}">
                 <div class="data text-light-c text-sm">Progress: {{ form.progress }}/100</div>
@@ -1082,6 +1082,20 @@ fetchReminders()
   .right-side > div{
     top: 75px;
     z-index: 1;
+  }
+}
+
+@media (max-width: 600px) {
+  .right-side{
+    order: 1;
+    width: 100%;
+  }
+  .right-side > div{
+    position: static;
+  }
+  .left-side{
+    width: 100%;
+    order: 2
   }
 }
 </style>
