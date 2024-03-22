@@ -40,7 +40,7 @@
                 }}</router-link></span>
             </div>
 
-            <p class="text-black-c text-sm w-full lg:w-[720px]">{{ reminder.message }}</p>
+            <p class="text-black-c text-sm w-full">{{ reminder.message }}</p>
           </div>
         </li>
       </ul>

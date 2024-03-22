@@ -4,15 +4,21 @@
 
     <form v-if="!hideCreate" @submit="sendNote">
       <div v-if="!writeNote"
-           class="flex items-center gap-x-2 px-3 py-[6px] bg-white rounded-[8px] cursor-pointer w-[250px]"
+           class="flex items-center gap-x-2 px-3 py-[6px] bg-notes-c rounded-[8px] cursor-pointer w-[250px] relative"
            @click="writeNote = true">
 
         <NotesIcon/>
-        <span class="text-sm text-black">Add private note</span>
+        <span class="text-sm text-black-c font-semibold">Add private note</span>
+
+        <span class="absolute right-0 bottom-0 z-[0]">
+          <NoteBtnIcon  class="relative z-[1]"/>
+
+          <span class="bg-[#f6f6f6] w-[11px] h-[11px] block absolute top-[1px] -right-[1px]"></span>
+        </span>
       </div>
 
       <div class="w-full items-center gap-x-6" v-else>
-        <div class="w-full sm:w-1/2">
+        <div class="w-full">
           <v-md-editor
               autofocus
               :right-toolbar="'toc sync-scroll fullscreen'"
@@ -127,6 +133,7 @@ import NotesIcon from "../Svg/NotesIcon.vue";
 import EditIcon from "../Svg/EditIcon.vue";
 import TrashIcon from "../Svg/TrashIcon.vue";
 import Button from '../Button/Button.vue'
+import NoteBtnIcon from "../Svg/NoteBtnIcon.vue";
 
 
 const props = defineProps({

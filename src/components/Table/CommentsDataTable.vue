@@ -12,7 +12,7 @@
       </div>
 
       <div class="w-full items-center gap-x-6" v-else>
-        <div class="w-full sm:w-1/2">
+        <div class="w-full">
           <v-md-editor
               autofocus
               :right-toolbar="'toc sync-scroll fullscreen'"

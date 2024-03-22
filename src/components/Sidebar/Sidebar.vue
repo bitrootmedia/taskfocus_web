@@ -320,7 +320,7 @@
       </div>
     </div>
 
-    <div v-if="userStore.showPanel.show" class="w-full flex md:hidden justify-center gap-x-4 mt-4 pb-1">
+    <div v-if="userStore.showPanel.show" class="w-full flex md:hidden justify-center gap-x-1 mt-4 pb-1">
       <Button
           @on-click="userStore.showPanel.update"
           label="Save Changes"
@@ -333,12 +333,33 @@
           size="medium"
           version="green"
       />
+      <Button
+          v-if="isAuthOwner && task.is_closed"
+          @on-click="uncloseTask"
+          label="Reopen Task"
+          size="medium"
+          version="green"
+      />
+
+      <Button
+          v-else-if="isAuthOwner"
+          @on-click="confirmModal = true"
+          label="Close Task"
+          size="medium"
+          version="green"
+      />
     </div>
+
+    <ConfirmCloseModal
+        :show-modal="confirmModal"
+        @close="confirmModal = false"
+        @update="closeTask"
+    />
   </nav>
 </template>
 
 <script setup>
-import {computed, onMounted, ref} from "vue";
+import {computed, onMounted, ref, watch} from "vue";
 import {useUserStore} from "../../store/user";
 import {useCookies} from "vue3-cookies";
 import {useToast} from "vue-toastification";
@@ -361,6 +382,7 @@ import {catchErrors} from "../../utils";
 import moment from "moment";
 import {useTasksStore} from "../../store/tasks";
 import Button from '../Button/Button.vue'
+import ConfirmCloseModal from '../Modals/ConfirmCloseModal.vue'
 
 const emit = defineEmits(['update:closePanel'])
 const props = defineProps({
@@ -380,6 +402,15 @@ const router = useRouter()
 // State
 const collapseShow = ref('hidden')
 const userConfig = ref(null)
+const task = ref({})
+
+
+//Watch
+watch(taskStore.$state,(val)=>{
+  if (Object.keys(val.task).length){
+    task.value = val.task
+  }
+})
 
 
 // Computed
@@ -391,8 +422,46 @@ const fullName = computed(() => {
   return user.username
 })
 
+const isAuthOwner = computed(() => {
+  if (!cookies.get('task_focus_user')) return ''
+
+  const user = cookies.get('task_focus_user')
+  const taskOwnerId = task.value.owner?.id
+
+  return user.pk === taskOwnerId
+})
+
 
 // Methods
+const closeTask = async (notes) => {
+  try {
+    const data = {
+      id: task.value.id,
+      closing_message: notes
+    }
+
+    const resp = await taskStore.closeTask(data)
+    confirmModal.value = false
+    await toast.success(resp.data.message);
+    if (task.value.project?.id) {
+      return await router.push(`/dashboard/project/${task.value.project.id}`)
+    }
+    await router.push(`/dashboard`)
+  } catch (e) {
+    catchErrors(e)
+  }
+}
+
+const uncloseTask = async () => {
+  try {
+    const resp = await taskStore.unCloseTask({id: task.value.id})
+    await taskStore.fetchTaskById({id: task.value.id})
+    await toast.success(resp.data.message);
+  } catch (e) {
+    catchErrors(e)
+  }
+}
+
 const toggleCollapseShow = (classes) => {
   collapseShow.value = classes;
 }
