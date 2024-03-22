@@ -23,7 +23,7 @@
                       <v-md-editor v-if="editLists[index]" v-model="element.content" height="270px"
                                    :disabled-menus="[]"/>
 
-                      <v-md-preview v-else :text="element.content" class="cursor-pointer"></v-md-preview>
+                      <v-md-preview v-else :text="element.content"></v-md-preview>
                     </div>
 
                     <div class="actions flex gap-x-1 items-center">
