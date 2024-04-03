@@ -3,11 +3,11 @@
     <div class="flex content-center items-center justify-center h-full">
       <div class="w-full lg:w-4/12 px-4">
         <div
-            class="relative flex flex-col min-w-0 break-words w-full mb-6 shadow-lg rounded-lg bg-blueGray-200 border-0"
+            class="relative flex flex-col min-w-0 break-words w-full mb-6 shadow-lg rounded-lg bg-light-bg-c border-0"
         >
           <div class="rounded-t mb-0 px-6 py-6">
             <div class="text-center mb-3">
-              <h6 class="text-blueGray-500 text-sm font-bold">
+              <h6 class="font-semibold text-3xl block text-black-c">
                 Create New Password
               </h6>
             </div>
@@ -15,48 +15,26 @@
           <div class="flex-auto px-4 lg:px-10 py-10 pt-0">
             <form @keypress="enterIn">
               <div class="relative w-full mb-3">
-                <label
-                    class="block uppercase text-blueGray-600 text-xs font-bold mb-2"
-                    htmlFor="grid-password"
-                >
-                  New Password
-                </label>
-                <input
-                    v-model="form.newPassword"
-                    type="password"
-                    class="border-0 px-3 py-3 placeholder-blueGray-300 text-blueGray-600 bg-white rounded text-sm shadow focus:outline-none focus:ring w-full ease-linear transition-all duration-150"
-                    placeholder="New Password"
-                />
+                <Input placeholder="New Password" label="New Password" v-model:value="form.newPassword" type="password"/>
                 <span class="text-xs font-medium text-red-600"
                       v-if="v$.newPassword.$error"> {{ v$.newPassword.$errors[0].$message }} </span>
               </div>
 
               <div class="relative w-full mb-3">
-                <label
-                    class="block uppercase text-blueGray-600 text-xs font-bold mb-2"
-                    htmlFor="grid-password"
-                >
-                  Confirm Password
-                </label>
-                <input
-                    v-model="form.confirmPassword"
-                    type="password"
-                    class="border-0 px-3 py-3 placeholder-blueGray-300 text-blueGray-600 bg-white rounded text-sm shadow focus:outline-none focus:ring w-full ease-linear transition-all duration-150"
-                    placeholder="Confirm Password"
-                />
+                <Input placeholder="Confirm Password" label="Confirm Password" v-model:value="form.confirmPassword" type="password"/>
                 <span class="text-xs font-medium text-red-600"
                       v-if="v$.confirmPassword.$error"> {{ v$.confirmPassword.$errors[0].$message }} </span>
               </div>
 
               <div class="text-center mt-6">
-                <button
-                    @click="createPassword"
+                <Button
+                    class="w-full flex justify-center"
+                    @on-click="createPassword"
                     :disabled="loading"
-                    class="bg-blueGray-800 text-white active:bg-blueGray-600 text-sm font-bold uppercase px-6 py-3 rounded shadow hover:shadow-lg outline-none focus:outline-none mr-1 mb-1 w-full ease-linear transition-all duration-150"
-                    type="button"
-                >
-                  Send
-                </button>
+                    label="Create"
+                    size="medium"
+                    version="yellow"
+                />
               </div>
             </form>
           </div>
@@ -75,6 +53,8 @@ import {required, sameAs, minLength} from "@vuelidate/validators";
 import {ref} from "vue";
 import {useVuelidate} from "@vuelidate/core";
 import {catchErrors} from "../../utils";
+import Button from '../../components/Button/Button.vue'
+import Input from '../../components/Input/Input.vue'
 
 const userStore = useUserStore()
 const {cookies} = useCookies();

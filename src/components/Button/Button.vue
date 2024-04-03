@@ -19,7 +19,7 @@
       }"
       :disabled="disabled"
       :type="type"
-      @click="clickHandler"
+      @click.prevent="clickHandler"
   >
     <slot name="left-icon"></slot>
     {{ label }}

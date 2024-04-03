@@ -1,56 +1,30 @@
 <template>
   <div class="main-container">
     <div class="content mt-4">
-      <h2 class="font-bold text-xl block text-blueGray-700 mb-6">Settings</h2>
+      <h2 class="text-black-c text-2xl font-semibold mb-4">Settings</h2>
 
-      <div class="passwords-wrapper w-full sm:w-[500px]">
-        <h2 class="font-bold text-md block text-blueGray-700 mb-3">Change Password</h2>
+      <div class="passwords-wrapper w-full sm:w-[300px]">
         <form @keypress="enterIn">
-          <div class="relative w-full mb-3">
-            <label
-                class="block uppercase text-blueGray-600 text-xs font-bold mb-2"
-                htmlFor="grid-password"
-            >
-              Password
-            </label>
-            <input
-                v-model="form.password"
-                id="grid-password"
-                type="password"
-                class="border-0 px-3 py-3 placeholder-blueGray-300 text-blueGray-600 bg-white rounded text-sm shadow focus:outline-none focus:ring w-full ease-linear transition-all duration-150"
-                placeholder="Password"
-            />
+          <div class="relative w-full mb-4">
+            <Input placeholder="Password" label="Password" v-model:value="form.password" type="password"/>
             <span class="text-xs font-medium text-red-600"
                   v-if="v$.password.$error"> {{ v$.password.$errors[0].$message }} </span>
           </div>
 
-          <div class="relative w-full mb-3">
-            <label
-                class="block uppercase text-blueGray-600 text-xs font-bold mb-2"
-                htmlFor="grid-confirmPassword"
-            >
-              Confirm Password
-            </label>
-            <input
-                v-model="form.confirmPassword"
-                id="grid-confirmPassword"
-                type="password"
-                class="border-0 px-3 py-3 placeholder-blueGray-300 text-blueGray-600 bg-white rounded text-sm shadow focus:outline-none focus:ring w-full ease-linear transition-all duration-150"
-                placeholder="Confirm Password"
-            />
+          <div class="relative w-full mb-4">
+            <Input placeholder="Confirm Password" label="Confirm Password" v-model:value="form.confirmPassword" type="confirmPassword"/>
             <span class="text-xs font-medium text-red-600"
                   v-if="v$.confirmPassword.$error"> {{ v$.confirmPassword.$errors[0].$message }} </span>
           </div>
 
-          <div class="text-center mt-6">
-            <button
-                @click="changePassword"
+          <div class="mt-6">
+            <Button
+                @on-click="changePassword"
+                label="Update Password"
                 :disabled="loading"
-                class="bg-blueGray-800 text-white active:bg-blueGray-600 text-sm font-bold uppercase px-6 py-3 rounded shadow hover:shadow-lg outline-none focus:outline-none mr-1 mb-1 w-full ease-linear transition-all duration-150"
-                type="button"
-            >
-              Update Password
-            </button>
+                size="medium"
+                version="yellow"
+            />
           </div>
 
         </form>
@@ -68,6 +42,8 @@ import {useUserStore} from "../../store/user";
 import {catchErrors} from "../../utils";
 import {useVuelidate} from '@vuelidate/core'
 import {required, sameAs} from '@vuelidate/validators'
+import Input from '../../components/Input/Input.vue'
+import Button from "../../components/Button/Button.vue"
 
 const userStore = useUserStore()
 const {cookies} = useCookies();

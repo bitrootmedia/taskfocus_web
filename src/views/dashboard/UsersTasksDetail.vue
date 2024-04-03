@@ -1,13 +1,24 @@
 <template>
-  <div class="main-container">
-    <h2 class="text-xl font-bold flex text-blueGray-800 mb-6" v-if="currentUser">{{ currentUser.first_name }}
+  <div class="main-container pt-6 pb-6">
+    <h2 class="flex font-semibold text-xl block text-black-c mb-3" v-if="currentUser">{{ currentUser.first_name }}
       {{ currentUser.last_name }}</h2>
 
+    <div v-if="currentTask" class="working-task mb-3 text-black-c text-sm">
+      Currently working on:
+      <span class="underline cursor-pointer" @click="toLinkPage('task')">{{
+          currentTask.title
+        }}</span>
+      <template v-if="currentTask.project?.title">
+        in project
+        <span class="underline cursor-pointer"
+              @click="toLinkPage('project')">{{ currentTask.project.title }}</span>
+      </template>
+    </div>
 
-    <ul class="inline-flex align-center border border-blueGray-500 rounded-md overflow-hidden">
+    <ul class="inline-flex align-center overflow-hidden mb-3 mt-2">
       <li v-for="tab in tabs" :key="tab.id"
-          @click="activeTab = tab.id" class="font-bold text-blueGray-500 text-lg cursor-pointer px-4 py-2"
-          :class="{'border-b border-blueGray-800 bg-blueGray-200': activeTab === tab.id}">
+          @click="activeTab = tab.id" class="text-black-c text-lg cursor-pointer px-4 pt-2 pb-1"
+          :class="{'border-b-2 border-green-c font-semibold': activeTab === tab.id}">
         {{ tab.label }}
       </li>
     </ul>
@@ -16,24 +27,12 @@
     <Loader v-if="loading"/>
 
     <template v-else>
-
       <template v-if="activeTab === 1">
-        <div v-if="currentTask" class="working-task mt-4">
-          Currently working on:
-          <span class="underline cursor-pointer text-blue-500" @click="toLinkPage('task')">{{
-              currentTask.title
-            }}</span>
-          <template v-if="currentTask.project?.title">
-            in project
-            <span class="underline cursor-pointer text-blue-500"
-                  @click="toLinkPage('project')">{{ currentTask.project.title }}</span>
-          </template>
-        </div>
         <div class="mb-8">
           <UrgentTasksDataTable :is-task="true" :user-id="route.params.id"/>
         </div>
         <div class="content mb-8">
-          <h2 class="font-bold text-xl block text-blueGray-700 mb-4">Queue</h2>
+          <h2 class="font-semibold text-lg text-black-c block mb-3">Queue</h2>
           <DataTable :headers="headers">
             <template v-slot:tableBody>
               <tr v-if="loading">
@@ -92,7 +91,7 @@
 
       <template v-else-if="activeTab === 3">
         <div class="accesses mt-4 mb-8">
-          <h2 class="font-bold text-xl block text-blueGray-700 mb-4">Project Access</h2>
+          <h2 class="font-semibold text-lg text-black-c block mb-3">Project Access</h2>
           <DataTable :headers="headersProject">
             <template v-slot:tableBody>
               <tr v-if="loading">
@@ -140,7 +139,7 @@
         </div>
 
         <div class="accesses">
-          <h2 class="font-bold text-xl block text-blueGray-700 mb-4">Tasks Access</h2>
+          <h2 class="font-semibold text-lg text-black-c block mb-3">Tasks Access</h2>
           <DataTable :headers="headersTask">
             <template v-slot:tableBody>
               <tr v-if="loading">

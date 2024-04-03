@@ -4,13 +4,7 @@
 
     <div class="header flex flex-col md:flex-row w-full sm:w-[250px] items-baseline md:items-center justify-between mb-[10px] gap-y-3">
       <div class="relative w-full">
-        <SearchIcon class="fas fa-search mr-2 text-sm text-blueGray-300 absolute top-1 left-2"/>
-        <input
-            v-model="filter.search.value"
-            type="text"
-            class="pl-9 pr-3 py-[5px] placeholder-[#797A7B] text-[#797A7B] bg-white border border-light-bg-c rounded-[6px] text-sm focus:outline-none focus:ring w-full ease-linear transition-all duration-150"
-            placeholder="Search"
-        />
+        <Input placeholder="Search" v-model:value="filter.search.value" leftIcon/>
       </div>
     </div>
 
@@ -102,6 +96,7 @@ import {useFilter} from "../../composables/useFilter";
 import {useToast} from "vue-toastification";
 import {useLogsStore} from "../../store/logs";
 import SearchIcon from "../Svg/SearchIcon.vue";
+import Input from "../Input/Input.vue"
 
 const props = defineProps({
   projectId: {

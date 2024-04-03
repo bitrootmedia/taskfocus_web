@@ -10,7 +10,7 @@
       <ul>
         <li v-for="reminder in reminders" :key="reminder.id"
             class="w-full mb-3 rounded-[10px]"
-            :class="[reminderCheck(reminder.reminder_date) === 'today' ? 'bg-red-light-c' : reminderCheck(reminder.reminder_date) === 'tmr' ? 'bg-orange-c' : '']"
+            :class="[reminderCheck(reminder.reminder_date) === 'today' ? 'bg-red-light-c' : reminderCheck(reminder.reminder_date) === 'tmr' ? 'bg-orange-c' : 'bg-red-light-c']"
         >
           <div class="header flex items-center justify-between border-b border-[#7b797938] px-3 pt-3 pb-2">
             <div class="flex items-center">

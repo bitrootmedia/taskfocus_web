@@ -17,6 +17,7 @@
 
           <div class="mb-5" v-if="reminders?.length">
             <Reminders
+                :show-links="true"
                 :paginate="paginate"
                 :reminders="reminders"
                 :loading="loadingRem"
@@ -282,8 +283,6 @@
                   </div>
                 </div>
               </div>
-
-
             </div>
           </div>
         </div>

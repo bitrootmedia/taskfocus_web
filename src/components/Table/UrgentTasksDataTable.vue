@@ -1,17 +1,11 @@
 <template>
   <div class="content mt-4">
-    <h2 class="font-bold text-xl block text-blueGray-700 mb-4">Urgent Tasks</h2>
+    <h2 class="font-semibold text-lg text-black-c block mb-3">Urgent Tasks</h2>
 
     <div class="header flex flex-col justify-between mb-4 gap-y-3">
       <div class="w-full flex gap-x-6">
-        <div class="relative w-full md:w-2/4">
-          <i class="fas fa-search mr-2 text-sm text-blueGray-300 absolute top-[12px] left-[8px]"/>
-          <input
-              v-model="filter.search.value"
-              type="text"
-              class="border-0 pl-8 pr-3 py-3 placeholder-blueGray-300 text-blueGray-600 bg-white rounded text-sm shadow focus:outline-none focus:ring w-full ease-linear transition-all duration-150"
-              placeholder="Search"
-          />
+        <div class="relative w-[250px]">
+          <Input placeholder="Search" v-model:value="filter.search.value" leftIcon/>
         </div>
       </div>
     </div>
@@ -125,6 +119,7 @@ import {usePaginate} from "../../composables/usePaginate";
 import {useFilter} from "../../composables/useFilter";
 import {useCookies} from "vue3-cookies";
 import config from "../../config";
+import Input from '../Input/Input.vue'
 
 const props = defineProps({
   taskId: {

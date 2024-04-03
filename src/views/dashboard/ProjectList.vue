@@ -1,34 +1,24 @@
 <template>
-  <div class="main-container">
-    <div class="header flex items-center justify-between">
-      <div class="relative w-2/4">
-        <i class="fas fa-search mr-2 text-sm text-blueGray-300 absolute top-[12px] left-[8px]"/>
-        <input
-            v-model="filter.search.value"
-            type="text"
-            class="border-0 pl-8 pr-3 py-3 placeholder-blueGray-300 text-blueGray-600 bg-white rounded text-sm shadow focus:outline-none focus:ring w-full ease-linear transition-all duration-150"
-            placeholder="Search"
-        />
+  <div class="main-container pt-6">
+    <div class="header flex items-center gap-x-4">
+      <div class="relative w-[250px]">
+        <Input placeholder="Search" v-model:value="filter.search.value" leftIcon/>
       </div>
 
-      <button
-          @click="router.push('/dashboard/create-project')"
-          class="bg-blueGray-800 text-white active:bg-blueGray-600 text-sm font-bold px-6 py-3 rounded shadow hover:shadow-lg outline-none focus:outline-none ease-linear transition-all duration-150"
-          type="button"
-      >
-        Create Project
-      </button>
+      <Button
+          @on-click="router.push('/dashboard/create-project')"
+          label="Create Project"
+          size="medium"
+          version="green"
+      />
     </div>
 
-    <div class="flex items-center mt-4">
-      <input
+    <div class="mt-4">
+      <CheckBox
           id="hideClosed"
-          v-model="hideClosed"
-          type="checkbox"
-          class="border-0 flex pl-8 pr-3 py-3 placeholder-blueGray-300 text-blueGray-600 rounded text-sm ease-linear transition-all duration-150 cursor-pointer"
-          placeholder="Search"
+          label="Hide closed projects"
+          v-model:value="hideClosed"
       />
-      <label for="hideClosed" class="text-md text-blueGray-500 font-medium cursor-pointer ml-2 whitespace-nowrap">Hide closed projects</label>
     </div>
 
     <div class="content mt-4">
@@ -107,6 +97,9 @@ import {useRouter} from "vue-router";
 import draggable from 'vuedraggable'
 import {usePaginate} from "../../composables/usePaginate";
 import {useFilter} from "../../composables/useFilter";
+import Button from '../../components/Button/Button.vue'
+import Input from '../../components/Input/Input.vue'
+import CheckBox from '../../components/CheckBox/CheckBox.vue'
 
 const projectStore = useProjectStore()
 const {cookies} = useCookies();

@@ -1,34 +1,20 @@
 <template>
-  <div class="main-container">
+  <div class="main-container pt-6">
     <form class="" @submit="createProject">
-      <div class="relative w-full md:w-2/4 mb-4">
-        <input
-            v-model="name"
-            type="text"
-            class="border-0 px-3 py-3 placeholder-blueGray-300 text-blueGray-600 bg-white rounded text-sm shadow focus:outline-none focus:ring w-full ease-linear transition-all duration-150"
-            placeholder="Project Name"
+      <div class="flex items-center items-baseline gap-x-4">
+        <div class="relative w-[250px]">
+          <Input placeholder="Project Name" v-model:value="name" />
+          <span class="text-xs font-medium text-red-600" v-if="v$.name.$error"> {{ v$.name.$errors[0].$message }} </span>
+        </div>
+
+        <Button
+            @on-click="createProject"
+            label="New Project"
+            :disabled="loading"
+            size="medium"
+            version="yellow"
         />
-        <span class="text-xs font-medium text-red-600" v-if="v$.name.$error"> {{ v$.name.$errors[0].$message }} </span>
       </div>
-
-<!--      <div class="w-full md:w-2/4 mb-4">-->
-<!--        <textarea-->
-<!--            v-model="description"-->
-<!--            type="text"-->
-<!--            rows="5"-->
-<!--            class="border-0 px-3 py-3 placeholder-blueGray-300 text-blueGray-600 bg-white rounded text-sm shadow focus:outline-none focus:ring w-full ease-linear transition-all duration-150"-->
-<!--            placeholder="Project Description"-->
-<!--        />-->
-<!--      </div>-->
-
-      <button
-          @click="createProject"
-          :disabled="loading"
-          class="bg-blueGray-800 text-white active:bg-blueGray-600 text-sm font-bold px-6 py-3 rounded shadow hover:shadow-lg outline-none focus:outline-none ease-linear transition-all duration-150"
-          type="button"
-      >
-        Next
-      </button>
     </form>
   </div>
 </template>
@@ -41,6 +27,8 @@ import { required } from '@vuelidate/validators'
 import {useToast} from "vue-toastification";
 import {useRouter} from "vue-router";
 import {useProjectStore} from "../../store/project";
+import Input from '../../components/Input/Input.vue'
+import Button from '../../components/Button/Button.vue'
 
 const projectStore = useProjectStore()
 const toast = useToast()

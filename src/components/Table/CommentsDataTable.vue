@@ -50,18 +50,11 @@
     <div v-if="showSearch"
          class="header flex flex-col md:flex-row items-baseline md:items-center justify-between mt-4 mb-4 gap-y-3">
       <div class="relative w-full sm:w-[500px]">
-        <SearchIcon class="fas fa-search mr-2 text-sm text-blueGray-300 absolute top-1 left-2"/>
-        <input
-            v-model="filter.search.value"
-            type="text"
-            class="pl-9 pr-3 py-[5px] placeholder-[#797A7B] text-[#797A7B] bg-white border border-light-bg-c rounded-[6px] text-sm focus:outline-none focus:ring w-full ease-linear transition-all duration-150"
-            placeholder="Search by project"
-        />
+        <Input placeholder="Search" v-model:value="filter.search.value" leftIcon/>
       </div>
     </div>
 
     <div class="comments mt-5">
-
       <ul >
         <li v-for="comment in comments" :key="comment.id" class="mb-5">
           <div class="">
@@ -192,11 +185,10 @@ import {useCookies} from "vue3-cookies";
 import config from '../../config'
 import {watch} from "vue";
 import {useAttachmentsStore} from "../../store/attachments";
-import Loader from './../Loader/Loader.vue'
 import PlusIcon from "../Svg/PlusIcon.vue";
 import Button from "../Button/Button.vue"
-import SearchIcon from "../Svg/SearchIcon.vue";
 import UserIcon from "../Svg/UserIcon.vue";
+import Input from '../Input/Input.vue'
 
 const props = defineProps({
   projectId: {

@@ -1,6 +1,6 @@
 <template>
-  <div class="main-container">
-    <h2 class="font-bold text-xl block text-blueGray-700 mb-4">Users</h2>
+  <div class="main-container pt-6">
+    <h2 class="font-semibold text-lg text-black-c block mb-3">Users</h2>
 
       <DataTable :headers="headers" @sorting="sorting">
         <template v-slot:tableBody>
