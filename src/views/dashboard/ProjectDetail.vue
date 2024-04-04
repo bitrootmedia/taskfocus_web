@@ -1,5 +1,5 @@
 <template>
-  <div class="main-container">
+  <div class="main-container pt-2 pb-6">
     <Loader v-if="loading"/>
     <div v-else class="content">
       <div class="header flex flex-col md:flex-row justify-between gap-x-2 lg:gap-x-10">
