@@ -1,6 +1,6 @@
 <template>
-  <div class="main-container">
-    <h2 class="font-bold text-xl block text-blueGray-700 mb-4">Users</h2>
+  <div class="main-container pt-6">
+    <h2 class="font-semibold text-lg text-black-c block mb-3">Users</h2>
 
       <DataTable :headers="headers" @sorting="sorting">
         <template v-slot:tableBody>
@@ -15,7 +15,7 @@
           <template v-else>
             <tr v-if="!users.length">
               <td :colspan="headers.length">
-                <p class="flex text-center px-4 justify-center py-8 text-blueGray-500 font-medium">
+                <p class="flex text-center px-4 justify-center py-8 text-black-c font-medium">
                   No data found
                 </p>
               </td>

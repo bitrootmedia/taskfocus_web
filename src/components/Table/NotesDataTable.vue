@@ -1,19 +1,24 @@
 <template>
   <div class="content mt-4">
-    <h2 class="font-bold text-xl block text-blueGray-700 mb-4">My Notes</h2>
+    <h2 class="font-semibold text-lg text-black-c block mb-3">Notes</h2>
 
     <form v-if="!hideCreate" @submit="sendNote">
+      <div v-if="!writeNote"
+           class="flex items-center gap-x-2 px-3 py-[6px] bg-notes-c rounded-[8px] cursor-pointer w-[250px] relative"
+           @click="writeNote = true">
 
-      <input
-          v-if="!writeNote"
-          @click="writeNote = true"
-          class="text-white w-full sm:w-1/2 hover:bg-gray-100 text-sm px-6 py-3 rounded cursor-pointer shadow outline-none focus:outline-none ease-linear transition-all duration-150"
-          placeholder="Write a note..."
-      />
+        <NotesIcon/>
+        <span class="text-sm text-black-c font-semibold">Add private note</span>
 
+        <span class="absolute right-0 bottom-0 z-[0]">
+          <NoteBtnIcon  class="relative z-[1]"/>
+
+          <span class="bg-[#f6f6f6] w-[11px] h-[11px] block absolute top-[1px] -right-[1px]"></span>
+        </span>
+      </div>
 
       <div class="w-full items-center gap-x-6" v-else>
-        <div class="w-full sm:w-1/2">
+        <div class="w-full">
           <v-md-editor
               autofocus
               :right-toolbar="'toc sync-scroll fullscreen'"
@@ -26,24 +31,24 @@
 
 
         <div class="mt-3 flex gap-x-2">
-          <button
-              @click="sendNote"
+          <Button
+              @on-click="sendNote"
               :disabled="btnLoad"
-              class="bg-blueGray-800 text-white active:bg-blueGray-600 text-sm font-bold px-6 py-3 rounded shadow hover:shadow-lg outline-none focus:outline-none ease-linear transition-all duration-150"
+              label="Send"
               type="submit"
-          >
-            Send
-          </button>
-          <button
-              @click="resetNote"
-              class="bg-blueGray-800 text-white active:bg-blueGray-600 text-sm font-bold px-6 py-3 rounded shadow hover:shadow-lg outline-none focus:outline-none ease-linear transition-all duration-150"
-              type="submit"
-          >
-            Close
-          </button>
+              size="medium"
+              version="yellow"
+          />
+          <Button
+              @on-click="resetNote"
+              label="Close"
+              size="medium"
+              version="green"
+          />
         </div>
       </div>
     </form>
+
     <span class="text-xs font-medium text-red-600" v-if="v$.message.$error"> {{
         v$.message.$errors[0].$message
       }} </span>
@@ -54,47 +59,44 @@
       <ul v-else>
         <li v-for="note in notes" :key="note.id" class="mb-4">
           <div class="flex gap-x-2 items-start">
-            <div class="w-full lg:w-1/2 rounded-[8px] px-4 py-4 bg-blueGray-600 border border-blueGray-700">
-              <div class="mb-2">
-                <div class="flex items-center mb-1">
-                  <span class="text-sm ml-2 text-white font-semibold">{{ convertDateTime(note.updated_at) }}</span>
+            <div class="w-full rounded-[10px] bg-notes-c">
+              <div class="header flex items-center justify-between border-b border-[#7b797938] px-3 pt-3 pb-2">
+                <div class="flex gap-x-2 items-center">
+                  <span class="text-black-c font-semibold text-[11px]">{{ convertDateTime(note.updated_at) }}</span>
+                </div>
+
+                <div class="actions flex gap-x-1 items-center">
+                  <EditIcon class="cursor-pointer" @click="editNote(note)"/>
+                  <TrashIcon class="cursor-pointer" @click="deleteNote(note)"></TrashIcon>
                 </div>
               </div>
 
-              <div class="bg-white rounded-[8px] shadow-lg">
-                <v-md-editor v-if="editNotesIds.includes(note.id)" v-model="note.note"
-                             height="300px">
-                </v-md-editor>
+              <div class="content">
+                <div>
+                  <v-md-editor v-if="editNotesIds.includes(note.id)" v-model="note.note"
+                               height="300px">
+                  </v-md-editor>
+                  <v-md-preview v-else :text="note.note"></v-md-preview>
+                </div>
 
-                <v-md-preview v-else :text="note.note"></v-md-preview>
-              </div>
-
-              <div class="flex gap-x-3 items-center mt-2">
+                <div class="flex gap-x-3 items-center mt-2">
                   <div v-if="editNotesIds.includes(note.id)" class="flex gap-x-3">
-                    <button
-                        @click="updateNotes(note)"
+                    <Button
+                        @on-click="updateNotes(note)"
                         :disabled="btnLoad"
-                        class="bg-blueGray-800 text-white active:bg-blueGray-600 text-sm font-bold px-3 py-1 rounded shadow hover:shadow-lg outline-none focus:outline-none ease-linear transition-all duration-150"
-                        type="button"
-                    >
-                      Update
-                    </button>
-                    <button
-                        @click="resetEditNote(note)"
-                        class="bg-blueGray-800 text-white active:bg-blueGray-600 text-sm font-bold px-3 py-1 rounded shadow hover:shadow-lg outline-none focus:outline-none ease-linear transition-all duration-150"
-                        type="button"
-                    >
-                      Reset
-                    </button>
+                        label="Update"
+                        size="medium"
+                        version="green"
+                    />
+                    <Button
+                        @on-click="resetEditNote(note)"
+                        label="Reset"
+                        size="medium"
+                        version="white"
+                    />
                   </div>
-                  <div v-else class="flex items-center gap-x-2">
-                    <span class="underline text-white text-sm cursor-pointer"
-                          @click="editNote(note)">Edit</span>
-                    <span class="underline text-white text-sm cursor-pointer"
-                          @click="deleteNote(note)">Delete</span>
-                  </div>
+                </div>
               </div>
-
             </div>
           </div>
         </li>
@@ -127,6 +129,12 @@ import config from '../../config'
 import {useAttachmentsStore} from "../../store/attachments";
 import Loader from './../Loader/Loader.vue'
 import {useNotesStore} from "../../store/notes";
+import NotesIcon from "../Svg/NotesIcon.vue";
+import EditIcon from "../Svg/EditIcon.vue";
+import TrashIcon from "../Svg/TrashIcon.vue";
+import Button from '../Button/Button.vue'
+import NoteBtnIcon from "../Svg/NoteBtnIcon.vue";
+
 
 const props = defineProps({
   projectId: {

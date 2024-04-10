@@ -15,6 +15,16 @@ module.exports = {
   theme: {
     colors: {
       ...colors,
+      'black-c': '#182128',
+      'orange-c': '#F8D487',
+      'orange-c-600': '#e3b349',
+      'orange-c-900': '#F3AE1B',
+      'green-c': '#349C91',
+      'light-c': '#797A7B',
+      'light-bg-c': '#E5E7E7',
+      'notes-c': '#FDEBAB',
+      'red-c': '#E44B2A',
+      'red-light-c': 'rgba(228, 75, 42, 0.20)',
     },
     extend: {
       minHeight: {

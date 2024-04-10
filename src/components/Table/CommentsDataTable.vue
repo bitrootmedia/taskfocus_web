@@ -1,19 +1,18 @@
 <template>
   <div class="content mt-4">
-    <h2 class="font-bold text-xl block text-blueGray-700 mb-4">Comments</h2>
+    <h2 class="font-semibold text-lg text-black-c block mb-3">Comments</h2>
 
     <form v-if="!hideCreate" @submit="sendComment">
+      <div v-if="!writeComment"
+           class="flex items-center gap-x-2 px-3 py-[6px] bg-white rounded-[8px] cursor-pointer w-[250px]"
+           @click="writeComment = true">
 
-      <input
-          v-if="!writeComment"
-          @click="writeComment = true"
-          class="text-white w-full sm:w-1/2 hover:bg-gray-100 text-sm px-6 py-3 rounded cursor-pointer shadow outline-none focus:outline-none ease-linear transition-all duration-150"
-          placeholder="Write a comment..."
-      />
-
+        <PlusIcon :size="20"/>
+        <span class="text-sm text-black">Add comment</span>
+      </div>
 
       <div class="w-full items-center gap-x-6" v-else>
-        <div class="w-full sm:w-1/2">
+        <div class="w-full">
           <v-md-editor
               autofocus
               :right-toolbar="'toc sync-scroll fullscreen'"
@@ -26,21 +25,21 @@
 
 
         <div class="mt-3 flex gap-x-2">
-          <button
-              @click="sendComment"
+          <Button
+              @on-click="sendComment"
               :disabled="btnLoad"
-              class="bg-blueGray-800 text-white active:bg-blueGray-600 text-sm font-bold px-6 py-3 rounded shadow hover:shadow-lg outline-none focus:outline-none ease-linear transition-all duration-150"
               type="submit"
-          >
-            Send
-          </button>
-          <button
-              @click="resetComment"
-              class="bg-blueGray-800 text-white active:bg-blueGray-600 text-sm font-bold px-6 py-3 rounded shadow hover:shadow-lg outline-none focus:outline-none ease-linear transition-all duration-150"
+              label="Create"
+              size="medium"
+              version="yellow"
+          />
+          <Button
+              @on-click="resetComment"
               type="submit"
-          >
-            Close
-          </button>
+              label="Close"
+              size="medium"
+              version="green"
+          />
         </div>
       </div>
     </form>
@@ -50,78 +49,75 @@
 
     <div v-if="showSearch"
          class="header flex flex-col md:flex-row items-baseline md:items-center justify-between mt-4 mb-4 gap-y-3">
-      <div class="relative w-full md:w-2/4">
-        <i class="fas fa-search mr-2 text-sm text-blueGray-300 absolute top-[12px] left-[8px]"/>
-        <input
-            v-model="filter.search.value"
-            type="text"
-            class="border-0 pl-8 pr-3 py-3 placeholder-blueGray-300 text-blueGray-600 bg-white rounded text-sm shadow focus:outline-none focus:ring w-full ease-linear transition-all duration-150"
-            placeholder="Search"
-        />
+      <div class="relative w-full sm:w-[500px]">
+        <Input placeholder="Search" v-model:value="filter.search.value" leftIcon/>
       </div>
     </div>
 
-    <div class="comments mt-3">
-      <Loader v-if="loading"/>
+    <div class="comments mt-5">
+      <ul >
+        <li v-for="comment in comments" :key="comment.id" class="mb-5">
+          <div class="">
+            <div class="flex mb-2">
+               <span class="bg-white mr-2 flex items-center px-[7px] py-[7px] rounded-full">
+                  <UserIcon/>
+               </span>
 
-      <ul v-else>
-        <li v-for="comment in comments" :key="comment.id" class="mb-4">
-          <div class="flex gap-x-2 items-start">
-             <span class="font-medium mr-3 flex items-center gap-x-2">
-              <i class="fas fa-user-circle text-blueGray-300 text-3xl"></i>
-            </span>
-
-            <div :class="{'w-full': editCommentsIds.includes(comment.id)}">
-              <div class="mb-2">
-                <div class="flex items-center mb-1">
-                  <div class="flex items-center gap-x-1">
-                    <b v-if="comment.author?.first_name || comment.author?.last_name" class="text-blueGray-600">{{
-                        comment.author?.first_name
-                      }} {{ comment.author?.last_name }}
-                    </b>
-                    <span class="text-sm text-blueGray-500 cursor-pointer underline"
-                          @click="reply(comment)">(@{{ comment.author?.username }})</span>
-                  </div>
-
-                  <span class="text-sm ml-2 text-blueGray-500">{{ convertDateTime(comment.created_at) }}</span>
+              <div class="flex items-center">
+                <div class="flex items-center gap-x-2">
+                   <span v-if="comment.author?.first_name || comment.author?.last_name"
+                         class="text-black-c text-sm font-semibold">{{
+                       comment.author?.first_name
+                     }} {{ comment.author?.last_name }}
+                   </span>
+                  <span class="text-black-c text-sm font-semibold cursor-pointer"
+                        @click="reply(comment)">(@{{ comment.author?.username }})</span>
                 </div>
 
-                <p class="text-sm text-blueGray-500">
+                <span class="text-[11px] ml-2 text-light-c font-semibold">{{
+                    convertDateTime(comment.created_at)
+                  }}</span>
+              </div>
+            </div>
+
+            <div class="mb-2">
+              <p class="text-[11px] text-black-c">
                   <span v-if="props.taskId && route.name !== 'Task Detail'" class="block">Task link: <router-link
                       class="underline"
                       :to="`/dashboard/task/${props.taskId}`">{{
                       taskName
                     }}</router-link></span>
-                  <span v-else-if="comment.task?.id && route.name !== 'Task Detail'" class="block">Task link: <router-link
-                      class="underline"
-                      :to="`/dashboard/task/${comment.task?.id}`">{{
-                      comment.task.title
-                    }}</router-link></span>
+                <span v-else-if="comment.task?.id && route.name !== 'Task Detail'" class="block">Task link: <router-link
+                    class="underline"
+                    :to="`/dashboard/task/${comment.task?.id}`">{{
+                    comment.task.title
+                  }}</router-link></span>
 
-                  <span v-if="comment.task?.project?.id && !['Project Detail','Task Detail'].includes(route.name)"
-                        class="block">Project link: <router-link
-                      class="underline"
-                      :to="`/dashboard/project/${comment.task?.project?.id}`">{{
-                      comment.task.project.title
-                    }}</router-link></span>
+                <span v-if="comment.task?.project?.id && !['Project Detail','Task Detail'].includes(route.name)"
+                      class="block">Project link: <router-link
+                    class="underline"
+                    :to="`/dashboard/project/${comment.task?.project?.id}`">{{
+                    comment.task.project.title
+                  }}</router-link></span>
 
 
-                  <span v-if="props.projectId && route.name !== 'Project Detail'" class="block">Project link: <router-link
-                      class="underline"
-                      :to="`/dashboard/project/${props.projectId}`">{{
-                      projectName
-                    }}</router-link></span>
+                <span v-if="props.projectId && route.name !== 'Project Detail'" class="block">Project link: <router-link
+                    class="underline"
+                    :to="`/dashboard/project/${props.projectId}`">{{
+                    projectName
+                  }}</router-link></span>
 
-                  <span v-else-if="comment.project?.id && !['Project Detail','Comments'].includes(route.name)"
-                        class="block">Project link: <router-link
-                      class="underline"
-                      :to="`/dashboard/project/${comment.project?.id}`">{{
-                      comment.project.title
-                    }}</router-link></span>
-                </p>
-              </div>
+                <span v-else-if="comment.project?.id && !['Project Detail','Comments'].includes(route.name)"
+                      class="block">Project link: <router-link
+                    class="underline"
+                    :to="`/dashboard/project/${comment.project?.id}`">{{
+                    comment.project.title
+                  }}</router-link></span>
+              </p>
+            </div>
 
-              <div class="bg-white rounded-[8px] shadow-lg">
+            <div :class="{'w-full': editCommentsIds.includes(comment.id)}">
+              <div class="bg-white rounded-[10px]">
                 <v-md-editor v-if="editCommentsIds.includes(comment.id)" v-model="comment.content"
                              height="300px">
                 </v-md-editor>
@@ -129,34 +125,34 @@
                 <v-md-preview v-else :text="comment.content"></v-md-preview>
               </div>
 
-              <div class="flex gap-x-3 items-center mt-2">
+              <div class="flex gap-x-3 items-center mt-1">
                 <template v-if="isAuthOwner(comment)">
                   <div v-if="editCommentsIds.includes(comment.id)" class="flex gap-x-3">
-                    <button
-                        @click="updateComment(comment)"
+                    <Button
+                        @on-click="updateComment(comment)"
                         :disabled="btnLoad"
-                        class="bg-blueGray-800 text-white active:bg-blueGray-600 text-sm font-bold px-3 py-1 rounded shadow hover:shadow-lg outline-none focus:outline-none ease-linear transition-all duration-150"
-                        type="button"
-                    >
-                      Update
-                    </button>
-                    <button
-                        @click="resetEditComment(comment)"
-                        class="bg-blueGray-800 text-white active:bg-blueGray-600 text-sm font-bold px-3 py-1 rounded shadow hover:shadow-lg outline-none focus:outline-none ease-linear transition-all duration-150"
-                        type="button"
-                    >
-                      Reset
-                    </button>
+                        label="Update"
+                        size="medium"
+                        version="yellow"
+                    />
+                    <Button
+                        @on-click="resetEditComment(comment)"
+                        :disabled="btnLoad"
+                        label="Reset"
+                        size="medium"
+                        version="green"
+                    />
                   </div>
-                  <span class="underline text-blueGray-500 text-sm cursor-pointer"
-                        v-else
-                        @click="editComment(comment)">Edit</span>
+                  <div v-else class="flex items-center gap-x-2">
+                    <span class="underline text-black-c text-xs cursor-pointer"
+                          @click="editComment(comment)">Edit</span>
+
+                    <span class="underline text-black-c text-xs cursor-pointer"
+                          @click="reply(comment)">Reply</span>
+                  </div>
                 </template>
 
-                <span class="underline text-blueGray-500 text-sm cursor-pointer"
-                      @click="reply(comment)">Reply</span>
               </div>
-
             </div>
           </div>
         </li>
@@ -189,7 +185,10 @@ import {useCookies} from "vue3-cookies";
 import config from '../../config'
 import {watch} from "vue";
 import {useAttachmentsStore} from "../../store/attachments";
-import Loader from './../Loader/Loader.vue'
+import PlusIcon from "../Svg/PlusIcon.vue";
+import Button from "../Button/Button.vue"
+import UserIcon from "../Svg/UserIcon.vue";
+import Input from '../Input/Input.vue'
 
 const props = defineProps({
   projectId: {

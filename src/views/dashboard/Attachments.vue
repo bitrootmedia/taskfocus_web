@@ -1,5 +1,5 @@
 <template>
-  <div class="main-container">
+  <div class="main-container pt-2 pb-6">
     <AttachmentsDataTable :hide-create="true"/>
   </div>
 </template>

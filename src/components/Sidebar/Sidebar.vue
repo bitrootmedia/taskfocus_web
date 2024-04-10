@@ -1,83 +1,77 @@
 <template>
   <nav
-      class="sticky top-0 md:static md:left-0 md:block md:fixed md:top-0 md:bottom-0 md:flex-row md:flex-nowrap shadow-xl bg-white flex flex-wrap items-center justify-between relative z-10 py-4"
-      :class="{'md:w-64 px-4 sm:px-6': !closePanel, 'md:w-16 px-2': closePanel}"
+      id="sidebar"
+      class="z-[2] sticky top-0 md:static md:left-0 pt-[10px] md:block md:fixed md:top-0 md:bottom-0 md:flex-row md:flex-nowrap shadow-xl bg-[#182128] flex flex-wrap items-center justify-between relative pb-[10px] md:pb-0 px-4 md:px-0"
+      :class="{'md:w-[312px]': !closePanel, 'md:w-[100px]': closePanel}"
   >
-    <span v-if="closePanel" @click="emit('update:closePanel',false)"
-          class="w-8 h-8 bg-white rounded-full flex items-center justify-center cursor-pointer absolute -right-[10px] top-1/2">
-       <i class="text-lg fas fa-chevron-circle-right text-blueGray-400"></i>
+    <span @click="emit('update:closePanel',!closePanel)"
+          class="w-10 h-10 bg-[#182128] hidden md:flex rounded-full flex items-center justify-center cursor-pointer absolute -right-[20px] top-[25px]">
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+               :class="{'rotate-180': !closePanel}">
+          <path d="M9 4.5L16.5 12L9 19.5" stroke="white" stroke-width="2" stroke-linecap="round"
+                stroke-linejoin="round"/>
+       </svg>
     </span>
 
     <div
-        class="md:flex-col md:items-stretch md:min-h-full md:flex-nowrap px-0 flex flex-wrap items-center justify-between w-full mx-auto"
+        class="bg-[#182128] md:flex-col md:items-stretch md:min-h-full md:flex-nowrap px-0 flex flex-wrap items-center justify-between w-full mx-auto"
     >
       <!-- Toggler -->
-      <div class="flex md:justify-between">
+      <div class="flex md:justify-between md:px-[10px]">
         <button
-            class="cursor-pointer text-black opacity-50 md:hidden px-3 py-1 text-xl leading-none bg-transparent rounded border border-solid border-transparent"
+            class="cursor-pointer text-white md:hidden px-3 py-1 text-xl leading-none bg-transparent rounded border border-solid border-transparent"
             type="button"
-            v-on:click="toggleCollapseShow('bg-white m-2 py-3 px-6')"
+            v-on:click="toggleCollapseShow('m-2 py-3 px-0')"
         >
-          <i class="fas fa-bars"></i>
+          <i class="fas fa-bars text-white"></i>
         </button>
         <!-- Brand -->
         <router-link
-            class="md:block text-left md:pb-2 text-blueGray-600 mr-0 inline-block whitespace-nowrap text-sm uppercase font-bold p-4 px-0"
+            class="md:block text-left md:pb-2 text-blueGray-600 mr-0 inline-block whitespace-nowrap text-sm uppercase font-bold"
             to="/"
         >
-          <img src="/public/logo.png" alt="thumbnail" class="w-[140px]">
-
-          <!--          <img v-if="config.LOGO_URL && closePanel" :src="config.LOGO_URL" alt="thumbnail">-->
-<!--          <span v-else-if="!closePanel">{{config.PROJECT_NAME}}</span>-->
+          <img v-if="!closePanel" src="/public/logo-dark.png" alt="thumbnail" class="w-[140px]">
+          <img v-else src="/public/logo-closed.png" alt="thumbnail" class="w-[64px]">
         </router-link>
-
-        <button
-            v-if="!closePanel"
-            @click="emit('update:closePanel',true)"
-            class="cursor-pointer text-xl leading-none px-3 py-1 border border-solid border-transparent rounded hidden md:block outline-none focus:outline-none"
-            type="button"
-        >
-          <i class="fas fa-expand text-blueGray-600"></i>
-        </button>
       </div>
       <!-- User -->
       <div class="flex md:hidden items-center">
         <div v-if="showMobile">
           <Notifications :mode="'dark'"/>
         </div>
-        <span class="cursor-pointer font-medium text-blueGray-600" @click="logout">Logout</span>
+        <span class="cursor-pointer font-medium text-white" @click="logout">Logout</span>
       </div>
       <!-- Collapse -->
       <div
-          class="md:flex md:flex-col md:items-stretch md:opacity-100 md:relative md:mt-4 md:shadow-none shadow absolute top-0 left-0 right-0 z-40 overflow-y-auto overflow-x-hidden h-auto items-center flex-1 rounded"
+          class="bg-[#182128] md:flex md:flex-col md:items-stretch md:opacity-100 md:relative md:mt-4 md:shadow-none shadow absolute top-0 left-0 right-0 z-40 overflow-y-auto overflow-x-hidden h-auto items-center flex-1 rounded"
           v-bind:class="collapseShow"
       >
         <!-- Collapse header -->
         <div
-            class="md:min-w-full md:hidden block pb-4 mb-4 border-b border-solid border-blueGray-200"
+            class="md:min-w-full md:hidden block pb-4 mb-4 border-b border-solid border-blueGray-200 px-4"
         >
           <div class="flex flex-wrap">
             <div class="w-6/12">
               <router-link
-                  class="md:block text-left md:pb-2 text-blueGray-600 mr-0 inline-block whitespace-nowrap text-sm uppercase font-bold p-4 px-0"
+                  class="md:block text-left md:pb-2 text-white mr-0 inline-block whitespace-nowrap text-sm uppercase font-bold p-4 px-0"
                   to="/"
               >
-                Task Focus
+                Aye aye captain
               </router-link>
             </div>
             <div class="w-6/12 flex justify-end">
               <button
                   type="button"
-                  class="cursor-pointer text-black opacity-50 md:hidden px-3 py-1 text-xl leading-none bg-transparent rounded border border-solid border-transparent"
+                  class="cursor-pointer text-white md:hidden px-3 py-1 text-xl leading-none bg-transparent rounded border border-solid border-transparent"
                   v-on:click="toggleCollapseShow('hidden')"
               >
-                <i class="fas fa-times"></i>
+                <i class="fas fa-times text-white"></i>
               </button>
             </div>
           </div>
         </div>
         <!-- Form -->
-        <form class="mt-6 mb-4 md:hidden">
+        <form class="mt-6 mb-4 md:hidden px-4">
           <div class="mb-3 pt-0">
             <input
                 type="text"
@@ -86,10 +80,6 @@
             />
           </div>
         </form>
-
-        <!-- Divider -->
-        <hr class="my-4 md:min-w-full"/>
-        <!-- Navigation -->
 
         <ul class="md:flex-col md:min-w-full flex flex-col list-none">
           <li class="items-center">
@@ -100,18 +90,15 @@
               <a
                   :href="href"
                   @click="navigate"
-                  class="text-xs uppercase py-3 font-bold block"
+                  class="flex gap-x-2 items-center text-lg py-3 font-medium block"
                   :class="[
                   isExactActive
-                    ? 'text-emerald-500 hover:text-emerald-600'
-                    : 'text-blueGray-700 hover:text-blueGray-500',
-                    closePanel ? 'text-center' : ''
+                    ? 'bg-[#41525B] text-orange-c hover:text-orange-c-600'
+                    : 'text-white hover:text-orange-c',
+                     closePanel ? 'text-center pl-[38px]' : 'pl-4 md:pl-[50px]'
                 ]"
               >
-                <i
-                    class="fas fa-tv mr-2 text-sm"
-                    :class="[isExactActive ? 'opacity-75' : 'text-blueGray-300']"
-                ></i>
+                <DashboardIcon :isExactActive="isExactActive"/>
                 {{ !closePanel ? 'Dashboard' : '' }}
               </a>
             </router-link>
@@ -122,18 +109,15 @@
               <a
                   :href="href"
                   @click="navigate"
-                  class="text-xs uppercase py-3 font-bold block"
+                  class="flex gap-x-2 items-center text-lg py-3 font-medium block"
                   :class="[
                   isExactActive
-                    ? 'text-emerald-500 hover:text-emerald-600'
-                    : 'text-blueGray-700 hover:text-blueGray-500',
-                    closePanel ? 'text-center' : ''
+                    ? 'bg-[#41525B] text-orange-c hover:text-orange-c-600'
+                    : 'text-white hover:text-orange-c',
+                     closePanel ? 'text-center pl-[38px]' : 'pl-4 md:pl-[50px]'
                 ]"
               >
-                <i
-                    class="fas fa-newspaper mr-2 text-sm"
-                    :class="[isExactActive ? 'opacity-75' : 'text-blueGray-300']"
-                ></i>
+                <NewTaskIcon :isExactActive="isExactActive"/>
                 {{ !closePanel ? 'New Task' : '' }}
               </a>
             </router-link>
@@ -144,18 +128,15 @@
               <a
                   :href="href"
                   @click="navigate"
-                  class="text-xs uppercase py-3 font-bold block"
+                  class="flex gap-x-2 items-center text-lg py-3 font-medium block"
                   :class="[
                   isExactActive
-                    ? 'text-emerald-500 hover:text-emerald-600'
-                    : 'text-blueGray-700 hover:text-blueGray-500',
-                    closePanel ? 'text-center' : ''
+                    ? 'bg-[#41525B] text-orange-c hover:text-orange-c-600'
+                    : 'text-white hover:text-orange-c',
+                     closePanel ? 'text-center pl-[38px]' : 'pl-4 md:pl-[50px]'
                 ]"
               >
-                <i
-                    class="fas fa-project-diagram mr-2 text-sm"
-                    :class="[isExactActive ? 'opacity-75' : 'text-blueGray-300']"
-                ></i>
+                <ProjectsIcon :isExactActive="isExactActive"/>
                 {{ !closePanel ? 'Projects' : '' }}
               </a>
             </router-link>
@@ -166,18 +147,15 @@
               <a
                   :href="href"
                   @click="navigate"
-                  class="text-xs uppercase py-3 font-bold block"
+                  class="flex gap-x-2 items-center text-lg py-3 font-medium block"
                   :class="[
                   isExactActive
-                    ? 'text-emerald-500 hover:text-emerald-600'
-                    : 'text-blueGray-700 hover:text-blueGray-500',
-                    closePanel ? 'text-center' : ''
+                    ? 'bg-[#41525B] text-orange-c hover:text-orange-c-600'
+                    : 'text-white hover:text-orange-c',
+                     closePanel ? 'text-center pl-[38px]' : 'pl-4 md:pl-[50px]'
                 ]"
               >
-                <i
-                    class="fas fa-tasks mr-2 text-sm"
-                    :class="[isExactActive ? 'opacity-75' : 'text-blueGray-300']"
-                ></i>
+                <TasksIcon :isExactActive="isExactActive"/>
                 {{ !closePanel ? 'Tasks' : '' }}
               </a>
             </router-link>
@@ -188,23 +166,20 @@
               <a
                   :href="href"
                   @click="navigate"
-                  class="text-xs uppercase py-3 font-bold block relative"
+                  class="flex gap-x-2 items-center text-lg py-3 font-medium block relative"
                   :class="[
                   isExactActive
-                    ? 'text-emerald-500 hover:text-emerald-600'
-                    : 'text-blueGray-700 hover:text-blueGray-500',
-                    closePanel ? 'text-center' : ''
+                     ? 'bg-[#41525B] text-orange-c hover:text-orange-c-600'
+                    : 'text-white hover:text-orange-c',
+                     closePanel ? 'text-center pl-[38px]' : 'pl-4 md:pl-[50px]'
                 ]"
               >
-                <i
-                    class="fas fa-head-side-mask mr-2 text-sm"
-                    :class="[isExactActive ? 'opacity-75' : 'text-blueGray-300']"
-                ></i>
+                <RemindersIcon :isExactActive="isExactActive"/>
                 {{ !closePanel ? 'Reminders' : '' }}
 
-                <div v-if="taskStore.expiredRemindersCount" class="text-white absolute mr-6 cursor-pointer top-[6px] left-[96px]" >
-                  <i class="fas fa-bell text-md text-red-500" ></i>
-                </div>
+                <!--                <div v-if="taskStore.expiredRemindersCount" class="text-white absolute mr-6 cursor-pointer top-[5px] left-[180px]" >-->
+                <!--                  <i class="fas fa-bell text-md text-red-500" ></i>-->
+                <!--                </div>-->
               </a>
             </router-link>
           </li>
@@ -214,18 +189,15 @@
               <a
                   :href="href"
                   @click="navigate"
-                  class="text-xs uppercase py-3 font-bold block"
+                  class="flex gap-x-2 items-center text-lg py-3 font-medium block"
                   :class="[
                   isExactActive
-                    ? 'text-emerald-500 hover:text-emerald-600'
-                    : 'text-blueGray-700 hover:text-blueGray-500',
-                    closePanel ? 'text-center' : ''
+                    ? 'bg-[#41525B] text-orange-c hover:text-orange-c-600'
+                    : 'text-white hover:text-orange-c',
+                     closePanel ? 'text-center pl-[38px]' : 'pl-4 md:pl-[50px]'
                 ]"
               >
-                <i
-                    class="fas fa-comments mr-2 text-sm"
-                    :class="[isExactActive ? 'opacity-75' : 'text-blueGray-300']"
-                ></i>
+                <CommentsIcon :isExactActive="isExactActive"/>
                 {{ !closePanel ? 'Comments' : '' }}
               </a>
             </router-link>
@@ -236,40 +208,34 @@
               <a
                   :href="href"
                   @click="navigate"
-                  class="text-xs uppercase py-3 font-bold block"
+                  class="flex gap-x-2 items-center text-lg py-3 font-medium block"
                   :class="[
                   isExactActive
-                    ? 'text-emerald-500 hover:text-emerald-600'
-                    : 'text-blueGray-700 hover:text-blueGray-500',
-                    closePanel ? 'text-center' : ''
+                    ? 'bg-[#41525B] text-orange-c hover:text-orange-c-600'
+                    : 'text-white hover:text-orange-c',
+                     closePanel ? 'text-center pl-[38px]' : 'pl-4 md:pl-[50px]'
                 ]"
               >
-                <i
-                    class="fas fa-images mr-2 text-sm"
-                    :class="[isExactActive ? 'opacity-75' : 'text-blueGray-300']"
-                ></i>
+                <AttachmentsIcon :isExactActive="isExactActive"/>
                 {{ !closePanel ? 'Attachments' : '' }}
               </a>
             </router-link>
           </li>
 
-          <li class="items-center" >
+          <li class="items-center">
             <router-link to="/dashboard/notifications" exact v-slot="{ href, navigate, isActive, isExactActive }">
               <a
                   :href="href"
                   @click="navigate"
-                  class="text-xs uppercase py-3 font-bold block"
+                  class="flex gap-x-2 items-center text-lg py-3 font-medium block"
                   :class="[
                   isExactActive
-                    ? 'text-emerald-500 hover:text-emerald-600'
-                    : 'text-blueGray-700 hover:text-blueGray-500',
-                    closePanel ? 'text-center' : ''
+                     ? 'bg-[#41525B] text-orange-c hover:text-orange-c-600'
+                    : 'text-white hover:text-orange-c',
+                     closePanel ? 'text-center pl-[38px]' : 'pl-4 md:pl-[50px]'
                 ]"
               >
-                <i
-                    class="fas fa-bell mr-2 text-sm"
-                    :class="[isExactActive ? 'opacity-75' : 'text-blueGray-300']"
-                ></i>
+                <NotificationsIcon :isExactActive="isExactActive"/>
                 {{ !closePanel ? 'Notifications' : '' }}
               </a>
             </router-link>
@@ -280,18 +246,15 @@
               <a
                   :href="href"
                   @click="navigate"
-                  class="text-xs uppercase py-3 font-bold block"
+                  class="flex gap-x-2 items-center text-lg py-3 font-medium block"
                   :class="[
                   isExactActive
-                    ? 'text-emerald-500 hover:text-emerald-600'
-                    : 'text-blueGray-700 hover:text-blueGray-500',
-                    closePanel ? 'text-center' : ''
+                    ? 'bg-[#41525B] text-orange-c hover:text-orange-c-600'
+                    : 'text-white hover:text-orange-c',
+                     closePanel ? 'text-center pl-[38px]' : 'pl-4 md:pl-[50px]'
                 ]"
               >
-                <i
-                    class="fas fa-bug mr-2 text-sm"
-                    :class="[isExactActive ? 'opacity-75' : 'text-blueGray-300']"
-                ></i>
+                <LogsIcon :isExactActive="isExactActive"/>
                 {{ !closePanel ? 'Logs' : '' }}
               </a>
             </router-link>
@@ -302,18 +265,15 @@
               <a
                   :href="href"
                   @click="navigate"
-                  class="text-xs uppercase py-3 font-bold block"
+                  class="flex gap-x-2 items-center text-lg py-3 font-medium block"
                   :class="[
                   isExactActive
-                    ? 'text-emerald-500 hover:text-emerald-600'
-                    : 'text-blueGray-700 hover:text-blueGray-500',
-                    closePanel ? 'text-center' : ''
+                     ? 'bg-[#41525B] text-orange-c hover:text-orange-c-600'
+                    : 'text-white hover:text-orange-c',
+                     closePanel ? 'text-center pl-[38px]' : 'pl-4 md:pl-[50px]'
                 ]"
               >
-                <i
-                    class="fas fa-calendar-day mr-2 text-sm"
-                    :class="[isExactActive ? 'opacity-75' : 'text-blueGray-300']"
-                ></i>
+                <TimeTrackerIcon :isExactActive="isExactActive"/>
                 {{ !closePanel ? 'Time Tracker' : '' }}
               </a>
             </router-link>
@@ -324,18 +284,15 @@
               <a
                   :href="href"
                   @click="navigate"
-                  class="text-xs uppercase py-3 font-bold block"
+                  class="flex gap-x-2 items-center text-lg py-3 font-medium block"
                   :class="[
                   isExactActive
-                    ? 'text-emerald-500 hover:text-emerald-600'
-                    : 'text-blueGray-700 hover:text-blueGray-500',
-                    closePanel ? 'text-center' : ''
+                    ? 'bg-[#41525B] text-orange-c hover:text-orange-c-600'
+                    : 'text-white hover:text-orange-c',
+                     closePanel ? 'text-center pl-[38px]' : 'pl-4 md:pl-[50px]'
                 ]"
               >
-                <i
-                    class="fas fa-users mr-2 text-sm"
-                    :class="[isExactActive ? 'opacity-75' : 'text-blueGray-300']"
-                ></i>
+                <UsersIcon :isExactActive="isExactActive"/>
                 {{ !closePanel ? 'Users' : '' }}
               </a>
             </router-link>
@@ -346,18 +303,15 @@
               <a
                   :href="href"
                   @click="navigate"
-                  class="text-xs uppercase py-3 font-bold block"
+                  class="flex gap-x-2 items-center text-lg py-3 font-medium block"
                   :class="[
                   isExactActive
-                    ? 'text-emerald-500 hover:text-emerald-600'
-                    : 'text-blueGray-700 hover:text-blueGray-500',
-                    closePanel ? 'text-center' : ''
+                    ? 'bg-[#41525B] text-orange-c hover:text-orange-c-600'
+                    : 'text-white hover:text-orange-c',
+                    closePanel ? 'text-center pl-[38px]' : 'pl-4 md:pl-[50px]'
                 ]"
               >
-                <i
-                    class="fas fa-cog mr-2 text-sm"
-                    :class="[isExactActive ? 'opacity-75' : 'text-blueGray-300']"
-                ></i>
+                <SettingsIcon :isExactActive="isExactActive"/>
                 {{ !closePanel ? 'Settings' : '' }}
               </a>
             </router-link>
@@ -366,37 +320,69 @@
       </div>
     </div>
 
-    <div v-if="userStore.showPanel.show" class="w-full flex md:hidden justify-center gap-x-4">
-      <button
-          @click="userStore.showPanel.update"
-          class="whitespace-nowrap bg-orange-400 text-white active:bg-blueGray-600 text-md font-bold px-6 py-2 rounded shadow hover:shadow-lg outline-none focus:outline-none ease-linear transition-all duration-150"
-          type="button"
-      >
-        Save Changes
-      </button>
-      <button
-          @click="userStore.showPanel.close"
-          class="whitespace-nowrap bg-gray-600 text-white active:bg-blueGray-600 text-md font-bold px-6 py-2 rounded shadow hover:shadow-lg outline-none focus:outline-none ease-linear transition-all duration-150"
-          type="button"
-      >
-        Discard Changes
-      </button>
+    <div v-if="userStore.showPanel.show" class="w-full flex md:hidden justify-center gap-x-1 mt-4 pb-1">
+      <Button
+          @on-click="userStore.showPanel.update"
+          label="Save Changes"
+          size="medium"
+          version="yellow"
+      />
+      <Button
+          @on-click="userStore.showPanel.close"
+          label="Discard Changes"
+          size="medium"
+          version="green"
+      />
+      <Button
+          v-if="isAuthOwner && task.is_closed"
+          @on-click="uncloseTask"
+          label="Reopen Task"
+          size="medium"
+          version="green"
+      />
+
+      <Button
+          v-else-if="isAuthOwner"
+          @on-click="confirmModal = true"
+          label="Close Task"
+          size="medium"
+          version="green"
+      />
     </div>
+
+    <ConfirmCloseModal
+        :show-modal="confirmModal"
+        @close="confirmModal = false"
+        @update="closeTask"
+    />
   </nav>
 </template>
 
 <script setup>
-import {computed, onMounted, ref} from "vue";
+import {computed, onMounted, ref, watch} from "vue";
 import {useUserStore} from "../../store/user";
 import {useCookies} from "vue3-cookies";
 import {useToast} from "vue-toastification";
 import {useRouter} from "vue-router";
 import axios from "axios";
-import config from '../../config'
 import Notifications from "../../components/Notifications/Notifications.vue";
+import DashboardIcon from "../Svg/DashboardIcon.vue";
+import ProjectsIcon from "../Svg/ProjectsIcon.vue";
+import TasksIcon from "../Svg/TasksIcon.vue";
+import NewTaskIcon from "../Svg/NewTaskIcon.vue";
+import RemindersIcon from "../Svg/RemindersIcon.vue";
+import NotificationsIcon from "../Svg/NotificationsIcon.vue";
+import UsersIcon from "../Svg/UsersIcon.vue";
+import SettingsIcon from "../Svg/SettingsIcon.vue";
+import LogsIcon from "../Svg/LogsIcon.vue";
+import CommentsIcon from "../Svg/CommentsIcon.vue";
+import AttachmentsIcon from "../Svg/AttachmentsIcon.vue";
+import TimeTrackerIcon from "../Svg/TimeTrackerIcon.vue";
 import {catchErrors} from "../../utils";
 import moment from "moment";
 import {useTasksStore} from "../../store/tasks";
+import Button from '../Button/Button.vue'
+import ConfirmCloseModal from '../Modals/ConfirmCloseModal.vue'
 
 const emit = defineEmits(['update:closePanel'])
 const props = defineProps({
@@ -416,6 +402,15 @@ const router = useRouter()
 // State
 const collapseShow = ref('hidden')
 const userConfig = ref(null)
+const task = ref({})
+
+
+//Watch
+watch(taskStore.$state,(val)=>{
+  if (Object.keys(val.task).length){
+    task.value = val.task
+  }
+})
 
 
 // Computed
@@ -423,12 +418,50 @@ const fullName = computed(() => {
   if (!cookies.get('task_focus_user')) return ''
 
   const user = cookies.get('task_focus_user')
-  if (user.first_name || user.last_name) return user.first_name + ' ' +user.last_name
+  if (user.first_name || user.last_name) return user.first_name + ' ' + user.last_name
   return user.username
+})
+
+const isAuthOwner = computed(() => {
+  if (!cookies.get('task_focus_user')) return ''
+
+  const user = cookies.get('task_focus_user')
+  const taskOwnerId = task.value.owner?.id
+
+  return user.pk === taskOwnerId
 })
 
 
 // Methods
+const closeTask = async (notes) => {
+  try {
+    const data = {
+      id: task.value.id,
+      closing_message: notes
+    }
+
+    const resp = await taskStore.closeTask(data)
+    confirmModal.value = false
+    await toast.success(resp.data.message);
+    if (task.value.project?.id) {
+      return await router.push(`/dashboard/project/${task.value.project.id}`)
+    }
+    await router.push(`/dashboard`)
+  } catch (e) {
+    catchErrors(e)
+  }
+}
+
+const uncloseTask = async () => {
+  try {
+    const resp = await taskStore.unCloseTask({id: task.value.id})
+    await taskStore.fetchTaskById({id: task.value.id})
+    await toast.success(resp.data.message);
+  } catch (e) {
+    catchErrors(e)
+  }
+}
+
 const toggleCollapseShow = (classes) => {
   collapseShow.value = classes;
 }
@@ -446,7 +479,7 @@ const logout = async () => {
   }
 }
 
-onMounted(()=>{
+onMounted(() => {
   if (window.innerWidth < 600) showMobile.value = true
 })
 
@@ -455,27 +488,27 @@ const fetchUser = async () => {
     const id = cookies.get('task_focus_user').pk
     if (id) {
       const resp = await userStore.fetchCurrentUser({id})
-      userConfig.value =resp.data.config
+      userConfig.value = resp.data.config
     }
   } catch (e) {
     catchErrors(e)
   }
 }
 
-const fetchReminders = async()=>{
+const fetchReminders = async () => {
   try {
     const resp = await taskStore.fetchReminders()
-    resp.data.results.forEach((reminder)=>{
+    resp.data.results.forEach((reminder) => {
       if (reminderCheck(reminder.reminder_date) === 'today') {
         return taskStore.expiredRemindersCount = true
       }
     })
-  }catch (e) {
+  } catch (e) {
     catchErrors(e)
   }
 }
 
-const reminderCheck = (date)=>{
+const reminderCheck = (date) => {
   const isToday = moment(0, "HH").diff(date, "days") >= 0
   const isTmr = moment(0, "HH").diff(date, "days") === -1
 
@@ -489,5 +522,7 @@ fetchReminders()
 fetchUser()
 
 </script>
+
+
 
 

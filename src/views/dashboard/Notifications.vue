@@ -1,19 +1,12 @@
 <template>
   <div class="main-container">
-    <div class="content mt-4">
+    <div class="content mt-6 mb-6">
 
-      <div class="header mb-4">
-        <h2 class="font-bold text-xl block text-blueGray-700">Notifications</h2>
+      <div class="header mb-3">
+        <h2 class="font-semibold text-xl block text-black-c ">Notifications</h2>
 
-        <div v-if="!route.query.id" class="flex items-center mt-4">
-          <input
-              id="hideClosed"
-              v-model="hideSeen"
-              type="checkbox"
-              class="border-0 flex pl-8 pr-3 py-3 placeholder-blueGray-300 text-blueGray-600 rounded text-sm ease-linear transition-all duration-150 cursor-pointer"
-              placeholder="Search"
-          />
-          <label for="hideClosed" class="text-md text-blueGray-500 font-medium cursor-pointer ml-2 whitespace-nowrap">Hide seen notifications</label>
+        <div v-if="!route.query.id" class="mt-3">
+          <CheckBox id="hideClosed" label="Hide seen notifications" v-model:value="hideSeen"/>
         </div>
       </div>
 
@@ -21,53 +14,51 @@
       <Loader v-if="loading" />
 
       <div v-else-if="!notifications.length">
-        <p class="flex text-center px-4 justify-center py-8 text-blueGray-500 text-3xl font-medium">
+        <p class="flex text-center px-4 justify-center py-8 text-black-c text-3xl font-medium">
           No data found
         </p>
       </div>
 
-      <div v-else class="border border-blueGray-200 shadow-lg rounded-[4px] px-4 py-3 mb-4"
-           :class="[`${item.status === 'UNREAD' ? 'bg-amber-50' : ''}`]"
+      <div v-else class="shadow-lg rounded-[4px] px-4 py-3 mb-4"
+           :class="[`${item.status === 'UNREAD' ? 'bg-notes-c' : ''}`]"
            v-for="(item,index) in notifications"
            :key="item.id">
-        <div class="flex justify-between mb-2">
-          <h4 class="text-lg font-semibold text-blueGray-700">{{ item.notification.tag }}</h4>
-
-          <button
+        <div class="flex justify-between items-center mb-3">
+          <h4 class="text-xl font-semibold text-black-c">{{ item.notification.tag }}</h4>
+          <Button
               v-if="item.status === 'UNREAD'"
-              @click="markAsRead(item.id)"
+              @on-click="markAsRead(item.id)"
               :disabled="loading"
-              class="bg-yellow-600 text-white active:bg-blueGray-600 text-sm font-bold px-4 py-2 rounded shadow hover:shadow-lg outline-none focus:outline-none ease-linear transition-all duration-150"
-              type="button"
-          >
-            Close
-          </button>
+              label="Close"
+              size="medium"
+              version="green"
+          />
         </div>
 
-        <div class="text-blueGray-800" :class="{'text-line-3': !readMore[index]}">
+        <div class="text-black-c text-sm w-full sm:w-11/12" :class="{'text-line-3': !readMore[index]}">
           {{ item.notification.content }}
         </div>
 
         <div v-if="item.notification.content.length > 120 && !readMore[index]">
-          <span class="cursor-pointer font-semibold underline mt-1 text-blueGray-700 text-sm"
+          <span class="cursor-pointer font-semibold underline mt-1 text-black-c text-sm"
                 @click.stop="readMoreText(index)">Read More</span>
         </div>
 
-        <div class="mt-2 text-blueGray-600">
+        <div class="mt-2 text-xs text-black-c">
           <span v-if="item.notification.task" class="block">Task:
-          <router-link :to="`/dashboard/task/${item.notification.task.id}`" class="underline text-blue-500">{{
+          <router-link :to="`/dashboard/task/${item.notification.task.id}`" class="underline">{{
               item.notification.task.title
             }}</router-link>
           </span>
 
           <span v-if="item.notification.project" class="block">Project:
-          <router-link :to="`/dashboard/project/${item.notification.project.id}`" class="underline text-blue-500">{{
+          <router-link :to="`/dashboard/project/${item.notification.project.id}`" class="underline">{{
               item.notification.project.title
             }}</router-link>
           </span>
         </div>
 
-        <div class="flex justify-end text-blueGray-500 font-semibold text-sm mt-2">
+        <div class="flex justify-end text-black-c font-semibold text-sm mt-2">
           {{ convertTimeAgo(item.created_at) }}
         </div>
       </div>
@@ -92,6 +83,8 @@ import {usePaginate} from "../../composables/usePaginate";
 import {useNotifications} from "../../store/notifications";
 import Pagination from './../../components/Pagination/Pagination.vue'
 import {useRoute} from "vue-router";
+import CheckBox from '../../components/CheckBox/CheckBox.vue'
+import Button from '../../components/Button/Button.vue'
 
 
 const notificationsStore = useNotifications()

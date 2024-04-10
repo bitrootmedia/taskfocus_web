@@ -1,8 +1,8 @@
 <template>
   <div class="content mt-6">
-    <div class="border-2 border-blueGray-300 rounded-[4px] px-4 py-4">
+    <div class="border border-light-bg-c rounded-[4px] px-4 pt-4">
       <div class="text-left mb-4">
-        <h4 class="text-xl font-bold inline-flex text-blueGray-800 cursor-pointer"
+        <h4 class="font-semibold text-lg text-black-c block mb-3 cursor-pointer"
             @click="toLink(`/dashboard/users/}`)">
           {{ user.first_name }} {{ user.last_name }}</h4>
       </div>
@@ -20,7 +20,7 @@
           <template v-else>
             <tr v-if="!userTasks.length">
               <td :colspan="headers.length">
-                <p class="flex text-center px-4 justify-center py-8 text-blueGray-500 font-medium">
+                <p class="flex text-center px-4 justify-center py-8 text-black-c font-medium">
                   No data found
                 </p>
               </td>

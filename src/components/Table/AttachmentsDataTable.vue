@@ -1,21 +1,28 @@
 <template>
   <div class="content mt-4">
 
-    <div class="header flex items-center gap-x-6 mb-4">
-      <h2 class="font-bold text-xl block text-blueGray-700">Attachments</h2>
+    <div class="header flex items-center gap-x-6 mb-3">
+      <h2 class="font-semibold text-lg text-black-c block">Attachments</h2>
     </div>
 
-    <div class="cursor-pointer w-full md:w-[500px] mb-4" v-if="!hideCreate">
-      <Dropzone
-          :key="key"
-          :maxFiles="Number(10000000000)"
-          :maxFileSize="200000000"
-          ref="dropZoneRef"
-          :uploadOnDrop="true"
-          :multipleUpload="true"
-          @sending="saveFiles"
-          :parallelUpload="6"
-      />
+    <div class="cursor-pointer w-full md:w-[250px] mb-4 relative" v-if="!hideCreate">
+      <div class="flex items-center gap-x-2 px-3 py-[6px] bg-white rounded-[8px] cursor-pointer w-[250px]">
+        <PaperClipIcon/>
+        <span class="text-sm text-black">Add attachments</span>
+      </div>
+
+      <div class="absolute w-[250px] h-9 top-0">
+        <Dropzone
+            :key="key"
+            :maxFiles="Number(10000000000)"
+            :maxFileSize="200000000"
+            ref="dropZoneRef"
+            :uploadOnDrop="true"
+            :multipleUpload="true"
+            @sending="saveFiles"
+            :parallelUpload="6"
+        />
+      </div>
     </div>
 
 
@@ -32,7 +39,7 @@
         <template v-else>
           <tr v-if="!attachments.length">
             <td :colspan="headers.length">
-              <p class="flex text-center px-4 justify-center py-8 text-blueGray-500 font-medium">
+              <p class="flex text-center px-4 justify-center py-8 text-black-c font-medium">
                 No data found
               </p>
             </td>
@@ -90,21 +97,28 @@
                       <template v-else>-</template>
                     </span>
                 </td>
-                <td class="border-t-0 px-3 align-middle border-l-0 border-r-0 text-xs whitespace-nowrap flex p-4 gap-x-2"
+                <td class="border-t-0 px-3 border-l-0 border-r-0 text-xs whitespace-nowrap p-4 "
                     width="15%">
-                  <button
-                      class="bg-blueGray-800 whitespace-nowrap text-white active:bg-blueGray-600 text-sm font-bold px-2 sm:px-4 py-3 rounded shadow hover:shadow-lg outline-none focus:outline-none ease-linear transition-all duration-150"
-                      type="button"
-                      @click="downloadTemplate(element.file_path)"> Download
-                  </button>
-                  <button
-                      v-if="isMediaOwner(element)"
-                      @click="openDeleteModal(element.id)"
-                      class="bg-red-500 whitespace-nowrap text-white active:bg-blueGray-600 text-sm font-bold px-2 sm:px-4 py-3 rounded shadow hover:shadow-lg outline-none focus:outline-none ease-linear transition-all duration-150"
-                      type="button"
-                  >
-                    Delete
-                  </button>
+                  <div class="flex gap-x-2 items-center">
+                    <Button
+                        @on-click="downloadTemplate(element.file_path)"
+                        :label="'Download'"
+                        version="white"
+                        size="medium"
+                    >
+                      <template #left-icon>
+                        <DownloadIcon />
+                      </template>
+
+                    </Button>
+                    <Button
+                        v-if="isMediaOwner(element)"
+                        @on-click="openDeleteModal(element.id)"
+                        :label="'Delete'"
+                        version="white"
+                        size="medium"
+                    />
+                  </div>
                 </td>
               </tr>
             </template>
@@ -155,6 +169,10 @@ import {useToast} from "vue-toastification";
 import {useAttachmentsStore} from "../../store/attachments";
 import AttachmentMediaModal from "../Modals/AttachmentMediaModal.vue";
 import ConfirmDeleteModal from './../Modals/ConfirmDeleteModal.vue'
+import PaperClipIcon from "../Svg/PaperClipIcon.vue";
+import DownloadIcon from "../Svg/DownloadIcon.vue";
+import Button from '../Button/Button.vue'
+
 
 const props = defineProps({
   projectId: {
