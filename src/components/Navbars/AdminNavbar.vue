@@ -29,28 +29,6 @@
              version="green"
          />
        </div>
-
-       <div v-if="route.name === 'Task Detail'">
-         <Button
-             v-if="isAuthOwner && task.is_closed"
-             @on-click="uncloseTask"
-             label="Reopen Task"
-             size="medium"
-             version="green"
-         />
-
-         <Button
-             v-else-if="isAuthOwner"
-             @on-click="confirmModal = true"
-             label="Close Task"
-             size="medium"
-             version="green"
-         >
-           <template #right-icon>
-             <CloseIcon/>
-           </template>
-         </Button>
-       </div>
      </div>
 
       <div class="flex items-center">
@@ -76,12 +54,6 @@
         </span>
       </div>
     </div>
-
-    <ConfirmCloseModal
-        :show-modal="confirmModal"
-        @close="confirmModal = false"
-        @update="closeTask"
-    />
   </nav>
 </template>
 
@@ -100,8 +72,6 @@ import LogoutIcon from "../Svg/LogoutIcon.vue";
 import Button from '../Button/Button.vue'
 import {useTasksStore} from "../../store/tasks";
 import {catchErrors} from "../../utils";
-import ConfirmCloseModal from '../Modals/ConfirmCloseModal.vue'
-import CloseIcon from "../Svg/CloseIcon.vue";
 
 const userStore = useUserStore()
 const taskStore = useTasksStore()
@@ -109,7 +79,6 @@ const {cookies} = useCookies();
 const toast = useToast()
 const router = useRouter()
 const route = useRoute()
-let confirmModal = ref(false)
 const task = ref({})
 const taskTitle = ref('')
 
@@ -145,35 +114,6 @@ const isAuthOwner = computed(() => {
 
 
 // Methods
-const closeTask = async (notes) => {
-  try {
-    const data = {
-      id: task.value.id,
-      closing_message: notes
-    }
-
-    const resp = await taskStore.closeTask(data)
-    confirmModal.value = false
-    await toast.success(resp.data.message);
-    if (task.value.project?.id) {
-      return await router.push(`/dashboard/project/${task.value.project.id}`)
-    }
-    await router.push(`/dashboard`)
-  } catch (e) {
-    catchErrors(e)
-  }
-}
-
-const uncloseTask = async () => {
-  try {
-    const resp = await taskStore.unCloseTask({id: task.value.id})
-    await taskStore.fetchTaskById({id: task.value.id})
-    await toast.success(resp.data.message);
-  } catch (e) {
-    catchErrors(e)
-  }
-}
-
 const updateTask = async (title) => {
   try {
     const data = {

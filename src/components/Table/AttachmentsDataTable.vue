@@ -26,7 +26,7 @@
     </div>
 
 
-    <DataTable :headers="headers" @sorting="sorting">
+    <DataTable :headers="headers" @sorting="sorting" v-if="!loading && attachments.length">
       <template v-slot:tableBody>
         <tr v-if="loading">
           <td :colspan="headers.length">

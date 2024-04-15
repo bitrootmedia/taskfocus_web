@@ -3,45 +3,81 @@
     <h2 class="font-semibold text-lg text-black-c block mb-3">Comments</h2>
 
     <form v-if="!hideCreate" @submit="sendComment">
-      <div v-if="!writeComment"
-           class="flex items-center gap-x-2 px-3 py-[6px] bg-white rounded-[8px] cursor-pointer w-[250px]"
-           @click="writeComment = true">
+      <template v-if="showCreateBtn">
+        <div v-if="!writeComment"
+             class="flex items-center gap-x-2 px-3 py-[6px] bg-white rounded-[8px] cursor-pointer w-[250px]"
+             @click="writeComment = true">
 
-        <PlusIcon :size="20"/>
-        <span class="text-sm text-black">Add comment</span>
-      </div>
-
-      <div class="w-full items-center gap-x-6" v-else>
-        <div class="w-full">
-          <v-md-editor
-              autofocus
-              :right-toolbar="'toc sync-scroll fullscreen'"
-              v-model="message"
-              :disabled-menus="[]"
-              @upload-image="handleUploadImage">
-            <h1>Hello</h1>
-          </v-md-editor>
+          <PlusIcon :size="20"/>
+          <span class="text-sm text-black">Add comment</span>
         </div>
 
+        <div class="w-full items-center gap-x-6" v-else>
+          <div class="w-full">
+            <v-md-editor
+                autofocus
+                :right-toolbar="'toc sync-scroll fullscreen'"
+                v-model="message"
+                :disabled-menus="[]"
+                @upload-image="handleUploadImage">
+              <h1>Hello</h1>
+            </v-md-editor>
+          </div>
 
-        <div class="mt-3 flex gap-x-2">
-          <Button
-              @on-click="sendComment"
-              :disabled="btnLoad"
-              type="submit"
-              label="Create"
-              size="medium"
-              version="yellow"
-          />
-          <Button
-              @on-click="resetComment"
-              type="submit"
-              label="Close"
-              size="medium"
-              version="green"
-          />
+
+          <div class="mt-3 flex gap-x-2">
+            <Button
+                @on-click="sendComment"
+                :disabled="btnLoad"
+                type="submit"
+                label="Create"
+                size="medium"
+                version="yellow"
+            />
+            <Button
+                @on-click="resetComment"
+                type="submit"
+                label="Close"
+                size="medium"
+                version="green"
+            />
+          </div>
         </div>
-      </div>
+      </template>
+
+      <template v-if="!showCreateBtn && showBtnResult">
+        <div class="w-full items-center gap-x-6" >
+          <div class="w-full">
+            <v-md-editor
+                autofocus
+                :right-toolbar="'toc sync-scroll fullscreen'"
+                v-model="message"
+                :disabled-menus="[]"
+                @upload-image="handleUploadImage">
+              <h1>Hello</h1>
+            </v-md-editor>
+          </div>
+
+
+          <div class="mt-3 flex gap-x-2">
+            <Button
+                @on-click="sendComment"
+                :disabled="btnLoad"
+                type="submit"
+                label="Create"
+                size="medium"
+                version="yellow"
+            />
+            <Button
+                @on-click="resetComment"
+                type="submit"
+                label="Close"
+                size="medium"
+                version="green"
+            />
+          </div>
+        </div>
+      </template>
     </form>
     <span class="text-xs font-medium text-red-600" v-if="v$.message.$error"> {{
         v$.message.$errors[0].$message
@@ -189,7 +225,7 @@ import PlusIcon from "../Svg/PlusIcon.vue";
 import Button from "../Button/Button.vue"
 import UserIcon from "../Svg/UserIcon.vue";
 import Input from '../Input/Input.vue'
-
+const emit = defineEmits()
 const props = defineProps({
   projectId: {
     type: String,
@@ -219,6 +255,14 @@ const props = defineProps({
     type: Boolean,
     default: false
   },
+  showCreateBtn: {
+    type: Boolean,
+    default: true
+  },
+  showBtnResult:{
+    type: Boolean,
+    default: false
+  }
 })
 
 // ValidationRules
@@ -346,6 +390,7 @@ const resetComment = () => {
   writeComment.value = false
   message.value = ''
   v$.value.$reset()
+  if (!props.showCreateBtn) emit('update:showBtnResult',false)
 }
 
 const toLink = (type) => {
@@ -353,9 +398,7 @@ const toLink = (type) => {
   else return router.push(`/dashboard/project/${props.projectId}`)
 }
 
-const sendComment = async (e) => {
-  e.preventDefault()
-
+const sendComment = async () => {
   try {
     const isValid = await v$.value.$validate();
     if (isValid) {
@@ -370,6 +413,7 @@ const sendComment = async (e) => {
       await toast.success("Comment created");
       message.value = ''
       v$.value.$reset()
+      if (!props.showCreateBtn) emit('update:showBtnResult',false)
       await fetchComments()
     }
   } catch (e) {

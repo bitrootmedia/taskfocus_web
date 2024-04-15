@@ -27,22 +27,22 @@
           </div>
 
           <div class="mb-10">
-            <NotesDataTable :task-id="task.id"/>
+            <NotesDataTable :showCreateBtn="false" v-model:showBtnResult="writeNote" :task-id="task.id"/>
           </div>
 
           <div class="mb-10">
-            <CommentsDataTable :task-id="task.id" :task-name="task.title" :is-task="true"/>
+            <CommentsDataTable :showCreateBtn="false" v-model:showBtnResult="writeComment" :task-id="task.id" :task-name="task.title" :is-task="true"/>
           </div>
 
           <div class="mb-10">
             <AttachmentsDataTable :task-id="task.id" :is-task="true"/>
           </div>
 
-          <div>
+          <div v-if="showTimeTracker">
             <TrackerDataTable :key="keyTracker" :task-id="task.id" :is-task="true" :can-edit="true"/>
           </div>
 
-          <div>
+          <div v-if="showLogs">
             <LogsDataTable :key="key" :task-id="task.id" :is-task="true"/>
           </div>
 
@@ -108,12 +108,18 @@
               @close="showReminderModal = false"
               @update="fetchReminders"
           />
+
+          <ConfirmCloseModal
+              :show-modal="confirmModal"
+              @close="confirmModal = false"
+              @update="closeTask"
+          />
         </div>
       </div>
     </div>
 
     <div class="right-side bg-white">
-      <div class="w-full bg-white py-6 px-[14px]">
+      <div class="right-side-content w-full bg-white py-6 px-[14px]">
         <div class="flex flex-col mb-3 border-b border-light-bg-c">
           <div class="cursor-pointer inline-flex font-semibold text-[22px] text-black-c" contenteditable="true" @input="saveData($event)">
             {{ task.title }}
@@ -133,12 +139,46 @@
               {{ currentTaskTotalTime?.hours || '00' }}hs {{ currentTaskTotalTime?.minutes || "00" }}m
             </h3>
 
+              <Button
+                  v-if="isAuthOwner && task.is_closed"
+                  class="w-full justify-center mb-2"
+                  @on-click="uncloseTask"
+                  label="Reopen Task"
+                  size="medium"
+                  version="green"
+              />
+
+              <Button
+                  v-else-if="isAuthOwner"
+                  class="w-full justify-center mb-2"
+                  @on-click="confirmModal = true"
+                  label="Close Task"
+                  size="medium"
+                  version="green"
+              />
+
             <Button
-                class="w-full justify-center"
+                class="w-full justify-center mb-2"
                 v-if="!task?.is_closed"
                 @on-click="toggleTask(currentTask?.id === task?.id ? 'stop' : 'work')"
                 :disabled="btnLoad"
                 :label="currentTask?.id === task?.id ? 'Stop working on this task' : 'Work on this task'"
+                version="yellow"
+                size="medium"
+            />
+
+            <Button
+                class="w-full justify-center"
+                @on-click="showTimeTracker = !showTimeTracker"
+                :label="showTimeTracker ? 'Hide time tracking' : 'Show time tracking'"
+                version="yellow"
+                size="medium"
+            />
+
+            <Button
+                class="w-full justify-center mt-2"
+                @on-click="showLogs = !showLogs"
+                :label="showLogs ? 'Hide logs' : 'Show logs'"
                 version="yellow"
                 size="medium"
             />
@@ -380,6 +420,21 @@
               <ImageIcon/>
               <span class="tooltip-text text-[13px] font-semibold text-black-c">Add image</span>
             </div>
+
+            <div
+                class="w-full border border-light-bg-c bg-white rounded-[6px] px-3 py-2 h-8 flex items-center gap-x-2 cursor-pointer"
+                 @click="writeComment = true">
+
+              <PlusIcon />
+              <span class="tooltip-text text-[13px] font-semibold text-black-c">Add comment</span>
+            </div>
+            <div
+                class="w-full border border-light-bg-c bg-white rounded-[6px] px-3 py-2 h-8 flex items-center gap-x-2 cursor-pointer"
+                @click="writeNote = true">
+
+              <NotesIcon />
+              <span class="tooltip-text text-[13px] font-semibold text-black-c">Add private note</span>
+            </div>
           </div>
         </div>
       </div>
@@ -421,12 +476,14 @@ import ResponsiblesModal from './../../components/Modals/ResponsiblesModal.vue'
 import FormList from './../../components/FormList/FormList.vue'
 import NotesDataTable from "../../components/Table/NotesDataTable.vue"
 import Button from "../../components/Button/Button.vue";
-import CloseIcon from "../../components/Svg/CloseIcon.vue";
-import PencilIcon from "../../components/Svg/PencilIcon.vue";
 import PencilSmallIcon from "../../components/Svg/PencilSmallIcon.vue";
 import MarkdownIcon from "../../components/Svg/MarkdownIcon.vue";
 import ImageIcon from "../../components/Svg/ImageIcon.vue";
 import ChecklistIcon from "../../components/Svg/ChecklistIcon.vue";
+import PlusIcon from "../../components/Svg/PlusIcon.vue"
+import NotesIcon from "../../components/Svg/NotesIcon.vue"
+import CloseIcon from "../../components/Svg/CloseIcon.vue"
+import ConfirmCloseModal from './../../components/Modals/ConfirmCloseModal.vue'
 
 // ValidationRules
 const rules = {
@@ -518,6 +575,11 @@ const form = ref({
   position: '',
   blocks: [],
 })
+const writeComment = ref(false)
+const writeNote = ref(false)
+const showLogs = ref(false)
+const showTimeTracker = ref(false)
+let confirmModal = ref(false)
 
 const v$ = useVuelidate(rules, form)
 
@@ -574,6 +636,25 @@ watch(() => form.value.is_urgent, (newValue, oldValue) => {
 })
 
 // Methods
+const closeTask = async (notes) => {
+  try {
+    const data = {
+      id: task.value.id,
+      closing_message: notes
+    }
+
+    const resp = await taskStore.closeTask(data)
+    confirmModal.value = false
+    await toast.success(resp.data.message);
+    if (task.value.project?.id) {
+      return await router.push(`/dashboard/project/${task.value.project.id}`)
+    }
+    await router.push(`/dashboard`)
+  } catch (e) {
+    catchErrors(e)
+  }
+}
+
 const addNewForm = (name) => {
   blockName.value = name
 }
@@ -935,6 +1016,17 @@ const fetchProjectAccess = async () => {
   }
 }
 
+const uncloseTask = async () => {
+  try {
+    const resp = await taskStore.unCloseTask({id: task.value.id})
+    await taskStore.fetchTaskById({id: task.value.id})
+    await toast.success(resp.data.message);
+    await fetchTask()
+  } catch (e) {
+    catchErrors(e)
+  }
+}
+
 const fetchQueueAccess = async () => {
   try {
     const id = route.params.id
@@ -1096,5 +1188,10 @@ fetchReminders()
     width: 100%;
     order: 2
   }
+}
+
+.right-side-content{
+  height: calc(100vh - 91px);
+  overflow-y: scroll;
 }
 </style>
