@@ -1,7 +1,7 @@
 <template>
   <div v-if="showModal" ref="componentModalRef"
-       class="overflow-x-hidden overflow-y-auto fixed inset-0 z-50 outline-none focus:outline-none justify-center items-center flex"
-  @click.self="emit('close')">
+    class="overflow-x-hidden overflow-y-auto fixed inset-0 z-50 outline-none focus:outline-none justify-center items-center flex"
+    @click.self="emit('close')">
     <div class="relative my-6 mx-auto w-[350px]">
       <!--content-->
       <div class="border-0 rounded-lg shadow-lg relative flex flex-col w-full bg-white outline-none focus:outline-none">
@@ -49,11 +49,8 @@
             </div>
 
 
-            <Pagination
-                v-if="paginate.pagination.value.total > 1 && !loading"
-                :pagination="paginate.pagination.value"
-                v-model:query="paginate.query.value"
-            />
+            <Pagination v-if="paginate.pagination.value.total > 1 && !loading" :pagination="paginate.pagination.value"
+              v-model:query="paginate.query.value" />
           </div>
         </div>
       </div>
@@ -63,16 +60,16 @@
 </template>
 
 <script setup>
-import {catchErrors} from "../../utils";
-import {onBeforeUnmount, onMounted, ref} from "vue";
+import { catchErrors } from "../../utils";
+import { onBeforeUnmount, onMounted, ref } from "vue";
 import Loader from "./../../components/Loader/Loader.vue"
-import {useProjectStore} from "../../store/project";
-import {useCookies} from "vue3-cookies";
-import {useToast} from "vue-toastification";
-import {usePaginate} from "../../composables/usePaginate";
-import {useFilter} from "../../composables/useFilter";
+import { useProjectStore } from "../../store/project";
+import { useCookies } from "vue3-cookies";
+import { useToast } from "vue-toastification";
+import { usePaginate } from "../../composables/usePaginate";
+import { useFilter } from "../../composables/useFilter";
 import Pagination from "./../Pagination/Pagination.vue"
-import {useTasksStore} from "../../store/tasks";
+import { useTasksStore } from "../../store/tasks";
 import config from "../../config";
 import CloseBlackIcon from "../Svg/CloseBlackIcon.vue";
 import Button from '../Button/Button.vue'
@@ -103,7 +100,7 @@ const props = defineProps({
 
 const projectStore = useProjectStore()
 const taskStore = useTasksStore()
-const {cookies} = useCookies();
+const { cookies } = useCookies();
 const toast = useToast()
 const projects = ref([])
 const componentModalRef = ref()
@@ -120,6 +117,7 @@ const fetchProjects = async () => {
       pagination: paginate.pagination.value,
       query: paginate.query.value,
       search: filter.search.value,
+      hideClosed: true
     }
     const resp = await projectStore.fetchProjects(options)
     projects.value = resp.data.results

@@ -3,7 +3,6 @@ name: Build and deploy Vue3 App
 on:
   push:
     branches:
-      - stage
       - main
 
 jobs:
