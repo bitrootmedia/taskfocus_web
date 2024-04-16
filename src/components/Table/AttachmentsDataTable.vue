@@ -1,32 +1,31 @@
 <template>
-  <div class="content mt-4">
+  <div class="content mt-4" v-if="attachments.length">
 
     <div class="header flex items-center gap-x-6 mb-3">
       <h2 class="font-semibold text-lg text-black-c block">Attachments</h2>
     </div>
 
-    <div class="cursor-pointer w-full md:w-[250px] mb-4 relative" v-if="!hideCreate">
-      <div class="flex items-center gap-x-2 px-3 py-[6px] bg-white rounded-[8px] cursor-pointer w-[250px]">
-        <PaperClipIcon/>
-        <span class="text-sm text-black">Add attachments</span>
+      <div class="cursor-pointer w-full md:w-[250px] mb-4 relative" v-if="showCreateBtn && !hideCreate">
+        <div class="flex items-center gap-x-2 px-3 py-[6px] bg-white rounded-[8px] cursor-pointer w-[250px]">
+          <PaperClipIcon/>
+          <span class="text-sm text-black">Add attachments</span>
+        </div>
+
+        <div class="absolute w-[250px] h-9 top-0">
+          <Dropzone
+              :key="key"
+              :maxFiles="Number(10000000000)"
+              :maxFileSize="200000000"
+              ref="dropZoneRef"
+              :uploadOnDrop="true"
+              :multipleUpload="true"
+              @sending="saveFiles"
+              :parallelUpload="6"
+          />
+        </div>
       </div>
 
-      <div class="absolute w-[250px] h-9 top-0">
-        <Dropzone
-            :key="key"
-            :maxFiles="Number(10000000000)"
-            :maxFileSize="200000000"
-            ref="dropZoneRef"
-            :uploadOnDrop="true"
-            :multipleUpload="true"
-            @sending="saveFiles"
-            :parallelUpload="6"
-        />
-      </div>
-    </div>
-
-
-    <DataTable :headers="headers" @sorting="sorting">
+    <DataTable :headers="headers" @sorting="sorting" v-if="!loading && attachments.length">
       <template v-slot:tableBody>
         <tr v-if="loading">
           <td :colspan="headers.length">
@@ -190,6 +189,10 @@ const props = defineProps({
   isTask: {
     type: Boolean,
     default: false
+  },
+  showCreateBtn: {
+    type: Boolean,
+    default: true
   },
 })
 
