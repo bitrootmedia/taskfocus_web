@@ -35,7 +35,7 @@
           </div>
 
           <div class="mb-10">
-            <AttachmentsDataTable :task-id="task.id" :is-task="true"/>
+            <AttachmentsDataTable :showCreateBtn="false" :task-id="task.id" :is-task="true" :key="updateKey"/>
           </div>
 
           <div v-if="showTimeTracker">
@@ -435,6 +435,28 @@
               <NotesIcon />
               <span class="tooltip-text text-[13px] font-semibold text-black-c">Add private note</span>
             </div>
+
+
+            <div class="w-full border border-light-bg-c bg-white rounded-[6px] px-3 py-2 h-8 flex items-center gap-x-2 cursor-pointer relative">
+              <div class="flex items-center gap-x-2 rounded-[8px] cursor-pointer">
+                <PaperClipIcon/>
+                <span class="tooltip-text text-[13px] font-semibold text-black-c">Add attachments</span>
+              </div>
+
+              <div class="absolute h-8 top-0 w-[90%]">
+                <Dropzone
+                    :key="updateKey"
+                    :maxFiles="Number(10000000000)"
+                    :maxFileSize="200000000"
+                    ref="dropZoneRef"
+                    :uploadOnDrop="true"
+                    :multipleUpload="true"
+                    @sending="saveFiles"
+                    :parallelUpload="6"
+                />
+              </div>
+            </div>
+
           </div>
         </div>
       </div>
@@ -482,8 +504,9 @@ import ImageIcon from "../../components/Svg/ImageIcon.vue";
 import ChecklistIcon from "../../components/Svg/ChecklistIcon.vue";
 import PlusIcon from "../../components/Svg/PlusIcon.vue"
 import NotesIcon from "../../components/Svg/NotesIcon.vue"
-import CloseIcon from "../../components/Svg/CloseIcon.vue"
+import PaperClipIcon from "../../components/Svg/PaperClipIcon.vue";
 import ConfirmCloseModal from './../../components/Modals/ConfirmCloseModal.vue'
+import Dropzone from 'dropzone-vue';
 
 // ValidationRules
 const rules = {
@@ -580,6 +603,7 @@ const writeNote = ref(false)
 const showLogs = ref(false)
 const showTimeTracker = ref(false)
 let confirmModal = ref(false)
+let updateKey = ref(0)
 
 const v$ = useVuelidate(rules, form)
 
@@ -682,7 +706,7 @@ const handleUploadImage = async (event, insertImage, files) => {
     const formData = new FormData();
     formData.append(file.name, file);
 
-    if (task.value.project.id) {
+    if (task.value.project?.id) {
       formData.append('project_id', task.value.project.id);
     }
     if (task.value.id) {
@@ -1120,6 +1144,31 @@ const routeLeave = (e) => {
   if (userStore.showPanel.show) return (e.returnValue = "");
 }
 
+const saveFiles = async (e) => {
+  try {
+    const formData = new FormData();
+    for (var i = 0; i < e.length; i++) {
+      formData.append(e[i].name, e[i]);
+    }
+
+    if (task.value.project?.id) {
+      formData.append('project_id', task.value.project.id);
+    }
+    if (task.value.id) {
+      formData.append('task_id', task.value.id);
+    }
+
+    const resp = await attachmentStore.uploadAttachments(formData)
+    if (resp.data.attachments.length) {
+      updateKey.value += 1
+      toast.success("Attachment uploaded");
+    }
+
+  } catch (e) {
+    catchErrors(e)
+  }
+}
+
 onMounted(() => {
   window.addEventListener('beforeunload', routeLeave)
 
@@ -1131,6 +1180,8 @@ onMounted(() => {
     fetchProjectAccess()
     fetchTaskAccess()
     fetchQueueAccess()
+
+    if (form.value.blocks?.length === 0) addNewForm('markdown')
   }, 600)
 
   setTimeout(() => {

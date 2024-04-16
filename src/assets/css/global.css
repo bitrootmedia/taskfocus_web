@@ -229,17 +229,17 @@ tr:nth-child(odd) {
     white-space: pre-wrap;
 }
 
-.notifications-wrapper::-webkit-scrollbar {
+.notifications-wrapper::-webkit-scrollbar, .right-side-content::-webkit-scrollbar {
     width: 4px;
     border-radius: 8px;
 }
 
-.notifications-wrapper::-webkit-scrollbar-track {
+.notifications-wrapper::-webkit-scrollbar-track, .right-side-content::-webkit-scrollbar-track {
     background-color: transparent;
     border-radius: 6px;
 }
 
-.notifications-wrapper::-webkit-scrollbar-thumb {
+.notifications-wrapper::-webkit-scrollbar-thumb, .right-side-content::-webkit-scrollbar-thumb {
     background-color: #c1bfbf;
     border-radius: 8px;
 }

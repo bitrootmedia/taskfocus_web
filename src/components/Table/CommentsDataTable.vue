@@ -1,5 +1,5 @@
 <template>
-  <div class="content mt-4">
+  <div class="content mt-4" v-if="comments.length">
     <h2 class="font-semibold text-lg text-black-c block mb-3">Comments</h2>
 
     <form v-if="!hideCreate" @submit="sendComment">
