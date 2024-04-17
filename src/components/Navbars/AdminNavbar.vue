@@ -122,7 +122,6 @@ const updateTask = async (title) => {
     }
 
     await taskStore.updateTask(data)
-    await toast.success("Task title updated");
   } catch (e) {
     catchErrors(e)
   }
