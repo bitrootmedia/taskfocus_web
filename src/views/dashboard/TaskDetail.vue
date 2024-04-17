@@ -121,10 +121,6 @@
     <div class="right-side bg-white">
       <div class="right-side-content w-full bg-white py-6 px-[14px]">
         <div class="flex flex-col mb-3 border-b border-light-bg-c">
-          <div class="cursor-pointer inline-flex font-semibold text-[22px] text-black-c" contenteditable="true" @input="saveData($event)">
-            {{ task.title }}
-          </div>
-
           <div class="flex gap-x-4 sm:gap-x-10 items-center flex-wrap pb-2" v-if="task?.project?.id">
             <div class="flex items-center gap-x-2">
               <span class="text-sm text-light-c whitespace-nowrap">In project:</span>
@@ -135,9 +131,9 @@
           </div>
 
           <div class="flex sm:items-center flex-wrap flex-col sm:flex-row pb-3" :class="{'border-light-bg-c border-t pt-3': task?.project?.id}">
-            <h3 class="text-[34px] text-black-c pb-3 w-full text-center" v-if="currentTaskTotalTime">
-              {{ currentTaskTotalTime?.hours || '00' }}hs {{ currentTaskTotalTime?.minutes || "00" }}m
-            </h3>
+<!--            <h3 class="text-[34px] text-black-c pb-3 w-full text-center" v-if="currentTaskTotalTime">-->
+<!--              {{ currentTaskTotalTime?.hours || '00' }}hs {{ currentTaskTotalTime?.minutes || "00" }}m-->
+<!--            </h3>-->
 
               <Button
                   v-if="isAuthOwner && task.is_closed"
@@ -163,22 +159,6 @@
                 @on-click="toggleTask(currentTask?.id === task?.id ? 'stop' : 'work')"
                 :disabled="btnLoad"
                 :label="currentTask?.id === task?.id ? 'Stop working on this task' : 'Work on this task'"
-                version="yellow"
-                size="medium"
-            />
-
-            <Button
-                class="w-full justify-center"
-                @on-click="showTimeTracker = !showTimeTracker"
-                :label="showTimeTracker ? 'Hide time tracking' : 'Show time tracking'"
-                version="yellow"
-                size="medium"
-            />
-
-            <Button
-                class="w-full justify-center mt-2"
-                @on-click="showLogs = !showLogs"
-                :label="showLogs ? 'Hide logs' : 'Show logs'"
                 version="yellow"
                 size="medium"
             />
@@ -391,6 +371,24 @@
                 @on-click="generateTag"
                 :disabled="btnLoad"
                 label="Tag ID Generator"
+                size="medium"
+                version="gray"
+                rounded
+            />
+
+            <Button
+                class="w-full justify-center"
+                @on-click="showTimeTracker = !showTimeTracker"
+                :label="showTimeTracker ? 'Hide time tracking' : 'Show time tracking'"
+                size="medium"
+                version="gray"
+                rounded
+            />
+
+            <Button
+                class="w-full justify-center"
+                @on-click="showLogs = !showLogs"
+                :label="showLogs ? 'Hide logs' : 'Show logs'"
                 size="medium"
                 version="gray"
                 rounded

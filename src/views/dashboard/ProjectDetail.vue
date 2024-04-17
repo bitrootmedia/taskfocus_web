@@ -158,6 +158,7 @@
       <div class="mt-6 sm:mt-8" v-if="project.id">
         <div class="mb-10">
           <TasksDataTable
+              type="project"
               :project-id="project.id"
               :project-title="project.title"
               :have-project-access-ids="haveProjectAccessIds"

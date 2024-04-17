@@ -3,7 +3,7 @@
     <h2 v-if="tempProject" class="text-md block text-blueGray-700 mb-4 sm:mb-8">Project: <b>{{ tempProject.name }}</b>
     </h2>
 
-    <form @submit="createTask">
+    <form @submit="createTask($event)">
       <div class="flex items-center items-baseline gap-x-4 mb-3">
         <div class="relative w-[250px]">
           <Input placeholder="Task Name" v-model:value="name"/>
@@ -166,7 +166,8 @@ const fetchSearchedTasks = async () => {
   }
 }
 
-const createTask = async () => {
+const createTask = async (e) => {
+  if (e) e.preventDefault()
   try {
     loading.value = true
     const isValid = await v$.value.$validate();

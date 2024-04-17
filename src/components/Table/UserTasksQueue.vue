@@ -1,8 +1,7 @@
 <template>
   <div class="content mt-6">
-    <div class="border border-light-bg-c rounded-[4px] px-4 pt-4">
-      <div class="text-left mb-4">
-        <h4 class="font-semibold text-lg text-black-c block mb-3 cursor-pointer"
+      <div class="text-left mb-1">
+        <h4 class="font-semibold text-lg text-black-c block cursor-pointer"
             @click="toLink(`/dashboard/users/}`)">
           {{ user.first_name }} {{ user.last_name }}</h4>
       </div>
@@ -66,7 +65,6 @@
           :pagination="paginate.pagination.value"
           v-model:query="paginate.query.value"
       />
-    </div>
   </div>
 </template>
 
