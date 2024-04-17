@@ -166,7 +166,7 @@
     </div>
 
 
-    <div class="main-container ">
+    <div :class="type === 'project' ? '' : 'main-container' ">
       <DataTable :headers="headers" @sorting="sorting">
         <template v-slot:tableBody>
 
@@ -321,6 +321,10 @@ const props = defineProps({
   hideCreate: {
     type: Boolean,
     default: false
+  },
+  type: {
+    type: String,
+    default: 'task'
   },
 })
 
