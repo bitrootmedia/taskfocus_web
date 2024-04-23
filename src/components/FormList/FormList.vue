@@ -39,26 +39,6 @@
                   <div class="content p-[14px] flex justify-between items-start gap-x-4">
                     <div>
                       <div v-if="editLists[index]" class="cursor-pointer w-full md:w-[500px] mb-4">
-                        <div class="inline-flex items-center gap-x-1 mr-4">
-                          <div class="flex items-center gap-x-2 px-3 py-[6px] bg-white rounded-[8px] cursor-pointer w-[250px] shadow">
-                            <PaperClipIcon/>
-                            <span class="text-sm text-black">Add attachments</span>
-                          </div>
-
-                          <div class="absolute w-[250px] h-9 top-0">
-                            <Dropzone
-                                :maxFiles="Number(1)"
-                                :maxFileSize="200000000"
-                                ref="dropZoneRef"
-                                :uploadOnDrop="true"
-                                :multipleUpload="false"
-                                :multiple="1"
-                                @sending="saveFiles($event,index)"
-                                :parallelUpload="1"
-                            />
-                          </div>
-                        </div>
-
                         <input
                             v-model="element.path"
                             disabled
