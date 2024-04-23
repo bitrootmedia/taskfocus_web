@@ -13,7 +13,7 @@
        >
          {{ route.name || 'Dashboard' }}
        </a>
-       <div v-else class="cursor-pointer inline-flex font-semibold text-[22px] text-black-c" contenteditable="true" @input="saveData($event)">{{ taskTitle }}</div>
+       <div v-else class="cursor-pointer inline-flex font-semibold text-[22px] text-black-c" contenteditable="true"  plaintext-only="true" @input="saveData($event)">{{ taskTitle }}</div>
 
        <div v-if="userStore.showPanel.show" class="hidden md:flex gap-x-4 flex-wrap">
          <Button
@@ -128,8 +128,9 @@ const updateTask = async (title) => {
 }
 
 const saveData = async(e)=>{
-  taskTitle.value = e.target.innerHTML
-  await updateTask(e.target.innerHTML)
+  const plainText = e.target.innerText.replace(/&nbsp;/g, ' ');
+  taskTitle.value = plainText
+  await updateTask(plainText)
 }
 
 const logout = async () => {

@@ -14,7 +14,7 @@
 
         <Button
             @on-click="createTask"
-            label="New Task"
+            label="Submit"
             :disabled="loading"
             size="medium"
             version="yellow"

@@ -1,8 +1,8 @@
 <template>
-  <div class="content mt-4" v-if="comments.length">
+  <div class="content mt-4" v-if="comments.length || showBtnResult">
     <h2 class="font-semibold text-lg text-black-c block mb-3">Comments</h2>
 
-    <form v-if="!hideCreate" @submit="sendComment">
+    <form v-if="!hideCreate" @submit="sendComment($event)">
       <template v-if="showCreateBtn">
         <div v-if="!writeComment"
              class="flex items-center gap-x-2 px-3 py-[6px] bg-white rounded-[8px] cursor-pointer w-[250px]"
@@ -398,7 +398,9 @@ const toLink = (type) => {
   else return router.push(`/dashboard/project/${props.projectId}`)
 }
 
-const sendComment = async () => {
+const sendComment = async (e) => {
+  if (e) e.preventDefault()
+
   try {
     const isValid = await v$.value.$validate();
     if (isValid) {

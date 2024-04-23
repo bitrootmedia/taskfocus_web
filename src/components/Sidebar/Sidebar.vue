@@ -2,7 +2,7 @@
   <nav
       id="sidebar"
       class="z-[2] sticky top-0 md:static md:left-0 pt-[10px] md:block md:fixed md:top-0 md:bottom-0 md:flex-row md:flex-nowrap shadow-xl bg-[#182128] flex flex-wrap items-center justify-between relative pb-[10px] md:pb-0 px-4 md:px-0"
-      :class="{'md:w-[312px]': !closePanel, 'md:w-[100px]': closePanel}"
+      :class="{'md:w-[220px]': !closePanel, 'md:w-[100px]': closePanel}"
   >
     <span @click="emit('update:closePanel',!closePanel)"
           class="w-10 h-10 bg-[#182128] hidden md:flex rounded-full flex items-center justify-center cursor-pointer absolute -right-[20px] top-[25px]">
@@ -95,7 +95,7 @@
                   isExactActive
                     ? 'bg-[#41525B] text-orange-c hover:text-orange-c-600'
                     : 'text-white hover:text-orange-c',
-                     closePanel ? 'text-center pl-[38px]' : 'pl-4 md:pl-[50px]'
+                     closePanel ? 'text-center pl-[38px]' : 'pl-4 '
                 ]"
               >
                 <DashboardIcon :isExactActive="isExactActive"/>
@@ -114,7 +114,7 @@
                   isExactActive
                     ? 'bg-[#41525B] text-orange-c hover:text-orange-c-600'
                     : 'text-white hover:text-orange-c',
-                     closePanel ? 'text-center pl-[38px]' : 'pl-4 md:pl-[50px]'
+                     closePanel ? 'text-center pl-[38px]' : 'pl-4'
                 ]"
               >
                 <NewTaskIcon :isExactActive="isExactActive"/>
@@ -133,7 +133,7 @@
                   isExactActive
                     ? 'bg-[#41525B] text-orange-c hover:text-orange-c-600'
                     : 'text-white hover:text-orange-c',
-                     closePanel ? 'text-center pl-[38px]' : 'pl-4 md:pl-[50px]'
+                     closePanel ? 'text-center pl-[38px]' : 'pl-4'
                 ]"
               >
                 <ProjectsIcon :isExactActive="isExactActive"/>
@@ -152,7 +152,7 @@
                   isExactActive
                     ? 'bg-[#41525B] text-orange-c hover:text-orange-c-600'
                     : 'text-white hover:text-orange-c',
-                     closePanel ? 'text-center pl-[38px]' : 'pl-4 md:pl-[50px]'
+                     closePanel ? 'text-center pl-[38px]' : 'pl-4'
                 ]"
               >
                 <TasksIcon :isExactActive="isExactActive"/>
@@ -171,7 +171,7 @@
                   isExactActive
                      ? 'bg-[#41525B] text-orange-c hover:text-orange-c-600'
                     : 'text-white hover:text-orange-c',
-                     closePanel ? 'text-center pl-[38px]' : 'pl-4 md:pl-[50px]'
+                     closePanel ? 'text-center pl-[38px]' : 'pl-4'
                 ]"
               >
                 <RemindersIcon :isExactActive="isExactActive"/>
@@ -194,7 +194,7 @@
                   isExactActive
                     ? 'bg-[#41525B] text-orange-c hover:text-orange-c-600'
                     : 'text-white hover:text-orange-c',
-                     closePanel ? 'text-center pl-[38px]' : 'pl-4 md:pl-[50px]'
+                     closePanel ? 'text-center pl-[38px]' : 'pl-4'
                 ]"
               >
                 <CommentsIcon :isExactActive="isExactActive"/>
@@ -213,7 +213,7 @@
                   isExactActive
                     ? 'bg-[#41525B] text-orange-c hover:text-orange-c-600'
                     : 'text-white hover:text-orange-c',
-                     closePanel ? 'text-center pl-[38px]' : 'pl-4 md:pl-[50px]'
+                     closePanel ? 'text-center pl-[38px]' : 'pl-4'
                 ]"
               >
                 <AttachmentsIcon :isExactActive="isExactActive"/>
@@ -232,7 +232,7 @@
                   isExactActive
                      ? 'bg-[#41525B] text-orange-c hover:text-orange-c-600'
                     : 'text-white hover:text-orange-c',
-                     closePanel ? 'text-center pl-[38px]' : 'pl-4 md:pl-[50px]'
+                     closePanel ? 'text-center pl-[38px]' : 'pl-4'
                 ]"
               >
                 <NotificationsIcon :isExactActive="isExactActive"/>
@@ -251,7 +251,7 @@
                   isExactActive
                     ? 'bg-[#41525B] text-orange-c hover:text-orange-c-600'
                     : 'text-white hover:text-orange-c',
-                     closePanel ? 'text-center pl-[38px]' : 'pl-4 md:pl-[50px]'
+                     closePanel ? 'text-center pl-[38px]' : 'pl-4'
                 ]"
               >
                 <LogsIcon :isExactActive="isExactActive"/>
@@ -270,7 +270,7 @@
                   isExactActive
                      ? 'bg-[#41525B] text-orange-c hover:text-orange-c-600'
                     : 'text-white hover:text-orange-c',
-                     closePanel ? 'text-center pl-[38px]' : 'pl-4 md:pl-[50px]'
+                     closePanel ? 'text-center pl-[38px]' : 'pl-4'
                 ]"
               >
                 <TimeTrackerIcon :isExactActive="isExactActive"/>
@@ -289,7 +289,7 @@
                   isExactActive
                     ? 'bg-[#41525B] text-orange-c hover:text-orange-c-600'
                     : 'text-white hover:text-orange-c',
-                     closePanel ? 'text-center pl-[38px]' : 'pl-4 md:pl-[50px]'
+                     closePanel ? 'text-center pl-[38px]' : 'pl-4'
                 ]"
               >
                 <UsersIcon :isExactActive="isExactActive"/>
@@ -308,7 +308,7 @@
                   isExactActive
                     ? 'bg-[#41525B] text-orange-c hover:text-orange-c-600'
                     : 'text-white hover:text-orange-c',
-                    closePanel ? 'text-center pl-[38px]' : 'pl-4 md:pl-[50px]'
+                    closePanel ? 'text-center pl-[38px]' : 'pl-4'
                 ]"
               >
                 <SettingsIcon :isExactActive="isExactActive"/>
