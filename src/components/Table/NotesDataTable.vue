@@ -1,5 +1,5 @@
 <template>
-  <div class="content mt-4" v-if="notes.length">
+  <div class="content mt-4" v-if="notes.length || showBtnResult">
     <h2 class="font-semibold text-lg text-black-c block mb-3">Notes</h2>
 
     <form v-if="!hideCreate" @submit="sendNote">

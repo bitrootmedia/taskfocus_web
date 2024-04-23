@@ -197,10 +197,6 @@ tr:nth-child(odd) {
     }
 }
 
-.description-panel .v-md-editor-preview {
-    word-break: break-all;
-}
-
 .description-panel .github-markdown-body {
     padding: 0 !important;
     width: 100%;

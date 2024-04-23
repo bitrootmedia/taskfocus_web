@@ -5,6 +5,25 @@
     <div class="left-side pt-6">
       <div>
         <div class="main-container pb-8">
+          <div class="text-blueGray-500 description-panel mb-6" v-if="task.description">
+            <h2 class="font-semibold text-lg text-black-c block mb-3">Description</h2>
+            <b v-if="!task.description && !isEditPanel.description" class="cursor-pointer"
+               @click="isEditPanel.description = true">N/A</b>
+            <div v-else>
+              <div @click="isEditPanel.description = true"
+                   :class="[`${!isEditPanel.description ? 'flex w-full' : 'flex w-full'}`]">
+                <template v-if="!isEditPanel.description" class="w-full">
+                  <v-md-preview :text="task.description" class="cursor-pointer"></v-md-preview>
+                </template>
+
+                <div v-else class="w-full mt-[10px]">
+                  <v-md-editor v-model="form.description" height="350px" :disabled-menus="[]"
+                               @upload-image="handleUploadImage"></v-md-editor>
+                </div>
+              </div>
+            </div>
+          </div>
+
           <div>
             <FormList
                 :block-name="blockName"
@@ -283,26 +302,6 @@
                     </li>
                   </ul>
                 </div>
-            </div>
-
-            <div class="text-blueGray-500 description-panel mt-2" v-if="task.description">
-              Description:
-              <b v-if="!task.description && !isEditPanel.description" class="cursor-pointer"
-                 @click="isEditPanel.description = true">N/A</b>
-
-              <div v-else>
-                <div @click="isEditPanel.description = true"
-                     :class="[`${!isEditPanel.description ? 'inline-flex' : 'flex w-full'}`]">
-                  <template v-if="!isEditPanel.description" class="w-full">
-                    <v-md-preview :text="task.description" class="cursor-pointer"></v-md-preview>
-                  </template>
-
-                  <div v-else class="w-full mt-[10px]">
-                    <v-md-editor v-model="form.description" height="350px" :disabled-menus="[]"
-                                 @upload-image="handleUploadImage"></v-md-editor>
-                  </div>
-                </div>
-              </div>
             </div>
           </div>
         </div>
