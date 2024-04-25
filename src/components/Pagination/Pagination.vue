@@ -1,9 +1,9 @@
 <template>
   <div class="flex" :class="[position === 'right' ? 'justify-start' : 'justify-end']">
     <div class="inline-flex gap-x-1 items-center">
-      <span class="text-sm text-blueGray-600 cursor-pointer" v-if="pagination.prev" @click="paginate(pagination.prev)">Prev</span>
-      <span class="text-md text-blueGray-600 font-medium">{{ pagination.current || 1 }}/{{ pagination.total }}</span>
-      <span class="text-sm text-blueGray-600 cursor-pointer" v-if="pagination.next" @click="paginate(pagination.next)">Next</span>
+      <span class="text-sm text-black-c cursor-pointer" v-if="pagination.prev" @click="paginate(pagination.prev)">Prev</span>
+      <span class="text-md text-black-c font-medium">{{ pagination.current || 1 }}/{{ pagination.total }}</span>
+      <span class="text-sm text-black-c cursor-pointer" v-if="pagination.next" @click="paginate(pagination.next)">Next</span>
     </div>
   </div>
 </template>

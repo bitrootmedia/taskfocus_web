@@ -1,327 +1,483 @@
 <template>
-  <div class="main-container">
-    <Loader v-if="loading"/>
+  <Loader v-if="loading"/>
 
-    <div v-else>
-      <div class="header flex flex-col md:flex-row justify-between gap-x-2 lg:gap-x-10 mb-10">
-        <div class="w-full ">
-          <div class="flex justify-between sm:justify-start gap-x-4 sm:gap-x-10 items-center mb-6">
-            <div :class="{'w-5/6 sm:w-3/4 md:w-3/6': isEditPanel.title}">
-              <h1 v-if="!isEditPanel.title" class="text-3xl font-bold text-blueGray-700 mb-1 cursor-pointer"
-                  @click="isEditPanel.title = true">{{ task.title }}</h1>
-              <div v-else class="mb-2">
-                <input
-                    v-model="form.title"
-                    type="text"
-                    class=" border-0 px-3 py-3 placeholder-blueGray-300 text-blueGray-600 bg-white rounded text-sm shadow focus:outline-none focus:ring w-full ease-linear transition-all duration-150"
-                    placeholder="Project Title"
-                />
-                <span class="text-xs font-medium text-red-600" v-if="v$.title.$error"> {{
-                    v$.title.$errors[0].$message
-                  }} </span>
+  <div v-else class="flex flex-col sm:flex-row">
+    <div class="left-side pt-6">
+      <div>
+        <div class="main-container pb-8">
+          <div class="text-blueGray-500 description-panel mb-6" v-if="task.description">
+            <h2 class="font-semibold text-lg text-black-c block mb-3">Description</h2>
+            <b v-if="!task.description && !isEditPanel.description" class="cursor-pointer"
+               @click="isEditPanel.description = true">N/A</b>
+            <div v-else>
+              <div @click="isEditPanel.description = true"
+                   :class="[`${!isEditPanel.description ? 'flex w-full' : 'flex w-full'}`]">
+                <template v-if="!isEditPanel.description" class="w-full">
+                  <v-md-preview :text="task.description" class="cursor-pointer"></v-md-preview>
+                </template>
+
+                <div v-else class="w-full mt-[10px]">
+                  <v-md-editor v-model="form.description" height="350px" :disabled-menus="[]"
+                               @upload-image="handleUploadImage"></v-md-editor>
+                </div>
               </div>
             </div>
+          </div>
 
-            <div class="flex items-center gap-x-2" v-if="task.project">
-              <span class="text-sm text-blueGray-600 whitespace-nowrap">In project:</span>
-              <h2 class="text-lg sm:text-2xl font-bold text-blueGray-700 mb-1 cursor-pointer lg:whitespace-nowrap"
+          <div>
+            <FormList
+                :block-name="blockName"
+                :key="keyList"
+                :task-id="task.id"
+                v-model="form.blocks"
+                @edit="isEditPanel.blocks = true"
+            />
+          </div>
+
+          <div class="mb-5" v-if="reminders?.length">
+            <Reminders
+                :show-links="true"
+                :paginate="paginate"
+                :reminders="reminders"
+                :loading="loadingRem"
+                :users="users"
+                @update="fetchReminders"
+            />
+          </div>
+
+          <div class="mb-10">
+            <NotesDataTable :showCreateBtn="false" v-model:showBtnResult="writeNote" :task-id="task.id"/>
+          </div>
+
+          <div class="mb-10">
+            <CommentsDataTable :showCreateBtn="false" v-model:showBtnResult="writeComment" :task-id="task.id"
+                               :task-name="task.title" :is-task="true"/>
+          </div>
+
+          <div class="mb-10">
+            <AttachmentsDataTable :showCreateBtn="false" :task-id="task.id" :is-task="true" :key="updateKey"/>
+          </div>
+
+          <div v-if="showTimeTracker">
+            <TrackerDataTable :key="keyTracker" :task-id="task.id" :is-task="true" :can-edit="true"/>
+          </div>
+
+          <div v-if="showLogs">
+            <LogsDataTable :key="key" :task-id="task.id" :is-task="true"/>
+          </div>
+
+          <ProjectsModal
+              :show-modal="showModal"
+              :project-id="task?.project?.id"
+              :task-id="task.id"
+              :btn-title="'Change project'"
+              @close="showModal = false"
+              @update="updateTaskShowData"
+          />
+
+          <UserTaskModal
+              :show-modal="showUsersModal"
+              :task="task"
+              :users="usersQueue"
+              :all-users="usersList"
+              :have-task-access="haveTaskAccess"
+              :have-task-access-ids="haveTaskAccessIds"
+              :btn-title="'Manage Task Users'"
+              @close="showUsersModal = false"
+              @update="updateTasks"
+          />
+
+          <OwnersModal
+              :show-modal="showOwnersModal"
+              :task="task"
+              :users="usersList"
+              :have-task-access="haveTaskAccess"
+              :have-task-access-ids="haveTaskAccessIds"
+              :btn-title="'Change Owners'"
+              @close="showOwnersModal = false"
+              @update="updateTaskOwner"
+          />
+
+          <ResponsiblesModal
+              :show-modal="showResponsiblesModal"
+              :task="task"
+              :users="users"
+              :btn-title="'Change Owners'"
+              @close="showResponsiblesModal = false"
+              @update-users="fetchUsers"
+              @update="updateResponsibles"
+          />
+
+
+          <UserQueueModal
+              :show-modal="showUsersQueueModal"
+              :task="task"
+              :users="usersQueue"
+              :have-task-access="haveQueueAccess"
+              :have-task-access-ids="haveQueueAccessIds"
+              :btn-title="'Queue'"
+              @close="showUsersQueueModal = false"
+              @update="updateTasksQueue"
+          />
+
+          <ReminderModal
+              :show-modal="showReminderModal"
+              :task="task"
+              :users="usersQueue"
+              :btn-title="'Add Reminder'"
+              @close="showReminderModal = false"
+              @update="fetchReminders"
+          />
+
+          <ConfirmCloseModal
+              :show-modal="confirmModal"
+              @close="confirmModal = false"
+              @update="closeTask"
+          />
+        </div>
+      </div>
+    </div>
+
+    <div class="right-side bg-white">
+      <div class="right-side-content w-full bg-white py-6 px-[14px]">
+        <div class="flex flex-col mb-3 border-b border-light-bg-c">
+          <div class="flex gap-x-4 sm:gap-x-10 items-center flex-wrap pb-2" v-if="task?.project?.id">
+            <div class="flex items-center gap-x-2">
+              <span class="text-sm text-light-c whitespace-nowrap">In project:</span>
+              <h2 class="text-md font-semibold text-black-c cursor-pointer lg:whitespace-nowrap"
                   @click="router.push(`/dashboard/project/${task.project.id}`)">
                 {{ task.project?.title }}</h2>
             </div>
           </div>
 
-          <div class="actions mb-4 flex gap-x-1 sm:gap-x-4 flex-wrap">
-            <button
-                v-if="!task.is_closed"
-                @click="toggleTask(currentTask?.id === task?.id ? 'stop' : 'work')"
-                class="mt-2 bg-blueGray-800 whitespace-nowrap text-white active:bg-blueGray-600 text-sm font-bold px-2 sm:px-4 py-2 rounded shadow hover:shadow-lg outline-none focus:outline-none ease-linear transition-all duration-150"
-                type="button"
-            >
-              {{ currentTask?.id === task?.id ? 'Stop working on this task' : 'Work on this task' }}
-            </button>
+          <div class="flex sm:items-center flex-wrap flex-col sm:flex-row pb-3"
+               :class="{'border-light-bg-c border-t pt-3': task?.project?.id}">
+            <!--            <h3 class="text-[34px] text-black-c pb-3 w-full text-center" v-if="currentTaskTotalTime">-->
+            <!--              {{ currentTaskTotalTime?.hours || '00' }}hs {{ currentTaskTotalTime?.minutes || "00" }}m-->
+            <!--            </h3>-->
 
-            <button
+            <Button
                 v-if="isAuthOwner && task.is_closed"
-                @click="uncloseTask"
-                class="mt-2 bg-yellow-600 whitespace-nowrap text-white active:bg-blueGray-600 text-sm font-bold px-2 sm:px-4 py-2 rounded shadow hover:shadow-lg outline-none focus:outline-none ease-linear transition-all duration-150"
-                type="button"
-            >
-              Unclose task
-            </button>
+                class="w-full justify-center mb-2"
+                @on-click="uncloseTask"
+                label="Reopen Task"
+                size="medium"
+                version="green"
+            />
 
-            <button
+            <Button
                 v-else-if="isAuthOwner"
-                @click="confirmModal = true"
-                class="mt-2 bg-yellow-600 whitespace-nowrap text-white active:bg-blueGray-600 text-sm font-bold px-2 sm:px-4 py-2 rounded shadow hover:shadow-lg outline-none focus:outline-none ease-linear transition-all duration-150"
-                type="button"
-            >
-              Close task
-            </button>
+                class="w-full justify-center mb-2"
+                @on-click="confirmModal = true"
+                label="Close Task"
+                size="medium"
+                version="green"
+            />
 
-            <button
-                v-if="isAuthOwner"
-                @click="showModal = true"
-                class="mt-2 bg-blueGray-400 whitespace-nowrap text-white active:bg-blueGray-600 text-sm font-bold px-2 sm:px-4 py-2 rounded shadow hover:shadow-lg outline-none focus:outline-none ease-linear transition-all duration-150"
-                type="button"
-            >
-              Change project
-            </button>
+            <Button
+                class="w-full justify-center mb-2"
+                v-if="!task?.is_closed"
+                @on-click="toggleTask(currentTask?.id === task?.id ? 'stop' : 'work')"
+                :disabled="btnLoad"
+                :label="currentTask?.id === task?.id ? 'Stop working on this task' : 'Work on this task'"
+                version="yellow"
+                size="medium"
+            />
 
-            <button
-                v-if="isAuthOwner"
-                @click="showUsersModal = true"
-                class="mt-2 bg-blueGray-800 whitespace-nowrap text-white active:bg-blueGray-600 text-sm font-bold px-2 sm:px-4 py-2 rounded shadow hover:shadow-lg outline-none focus:outline-none ease-linear transition-all duration-150"
-                type="button"
-            >
-              Manage Task Users
-            </button>
-          </div>
+            <div class="mt-2">
+              <div class="inline-flex items-center" v-if="!isEditPanel.progress">
+                <span class="inline-block text-light-c text-sm mr-2">Progress:</span>
 
-          <div class="mb-2 sm:mb-4">
-            <div class="text-blueGray-500">
-              Task Owner: &nbsp;
-              <b :class="{'cursor-pointer': isAuthOwner}" @click="isAuthOwner ? isEditPanel.owner = true : null"
-                 v-if="!isEditPanel.owner">
-                <span v-if="task.owner?.first_name || task.owner?.last_name">{{
-                    task.owner?.first_name
-                  }} {{ task.owner?.last_name }}</span>
-                <span v-else>{{ task.owner?.username }}</span>
-              </b>
+                <div class="cursor-pointer flex items-center">
+                  <div class="w-[180px] sm:w-[120px] h-2 bg-blueGray-200 rounded-md">
+                        <span class="progress block h-2 rounded-md flex items-center justify-center"
+                              :style="{width: `${task.progress || 0}%`, background: `${bgConvert(task.progress)}`}">
+                        </span>
+                  </div>
+                </div>
 
-              <div v-else class="mb-2 w-80">
-                <select v-model="form.owner" placeholder="Select User"
-                        class="border-0 px-3 py-3 placeholder-blueGray-300 text-blueGray-600 bg-white rounded text-sm shadow focus:outline-none focus:ring w-full ease-linear transition-all duration-150"
-                >
-                  <option :value="user.id" v-for="(user) in users" :key="user.id">{{ user.username }}</option>
-                </select>
+                <PencilSmallIcon class="cursor-pointer ml-1" @click="isEditPanel.progress = true"/>
               </div>
-
+              <div v-else class="w-[250px] range-slider">
+                <input type="range" min="0" max="100" step="1" v-model="form.progress" @input="updateSlider"
+                       :style="{backgroundSize: backgroundSize}">
+                <div class="data text-light-c text-sm">Progress: {{ form.progress }}/100</div>
+              </div>
             </div>
-          </div>
 
-          <div class="mb-2 sm:mb-4">
-            <div class="flex gap-x-1">
-              <span class="text-blueGray-500 whitespace-nowrap">Task Access: &nbsp;</span>
+            <div class="flex items-center gap-x-1 mt-2">
+              <span class="text-sm text-light-c">Responsible:</span>
+              <div class="flex items-center gap-x-1">
+                        <span v-if="task.responsible?.first_name || task.responsible?.last_name"
+                              class="text-sm text-black-c font-semibold"> {{
+                            task.responsible?.first_name
+                          }} {{ task.responsible?.last_name }}
+                        </span>
+                <span v-else-if="task.responsible?.username"
+                      class="text-sm text-black-c font-semibold"> {{ task.responsible?.username }}</span>
+                <span v-else class="text-sm text-black-c font-semibold">N/A</span>
 
-                <ul class="flex gap-x-2 flex-wrap">
-                  <li class="text-blueGray-500 font-bold">
-                    {{ task.owner?.username }}(owner){{haveTaskAccess.length || haveProjectAccess.length ? ',' : ''}}
-                  </li>
-
-                  <li v-if="haveProjectAccess.length" v-for="(item,index) in haveProjectAccess" :key="item.user.id" class="text-blueGray-500 font-bold">
-                    {{ item.user.username }}<span class="text-blueGray-500 font-bold">(project)</span><span
-                      v-if="haveTaskAccessIds.length || index !== haveProjectAccess.length - 1">,</span>
-                  </li>
-
-                  <li v-if="haveTaskAccess.length" v-for="(item,index) in haveTaskAccess" :key="item.user.id" class="text-blueGray-500 font-bold">
-                    {{ item.user.username }}<span class="text-blueGray-500 font-bold">(task)</span><span
-                      v-if="index !== haveTaskAccess.length - 1">,</span>
-                  </li>
-                </ul>
-
-            </div>
-          </div>
-
-          <div class="mb-2 sm:mb-4" v-if="task.project || hasAccess">
-            <div class="text-blueGray-500">
-              Responsible: &nbsp;
-              <b class="cursor-pointer" @click="isEditPanel.user = true" v-if="!isEditPanel.user">
-                <span v-if="task.responsible?.first_name || task.responsible?.last_name"> {{
-                    task.responsible?.first_name
-                  }} {{ task.responsible?.last_name }}</span>
-                <span v-else-if="task.responsible?.username"> {{ task.responsible?.username }}</span>
-                <span v-else>N/A</span>
-              </b>
-
-              <div v-else class="mb-2 w-80">
-                <select v-model="form.user" placeholder="Select User"
-                        class="border-0 px-3 py-3 placeholder-blueGray-300 text-blueGray-600 bg-white rounded text-sm shadow focus:outline-none focus:ring w-full ease-linear transition-all duration-150"
-                >
-                  <option :value="user.id" v-for="(user) in users" :key="user.id">{{ user.username }}</option>
-                </select>
+                <PencilSmallIcon class="cursor-pointer" @click="showResponsiblesModal = true"/>
               </div>
             </div>
           </div>
+        </div>
 
-          <div class="mb-2 sm:mb-4">
-            <div class="text-blueGray-500">
-              ETA:&nbsp;
-              <b class="cursor-pointer" v-if="!isEditPanel.eta" @click="isEditPanel.eta = true">
-                <span v-if="!task.eta_date">N/A</span>
-                <span v-else>{{ convertDayDiff(task.eta_date) }} ({{ task.eta_date }})</span>
-              </b>
+        <div class="flex flex-col lg:flex-row lg:gap-x-20">
+          <div class="w-full">
+            <div class="flex flex-col sm:flex-row sm:items-center flex-wrap gap-y-2 gap-x-12 mb-2">
+              <div class="flex items-center gap-x-1">
+                <span class="inline-block text-sm text-light-c">Tag:</span>
+                <div class="flex items-center gap-x-1" v-if="!isEditPanel.tag">
+                  <span v-if="!task.tag" class="text-sm text-black-c font-semibold">N/A</span>
+                  <span v-else class="text-sm text-black-c font-semibold">{{ task.tag }}</span>
+                  <PencilSmallIcon class="cursor-pointer" @click="isEditPanel.tag = true"/>
+                </div>
 
-              <div v-else class="mb-2 w-80">
                 <input
-                    v-model="form.eta_date"
-                    type="date"
-                    class="border-0 px-3 py-3 placeholder-blueGray-300 text-blueGray-600 bg-white rounded text-sm shadow focus:outline-none focus:ring w-full ease-linear transition-all duration-150"
-                    placeholder="Eta"
-                />
-              </div>
-            </div>
-
-          </div>
-
-          <div class="mb-2 sm:mb-4">
-            <div class="text-blueGray-500">
-              Tag:&nbsp;
-              <b class="cursor-pointer" v-if="!isEditPanel.tag" @click="isEditPanel.tag = true">
-                <span v-if="!task.tag">N/A</span>
-                <span v-else>{{ task.tag }}</span>
-              </b>
-
-              <div v-else class="mb-2 w-80">
-                <input
+                    v-else
                     v-model="form.tag"
                     type="text"
-                    class="border-0 px-3 py-3 placeholder-blueGray-300 text-blueGray-600 bg-white rounded text-sm shadow focus:outline-none focus:ring w-full ease-linear transition-all duration-150"
+                    class="px-3 py-[5px] w-full sm:w-[150px] placeholder-[#797A7B] text-[#797A7B] bg-white border border-light-bg-c rounded-[6px] text-sm focus:outline-none focus:ring ease-linear transition-all duration-150"
                     placeholder="Tag"
                 />
               </div>
-            </div>
 
-          </div>
-
-          <div class="mb-2 sm:mb-4">
-            <div class="text-blueGray-500">
-              Status:&nbsp;
-              <b class="uppercase cursor-pointer" v-if="!isEditPanel.status"
-                 @click="isEditPanel.status = true">{{ task.status || 'N/A' }}
-              </b>
-              <div v-else class="mb-2 w-80">
-                <select v-model="form.status" placeholder="Select User"
-                        class="border-0 px-3 py-3 placeholder-blueGray-300 text-blueGray-600 bg-white rounded text-sm shadow focus:outline-none focus:ring w-full ease-linear transition-all duration-150"
+              <div class="flex items-center gap-x-1">
+                <span class="inline-block text-sm text-light-c">Status:</span>
+                <div v-if="!isEditPanel.status"
+                     class="uppercase text-sm text-black-c font-semibold flex items-center gap-x-1">
+                  <span>{{ task.status || 'N/A' }}</span>
+                  <PencilSmallIcon class="cursor-pointer" @click="isEditPanel.status = true"/>
+                </div>
+                <select v-else v-model="form.status" placeholder="Select User"
+                        class="pl-3 pr-8 py-[5px] placeholder-[#797A7B] text-[#797A7B] bg-white border border-light-bg-c rounded-[6px] text-sm focus:outline-none focus:ring w-full ease-linear transition-all duration-150"
                 >
                   <option :value="item[0]" v-for="(item) in dictionary" :key="item[0]">{{ item[1] }}</option>
                 </select>
               </div>
-            </div>
 
-          </div>
-
-          <div class="mb-2 sm:mb-4">
-            <div class="text-blueGray-500">
-              Urgency Level:&nbsp;
-              <b class="uppercase cursor-pointer" v-if="!isEditPanel.urgency_level"
-                 @click="isEditPanel.urgency_level = true">{{ task.urgency_level || 'N/A' }}
-              </b>
-              <div v-else class="mb-2 w-80">
-                <select v-model="form.urgency_level" placeholder="Select User"
-                        class="border-0 px-3 py-3 placeholder-blueGray-300 text-blueGray-600 bg-white rounded text-sm shadow focus:outline-none focus:ring w-full ease-linear transition-all duration-150"
-                >
-                  <option :value="item[0]" v-for="(item) in urgencyLevels" :key="item[0]">{{ item[1] }}</option>
-                </select>
-              </div>
-            </div>
-
-          </div>
-
-          <div class="mb-2 sm:mb-4">
-            <div class="text-blueGray-500 inline-flex items-center" v-if="!isEditPanel.progress">
-              Progress:
-
-              <div @click="isEditPanel.progress = true" class="cursor-pointer flex items-center">
-                <div class=" w-[150px] h-[20px] border-2 border-blueGray-300 ml-3">
-                  <span class="progress bg-blueGray-500 block h-[16px]"
-                        :style="{width: `${task.progress || 0}%`}"></span>
+              <div class="flex items-center gap-x-1">
+                <span class="inline-block text-sm text-light-c">Position:</span>
+                <div v-if="!isEditPanel.position"
+                     class="uppercase cursor-pointer text-sm text-black-c font-semibold flex items-center gap-x-1">
+                  <span>{{ task.position || 'N/A' }}</span>
+                  <PencilSmallIcon class="cursor-pointer" @click="isEditPanel.position = true"/>
                 </div>
-                <span class="ml-2">{{ task.progress || 0 }}%</span>
+                <input
+                    v-else
+                    v-model="form.position"
+                    type="number"
+                    class="px-3 py-[5px] w-full sm:w-[150px] placeholder-[#797A7B] text-[#797A7B] bg-white border border-light-bg-c rounded-[6px] text-sm focus:outline-none focus:ring ease-linear transition-all duration-150"
+                    placeholder="Position"
+                />
+              </div>
+
+              <div class="flex items-center gap-x-1">
+                <span class="inline-block text-sm text-light-c">Urgent:</span>
+
+                <Switch v-model:value="form.is_urgent"/>
+              </div>
+
+              <div class="flex gap-x-1 flex-wrap">
+                <span class="text-sm text-light-c whitespace-nowrap">Task Access:</span>
+
+                <ul class="flex gap-x-2 flex-wrap">
+                  <li class="text-sm text-black-c font-semibold">
+                    {{ task.owner?.first_name }} {{
+                      task.owner?.last_name
+                    }}(owner){{ haveTaskAccess.length || haveProjectAccess.length ? ',' : '' }}
+                  </li>
+
+                  <li v-if="haveProjectAccess.length" v-for="(item,index) in haveProjectAccess" :key="item.user.id"
+                      class="text-sm text-black-c font-semibold">
+                    {{ item.user.first_name }} {{ item.user.last_name }}<span
+                      class="text-sm text-black-c font-semibold">(project)</span><span
+                      v-if="haveTaskAccessIds.length || index !== haveProjectAccess.length - 1">,</span>
+                  </li>
+
+                  <li v-if="haveTaskAccess.length" v-for="(item,index) in haveTaskAccess" :key="item.user.id"
+                      class="text-sm text-black-c font-semibold">
+                    {{ item.user.first_name }} {{ item.user.last_name }}<span
+                      class="text-sm text-black-c font-semibold">(task)</span><span
+                      v-if="index !== haveTaskAccess.length - 1">,</span>
+                  </li>
+                </ul>
               </div>
             </div>
-            <div v-else class="mb-2 w-80 range-slider">
-              <input type="range" min="0" max="100" step="1" v-model="form.progress" @input="updateSlider"
-                     :style="{backgroundSize: backgroundSize}">
-              <div class="data text-blueGray-500">Progress: {{ form.progress }}/100</div>
-            </div>
           </div>
+        </div>
 
-          <div>
-            <div class="text-blueGray-500"
-                 @click="isEditPanel.description = true">
-              Description:
 
-              <template v-if="!isEditPanel.description">
-                <b v-if="!task.description" class="cursor-pointer">N/A</b>
-                <v-md-preview-html v-else
-                                   :html="xss.process(VMdEditor.vMdParser.themeConfig.markdownParser.render(task.description))"
-                                   preview-class="vuepress-markdown-body" class="cursor-pointer"></v-md-preview-html>
-              </template>
+        <div
+            class="actions mb-3 flex justify-between flex-col sm:flex-row gap-x-6 bg-white">
 
-              <div v-else class="w-[800px]">
-                <v-md-editor v-model="form.description" height="300px"></v-md-editor>
+          <div class="flex flex-wrap gap-1">
+            <Button
+                class="w-full justify-center"
+                v-if="isAuthOwner || isAuthProjectOwner"
+                @on-click="showOwnersModal = true"
+                label="Change Owner"
+                size="medium"
+                version="gray"
+                rounded
+            />
+            <Button
+                class="w-full justify-center"
+                v-if="isAuthOwner"
+                @on-click="showModal = true"
+                label="Change Project"
+                size="medium"
+                version="gray"
+                rounded
+            />
+            <Button
+                class="w-full justify-center"
+                v-if="isAuthOwner"
+                @on-click="showUsersModal = true"
+                label="Manage Task Users"
+                size="medium"
+                version="gray"
+                rounded
+            />
+            <Button
+                class="w-full justify-center"
+                v-if="isAuthOwner"
+                @on-click="showUsersQueueModal = true"
+                label="Queue"
+                size="medium"
+                version="gray"
+                rounded
+            />
+            <Button
+                class="w-full justify-center"
+                v-if="showBtn"
+                @on-click="updateMyQueue"
+                :label="!isAuthQueue ? 'Add to my queue' : 'Remove from my queue'"
+                size="medium"
+                :disabled="btnLoad"
+                version="gray"
+                rounded
+            />
+            <Button
+                class="w-full justify-center"
+                @on-click="showReminderModal = true"
+                label="Add Reminder"
+                size="medium"
+                version="gray"
+                rounded
+            />
+            <Button
+                class="w-full justify-center"
+                @on-click="generateTag"
+                :disabled="btnLoad"
+                label="Tag ID Generator"
+                size="medium"
+                version="gray"
+                rounded
+            />
+
+            <Button
+                class="w-full justify-center"
+                @on-click="showTimeTracker = !showTimeTracker"
+                :label="showTimeTracker ? 'Hide time tracking' : 'Show time tracking'"
+                size="medium"
+                version="gray"
+                rounded
+            />
+
+            <Button
+                class="w-full justify-center"
+                @on-click="showLogs = !showLogs"
+                :label="showLogs ? 'Hide logs' : 'Show logs'"
+                size="medium"
+                version="gray"
+                rounded
+            />
+          </div>
+        </div>
+
+        <div class="flex align-center mt-4 flex-wrap">
+          <div class="flex gap-x-4 gap-y-2 flex align-center flex-wrap">
+            <div
+                class="w-full border border-light-bg-c bg-white rounded-[6px] px-3 py-2 h-8 flex items-center gap-x-2 cursor-pointer"
+                @click="addNewForm('markdown')">
+              <MarkdownIcon/>
+              <span class="tooltip-text text-[13px] font-semibold text-black-c">Create markdown</span>
+            </div>
+
+            <div
+                class="w-full border border-light-bg-c bg-white rounded-[6px] px-3 py-2 h-8 flex items-center gap-x-2 cursor-pointer"
+                @click="addNewForm('checklist')">
+              <ChecklistIcon/>
+              <span class="tooltip-text text-[13px] font-semibold text-black-c">Create checklist</span>
+            </div>
+
+            <div
+                class="w-full border border-light-bg-c bg-white rounded-[6px] px-3 py-2 h-8 flex items-center gap-x-2 cursor-pointer relative">
+              <div class="flex items-center gap-x-2 rounded-[8px] cursor-pointer">
+                <ImageIcon/>
+                <span class="tooltip-text text-[13px] font-semibold text-black-c">Add image</span>
+              </div>
+
+              <div class="absolute h-8 top-0 w-[90%]">
+                <input type="file" @change="saveImageFiles" class="opacity-0 cursor-pointer w-[200px]">
               </div>
             </div>
 
-          </div>
+            <div
+                class="w-full border border-light-bg-c bg-white rounded-[6px] px-3 py-2 h-8 flex items-center gap-x-2 cursor-pointer"
+                @click="writeComment = true">
 
-          <div v-if="showPanel" class="flex gap-x-4">
-            <button
-                @click="updateTask"
-                class="mt-2 bg-blueGray-800 text-white active:bg-blueGray-600 text-md font-bold px-6 py-2 rounded shadow hover:shadow-lg outline-none focus:outline-none ease-linear transition-all duration-150"
-                type="button"
-            >
-              Update
-            </button>
-            <button
-                @click="resetData"
-                class="mt-2 bg-blueGray-800 text-white active:bg-blueGray-600 text-md font-bold px-6 py-2 rounded shadow hover:shadow-lg outline-none focus:outline-none ease-linear transition-all duration-150"
-                type="button"
-            >
-              Close
-            </button>
+              <PlusIcon/>
+              <span class="tooltip-text text-[13px] font-semibold text-black-c">Add comment</span>
+            </div>
+            <div
+                class="w-full border border-light-bg-c bg-white rounded-[6px] px-3 py-2 h-8 flex items-center gap-x-2 cursor-pointer"
+                @click="writeNote = true">
+
+              <NotesIcon/>
+              <span class="tooltip-text text-[13px] font-semibold text-black-c">Add private note</span>
+            </div>
+
+
+            <div
+                class="w-full border border-light-bg-c bg-white rounded-[6px] px-3 py-2 h-8 flex items-center gap-x-2 cursor-pointer relative">
+              <div class="flex items-center gap-x-2 rounded-[8px] cursor-pointer">
+                <PaperClipIcon/>
+                <span class="tooltip-text text-[13px] font-semibold text-black-c">Add attachments</span>
+              </div>
+
+              <div class="absolute h-8 top-0 w-[90%]">
+                <Dropzone
+                    :key="updateKey"
+                    :maxFiles="Number(10000000000)"
+                    :maxFileSize="200000000"
+                    ref="dropZoneRef"
+                    :uploadOnDrop="true"
+                    :multipleUpload="true"
+                    @sending="saveFiles"
+                    :parallelUpload="6"
+                />
+              </div>
+            </div>
+
           </div>
         </div>
       </div>
-
-      <div class="mb-10">
-        <AttachmentsDataTable :task-id="task.id" :is-task="true"/>
-      </div>
-
-      <div class="mb-10">
-        <CommentsDataTable :task-id="task.id" :task-name="task.title" :is-task="true"/>
-      </div>
-
-      <div>
-        <LogsDataTable :key="key" :task-id="task.id" :is-task="true"/>
-      </div>
-
-      <ProjectsModal
-          :show-modal="showModal"
-          :project-id="task.project?.id"
-          :task-id="task.id"
-          @close="showModal = false"
-          @update="fetchTask"
-      />
-
-      <UserTaskModal
-          :show-modal="showUsersModal"
-          :task="task"
-          :users="usersList"
-          :have-task-access="haveTaskAccess"
-          :have-task-access-ids="haveTaskAccessIds"
-          @close="showUsersModal = false"
-          @update="updateTasks"
-      />
-
-      <ConfirmCloseModal
-          :show-modal="confirmModal"
-          @close="confirmModal = false"
-          @update="closeTask"
-      />
     </div>
   </div>
+
 </template>
 
 <script setup>
-import {computed, onMounted, ref} from "vue";
+import {computed, onBeforeUnmount, onMounted, ref, watch} from "vue";
 import {catchErrors} from "../../utils";
 import {useRoute, useRouter} from "vue-router";
 import {useTasksStore} from "../../store/tasks";
 import Loader from "./../../components/Loader/Loader.vue"
-import {required} from "@vuelidate/validators";
+import {required, helpers} from "@vuelidate/validators";
 import {useVuelidate} from "@vuelidate/core";
-import {convertDayDiff} from "../../utils";
 import ProjectsModal from "../../components/Modals/ProjectsModal.vue";
 import AttachmentsDataTable from "../../components/Table/AttachmentsDataTable.vue";
 import CommentsDataTable from "../../components/Table/CommentsDataTable.vue";
@@ -329,15 +485,49 @@ import LogsDataTable from "../../components/Table/LogsDataTable.vue";
 import {useToast} from "vue-toastification";
 import {useUserStore} from "../../store/user";
 import {useCookies} from "vue3-cookies";
-import moment from "moment";
 import UserTaskModal from "../../components/Modals/UserTaskModal.vue";
-import ConfirmCloseModal from "../../components/Modals/ConfirmCloseModal.vue";
-import VMdEditor, {xss} from '@kangc/v-md-editor';
+import VMdEditor from '@kangc/v-md-editor';
 import {useProjectStore} from "../../store/project";
+import UserQueueModal from "../../components/Modals/UserQueueModal.vue";
+import {useUsersTasksStore} from "../../store/users-tasks";
+import ReminderModal from "../../components/Modals/ReminderModal.vue";
+import {usePaginate} from "../../composables/usePaginate";
+import Reminders from '../../components/Reminders/Reminders.vue'
+import config from "../../config";
+import OwnersModal from "../../components/Modals/OwnersModal.vue";
+import {useAttachmentsStore} from "../../store/attachments";
+import TrackerDataTable from "../../components/Table/TrackerDataTable.vue";
+import moment from "moment";
+import Switch from '../../components/Switch/Switch.vue'
+import ResponsiblesModal from './../../components/Modals/ResponsiblesModal.vue'
+import FormList from './../../components/FormList/FormList.vue'
+import NotesDataTable from "../../components/Table/NotesDataTable.vue"
+import Button from "../../components/Button/Button.vue";
+import PencilSmallIcon from "../../components/Svg/PencilSmallIcon.vue";
+import MarkdownIcon from "../../components/Svg/MarkdownIcon.vue";
+import ImageIcon from "../../components/Svg/ImageIcon.vue";
+import ChecklistIcon from "../../components/Svg/ChecklistIcon.vue";
+import PlusIcon from "../../components/Svg/PlusIcon.vue"
+import NotesIcon from "../../components/Svg/NotesIcon.vue"
+import PaperClipIcon from "../../components/Svg/PaperClipIcon.vue";
+import ConfirmCloseModal from './../../components/Modals/ConfirmCloseModal.vue'
+import Dropzone from 'dropzone-vue';
 
 // ValidationRules
 const rules = {
   title: {required},
+  estimated_work_hours: {
+    asyncValidator: (val) => {
+      helpers.withParams(
+          {type: 'maxDecimals', max: length},
+          value =>
+              !helpers.req(value) ||
+              new RegExp(
+                  `^\\s*-?(\\d+(\\.\\d{1,${1}})?|\\.\\d{1,${1}})\\s*$`
+              ).test(val)
+      )
+    }
+  }
 }
 
 // toggleTask('close')
@@ -349,92 +539,132 @@ const defaultEditValues = {
   eta: false,
   user: false,
   tag: false,
-  urgency_level: false,
+  is_urgent: false,
+  position: false,
   owner: false,
+  estimated_work_hours: false,
+  blocks: false
 }
 
 // State
 const taskStore = useTasksStore()
 const projectStore = useProjectStore()
 const userStore = useUserStore()
+const attachmentStore = useAttachmentsStore()
+const usersTasksStore = useUsersTasksStore()
 const route = useRoute()
 const router = useRouter()
 const toast = useToast()
 const {cookies} = useCookies();
 
+const keyList = ref(0)
+const btnLoad = ref(false)
 const loading = ref(false)
+const loadingRem = ref(false)
+const showBtn = ref(false)
 const showModal = ref(false)
-const showUsersModal = ref(false)
-const confirmModal = ref(false)
+let showReminderModal = ref(false)
+let showUsersModal = ref(false)
+let showUsersQueueModal = ref(false)
+let showResponsiblesModal = ref(false)
+let showOwnersModal = ref(false)
+let toggleActive = ref(false)
+let firstLoad = ref(false)
+const blockName = ref('')
 const task = ref(null)
+const currentTaskTotalTime = ref(null)
 const currentTask = ref(null)
-const hasAccess = ref(false)
 const key = ref(0)
+const keyTracker = ref(0)
 const timer = ref(null)
 const backgroundSize = ref('0% 0%')
+const reminders = ref([])
 const users = ref([])
 const usersList = ref([])
+const usersQueue = ref([])
 const dictionary = ref([])
-const urgencyLevels = ref([])
 const haveTaskAccess = ref([])
 const haveTaskAccessIds = ref([])
+const haveQueueAccess = ref([])
+const haveQueueAccessIds = ref([])
 const haveProjectAccessIds = ref([])
 const haveProjectAccess = ref([])
 const isEditPanel = ref({...defaultEditValues})
 const form = ref({
   title: '',
   description: '',
-  eta_date: '',
+  estimated_work_hours: '',
   status: '',
   user: '',
   owner: '',
   progress: '',
   tag: '',
-  urgency_level: '',
+  is_urgent: '',
+  position: '',
+  blocks: [],
 })
+const writeComment = ref(false)
+const writeNote = ref(false)
+const showLogs = ref(false)
+const showTimeTracker = ref(false)
+let confirmModal = ref(false)
+let updateKey = ref(0)
 
 const v$ = useVuelidate(rules, form)
 
 // Computed
-const isAuthOwner = computed(() => {
-  if (!cookies.get('crowdsteer_user')) return ''
+const isAuthQueue = computed(() => {
+  if (!cookies.get('task_focus_user')) return ''
 
-  const user = cookies.get('crowdsteer_user')
+  const user = cookies.get('task_focus_user')
+  return haveQueueAccessIds.value.includes(user.pk)
+})
+
+const isAuthProjectOwner = computed(() => {
+  if (!cookies.get('task_focus_user')) return ''
+
+  if (!task.value.project) return false
+
+  const user = cookies.get('task_focus_user')
+  const projectOwnerId = task.value.project.owner.id
+
+  return user.pk === projectOwnerId
+})
+
+const isAuthOwner = computed(() => {
+  if (!cookies.get('task_focus_user')) return ''
+
+  const user = cookies.get('task_focus_user')
   const taskOwnerId = task.value.owner.id
 
   return user.pk === taskOwnerId
 })
+
 
 const showPanel = computed(() => {
   const arr = Object.values(isEditPanel.value)
   return arr.includes(true)
 })
 
+//Watch
+watch(showPanel, (val) => {
+  if (val) {
+    const obj = {
+      show: true,
+      close: resetData,
+      update: updateTask,
+    }
+    userStore.setShowPanel(obj)
+  }
+})
+
+watch(() => form.value.is_urgent, (newValue, oldValue) => {
+  if (firstLoad.value) return updateTask(true)
+
+  firstLoad.value = true
+})
 
 // Methods
-const updateTasks = () => {
-  fetchTask()
-  fetchTaskAccess()
-}
-const updateSlider = (e) => {
-  let clickedElement = e.target,
-      min = clickedElement.min,
-      max = clickedElement.max,
-      val = clickedElement.value;
-
-  backgroundSize.value = (val - min) * 100 / (max - min) + '% 100%';
-}
-const toggleTask = async (type) => {
-  try {
-    if (type === 'stop') currentTask.value = null
-    const resp = type === 'stop' ? await taskStore.stopTask({id: task.value.id}) : await taskStore.startTask({id: task.value.id})
-    await toast.success(resp.data.message);
-    await fetchCurrentTask()
-  } catch (e) {
-    catchErrors(e)
-  }
-}
-
 const closeTask = async (notes) => {
   try {
     const data = {
@@ -445,7 +675,7 @@ const closeTask = async (notes) => {
     const resp = await taskStore.closeTask(data)
     confirmModal.value = false
     await toast.success(resp.data.message);
-    if (task.value.project) {
+    if (task.value.project?.id) {
       return await router.push(`/dashboard/project/${task.value.project.id}`)
     }
     await router.push(`/dashboard`)
@@ -454,29 +684,174 @@ const closeTask = async (notes) => {
   }
 }
 
-const uncloseTask = async () => {
+const addNewForm = (name) => {
+  blockName.value = name
+}
+
+const bgConvert = (progress) => {
+  return '#349C91'
+
+  // if (progress < 25) return '#349C91'
+  // if (progress < 50) return '#349C91'
+  // if (progress < 75) return '#349C91'
+  // if (progress >= 75) return '#349C91'
+}
+
+const generateTag = () => {
+  const tag = Math.random().toString(36).slice(2, 7).toUpperCase();
+  navigator.clipboard.writeText(tag)
+
+  toast.success("New tag id generated and copied");
+}
+
+
+const handleUploadImage = async (event, insertImage, files) => {
   try {
-    const resp = await taskStore.unCloseTask({id: task.value.id})
-    await toast.success(resp.data.message);
-    await fetchTask()
+    const file = files[0]
+    const formData = new FormData();
+    formData.append(file.name, file);
+
+    if (task.value.project?.id) {
+      formData.append('project_id', task.value.project.id);
+    }
+    if (task.value.id) {
+      formData.append('task_id', task.value.id);
+    }
+
+    const resp = await attachmentStore.uploadAttachments(formData)
+    if (resp.data.attachments[0].file_path) {
+      insertImage({
+        url: resp.data.attachments[0].file_path,
+      });
+    }
   } catch (e) {
     catchErrors(e)
   }
 }
 
-const fetchTask = async () => {
+const updateTaskShowData = () => {
+  fetchTask(true)
+
+  setTimeout(() => {
+    fetchProjectAccess()
+    fetchTaskAccess()
+    fetchQueueAccess()
+  }, 500)
+
+  setTimeout(() => {
+    fetchUsers()
+  }, 700)
+}
+const updateTasks = (owner) => {
+  fetchTask(true)
+  fetchTaskAccess()
+
+  setTimeout(() => {
+    fetchUsers()
+  }, 700)
+}
+
+const updateTasksQueue = () => {
+  fetchTask(true)
+  fetchQueueAccess()
+
+  setTimeout(() => {
+    fetchUsers()
+  }, 700)
+}
+
+
+const updateMyQueue = () => {
+  if (isAuthQueue.value) return removeUser()
+
+  assignUser()
+}
+
+const assignUser = async () => {
+  try {
+    btnLoad.value = true
+    const user = cookies.get('task_focus_user')
+    const data = {
+      task: task.value.id,
+      user: user.pk
+    }
+
+    await usersTasksStore.assignUserToQueue(data)
+    toast.success("Queue updated");
+    updateTasksQueue()
+  } catch (e) {
+    catchErrors(e)
+  } finally {
+    btnLoad.value = false
+  }
+}
+
+const updateResponsibles = (userId) => {
+  form.value.user = userId
+  updateTask(true)
+}
+
+const removeUser = async () => {
+  try {
+    btnLoad.value = true
+    const user = cookies.get('task_focus_user')
+
+    const data = {
+      task: task.value.id,
+      user: user.pk
+    }
+    await usersTasksStore.removeUserFromQueue(data)
+    toast.success("Queue updated");
+    updateTasksQueue()
+  } catch (e) {
+    catchErrors(e)
+  } finally {
+    btnLoad.value = false
+  }
+}
+
+const updateSlider = (e) => {
+  let clickedElement = e.target,
+      min = clickedElement.min,
+      max = clickedElement.max,
+      val = clickedElement.value;
+
+  backgroundSize.value = (val - min) * 100 / (max - min) + '% 100%';
+}
+const toggleTask = async (type) => {
+  try {
+    btnLoad.value = true
+    if (type === 'stop') currentTask.value = null
+    const resp = type === 'stop' ? await taskStore.stopTask({id: task.value.id}) : await taskStore.startTask({id: task.value.id})
+
+    const message = type !== 'stop' ? `Started working on task ${task.value.title}` : `Stopped working on task ${task.value.title}`
+    await toast.success(message);
+    await fetchCurrentTask()
+    keyTracker.value += 1
+  } catch (e) {
+    catchErrors(e)
+  } finally {
+    btnLoad.value = false
+  }
+}
+
+const fetchTask = async (noLoad = false) => {
   try {
     const id = route.params.id
     if (id) {
-      loading.value = true
+      if (!noLoad) loading.value = true
       const resp = await taskStore.fetchTaskById({id})
       task.value = {...resp.data}
-      form.value = {...resp.data}
 
-      if (!resp.data.eta_date) form.value.eta_date = new Date().toISOString().slice(0, 10)
+      Object.keys(resp.data).forEach((key) => {
+        form.value[key] = resp.data[key]
+      })
+
       if (resp.data.responsible?.id) form.value.user = resp.data.responsible.id
       if (resp.data.responsible?.id) form.value.owner = resp.data.responsible.id
       backgroundSize.value = `${resp.data.progress || 0}% 100%`
+
+      await fetchTaskTotalTime()
     }
 
   } catch (e) {
@@ -486,11 +861,25 @@ const fetchTask = async () => {
   }
 }
 
+const fetchProject = async () => {
+  const project = task.value?.project
+  if (!project) return
+
+  if (!haveProjectAccessIds.value.includes(project.owner.id)) {
+    const obj = {
+      project: project.id,
+      user: project.owner
+    }
+
+    haveProjectAccessIds.value.push(project.owner.id)
+    haveProjectAccess.value.push(obj)
+  }
+}
+
 const fetchDictionary = async () => {
   try {
     const resp = await taskStore.fetchDictionary()
     dictionary.value = resp.data.task_status_choices
-    urgencyLevels.value = resp.data.task_urgency_level_choices
   } catch (e) {
     catchErrors(e)
   }
@@ -508,34 +897,68 @@ const fetchCurrentTask = async () => {
 }
 
 const resetData = () => {
+  hidePanel()
+
   isEditPanel.value = {...defaultEditValues}
   form.value = {...task.value}
 
   if (task.value.responsible?.id) form.value.user = task.value.responsible.id
   if (task.value.owner?.id) form.value.owner = task.value.responsible.id
-  form.value.eta_date = new Date().toISOString().slice(0, 10)
+
   backgroundSize.value = `${task.value.progress || 0}% 100%`
+
+  fetchTask()
 }
 
-const updateTask = async () => {
+const hidePanel = () => {
+  const obj = {
+    show: false,
+    close: null,
+    update: null,
+  }
+  userStore.setShowPanel(obj)
+}
+
+const updateTaskOwner = async (owner) => {
+  try {
+    const data = {
+      id: task.value.id,
+      owner
+    }
+
+    await taskStore.updateTaskOwner(data)
+    await toast.success("Successfully owner updated");
+    await updateTaskShowData()
+  } catch (e) {
+    catchErrors(e)
+  }
+}
+
+const updateTask = async (noLoad) => {
+  if (!task.value.id) return
+
   try {
     const data = {
       id: task.value.id,
       title: form.value.title,
       description: form.value.description,
-      eta_date: form.value.eta_date,
+      estimated_work_hours: form.value.estimated_work_hours,
       status: form.value.status,
       responsible: form.value.user,
       owner: form.value.owner,
       progress: form.value.progress,
       tag: form.value.tag,
-      urgency_level: form.value.urgency_level,
+      is_urgent: form.value.is_urgent,
+      position: form.value.position,
+      blocks: form.value.blocks,
     }
 
     await taskStore.updateTask(data)
-    await toast.success("Successfully task updated");
+    await toast.success("Task updated");
+    keyList.value += 1
     isEditPanel.value = {...defaultEditValues}
-    await fetchTask()
+    await hidePanel()
+    await fetchTask(noLoad)
   } catch (e) {
     catchErrors(e)
   }
@@ -553,7 +976,6 @@ const fetchUsers = async () => {
       }
     ]
 
-    usersList.value = resp.data.results.filter((item) => item.id !== task.value?.owner?.id)
     const arrIds = [...new Set([...haveTaskAccessIds.value, ...haveProjectAccessIds.value])];
     const tempArr = []
     resp.data.results.forEach((item) => {
@@ -561,7 +983,16 @@ const fetchUsers = async () => {
         tempArr.push(item)
       }
     })
+
     users.value = [...users.value, ...tempArr]
+
+    usersQueue.value = tempArr
+
+// if (task.value?.owner?.id !== task.value?.project?.owner?.id && task.value?.project?.owner?.id) {
+//   users.value.push(task.value?.project?.owner)
+// }
+
+    usersList.value = resp.data.results.filter((item) => item.id !== task.value?.owner?.id)
   } catch (e) {
     catchErrors(e)
   }
@@ -572,19 +1003,16 @@ const fetchTaskAccess = async () => {
     const id = route.params.id
     if (id) {
       const resp = await taskStore.fetchTaskAccess({id})
-      const user = cookies.get('crowdsteer_user')
+      const user = cookies.get('task_focus_user')
       const list = []
       const ids = []
+
       resp.data.results.forEach((item) => {
-        if (item.user.id !== user.pk) {
-          list.push(item)
-          ids.push(item.user.id)
-        } else {
-          hasAccess.value = true
-        }
+        list.push(item)
+        ids.push(item.user.id)
       })
       haveTaskAccess.value = list
-      haveTaskAccessIds.value = [ids]
+      haveTaskAccessIds.value = ids
     }
   } catch (e) {
     catchErrors(e)
@@ -593,42 +1021,268 @@ const fetchTaskAccess = async () => {
 
 const fetchProjectAccess = async () => {
   try {
-    const projectId = task.value.project.id
+    const projectId = task.value?.project?.id
     if (projectId) {
       const resp = await projectStore.fetchProjectAccess({id: projectId})
-      const user = cookies.get('crowdsteer_user')
+      const user = cookies.get('task_focus_user')
       const list = []
       const ids = []
+
       resp.data.results.forEach((item) => {
-        if (item.user.id !== user.pk) {
-          list.push(item)
-          ids.push(item.user.id)
-        }
+        // if (item.user.id !== user.pk) {
+        list.push(item)
+        ids.push(item.user.id)
+        // }
       })
 
       haveProjectAccess.value = list
       haveProjectAccessIds.value = ids
+
+      await fetchProject()
     }
   } catch (e) {
     catchErrors(e)
   }
 }
 
+const uncloseTask = async () => {
+  try {
+    const resp = await taskStore.unCloseTask({id: task.value.id})
+    await taskStore.fetchTaskById({id: task.value.id})
+    await toast.success(resp.data.message);
+    await fetchTask()
+  } catch (e) {
+    catchErrors(e)
+  }
+}
+
+const fetchQueueAccess = async () => {
+  try {
+    const id = route.params.id
+    if (id) {
+      const resp = await usersTasksStore.fetchUsersTasksQueue({id})
+      const list = []
+      const ids = []
+      resp.data.users.forEach((item) => {
+        list.push(item)
+        ids.push(item.id)
+      })
+      haveQueueAccess.value = list
+      haveQueueAccessIds.value = ids
+    }
+  } catch (e) {
+    catchErrors(e)
+  }
+}
+
+const fetchTaskTotalTime = async () => {
+  try {
+    const resp = await taskStore.fetchTaskTime({id: task.value.id})
+    currentTaskTotalTime.value = resp.data.total_time
+  } catch (e) {
+    catchErrors(e)
+  }
+}
+
+const fetchReminders = async () => {
+  try {
+    const id = route.params.id
+    if (id) {
+      loadingRem.value = true
+      const options = {
+        pagination: paginate.pagination.value,
+        query: paginate.query.value,
+        id
+      }
+
+      const resp = await taskStore.fetchReminders(options)
+      reminders.value = resp.data.results
+      paginate.updatePagination(resp)
+
+      if (!resp.data.results.length) return taskStore.expiredRemindersCount = false
+      resp.data.results.forEach((reminder) => {
+        if (reminderCheck(reminder.reminder_date) === 'today') {
+          return taskStore.expiredRemindersCount = true
+        }
+
+        return taskStore.expiredRemindersCount = false
+      })
+    }
+  } catch (e) {
+    catchErrors(e)
+  } finally {
+    loadingRem.value = false
+  }
+}
+
+const saveData = async (e) => {
+  await updateTaskTitle(e.target.innerHTML)
+}
+
+const updateTaskTitle = async (title) => {
+  try {
+    const data = {
+      id: task.value.id,
+      title: title,
+    }
+
+    await taskStore.updateTask(data)
+    await toast.success("Task title updated");
+  } catch (e) {
+    catchErrors(e)
+  }
+}
+
+const reminderCheck = (date) => {
+  const isToday = moment(0, "HH").diff(date, "days") >= 0
+  const isTmr = moment(0, "HH").diff(date, "days") === -1
+
+  if (isToday) return 'today'
+  if (isTmr) return 'tmr'
+
+  return ''
+}
+
+const routeLeave = (e) => {
+  e.preventDefault();
+
+  if (userStore.showPanel.show) return (e.returnValue = "");
+}
+
+const saveImageFiles = async (e) => {
+  e.preventDefault()
+  try {
+    const files = e.target.files
+    const formData = new FormData();
+    for (var i = 0; i < files.length; i++) {
+      formData.append(files[i].name, files[i]);
+    }
+
+    if (task.value.project?.id) {
+      formData.append('project_id', task.value.project.id);
+    }
+    if (task.value.id) {
+      formData.append('task_id', task.value.id);
+    }
+
+    const resp = await attachmentStore.uploadAttachments(formData)
+    if (resp.data.attachments.length) {
+      updateKey.value += 1
+      toast.success("Attachment uploaded");
+      const obj = {
+        type: 'image',
+        path: resp.data.attachments[0].file_path,
+      }
+      form.value.blocks.push(obj)
+    }
+  } catch (e) {
+    catchErrors(e)
+  }
+}
+
+const saveFiles = async (e) => {
+  try {
+    const formData = new FormData();
+    for (var i = 0; i < e.length; i++) {
+      formData.append(e[i].name, e[i]);
+    }
+
+    if (task.value.project?.id) {
+      formData.append('project_id', task.value.project.id);
+    }
+    if (task.value.id) {
+      formData.append('task_id', task.value.id);
+    }
+
+    const resp = await attachmentStore.uploadAttachments(formData)
+    if (resp.data.attachments.length) {
+      updateKey.value += 1
+      toast.success("Attachment uploaded");
+    }
+
+  } catch (e) {
+    catchErrors(e)
+  }
+}
+
 onMounted(() => {
+  window.addEventListener('beforeunload', routeLeave)
+
   timer.value = setInterval(() => {
     key.value += 1
   }, 15000)
 
   setTimeout(() => {
     fetchProjectAccess()
+    fetchTaskAccess()
+    fetchQueueAccess()
+
+    if (form.value.blocks?.length === 0) addNewForm('markdown')
+  }, 600)
+
+  setTimeout(() => {
+    showBtn.value = true
+
     fetchUsers()
-  }, 300)
+  }, 700)
 })
 
 
+onBeforeUnmount(() => {
+  window.removeEventListener('beforeunload', routeLeave)
+})
+
 // Run Functions
+const options = {
+  pageSize: config.REMINDERS
+}
+const paginate = usePaginate(fetchReminders, options)
+
 fetchTask()
-fetchTaskAccess()
 fetchDictionary()
 fetchCurrentTask()
+fetchReminders()
 </script>
+
+<style scoped>
+.left-side {
+  width: calc(100% - 252px);
+}
+
+.right-side {
+  width: 252px;
+}
+
+.right-side > div {
+  position: sticky;
+  top: 91px;
+}
+
+@media (max-width: 767px) {
+  .right-side > div {
+    top: 75px;
+    z-index: 1;
+  }
+}
+
+@media (max-width: 600px) {
+  .right-side {
+    order: 1;
+    width: 100%;
+  }
+
+  .right-side > div {
+    position: static;
+  }
+
+  .left-side {
+    width: 100%;
+    order: 2
+  }
+}
+
+.right-side-content {
+  height: calc(100vh - 91px);
+  overflow-y: scroll;
+}
+</style>

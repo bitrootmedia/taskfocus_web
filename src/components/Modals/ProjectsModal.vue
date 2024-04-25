@@ -1,62 +1,56 @@
 <template>
-  <div v-if="showModal"
-       class="overflow-x-hidden overflow-y-auto fixed inset-0 z-50 outline-none focus:outline-none justify-center items-center flex">
+  <div v-if="showModal" ref="componentModalRef"
+    class="overflow-x-hidden overflow-y-auto fixed inset-0 z-50 outline-none focus:outline-none justify-center items-center flex"
+    @click.self="emit('close')">
     <div class="relative my-6 mx-auto w-[350px]">
       <!--content-->
       <div class="border-0 rounded-lg shadow-lg relative flex flex-col w-full bg-white outline-none focus:outline-none">
         <!--header-->
-        <div class="flex items-center justify-between p-5 border-b border-solid border-blueGray-200 rounded-t">
-          <h3 class="text-3xl font-semibold">
-            Projects
-          </h3>
+        <div class="py-3">
+          <div class="flex items-center justify-between rounded-t p-3 border-b border-light-bg-c">
+            <h3 class="text-[22px] text-black-c font-semibold">
+              Projects
+            </h3>
 
-          <div>
-            <span class="cursor-pointer" @click="emit('close')">
-               <i class="fas fa-window-close mr-2 text-3xl text-blueGray-400"/>
-            </span>
+            <CloseBlackIcon class="cursor-pointer" @click="emit('close')"/>
           </div>
         </div>
         <!--body-->
-        <div class="relative p-6 flex-auto">
+        <div class="relative p-3 flex-auto">
           <Loader v-if="loading"/>
 
           <div v-else class="content">
             <div class="relative mb-6">
-              <i class="fas fa-search mr-2 text-sm text-blueGray-300 absolute top-[12px] left-[8px]"/>
+              <SearchIcon class="fas fa-search mr-2 text-sm text-blueGray-300 absolute top-1 left-2"/>
               <input
                   v-model="filter.search.value"
                   type="text"
-                  class="border-0 pl-8 pr-3 py-3 placeholder-blueGray-300 text-blueGray-600 bg-white rounded text-sm shadow focus:outline-none focus:ring w-full ease-linear transition-all duration-150"
-                  placeholder="Search Project..."
+                  class="pl-9 pr-3 py-[5px] placeholder-[#797A7B] text-[#797A7B] bg-white border border-light-bg-c rounded-[6px] text-sm focus:outline-none focus:ring w-full ease-linear transition-all duration-150"
+                  placeholder="Search..."
               />
             </div>
 
             <ul v-if="projects.length">
-              <li v-for="project in projects" :key="project.id" class="flex justify-between align-center gap-x-1 my-3">
-                <span class="text-lg text-blueGray-500 font-medium">{{ project.title }}</span>
-                <button
-                    :class="{'bg-red-600': project.id === projectId, 'bg-emerald-600': project.id !== projectId}"
-                    class="text-white active:bg-blueGray-600 text-sm font-bold px-3 py-1 rounded shadow hover:shadow-lg outline-none focus:outline-none ease-linear transition-all duration-150"
-                    type="button"
-                    @click="updateProject(project.id === projectId ? null : project.id)"
-                >
-                  {{ project.id === projectId ? 'Remove' : 'Select' }}
-                </button>
+              <li v-for="project in projects" :key="project.id" class="flex justify-between items-center gap-x-1 mb-2">
+                <span class="text-md text-black-c font-semibold">{{ project?.title }}</span>
+                <Button
+                    @on-click="updateProject(project?.id === projectId ? null : project?.id)"
+                    :label="project?.id === projectId ? 'Delete' : 'Select'"
+                    :version="project?.id === projectId ? 'red-small' : 'green-small'"
+                    size="small"
+                />
               </li>
             </ul>
 
             <div v-else>
-              <p class="flex justify-center py-3 text-blueGray-500 font-medium">
-                Sorry, but we can't find any information
+              <p class="flex justify-center pb-3 text-black-c font-medium">
+                No data found
               </p>
             </div>
 
 
-            <Pagination
-                v-if="paginate.pagination.value.total > 1 && !loading"
-                :pagination="paginate.pagination.value"
-                v-model:query="paginate.query.value"
-            />
+            <Pagination v-if="paginate.pagination.value.total > 1 && !loading" :pagination="paginate.pagination.value"
+              v-model:query="paginate.query.value" />
           </div>
         </div>
       </div>
@@ -66,18 +60,22 @@
 </template>
 
 <script setup>
-import {catchErrors} from "../../utils";
-import {ref} from "vue";
+import { catchErrors } from "../../utils";
+import { onBeforeUnmount, onMounted, ref } from "vue";
 import Loader from "./../../components/Loader/Loader.vue"
-import {useProjectStore} from "../../store/project";
-import {useCookies} from "vue3-cookies";
-import {useToast} from "vue-toastification";
-import {usePaginate} from "../../composables/usePaginate";
-import {useFilter} from "../../composables/useFilter";
+import { useProjectStore } from "../../store/project";
+import { useCookies } from "vue3-cookies";
+import { useToast } from "vue-toastification";
+import { usePaginate } from "../../composables/usePaginate";
+import { useFilter } from "../../composables/useFilter";
 import Pagination from "./../Pagination/Pagination.vue"
-import {useTasksStore} from "../../store/tasks";
+import { useTasksStore } from "../../store/tasks";
+import config from "../../config";
+import CloseBlackIcon from "../Svg/CloseBlackIcon.vue";
+import Button from '../Button/Button.vue'
+import SearchIcon from "../Svg/SearchIcon.vue";
 
-const emit = defineEmits(['close','update'])
+const emit = defineEmits(['close', 'update'])
 const props = defineProps({
   showModal: {
     type: Boolean,
@@ -93,26 +91,33 @@ const props = defineProps({
     default: () => {
     }
   },
+  btnTitle: {
+    type: String,
+    default: ''
+  },
 })
 
 
 const projectStore = useProjectStore()
 const taskStore = useTasksStore()
-const {cookies} = useCookies();
+const { cookies } = useCookies();
 const toast = useToast()
 const projects = ref([])
+const componentModalRef = ref()
+
 
 // State
 const loading = ref(false)
 
 
 // Methods
-const fetchProjects = async()=>{
+const fetchProjects = async () => {
   try {
     const options = {
       pagination: paginate.pagination.value,
       query: paginate.query.value,
       search: filter.search.value,
+      hideClosed: true
     }
     const resp = await projectStore.fetchProjects(options)
     projects.value = resp.data.results
@@ -123,7 +128,7 @@ const fetchProjects = async()=>{
 }
 
 
-const updateProject = async (id)=>{
+const updateProject = async (id) => {
   try {
     const data = {
       id: props.taskId,
@@ -138,9 +143,27 @@ const updateProject = async (id)=>{
   }
 }
 
+const handleClick = (e) => {
+  if (e.target.innerHTML === props.btnTitle) return false
+
+  if (!componentModalRef.value === e.target) {
+    emit('close')
+  }
+}
+
+onMounted(() => {
+  window.addEventListener('click', handleClick)
+})
+onBeforeUnmount(() => {
+  window.removeEventListener('click', handleClick)
+})
+
 // Composables
-const paginate = usePaginate(fetchProjects,null)
-const filter = useFilter(projects,fetchProjects)
+const options = {
+  pageSize: config.PROJECT_POPUP
+}
+const paginate = usePaginate(fetchProjects, options)
+const filter = useFilter(projects, fetchProjects)
 
 fetchProjects()
 

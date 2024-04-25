@@ -1,128 +1,194 @@
 <template>
-  <div class="content mt-4">
-    <h2 class="font-bold text-xl block text-blueGray-700 mb-4">Comments</h2>
+  <div class="content mt-4" v-if="comments.length || showBtnResult">
+    <h2 class="font-semibold text-lg text-black-c block mb-3">Comments</h2>
 
-    <form v-if="!hideCreate" @submit="sendComment">
+    <form v-if="!hideCreate" @submit="sendComment($event)">
+      <template v-if="showCreateBtn">
+        <div v-if="!writeComment"
+             class="flex items-center gap-x-2 px-3 py-[6px] bg-white rounded-[8px] cursor-pointer w-[250px]"
+             @click="writeComment = true">
 
-      <button
-          v-if="!writeComment"
-          @click="writeComment = true"
-          class="bg-blueGray-800 text-white active:bg-blueGray-600 text-sm font-bold px-6 py-3 rounded shadow hover:shadow-lg outline-none focus:outline-none ease-linear transition-all duration-150"
-          type="submit"
-      >
-        Write Comment
-      </button>
-
-      <div class="w-full items-center gap-x-6" v-else>
-        <div class="w-[800px]">
-          <v-md-editor v-model="message" height="300px"></v-md-editor>
+          <PlusIcon :size="20"/>
+          <span class="text-sm text-black">Add comment</span>
         </div>
 
-        <div class="mt-3 flex gap-x-2">
-          <button
-              @click="sendComment"
-              class="bg-blueGray-800 text-white active:bg-blueGray-600 text-sm font-bold px-6 py-3 rounded shadow hover:shadow-lg outline-none focus:outline-none ease-linear transition-all duration-150"
-              type="submit"
-          >
-            Send
-          </button>
-          <button
-              @click="resetComment"
-              class="bg-blueGray-800 text-white active:bg-blueGray-600 text-sm font-bold px-6 py-3 rounded shadow hover:shadow-lg outline-none focus:outline-none ease-linear transition-all duration-150"
-              type="submit"
-          >
-            Close
-          </button>
+        <div class="w-full items-center gap-x-6" v-else>
+          <div class="w-full">
+            <v-md-editor
+                autofocus
+                :right-toolbar="'toc sync-scroll fullscreen'"
+                v-model="message"
+                :disabled-menus="[]"
+                @upload-image="handleUploadImage">
+              <h1>Hello</h1>
+            </v-md-editor>
+          </div>
+
+
+          <div class="mt-3 flex gap-x-2">
+            <Button
+                @on-click="sendComment"
+                :disabled="btnLoad"
+                type="submit"
+                label="Create"
+                size="medium"
+                version="yellow"
+            />
+            <Button
+                @on-click="resetComment"
+                type="submit"
+                label="Close"
+                size="medium"
+                version="green"
+            />
+          </div>
         </div>
-      </div>
+      </template>
+
+      <template v-if="!showCreateBtn && showBtnResult">
+        <div class="w-full items-center gap-x-6" >
+          <div class="w-full">
+            <v-md-editor
+                autofocus
+                :right-toolbar="'toc sync-scroll fullscreen'"
+                v-model="message"
+                :disabled-menus="[]"
+                @upload-image="handleUploadImage">
+              <h1>Hello</h1>
+            </v-md-editor>
+          </div>
+
+
+          <div class="mt-3 flex gap-x-2">
+            <Button
+                @on-click="sendComment"
+                :disabled="btnLoad"
+                type="submit"
+                label="Create"
+                size="medium"
+                version="yellow"
+            />
+            <Button
+                @on-click="resetComment"
+                type="submit"
+                label="Close"
+                size="medium"
+                version="green"
+            />
+          </div>
+        </div>
+      </template>
     </form>
     <span class="text-xs font-medium text-red-600" v-if="v$.message.$error"> {{
         v$.message.$errors[0].$message
       }} </span>
 
-    <div class="header flex flex-col md:flex-row items-baseline md:items-center justify-between mt-4 mb-4 gap-y-3">
-      <div class="relative w-full md:w-2/4">
-        <i class="fas fa-search mr-2 text-sm text-blueGray-300 absolute top-[12px] left-[8px]"/>
-        <input
-            v-model="filter.search.value"
-            type="text"
-            class="border-0 pl-8 pr-3 py-3 placeholder-blueGray-300 text-blueGray-600 bg-white rounded text-sm shadow focus:outline-none focus:ring w-full ease-linear transition-all duration-150"
-            placeholder="Search"
-        />
+    <div v-if="showSearch"
+         class="header flex flex-col md:flex-row items-baseline md:items-center justify-between mt-4 mb-4 gap-y-3">
+      <div class="relative w-full sm:w-[500px]">
+        <Input placeholder="Search" v-model:value="filter.search.value" leftIcon/>
       </div>
     </div>
 
-    <div class="comments mt-3">
-      <ul>
-        <li v-for="comment in comments" :key="comment.id" class="mb-4">
-          <div class="flex gap-x-2 items-start">
-             <span class="font-medium mr-3 flex items-center gap-x-2">
-              <i class="fas fa-user-circle text-blueGray-300 text-3xl"></i>
-            </span>
+    <div class="comments mt-5">
+      <ul >
+        <li v-for="comment in comments" :key="comment.id" class="mb-5">
+          <div class="">
+            <div class="flex mb-2">
+               <span class="bg-white mr-2 flex items-center px-[7px] py-[7px] rounded-full">
+                  <UserIcon/>
+               </span>
 
-            <div :class="{'w-full': editCommentsIds.includes(comment.id)}">
-              <div class="mb-2">
-                <div class="flex items-center">
-                  <b v-if="comment.author?.first_name || comment.author?.last_name" class="text-blueGray-600">{{
-                      comment.author?.first_name
-                    }} {{ comment.author?.last_name }}
-                  </b>
-                  <b v-else class="text-blueGray-600">{{ comment.author?.username }}</b>
-
-                  <span class="text-sm ml-2 text-blueGray-500">{{ convertDateTime(comment.created_at) }}</span>
+              <div class="flex items-center">
+                <div class="flex items-center gap-x-2">
+                   <span v-if="comment.author?.first_name || comment.author?.last_name"
+                         class="text-black-c text-sm font-semibold">{{
+                       comment.author?.first_name
+                     }} {{ comment.author?.last_name }}
+                   </span>
+                  <span class="text-black-c text-sm font-semibold cursor-pointer"
+                        @click="reply(comment)">(@{{ comment.author?.username }})</span>
                 </div>
 
-                <p class="text-sm text-blueGray-500">
-                  <span v-if="props.taskId">Task link: <router-link class="underline"
-                                                                    :to="`/dashboard/task/${props.taskId}`">{{
+                <span class="text-[11px] ml-2 text-light-c font-semibold">{{
+                    convertDateTime(comment.created_at)
+                  }}</span>
+              </div>
+            </div>
+
+            <div class="mb-2">
+              <p class="text-[11px] text-black-c">
+                  <span v-if="props.taskId && route.name !== 'Task Detail'" class="block">Task link: <router-link
+                      class="underline"
+                      :to="`/dashboard/task/${props.taskId}`">{{
                       taskName
                     }}</router-link></span>
-                  <span v-else-if="props.projectId">Project link: <router-link class="underline"
-                                                                               :to="`/dashboard/project/${props.projectId}`">{{
-                      projectName
-                    }}</router-link></span>
-                  <span v-else-if="comment.task?.id">Task link: <router-link class="underline"
-                                                                             :to="`/dashboard/task/${comment.task?.id}`">{{
-                      comment.task.title
-                    }}</router-link></span>
-                  <span v-else-if="comment.project?.id">Project link: <router-link class="underline"
-                                                                                   :to="`/dashboard/project/${comment.project?.id}`">{{
-                      comment.project.title
-                    }}</router-link></span>
-                </p>
-              </div>
+                <span v-else-if="comment.task?.id && route.name !== 'Task Detail'" class="block">Task link: <router-link
+                    class="underline"
+                    :to="`/dashboard/task/${comment.task?.id}`">{{
+                    comment.task.title
+                  }}</router-link></span>
 
-              <div class="bg-white rounded-[8px] shadow-lg">
+                <span v-if="comment.task?.project?.id && !['Project Detail','Task Detail'].includes(route.name)"
+                      class="block">Project link: <router-link
+                    class="underline"
+                    :to="`/dashboard/project/${comment.task?.project?.id}`">{{
+                    comment.task.project.title
+                  }}</router-link></span>
+
+
+                <span v-if="props.projectId && route.name !== 'Project Detail'" class="block">Project link: <router-link
+                    class="underline"
+                    :to="`/dashboard/project/${props.projectId}`">{{
+                    projectName
+                  }}</router-link></span>
+
+                <span v-else-if="comment.project?.id && !['Project Detail','Comments'].includes(route.name)"
+                      class="block">Project link: <router-link
+                    class="underline"
+                    :to="`/dashboard/project/${comment.project?.id}`">{{
+                    comment.project.title
+                  }}</router-link></span>
+              </p>
+            </div>
+
+            <div :class="{'w-full': editCommentsIds.includes(comment.id)}">
+              <div class="bg-white rounded-[10px]">
                 <v-md-editor v-if="editCommentsIds.includes(comment.id)" v-model="comment.content"
-                             height="300px"></v-md-editor>
+                             height="300px">
+                </v-md-editor>
 
-                <v-md-preview-html v-else
-                                   :html="xss.process(VMdEditor.vMdParser.themeConfig.markdownParser.render(comment.content))"
-                                   preview-class="vuepress-markdown-body"></v-md-preview-html>
+                <v-md-preview v-else :text="comment.content"></v-md-preview>
               </div>
 
-              <div v-if="isAuthOwner(comment)">
-                <div v-if="editCommentsIds.includes(comment.id)" class="flex gap-x-3 mt-2">
-                  <button
-                      @click="updateComment(comment)"
-                      class="bg-blueGray-800 text-white active:bg-blueGray-600 text-sm font-bold px-3 py-1 rounded shadow hover:shadow-lg outline-none focus:outline-none ease-linear transition-all duration-150"
-                      type="button"
-                  >
-                    Update
-                  </button>
-                  <button
-                      @click="resetEditComment(comment)"
-                      class="bg-blueGray-800 text-white active:bg-blueGray-600 text-sm font-bold px-3 py-1 rounded shadow hover:shadow-lg outline-none focus:outline-none ease-linear transition-all duration-150"
-                      type="button"
-                  >
-                    Reset
-                  </button>
-                </div>
-                <span class="underline text-blueGray-500 text-sm cursor-pointer"
-                      v-else
-                      @click="editComment(comment)">Edit</span>
-              </div>
+              <div class="flex gap-x-3 items-center mt-1">
+                <template v-if="isAuthOwner(comment)">
+                  <div v-if="editCommentsIds.includes(comment.id)" class="flex gap-x-3">
+                    <Button
+                        @on-click="updateComment(comment)"
+                        :disabled="btnLoad"
+                        label="Update"
+                        size="medium"
+                        version="yellow"
+                    />
+                    <Button
+                        @on-click="resetEditComment(comment)"
+                        :disabled="btnLoad"
+                        label="Reset"
+                        size="medium"
+                        version="green"
+                    />
+                  </div>
+                  <div v-else class="flex items-center gap-x-2">
+                    <span class="underline text-black-c text-xs cursor-pointer"
+                          @click="editComment(comment)">Edit</span>
 
+                    <span class="underline text-black-c text-xs cursor-pointer"
+                          @click="reply(comment)">Reply</span>
+                  </div>
+                </template>
+
+              </div>
             </div>
           </div>
         </li>
@@ -140,7 +206,7 @@
 
 <script setup>
 import Pagination from './../Pagination/Pagination.vue'
-import {computed, onMounted, onUnmounted, ref} from "vue";
+import {onMounted, onUnmounted, ref} from "vue";
 import {catchErrors} from "../../utils";
 import {convertDateTime} from "../../utils";
 import {useRoute, useRouter} from "vue-router";
@@ -150,10 +216,16 @@ import {useCommentsStore} from "../../store/comments";
 import {useToast} from "vue-toastification";
 import {useVuelidate} from '@vuelidate/core'
 import {required} from '@vuelidate/validators'
-import VMdEditor, {xss} from '@kangc/v-md-editor';
+import VMdEditor from '@kangc/v-md-editor';
 import {useCookies} from "vue3-cookies";
-
-
+import config from '../../config'
+import {watch} from "vue";
+import {useAttachmentsStore} from "../../store/attachments";
+import PlusIcon from "../Svg/PlusIcon.vue";
+import Button from "../Button/Button.vue"
+import UserIcon from "../Svg/UserIcon.vue";
+import Input from '../Input/Input.vue'
+const emit = defineEmits()
 const props = defineProps({
   projectId: {
     type: String,
@@ -179,6 +251,18 @@ const props = defineProps({
     type: Boolean,
     default: false
   },
+  showSearch: {
+    type: Boolean,
+    default: false
+  },
+  showCreateBtn: {
+    type: Boolean,
+    default: true
+  },
+  showBtnResult:{
+    type: Boolean,
+    default: false
+  }
 })
 
 // ValidationRules
@@ -187,11 +271,13 @@ const rules = {
 }
 
 const commentsStore = useCommentsStore()
+const attachmentsStore = useAttachmentsStore()
 const toast = useToast()
 const router = useRouter()
 const route = useRoute()
 const {cookies} = useCookies();
 
+const btnLoad = ref(false)
 const loading = ref(false)
 let writeComment = ref(false)
 const domain = ref(null)
@@ -203,9 +289,46 @@ let timer = null
 const v$ = useVuelidate(rules, {message})
 
 
+watch(editCommentsIds, (val) => {
+  if (val.length) stopTimer()
+  else startTimer()
+})
+
 // Methods
+const reply = (comment) => {
+  writeComment.value = true
+  message.value = `@${comment.author.username} `
+
+  const textarea = document.getElementsByTagName('textarea')
+  if (textarea) textarea[0].focus()
+}
+
 const editComment = (comment) => {
-  editCommentsIds.value.push(comment.id)
+  editCommentsIds.value = [...editCommentsIds.value, comment.id]
+}
+
+const handleUploadImage = async (event, insertImage, files) => {
+  try {
+    const file = files[0]
+    const formData = new FormData();
+    formData.append(file.name, file);
+
+    if (props.projectId) {
+      formData.append('project_id', props.projectId);
+    }
+    if (props.taskId) {
+      formData.append('task_id', props.taskId);
+    }
+
+    const resp = await attachmentsStore.uploadAttachments(formData)
+    if (resp.data.attachments[0].file_path) {
+      insertImage({
+        url: resp.data.attachments[0].file_path,
+      });
+    }
+  } catch (e) {
+    catchErrors(e)
+  }
 }
 
 const resetEditComment = (comment) => {
@@ -215,6 +338,7 @@ const resetEditComment = (comment) => {
 
 const updateComment = async (comment) => {
   try {
+    btnLoad.value = true
     const data = {
       id: comment.id,
       content: comment.content,
@@ -222,7 +346,7 @@ const updateComment = async (comment) => {
       task: props.taskId,
     }
     await commentsStore.updateComment(data)
-    await toast.success("Successfully comment updated");
+    await toast.success("Comment updated");
   } catch (e) {
     catchErrors(e)
   } finally {
@@ -231,9 +355,9 @@ const updateComment = async (comment) => {
 }
 
 const isAuthOwner = (comment) => {
-  if (!cookies.get('crowdsteer_user')) return ''
+  if (!cookies.get('task_focus_user')) return ''
 
-  const user = cookies.get('crowdsteer_user')
+  const user = cookies.get('task_focus_user')
   const commentOwnerId = comment.author.id
 
   return user.pk === commentOwnerId
@@ -258,6 +382,7 @@ const fetchComments = async (label = null) => {
     catchErrors(e)
   } finally {
     loading.value = false
+    btnLoad.value = false
   }
 }
 
@@ -265,6 +390,7 @@ const resetComment = () => {
   writeComment.value = false
   message.value = ''
   v$.value.$reset()
+  if (!props.showCreateBtn) emit('update:showBtnResult',false)
 }
 
 const toLink = (type) => {
@@ -273,26 +399,30 @@ const toLink = (type) => {
 }
 
 const sendComment = async (e) => {
-  e.preventDefault()
+  if (e) e.preventDefault()
 
   try {
     const isValid = await v$.value.$validate();
     if (isValid) {
+      btnLoad.value = true
       const data = {
         content: message.value,
         project: props.projectId,
         task: props.taskId,
       }
+
       await commentsStore.createComments(data)
-      await toast.success("Successfully comment created");
+      await toast.success("Comment created");
       message.value = ''
       v$.value.$reset()
+      if (!props.showCreateBtn) emit('update:showBtnResult',false)
       await fetchComments()
     }
   } catch (e) {
     catchErrors(e)
   } finally {
     writeComment.value = false
+    btnLoad.value = false
   }
 }
 
@@ -300,25 +430,31 @@ const sorting = (label) => {
   fetchComments(label)
 }
 
+const startTimer = () => {
+  timer = setInterval(() => {
+    fetchComments()
+  }, 15000)
+}
+
+const stopTimer = () => {
+  clearInterval(timer)
+  timer = null
+}
+
 onMounted(() => {
-  if (route.name === 'Task Detail') {
-    timer = setInterval(() => {
-      fetchComments()
-    }, 15000)
-  }
+  if (route.name === 'Task Detail') startTimer()
 
   const host = window.location.host
   domain.value = host.replace('www.', '')
 })
 
 onUnmounted(() => {
-  clearInterval(timer)
-  timer = null
+  stopTimer()
 });
 
 // Composables
 const options = {
-  pageSize: 6
+  pageSize: config.COMMENTS_PAGE_SIZE
 }
 const paginate = usePaginate(fetchComments, options)
 const filter = useFilter(comments, fetchComments)

@@ -4,7 +4,7 @@ import config from "../config"
 import {useCookies} from "vue3-cookies";
 
 const {cookies} = useCookies();
-const token = cookies.get('crowdsteer_token')
+const token = cookies.get('task_focus_token')
 if (token) {
     axios.defaults.headers.common['Authorization'] = `Token ${token}`
 }
@@ -32,6 +32,10 @@ export const useAttachmentsStore = defineStore('attachments', {
                     "Content-Type": "multipart/form-data",
                 },
             })
+        },
+
+        async deleteAttachments(payload) {
+            return await axios.delete(`${config.BASE_API_URL}/attachment/${payload.id}`)
         },
     },
 })
