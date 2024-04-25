@@ -1,6 +1,6 @@
 <template>
   <div class="content mt-4">
-    <h2 class="font-bold text-xl block text-blueGray-700 mb-4">Time Tracker</h2>
+    <h2 class="font-semibold text-lg text-black-c block mb-[10px]">Time Tracker</h2>
 
     <DataTable :headers="headers" @sorting="sorting">
       <template v-slot:tableBody>
@@ -15,7 +15,7 @@
         <template v-else>
           <tr v-if="!tasks.length">
             <td :colspan="headers.length">
-              <p class="flex text-center px-4 justify-center py-8 text-blueGray-500 font-medium">
+              <p class="flex text-center px-4 justify-center py-8 text-black-c font-medium">
                 No data found
               </p>
             </td>
@@ -37,8 +37,11 @@
                     }} {{ element.user?.last_name }}</span>
                   <span v-else>{{ element.user?.username }}</span>
                 </td>
-                <td class="border-t-0 px-3 align-middle border-l-0 border-r-0 text-xs whitespace-nowrap p-4" v-if="!taskId">
-                  <span v-if="element.task" class="cursor-pointer" @click="toLink(element.task)">{{ element.task.title }}</span>
+                <td class="border-t-0 px-3 align-middle border-l-0 border-r-0 text-xs whitespace-nowrap p-4"
+                    v-if="!taskId">
+                  <span v-if="element.task" class="cursor-pointer" @click="toLink(element.task)">{{
+                      element.task.title
+                    }}</span>
                   <span v-else>-</span>
                 </td>
                 <td class="border-t-0 px-3 align-middle border-l-0 border-r-0 text-xs whitespace-nowrap p-4">
@@ -48,20 +51,16 @@
                   {{ element.stopped_at ? convertDateTimezone(element.stopped_at) : '-' }}
                 </td>
                 <td class="border-t-0 px-3 align-middle border-l-0 border-r-0 text-xs whitespace-nowrap p-4"
-                    >
+                >
                   <span class="truncate block">
-                    {{convertHumanTime(element.total_time)}}
+                    {{ convertHumanTime(element.total_time) }}
                   </span>
                 </td>
-                <td v-if="canEdit" class="border-t-0 px-3 align-middle border-l-0 border-r-0 text-xs whitespace-nowrap p-4"
-                    >
-                  <button
-                      v-if="isOwner(element)"
-                      class="bg-blueGray-800 whitespace-nowrap text-white active:bg-blueGray-600 text-sm font-bold px-2 sm:px-4 py-2 rounded shadow hover:shadow-lg outline-none focus:outline-none ease-linear transition-all duration-150"
-                      type="button"
-                      @click="openModal(element)"
-                     > Edit
-                  </button>
+                <td v-if="canEdit"
+                    class="border-t-0 px-3 align-middle border-l-0 border-r-0 text-xs whitespace-nowrap p-4"
+                >
+                  <Button v-if="isOwner(element)" label="Edit" version="white" size="small"
+                          @on-click="openModal(element)"/>
                 </td>
               </tr>
             </template>
@@ -103,6 +102,8 @@ import {useFilter} from "../../composables/useFilter";
 import {convertHumanTime} from "../../utils";
 import TimeTrackerModal from '../Modals/TimeTrackerModal.vue'
 import {useCookies} from "vue3-cookies";
+import Button from "../Button/Button.vue";
+import DownloadIcon from "../Svg/DownloadIcon.vue";
 
 const props = defineProps({
   taskId: {
@@ -152,7 +153,7 @@ const headers = computed(() => {
 
 
 // Methods
-const isOwner = (element)=>{
+const isOwner = (element) => {
   if (!cookies.get('task_focus_user')) return ''
 
   const user = cookies.get('task_focus_user')
@@ -160,7 +161,7 @@ const isOwner = (element)=>{
   return element.user.id === user.pk
 }
 
-const openModal = (item)=>{
+const openModal = (item) => {
   current.value = item
   showEditModal.value = true
 }

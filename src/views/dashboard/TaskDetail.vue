@@ -1,131 +1,42 @@
 <template>
-  <div class="main-container">
-    <Loader v-if="loading"/>
+  <Loader v-if="loading"/>
 
-    <div v-else>
-      <div class="header flex flex-col md:flex-row justify-between gap-x-2 lg:gap-x-10 mb-10">
-        <div class="w-full ">
-          <div class="flex justify-between sm:justify-start gap-x-4 sm:gap-x-10 items-center mb-6">
-            <div :class="{'w-5/6 sm:w-3/4 md:w-3/6': isEditPanel.title}">
-              <h1 v-if="!isEditPanel.title" class="text-3xl font-bold text-blueGray-700 mb-1 cursor-pointer"
-                  @click="isEditPanel.title = true">{{ task?.title }}</h1>
-              <div v-else class="mb-2">
-                <input
-                    v-model="form.title"
-                    type="text"
-                    class=" border-0 px-3 py-3 placeholder-blueGray-300 text-blueGray-600 bg-white rounded text-sm shadow focus:outline-none focus:ring w-full ease-linear transition-all duration-150"
-                    placeholder="Project Title"
-                />
-                <span class="text-xs font-medium text-red-600" v-if="v$.title.$error"> {{
-                    v$.title.$errors[0].$message
-                  }} </span>
+  <div v-else class="flex flex-col sm:flex-row">
+    <div class="left-side pt-6">
+      <div>
+        <div class="main-container pb-8">
+          <div class="text-blueGray-500 description-panel mb-6" v-if="task.description">
+            <h2 class="font-semibold text-lg text-black-c block mb-3">Description</h2>
+            <b v-if="!task.description && !isEditPanel.description" class="cursor-pointer"
+               @click="isEditPanel.description = true">N/A</b>
+            <div v-else>
+              <div @click="isEditPanel.description = true"
+                   :class="[`${!isEditPanel.description ? 'flex w-full' : 'flex w-full'}`]">
+                <template v-if="!isEditPanel.description" class="w-full">
+                  <v-md-preview :text="task.description" class="cursor-pointer"></v-md-preview>
+                </template>
+
+                <div v-else class="w-full mt-[10px]">
+                  <v-md-editor v-model="form.description" height="350px" :disabled-menus="[]"
+                               @upload-image="handleUploadImage"></v-md-editor>
+                </div>
               </div>
             </div>
-
-            <div class="flex items-center gap-x-2" v-if="task?.project?.id">
-              <span class="text-sm text-blueGray-600 whitespace-nowrap">In project:</span>
-              <h2 class="text-lg sm:text-2xl font-bold text-blueGray-700 mb-1 cursor-pointer lg:whitespace-nowrap"
-                  @click="router.push(`/dashboard/project/${task.project.id}`)">
-                {{ task.project?.title }}</h2>
-            </div>
           </div>
 
-          <div class="actions mb-4 flex gap-x-1 sm:gap-x-4 flex-wrap">
-            <button
-                v-if="!task?.is_closed"
-                @click="toggleTask(currentTask?.id === task?.id ? 'stop' : 'work')"
-                :disabled="btnLoad"
-                :class="[currentTask?.id === task?.id ? 'bg-orange-400' : 'bg-blueGray-800']"
-                class="mt-2  whitespace-nowrap text-white active:bg-blueGray-600 text-sm font-bold px-2 sm:px-4 py-2 rounded shadow hover:shadow-lg outline-none focus:outline-none ease-linear transition-all duration-150"
-                type="button"
-            >
-              {{ currentTask?.id === task?.id ? 'Stop working on this task' : 'Work on this task' }}
-            </button>
-
-            <button
-                v-if="isAuthOwner && task.is_closed"
-                @click="uncloseTask"
-                :disabled="btnLoad"
-                class="mt-2 bg-blueGray-800 whitespace-nowrap text-white active:bg-blueGray-600 text-sm font-bold px-2 sm:px-4 py-2 rounded shadow hover:shadow-lg outline-none focus:outline-none ease-linear transition-all duration-150"
-                type="button"
-            >
-              Unclose task
-            </button>
-
-            <button
-                v-else-if="isAuthOwner"
-                @click="confirmModal = true"
-                class="mt-2 bg-orange-400 whitespace-nowrap text-white active:bg-blueGray-600 text-sm font-bold px-2 sm:px-4 py-2 rounded shadow hover:shadow-lg outline-none focus:outline-none ease-linear transition-all duration-150"
-                type="button"
-            >
-              Close task
-            </button>
-
-            <button
-                v-if="isAuthOwner || isAuthProjectOwner"
-                @click="showOwnersModal = true"
-                class="mt-2 bg-blueGray-800 whitespace-nowrap text-white active:bg-blueGray-600 text-sm font-bold px-2 sm:px-4 py-2 rounded shadow hover:shadow-lg outline-none focus:outline-none ease-linear transition-all duration-150"
-                type="button"
-            >Change Owner
-            </button>
-
-            <button
-                v-if="isAuthOwner"
-                @click="showModal = true"
-                class="mt-2 bg-blueGray-800 whitespace-nowrap text-white active:bg-blueGray-600 text-sm font-bold px-2 sm:px-4 py-2 rounded shadow hover:shadow-lg outline-none focus:outline-none ease-linear transition-all duration-150"
-                type="button"
-            >Change project
-            </button>
-
-            <button
-                v-if="isAuthOwner"
-                @click="showUsersModal = true"
-                class="mt-2 bg-blueGray-800 whitespace-nowrap text-white active:bg-blueGray-600 text-sm font-bold px-2 sm:px-4 py-2 rounded shadow hover:shadow-lg outline-none focus:outline-none ease-linear transition-all duration-150"
-                type="button"
-            >Manage Task Users
-            </button>
-
-            <button
-                v-if="isAuthOwner"
-                @click="showUsersQueueModal = true"
-                class="mt-2 bg-blueGray-800 whitespace-nowrap text-white active:bg-blueGray-600 text-sm font-bold px-2 sm:px-4 py-2 rounded shadow hover:shadow-lg outline-none focus:outline-none ease-linear transition-all duration-150"
-                type="button"
-            >Queue
-            </button>
-
-            <button
-                v-if="showBtn"
-                @click="updateMyQueue"
-                :disabled="btnLoad"
-                :class="[isAuthQueue ? 'bg-orange-400' : 'bg-blueGray-800']"
-                class="mt-2 whitespace-nowrap text-white active:bg-blueGray-600 text-sm font-bold px-2 sm:px-4 py-2 rounded shadow hover:shadow-lg outline-none focus:outline-none ease-linear transition-all duration-150"
-                type="button"
-            >
-              {{ !isAuthQueue ? 'Add to my queue' : 'Remove from my queue' }}
-            </button>
-
-            <button
-                @click="showReminderModal = true"
-                class="mt-2 bg-blueGray-800 whitespace-nowrap text-white active:bg-blueGray-600 text-sm font-bold px-2 sm:px-4 py-2 rounded shadow hover:shadow-lg outline-none focus:outline-none ease-linear transition-all duration-150"
-                type="button"
-            >Add Reminder
-            </button>
-
-            <button
-                @click="generateTag"
-                :disabled="btnLoad"
-                class="mt-2 bg-blueGray-800 whitespace-nowrap text-white active:bg-blueGray-600 text-sm font-bold px-2 sm:px-4 py-2 rounded shadow hover:shadow-lg outline-none focus:outline-none ease-linear transition-all duration-150"
-                type="button"
-            >Tag ID Generator
-            </button>
-          </div>
-
-          <div v-if="task?.is_closed" class="mb-4">
-            <p class="font-bold text-lg text-red-500">THIS TASK IS CLOSED</p>
+          <div>
+            <FormList
+                :block-name="blockName"
+                :key="keyList"
+                :task-id="task.id"
+                v-model="form.blocks"
+                @edit="isEditPanel.blocks = true"
+            />
           </div>
 
           <div class="mb-5" v-if="reminders?.length">
             <Reminders
+                :show-links="true"
                 :paginate="paginate"
                 :reminders="reminders"
                 :loading="loadingRem"
@@ -134,284 +45,429 @@
             />
           </div>
 
-          <div class="flex flex-col lg:flex-row lg:gap-x-20">
-            <div class="lg:w-1/2 order-1 lg:order-1">
-              <div class="mb-2 sm:mb-4">
-                <div class="flex gap-x-1">
-                  <span class="text-blueGray-500 whitespace-nowrap">Task Access: &nbsp;</span>
+          <div class="mb-10">
+            <NotesDataTable :showCreateBtn="false" v-model:showBtnResult="writeNote" :task-id="task.id"/>
+          </div>
 
-                  <ul class="flex gap-x-2 flex-wrap">
-                    <li class="text-blueGray-500 font-bold">
-                      {{ task.owner?.first_name }} {{
-                        task.owner?.last_name
-                      }}(owner){{ haveTaskAccess.length || haveProjectAccess.length ? ',' : '' }}
-                    </li>
+          <div class="mb-10">
+            <CommentsDataTable :showCreateBtn="false" v-model:showBtnResult="writeComment" :task-id="task.id"
+                               :task-name="task.title" :is-task="true"/>
+          </div>
 
-                    <li v-if="haveProjectAccess.length" v-for="(item,index) in haveProjectAccess" :key="item.user.id"
-                        class="text-blueGray-500 font-bold">
-                      {{ item.user.first_name }} {{ item.user.last_name }}<span class="text-blueGray-500 font-bold">(project)</span><span
-                        v-if="haveTaskAccessIds.length || index !== haveProjectAccess.length - 1">,</span>
-                    </li>
+          <div class="mb-10">
+            <AttachmentsDataTable :showCreateBtn="false" :task-id="task.id" :is-task="true" :key="updateKey"/>
+          </div>
 
-                    <li v-if="haveTaskAccess.length" v-for="(item,index) in haveTaskAccess" :key="item.user.id"
-                        class="text-blueGray-500 font-bold">
-                      {{ item.user.first_name }} {{ item.user.last_name }}<span
-                        class="text-blueGray-500 font-bold">(task)</span><span
-                        v-if="index !== haveTaskAccess.length - 1">,</span>
-                    </li>
-                  </ul>
-                </div>
-              </div>
+          <div v-if="showTimeTracker">
+            <TrackerDataTable :key="keyTracker" :task-id="task.id" :is-task="true" :can-edit="true"/>
+          </div>
 
-              <div class="mb-2 sm:mb-4">
-                <div class="text-blueGray-500">
-                  Responsible: &nbsp;
-                  <b class="cursor-pointer" @click="showResponsiblesModal = true">
-                    <span v-if="task.responsible?.first_name || task.responsible?.last_name"> {{
-                        task.responsible?.first_name
-                      }} {{ task.responsible?.last_name }}</span>
-                    <span v-else-if="task.responsible?.username"> {{ task.responsible?.username }}</span>
-                    <span v-else>N/A</span>
-                  </b>
-                </div>
-              </div>
+          <div v-if="showLogs">
+            <LogsDataTable :key="key" :task-id="task.id" :is-task="true"/>
+          </div>
 
-              <div class="text-blueGray-500 description-panel mb-2 sm:mb-4">
-                Description:
-                <b v-if="!task.description && !isEditPanel.description" class="cursor-pointer"
-                   @click="isEditPanel.description = true">N/A</b>
+          <ProjectsModal
+              :show-modal="showModal"
+              :project-id="task?.project?.id"
+              :task-id="task.id"
+              :btn-title="'Change project'"
+              @close="showModal = false"
+              @update="updateTaskShowData"
+          />
 
-                <div v-else>
-                  <div @click="isEditPanel.description = true"
-                       :class="[`${!isEditPanel.description ? 'inline-flex' : 'flex w-full'}`]">
-                    <template v-if="!isEditPanel.description" class="w-full">
-                      <v-md-preview :text="task.description" class="cursor-pointer"></v-md-preview>
-                    </template>
+          <UserTaskModal
+              :show-modal="showUsersModal"
+              :task="task"
+              :users="usersQueue"
+              :all-users="usersList"
+              :have-task-access="haveTaskAccess"
+              :have-task-access-ids="haveTaskAccessIds"
+              :btn-title="'Manage Task Users'"
+              @close="showUsersModal = false"
+              @update="updateTasks"
+          />
 
-                    <div v-else class="w-full mt-[10px]">
-                      <v-md-editor v-model="form.description" height="300px" :disabled-menus="[]"
-                                   @upload-image="handleUploadImage"></v-md-editor>
-                    </div>
+          <OwnersModal
+              :show-modal="showOwnersModal"
+              :task="task"
+              :users="usersList"
+              :have-task-access="haveTaskAccess"
+              :have-task-access-ids="haveTaskAccessIds"
+              :btn-title="'Change Owners'"
+              @close="showOwnersModal = false"
+              @update="updateTaskOwner"
+          />
+
+          <ResponsiblesModal
+              :show-modal="showResponsiblesModal"
+              :task="task"
+              :users="users"
+              :btn-title="'Change Owners'"
+              @close="showResponsiblesModal = false"
+              @update-users="fetchUsers"
+              @update="updateResponsibles"
+          />
+
+
+          <UserQueueModal
+              :show-modal="showUsersQueueModal"
+              :task="task"
+              :users="usersQueue"
+              :have-task-access="haveQueueAccess"
+              :have-task-access-ids="haveQueueAccessIds"
+              :btn-title="'Queue'"
+              @close="showUsersQueueModal = false"
+              @update="updateTasksQueue"
+          />
+
+          <ReminderModal
+              :show-modal="showReminderModal"
+              :task="task"
+              :users="usersQueue"
+              :btn-title="'Add Reminder'"
+              @close="showReminderModal = false"
+              @update="fetchReminders"
+          />
+
+          <ConfirmCloseModal
+              :show-modal="confirmModal"
+              @close="confirmModal = false"
+              @update="closeTask"
+          />
+        </div>
+      </div>
+    </div>
+
+    <div class="right-side bg-white">
+      <div class="right-side-content w-full bg-white py-6 px-[14px]">
+        <div class="flex flex-col mb-3 border-b border-light-bg-c">
+          <div class="flex gap-x-4 sm:gap-x-10 items-center flex-wrap pb-2" v-if="task?.project?.id">
+            <div class="flex items-center gap-x-2">
+              <span class="text-sm text-light-c whitespace-nowrap">In project:</span>
+              <h2 class="text-md font-semibold text-black-c cursor-pointer lg:whitespace-nowrap"
+                  @click="router.push(`/dashboard/project/${task.project.id}`)">
+                {{ task.project?.title }}</h2>
+            </div>
+          </div>
+
+          <div class="flex sm:items-center flex-wrap flex-col sm:flex-row pb-3"
+               :class="{'border-light-bg-c border-t pt-3': task?.project?.id}">
+            <!--            <h3 class="text-[34px] text-black-c pb-3 w-full text-center" v-if="currentTaskTotalTime">-->
+            <!--              {{ currentTaskTotalTime?.hours || '00' }}hs {{ currentTaskTotalTime?.minutes || "00" }}m-->
+            <!--            </h3>-->
+
+            <Button
+                v-if="isAuthOwner && task.is_closed"
+                class="w-full justify-center mb-2"
+                @on-click="uncloseTask"
+                label="Reopen Task"
+                size="medium"
+                version="green"
+            />
+
+            <Button
+                v-else-if="isAuthOwner"
+                class="w-full justify-center mb-2"
+                @on-click="confirmModal = true"
+                label="Close Task"
+                size="medium"
+                version="green"
+            />
+
+            <Button
+                class="w-full justify-center mb-2"
+                v-if="!task?.is_closed"
+                @on-click="toggleTask(currentTask?.id === task?.id ? 'stop' : 'work')"
+                :disabled="btnLoad"
+                :label="currentTask?.id === task?.id ? 'Stop working on this task' : 'Work on this task'"
+                version="yellow"
+                size="medium"
+            />
+
+            <div class="mt-2">
+              <div class="inline-flex items-center" v-if="!isEditPanel.progress">
+                <span class="inline-block text-light-c text-sm mr-2">Progress:</span>
+
+                <div class="cursor-pointer flex items-center">
+                  <div class="w-[180px] sm:w-[120px] h-2 bg-blueGray-200 rounded-md">
+                        <span class="progress block h-2 rounded-md flex items-center justify-center"
+                              :style="{width: `${task.progress || 0}%`, background: `${bgConvert(task.progress)}`}">
+                        </span>
                   </div>
                 </div>
 
-
+                <PencilSmallIcon class="cursor-pointer ml-1" @click="isEditPanel.progress = true"/>
               </div>
-
-              <FormList
-                  :key="keyList"
-                  :task-id="task.id"
-                  v-model="form.blocks"
-                  @edit="isEditPanel.blocks = true"
-              />
+              <div v-else class="w-[250px] range-slider">
+                <input type="range" min="0" max="100" step="1" v-model="form.progress" @input="updateSlider"
+                       :style="{backgroundSize: backgroundSize}">
+                <div class="data text-light-c text-sm">Progress: {{ form.progress }}/100</div>
+              </div>
             </div>
 
-            <div class="lg:w-1/2 order-2 lg:order-2 mt-3 lg:mt-0">
-              <div class="mb-2 sm:mb-4">
-                <div class="text-blueGray-500">
-                  <span class="w-[80px] inline-block">Tag:</span>
-                  <b class="cursor-pointer" v-if="!isEditPanel.tag" @click="isEditPanel.tag = true">
-                    <span v-if="!task.tag">N/A</span>
-                    <span v-else>{{ task.tag }}</span>
-                  </b>
+            <div class="flex items-center gap-x-1 mt-2">
+              <span class="text-sm text-light-c">Responsible:</span>
+              <div class="flex items-center gap-x-1">
+                        <span v-if="task.responsible?.first_name || task.responsible?.last_name"
+                              class="text-sm text-black-c font-semibold"> {{
+                            task.responsible?.first_name
+                          }} {{ task.responsible?.last_name }}
+                        </span>
+                <span v-else-if="task.responsible?.username"
+                      class="text-sm text-black-c font-semibold"> {{ task.responsible?.username }}</span>
+                <span v-else class="text-sm text-black-c font-semibold">N/A</span>
 
-                  <div v-else class="mb-2 w-80">
-                    <input
-                        v-model="form.tag"
-                        type="text"
-                        class="border-0 px-3 py-3 placeholder-blueGray-300 text-blueGray-600 bg-white rounded text-sm shadow focus:outline-none focus:ring w-full ease-linear transition-all duration-150"
-                        placeholder="Tag"
-                    />
-                  </div>
-                </div>
-              </div>
-
-              <div class="mb-2 sm:mb-4">
-                <div class="text-blueGray-500">
-                  <span class="w-[80px] inline-block">Est Hours:</span>
-                  <b class="cursor-pointer" v-if="!isEditPanel.estimated_work_hours"
-                     @click="isEditPanel.estimated_work_hours = true">
-                    <span v-if="!task.estimated_work_hours">N/A</span>
-                    <span v-else>{{ task.estimated_work_hours }}</span>
-                  </b>
-
-                  <div v-else class="mb-2 w-80">
-                    <input
-                        v-model="form.estimated_work_hours"
-                        type="number"
-                        patern="[0-9]"
-                        class="border-0 px-3 py-3 placeholder-blueGray-300 text-blueGray-600 bg-white rounded text-sm shadow focus:outline-none focus:ring w-full ease-linear transition-all duration-150"
-                        placeholder="Est Hours"
-                    />
-                  </div>
-                </div>
-              </div>
-
-              <div class="mb-2 sm:mb-4">
-                <div class="text-blueGray-500">
-                  <span class="w-[80px] inline-block">Status:</span>
-                  <b class="uppercase cursor-pointer" v-if="!isEditPanel.status"
-                     @click="isEditPanel.status = true">{{ task.status || 'N/A' }}
-                  </b>
-                  <div v-else class="mb-2 w-80">
-                    <select v-model="form.status" placeholder="Select User"
-                            class="border-0 px-3 py-3 placeholder-blueGray-300 text-blueGray-600 bg-white rounded text-sm shadow focus:outline-none focus:ring w-full ease-linear transition-all duration-150"
-                    >
-                      <option :value="item[0]" v-for="(item) in dictionary" :key="item[0]">{{ item[1] }}</option>
-                    </select>
-                  </div>
-                </div>
-
-              </div>
-
-              <div class="mb-2 sm:mb-4">
-
-
-                <div class="text-blueGray-500 flex items-center">
-                  <span class="w-[80px] inline-block">Urgent:</span>
-
-                  <Switch v-model:value="form.is_urgent"/>
-                </div>
-
-              </div>
-
-              <div class="mb-2 sm:mb-4">
-
-                <div class="text-blueGray-500">
-                  <span class="w-[80px] inline-block">Position:</span>
-                  <b class="uppercase cursor-pointer" v-if="!isEditPanel.position"
-                     @click="isEditPanel.position = true">{{ task.position || 'N/A' }}
-                  </b>
-                  <div v-else class="mb-2 w-80">
-                    <input
-                        v-model="form.position"
-                        type="number"
-                        class="border-0 px-3 py-3 placeholder-blueGray-300 text-blueGray-600 bg-white rounded text-sm shadow focus:outline-none focus:ring w-full ease-linear transition-all duration-150"
-                        placeholder="Position"
-                    />
-                  </div>
-                </div>
-
-              </div>
-
-              <div class="mb-2 sm:mb-4">
-                <div class="text-blueGray-500 inline-flex items-center" v-if="!isEditPanel.progress">
-                  <span class="w-[80px] inline-block">Progress:</span>
-
-                  <div @click="isEditPanel.progress = true" class="cursor-pointer flex items-center">
-                    <div class=" w-[150px] h-[18px] bg-blueGray-200 rounded-md">
-                  <span class="progress block h-[18px] rounded-md flex items-center justify-center"
-                        :style="{width: `${task.progress || 0}%`, background: `${bgConvert(task.progress)}`}">
-
-                     <span class="text-[#fff] text-sm font-semibold" v-if="task.progress > 15">{{
-                         task.progress || 0
-                       }}%</span>
-                  </span>
-                    </div>
-                  </div>
-                </div>
-                <div v-else class="mb-2 w-80 range-slider">
-                  <input type="range" min="0" max="100" step="1" v-model="form.progress" @input="updateSlider"
-                         :style="{backgroundSize: backgroundSize}">
-                  <div class="data text-blueGray-500">Progress: {{ form.progress }}/100</div>
-                </div>
+                <PencilSmallIcon class="cursor-pointer" @click="showResponsiblesModal = true"/>
               </div>
             </div>
           </div>
         </div>
+
+        <div class="flex flex-col lg:flex-row lg:gap-x-20">
+          <div class="w-full">
+            <div class="flex flex-col sm:flex-row sm:items-center flex-wrap gap-y-2 gap-x-12 mb-2">
+              <div class="flex items-center gap-x-1">
+                <span class="inline-block text-sm text-light-c">Tag:</span>
+                <div class="flex items-center gap-x-1" v-if="!isEditPanel.tag">
+                  <span v-if="!task.tag" class="text-sm text-black-c font-semibold">N/A</span>
+                  <span v-else class="text-sm text-black-c font-semibold">{{ task.tag }}</span>
+                  <PencilSmallIcon class="cursor-pointer" @click="isEditPanel.tag = true"/>
+                </div>
+
+                <input
+                    v-else
+                    v-model="form.tag"
+                    type="text"
+                    class="px-3 py-[5px] w-full sm:w-[150px] placeholder-[#797A7B] text-[#797A7B] bg-white border border-light-bg-c rounded-[6px] text-sm focus:outline-none focus:ring ease-linear transition-all duration-150"
+                    placeholder="Tag"
+                />
+              </div>
+
+              <div class="flex items-center gap-x-1">
+                <span class="inline-block text-sm text-light-c">Status:</span>
+                <div v-if="!isEditPanel.status"
+                     class="uppercase text-sm text-black-c font-semibold flex items-center gap-x-1">
+                  <span>{{ task.status || 'N/A' }}</span>
+                  <PencilSmallIcon class="cursor-pointer" @click="isEditPanel.status = true"/>
+                </div>
+                <select v-else v-model="form.status" placeholder="Select User"
+                        class="pl-3 pr-8 py-[5px] placeholder-[#797A7B] text-[#797A7B] bg-white border border-light-bg-c rounded-[6px] text-sm focus:outline-none focus:ring w-full ease-linear transition-all duration-150"
+                >
+                  <option :value="item[0]" v-for="(item) in dictionary" :key="item[0]">{{ item[1] }}</option>
+                </select>
+              </div>
+
+              <div class="flex items-center gap-x-1">
+                <span class="inline-block text-sm text-light-c">Position:</span>
+                <div v-if="!isEditPanel.position"
+                     class="uppercase cursor-pointer text-sm text-black-c font-semibold flex items-center gap-x-1">
+                  <span>{{ task.position || 'N/A' }}</span>
+                  <PencilSmallIcon class="cursor-pointer" @click="isEditPanel.position = true"/>
+                </div>
+                <input
+                    v-else
+                    v-model="form.position"
+                    type="number"
+                    class="px-3 py-[5px] w-full sm:w-[150px] placeholder-[#797A7B] text-[#797A7B] bg-white border border-light-bg-c rounded-[6px] text-sm focus:outline-none focus:ring ease-linear transition-all duration-150"
+                    placeholder="Position"
+                />
+              </div>
+
+              <div class="flex items-center gap-x-1">
+                <span class="inline-block text-sm text-light-c">Urgent:</span>
+
+                <Switch v-model:value="form.is_urgent"/>
+              </div>
+
+              <div class="flex gap-x-1 flex-wrap">
+                <span class="text-sm text-light-c whitespace-nowrap">Task Access:</span>
+
+                <ul class="flex gap-x-2 flex-wrap">
+                  <li class="text-sm text-black-c font-semibold">
+                    {{ task.owner?.first_name }} {{
+                      task.owner?.last_name
+                    }}(owner){{ haveTaskAccess.length || haveProjectAccess.length ? ',' : '' }}
+                  </li>
+
+                  <li v-if="haveProjectAccess.length" v-for="(item,index) in haveProjectAccess" :key="item.user.id"
+                      class="text-sm text-black-c font-semibold">
+                    {{ item.user.first_name }} {{ item.user.last_name }}<span
+                      class="text-sm text-black-c font-semibold">(project)</span><span
+                      v-if="haveTaskAccessIds.length || index !== haveProjectAccess.length - 1">,</span>
+                  </li>
+
+                  <li v-if="haveTaskAccess.length" v-for="(item,index) in haveTaskAccess" :key="item.user.id"
+                      class="text-sm text-black-c font-semibold">
+                    {{ item.user.first_name }} {{ item.user.last_name }}<span
+                      class="text-sm text-black-c font-semibold">(task)</span><span
+                      v-if="index !== haveTaskAccess.length - 1">,</span>
+                  </li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </div>
+
+
+        <div
+            class="actions mb-3 flex justify-between flex-col sm:flex-row gap-x-6 bg-white">
+
+          <div class="flex flex-wrap gap-1">
+            <Button
+                class="w-full justify-center"
+                v-if="isAuthOwner || isAuthProjectOwner"
+                @on-click="showOwnersModal = true"
+                label="Change Owner"
+                size="medium"
+                version="gray"
+                rounded
+            />
+            <Button
+                class="w-full justify-center"
+                v-if="isAuthOwner"
+                @on-click="showModal = true"
+                label="Change Project"
+                size="medium"
+                version="gray"
+                rounded
+            />
+            <Button
+                class="w-full justify-center"
+                v-if="isAuthOwner"
+                @on-click="showUsersModal = true"
+                label="Manage Task Users"
+                size="medium"
+                version="gray"
+                rounded
+            />
+            <Button
+                class="w-full justify-center"
+                v-if="isAuthOwner"
+                @on-click="showUsersQueueModal = true"
+                label="Queue"
+                size="medium"
+                version="gray"
+                rounded
+            />
+            <Button
+                class="w-full justify-center"
+                v-if="showBtn"
+                @on-click="updateMyQueue"
+                :label="!isAuthQueue ? 'Add to my queue' : 'Remove from my queue'"
+                size="medium"
+                :disabled="btnLoad"
+                version="gray"
+                rounded
+            />
+            <Button
+                class="w-full justify-center"
+                @on-click="showReminderModal = true"
+                label="Add Reminder"
+                size="medium"
+                version="gray"
+                rounded
+            />
+            <Button
+                class="w-full justify-center"
+                @on-click="generateTag"
+                :disabled="btnLoad"
+                label="Tag ID Generator"
+                size="medium"
+                version="gray"
+                rounded
+            />
+
+            <Button
+                class="w-full justify-center"
+                @on-click="showTimeTracker = !showTimeTracker"
+                :label="showTimeTracker ? 'Hide time tracking' : 'Show time tracking'"
+                size="medium"
+                version="gray"
+                rounded
+            />
+
+            <Button
+                class="w-full justify-center"
+                @on-click="showLogs = !showLogs"
+                :label="showLogs ? 'Hide logs' : 'Show logs'"
+                size="medium"
+                version="gray"
+                rounded
+            />
+          </div>
+        </div>
+
+        <div class="flex align-center mt-4 flex-wrap">
+          <div class="flex gap-x-4 gap-y-2 flex align-center flex-wrap">
+            <div
+                class="w-full border border-light-bg-c bg-white rounded-[6px] px-3 py-2 h-8 flex items-center gap-x-2 cursor-pointer"
+                @click="addNewForm('markdown')">
+              <MarkdownIcon/>
+              <span class="tooltip-text text-[13px] font-semibold text-black-c">Create markdown</span>
+            </div>
+
+            <div
+                class="w-full border border-light-bg-c bg-white rounded-[6px] px-3 py-2 h-8 flex items-center gap-x-2 cursor-pointer"
+                @click="addNewForm('checklist')">
+              <ChecklistIcon/>
+              <span class="tooltip-text text-[13px] font-semibold text-black-c">Create checklist</span>
+            </div>
+
+            <div
+                class="w-full border border-light-bg-c bg-white rounded-[6px] px-3 py-2 h-8 flex items-center gap-x-2 cursor-pointer relative">
+              <div class="flex items-center gap-x-2 rounded-[8px] cursor-pointer">
+                <ImageIcon/>
+                <span class="tooltip-text text-[13px] font-semibold text-black-c">Add image</span>
+              </div>
+
+              <div class="absolute h-8 top-0 w-[90%]">
+                <input type="file" @change="saveImageFiles" class="opacity-0 cursor-pointer w-[200px]">
+              </div>
+            </div>
+
+            <div
+                class="w-full border border-light-bg-c bg-white rounded-[6px] px-3 py-2 h-8 flex items-center gap-x-2 cursor-pointer"
+                @click="writeComment = true">
+
+              <PlusIcon/>
+              <span class="tooltip-text text-[13px] font-semibold text-black-c">Add comment</span>
+            </div>
+            <div
+                class="w-full border border-light-bg-c bg-white rounded-[6px] px-3 py-2 h-8 flex items-center gap-x-2 cursor-pointer"
+                @click="writeNote = true">
+
+              <NotesIcon/>
+              <span class="tooltip-text text-[13px] font-semibold text-black-c">Add private note</span>
+            </div>
+
+
+            <div
+                class="w-full border border-light-bg-c bg-white rounded-[6px] px-3 py-2 h-8 flex items-center gap-x-2 cursor-pointer relative">
+              <div class="flex items-center gap-x-2 rounded-[8px] cursor-pointer">
+                <PaperClipIcon/>
+                <span class="tooltip-text text-[13px] font-semibold text-black-c">Add attachments</span>
+              </div>
+
+              <div class="absolute h-8 top-0 w-[90%]">
+                <Dropzone
+                    :key="updateKey"
+                    :maxFiles="Number(10000000000)"
+                    :maxFileSize="200000000"
+                    ref="dropZoneRef"
+                    :uploadOnDrop="true"
+                    :multipleUpload="true"
+                    @sending="saveFiles"
+                    :parallelUpload="6"
+                />
+              </div>
+            </div>
+
+          </div>
+        </div>
       </div>
-
-      <div class="mb-10">
-        <AttachmentsDataTable :task-id="task.id" :is-task="true"/>
-      </div>
-
-      <div class="mb-10">
-        <NotesDataTable :task-id="task.id" />
-      </div>
-
-      <div class="mb-10">
-        <CommentsDataTable :task-id="task.id" :task-name="task.title" :is-task="true"/>
-      </div>
-
-      <div>
-        <TrackerDataTable :key="keyTracker" :task-id="task.id" :is-task="true" :can-edit="true"/>
-      </div>
-
-      <div>
-        <LogsDataTable :key="key" :task-id="task.id" :is-task="true"/>
-      </div>
-
-      <ProjectsModal
-          :show-modal="showModal"
-          :project-id="task?.project?.id"
-          :task-id="task.id"
-          :btn-title="'Change project'"
-          @close="showModal = false"
-          @update="updateTaskShowData"
-      />
-
-      <UserTaskModal
-          :show-modal="showUsersModal"
-          :task="task"
-          :users="usersQueue"
-          :all-users="usersList"
-          :have-task-access="haveTaskAccess"
-          :have-task-access-ids="haveTaskAccessIds"
-          :btn-title="'Manage Task Users'"
-          @close="showUsersModal = false"
-          @update="updateTasks"
-      />
-
-      <OwnersModal
-          :show-modal="showOwnersModal"
-          :task="task"
-          :users="usersList"
-          :have-task-access="haveTaskAccess"
-          :have-task-access-ids="haveTaskAccessIds"
-          :btn-title="'Change Owners'"
-          @close="showOwnersModal = false"
-          @update="updateTaskOwner"
-      />
-
-      <ResponsiblesModal
-          :show-modal="showResponsiblesModal"
-          :task="task"
-          :users="users"
-          :btn-title="'Change Owners'"
-          @close="showResponsiblesModal = false"
-          @update-users="fetchUsers"
-          @update="updateResponsibles"
-      />
-
-
-      <UserQueueModal
-          :show-modal="showUsersQueueModal"
-          :task="task"
-          :users="usersQueue"
-          :have-task-access="haveQueueAccess"
-          :have-task-access-ids="haveQueueAccessIds"
-          :btn-title="'Queue'"
-          @close="showUsersQueueModal = false"
-          @update="updateTasksQueue"
-      />
-
-      <ReminderModal
-          :show-modal="showReminderModal"
-          :task="task"
-          :users="usersQueue"
-          :btn-title="'Add Reminder'"
-          @close="showReminderModal = false"
-          @update="fetchReminders"
-      />
-
-
-      <ConfirmCloseModal
-          :show-modal="confirmModal"
-          @close="confirmModal = false"
-          @update="closeTask"
-      />
     </div>
   </div>
+
 </template>
 
 <script setup>
@@ -430,7 +486,6 @@ import {useToast} from "vue-toastification";
 import {useUserStore} from "../../store/user";
 import {useCookies} from "vue3-cookies";
 import UserTaskModal from "../../components/Modals/UserTaskModal.vue";
-import ConfirmCloseModal from "../../components/Modals/ConfirmCloseModal.vue";
 import VMdEditor from '@kangc/v-md-editor';
 import {useProjectStore} from "../../store/project";
 import UserQueueModal from "../../components/Modals/UserQueueModal.vue";
@@ -447,6 +502,16 @@ import Switch from '../../components/Switch/Switch.vue'
 import ResponsiblesModal from './../../components/Modals/ResponsiblesModal.vue'
 import FormList from './../../components/FormList/FormList.vue'
 import NotesDataTable from "../../components/Table/NotesDataTable.vue"
+import Button from "../../components/Button/Button.vue";
+import PencilSmallIcon from "../../components/Svg/PencilSmallIcon.vue";
+import MarkdownIcon from "../../components/Svg/MarkdownIcon.vue";
+import ImageIcon from "../../components/Svg/ImageIcon.vue";
+import ChecklistIcon from "../../components/Svg/ChecklistIcon.vue";
+import PlusIcon from "../../components/Svg/PlusIcon.vue"
+import NotesIcon from "../../components/Svg/NotesIcon.vue"
+import PaperClipIcon from "../../components/Svg/PaperClipIcon.vue";
+import ConfirmCloseModal from './../../components/Modals/ConfirmCloseModal.vue'
+import Dropzone from 'dropzone-vue';
 
 // ValidationRules
 const rules = {
@@ -503,10 +568,11 @@ let showUsersModal = ref(false)
 let showUsersQueueModal = ref(false)
 let showResponsiblesModal = ref(false)
 let showOwnersModal = ref(false)
-let confirmModal = ref(false)
 let toggleActive = ref(false)
 let firstLoad = ref(false)
+const blockName = ref('')
 const task = ref(null)
+const currentTaskTotalTime = ref(null)
 const currentTask = ref(null)
 const key = ref(0)
 const keyTracker = ref(0)
@@ -537,6 +603,12 @@ const form = ref({
   position: '',
   blocks: [],
 })
+const writeComment = ref(false)
+const writeNote = ref(false)
+const showLogs = ref(false)
+const showTimeTracker = ref(false)
+let confirmModal = ref(false)
+let updateKey = ref(0)
 
 const v$ = useVuelidate(rules, form)
 
@@ -593,11 +665,36 @@ watch(() => form.value.is_urgent, (newValue, oldValue) => {
 })
 
 // Methods
+const closeTask = async (notes) => {
+  try {
+    const data = {
+      id: task.value.id,
+      closing_message: notes
+    }
+
+    const resp = await taskStore.closeTask(data)
+    confirmModal.value = false
+    await toast.success(resp.data.message);
+    if (task.value.project?.id) {
+      return await router.push(`/dashboard/project/${task.value.project.id}`)
+    }
+    await router.push(`/dashboard`)
+  } catch (e) {
+    catchErrors(e)
+  }
+}
+
+const addNewForm = (name) => {
+  blockName.value = name
+}
+
 const bgConvert = (progress) => {
-  if (progress < 25) return '#ACDF87'
-  if (progress < 50) return '#68BB59'
-  if (progress < 75) return '#5d9410'
-  if (progress >= 75) return '#3b831c'
+  return '#349C91'
+
+  // if (progress < 25) return '#349C91'
+  // if (progress < 50) return '#349C91'
+  // if (progress < 75) return '#349C91'
+  // if (progress >= 75) return '#349C91'
 }
 
 const generateTag = () => {
@@ -614,7 +711,7 @@ const handleUploadImage = async (event, insertImage, files) => {
     const formData = new FormData();
     formData.append(file.name, file);
 
-    if (task.value.project.id) {
+    if (task.value.project?.id) {
       formData.append('project_id', task.value.project.id);
     }
     if (task.value.id) {
@@ -738,38 +835,6 @@ const toggleTask = async (type) => {
   }
 }
 
-const closeTask = async (notes) => {
-  try {
-    const data = {
-      id: task.value.id,
-      closing_message: notes
-    }
-
-    const resp = await taskStore.closeTask(data)
-    confirmModal.value = false
-    await toast.success(resp.data.message);
-    if (task.value.project?.id) {
-      return await router.push(`/dashboard/project/${task.value.project.id}`)
-    }
-    await router.push(`/dashboard`)
-  } catch (e) {
-    catchErrors(e)
-  }
-}
-
-const uncloseTask = async () => {
-  try {
-    btnLoad.value = true
-    const resp = await taskStore.unCloseTask({id: task.value.id})
-    await toast.success(resp.data.message);
-    await fetchTask()
-  } catch (e) {
-    catchErrors(e)
-  } finally {
-    btnLoad.value = false
-  }
-}
-
 const fetchTask = async (noLoad = false) => {
   try {
     const id = route.params.id
@@ -785,6 +850,8 @@ const fetchTask = async (noLoad = false) => {
       if (resp.data.responsible?.id) form.value.user = resp.data.responsible.id
       if (resp.data.responsible?.id) form.value.owner = resp.data.responsible.id
       backgroundSize.value = `${resp.data.progress || 0}% 100%`
+
+      await fetchTaskTotalTime()
     }
 
   } catch (e) {
@@ -921,9 +988,9 @@ const fetchUsers = async () => {
 
     usersQueue.value = tempArr
 
-    // if (task.value?.owner?.id !== task.value?.project?.owner?.id && task.value?.project?.owner?.id) {
-    //   users.value.push(task.value?.project?.owner)
-    // }
+// if (task.value?.owner?.id !== task.value?.project?.owner?.id && task.value?.project?.owner?.id) {
+//   users.value.push(task.value?.project?.owner)
+// }
 
     usersList.value = resp.data.results.filter((item) => item.id !== task.value?.owner?.id)
   } catch (e) {
@@ -978,6 +1045,17 @@ const fetchProjectAccess = async () => {
   }
 }
 
+const uncloseTask = async () => {
+  try {
+    const resp = await taskStore.unCloseTask({id: task.value.id})
+    await taskStore.fetchTaskById({id: task.value.id})
+    await toast.success(resp.data.message);
+    await fetchTask()
+  } catch (e) {
+    catchErrors(e)
+  }
+}
+
 const fetchQueueAccess = async () => {
   try {
     const id = route.params.id
@@ -992,6 +1070,15 @@ const fetchQueueAccess = async () => {
       haveQueueAccess.value = list
       haveQueueAccessIds.value = ids
     }
+  } catch (e) {
+    catchErrors(e)
+  }
+}
+
+const fetchTaskTotalTime = async () => {
+  try {
+    const resp = await taskStore.fetchTaskTime({id: task.value.id})
+    currentTaskTotalTime.value = resp.data.total_time
   } catch (e) {
     catchErrors(e)
   }
@@ -1028,6 +1115,24 @@ const fetchReminders = async () => {
   }
 }
 
+const saveData = async (e) => {
+  await updateTaskTitle(e.target.innerHTML)
+}
+
+const updateTaskTitle = async (title) => {
+  try {
+    const data = {
+      id: task.value.id,
+      title: title,
+    }
+
+    await taskStore.updateTask(data)
+    await toast.success("Task title updated");
+  } catch (e) {
+    catchErrors(e)
+  }
+}
+
 const reminderCheck = (date) => {
   const isToday = moment(0, "HH").diff(date, "days") >= 0
   const isTmr = moment(0, "HH").diff(date, "days") === -1
@@ -1044,6 +1149,62 @@ const routeLeave = (e) => {
   if (userStore.showPanel.show) return (e.returnValue = "");
 }
 
+const saveImageFiles = async (e) => {
+  e.preventDefault()
+  try {
+    const files = e.target.files
+    const formData = new FormData();
+    for (var i = 0; i < files.length; i++) {
+      formData.append(files[i].name, files[i]);
+    }
+
+    if (task.value.project?.id) {
+      formData.append('project_id', task.value.project.id);
+    }
+    if (task.value.id) {
+      formData.append('task_id', task.value.id);
+    }
+
+    const resp = await attachmentStore.uploadAttachments(formData)
+    if (resp.data.attachments.length) {
+      updateKey.value += 1
+      toast.success("Attachment uploaded");
+      const obj = {
+        type: 'image',
+        path: resp.data.attachments[0].file_path,
+      }
+      form.value.blocks.push(obj)
+    }
+  } catch (e) {
+    catchErrors(e)
+  }
+}
+
+const saveFiles = async (e) => {
+  try {
+    const formData = new FormData();
+    for (var i = 0; i < e.length; i++) {
+      formData.append(e[i].name, e[i]);
+    }
+
+    if (task.value.project?.id) {
+      formData.append('project_id', task.value.project.id);
+    }
+    if (task.value.id) {
+      formData.append('task_id', task.value.id);
+    }
+
+    const resp = await attachmentStore.uploadAttachments(formData)
+    if (resp.data.attachments.length) {
+      updateKey.value += 1
+      toast.success("Attachment uploaded");
+    }
+
+  } catch (e) {
+    catchErrors(e)
+  }
+}
+
 onMounted(() => {
   window.addEventListener('beforeunload', routeLeave)
 
@@ -1055,6 +1216,8 @@ onMounted(() => {
     fetchProjectAccess()
     fetchTaskAccess()
     fetchQueueAccess()
+
+    if (form.value.blocks?.length === 0) addNewForm('markdown')
   }, 600)
 
   setTimeout(() => {
@@ -1080,3 +1243,46 @@ fetchDictionary()
 fetchCurrentTask()
 fetchReminders()
 </script>
+
+<style scoped>
+.left-side {
+  width: calc(100% - 252px);
+}
+
+.right-side {
+  width: 252px;
+}
+
+.right-side > div {
+  position: sticky;
+  top: 91px;
+}
+
+@media (max-width: 767px) {
+  .right-side > div {
+    top: 75px;
+    z-index: 1;
+  }
+}
+
+@media (max-width: 600px) {
+  .right-side {
+    order: 1;
+    width: 100%;
+  }
+
+  .right-side > div {
+    position: static;
+  }
+
+  .left-side {
+    width: 100%;
+    order: 2
+  }
+}
+
+.right-side-content {
+  height: calc(100vh - 91px);
+  overflow-y: scroll;
+}
+</style>

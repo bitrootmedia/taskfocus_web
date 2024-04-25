@@ -5,42 +5,41 @@
       <!--content-->
       <div class="border-0 rounded-lg shadow-lg relative flex flex-col w-full bg-white outline-none focus:outline-none">
         <!--header-->
-        <div class="flex items-center justify-between p-5 border-b border-solid border-blueGray-200 rounded-t">
-          <h3 class="text-3xl font-semibold">
-            Manage Task Access
-          </h3>
+        <div class="py-3">
+          <div class="flex items-center justify-between rounded-t p-3 border-b border-light-bg-c">
+            <h3 class="text-[22px] text-black-c font-semibold">
+              Manage Task Access
+            </h3>
 
-          <div>
-            <span class="cursor-pointer" @click="emit('close')">
-               <i class="fas fa-window-close mr-2 text-3xl text-blueGray-400"/>
-            </span>
+            <CloseBlackIcon class="cursor-pointer" @click="emit('close')"/>
           </div>
         </div>
+
         <!--body-->
-        <div class="relative p-6 flex-auto">
+        <div class="relative p-3 flex-auto">
           <Loader v-if="loading"/>
 
           <div v-else class="content">
-            <button
-                class="active:bg-blueGray-600 text-sm font-bold px-3 py-1 rounded shadow hover:shadow-lg outline-none focus:outline-none ease-linear transition-all duration-150"
-                type="button"
-                @click="showAll = !showAll"
-            >
-              {{showAll ? 'Hide all users' : 'Show all users'}}
-            </button>
+            <div class="mb-3 flex justify-end">
+              <Button
+                  @on-click="showAll = !showAll"
+                  :label="showAll ? 'Hide all users' : 'Show all users'"
+                  version="white"
+                  size="small"
+              />
+            </div>
 
             <ul>
-              <li v-for="user in listOfUsers" :key="user.id" class="flex justify-between items-center gap-x-1 my-3">
-                <span class="text-lg text-blueGray-500 font-medium">{{ user.first_name }} {{ user.last_name }}</span>
-                <button
-                    :class="{'bg-red-600': haveTaskAccessIds.includes(user.id), 'bg-emerald-600':!haveTaskAccessIds.includes(user.id)}"
-                    class="text-white active:bg-blueGray-600 text-sm font-bold px-3 py-1 rounded shadow hover:shadow-lg outline-none focus:outline-none ease-linear transition-all duration-150"
-                    type="button"
+              <li v-for="user in listOfUsers" :key="user.id" class="flex justify-between items-center gap-x-1 mb-2">
+                <span class="text-[13px] text-light-c font-medium" v-if="user.first_name || user.last_name">{{ user.first_name }} {{ user.last_name }}</span>
+                <span class="text-[13px] text-light-c font-medium" v-else>{{ user.username }}</span>
+                <Button
+                    @on-click="haveTaskAccessIds.includes(user.id) ? removeUser(user) : assignUser(user)"
+                    :label="haveTaskAccessIds.includes(user.id) ? 'Remove' : 'Assign'"
                     :disabled="btnLoad"
-                    @click="haveTaskAccessIds.includes(user.id) ? removeUser(user) : assignUser(user)"
-                >
-                  {{ haveTaskAccessIds.includes(user.id) ? 'Remove' : 'Assign' }}
-                </button>
+                    :version="haveTaskAccessIds.includes(user.id) ? 'red-small' : 'green-small'"
+                    size="small"
+                />
               </li>
             </ul>
           </div>
@@ -58,8 +57,10 @@ import Loader from "./../../components/Loader/Loader.vue"
 import {useTasksStore} from "../../store/tasks";
 import {useCookies} from "vue3-cookies";
 import {useToast} from "vue-toastification";
+import CloseBlackIcon from "../Svg/CloseBlackIcon.vue";
+import Button from '../Button/Button.vue'
 
-const emit = defineEmits(['close','update'])
+const emit = defineEmits(['close', 'update'])
 const props = defineProps({
   showModal: {
     type: Boolean,
@@ -103,7 +104,7 @@ const btnLoad = ref(false)
 const loading = ref(false)
 const componentModalRef = ref()
 
-const listOfUsers = computed(()=>{
+const listOfUsers = computed(() => {
   return showAll.value ? props.allUsers : props.users
 })
 
@@ -121,21 +122,21 @@ const assignUser = async (user) => {
     emit('update')
   } catch (e) {
     catchErrors(e)
-  }finally {
+  } finally {
     btnLoad.value = false
   }
 }
 
-const removeUser = async (user)=>{
+const removeUser = async (user) => {
   try {
     btnLoad.value = true
-    const findItem = props.haveTaskAccess.find((item)=>item.user.id === user.id)
+    const findItem = props.haveTaskAccess.find((item) => item.user.id === user.id)
     await taskStore.removeUserFromTask({id: findItem.id})
     toast.success("Successfully removed");
     emit('update')
   } catch (e) {
     catchErrors(e)
-  }finally {
+  } finally {
     btnLoad.value = false
   }
 }

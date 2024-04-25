@@ -1,22 +1,7 @@
 <template>
-  <div class="flex gap-x-4 mb-8">
-    <button type="button" class="text-white mr-6 cursor-pointer hover-text" @click="addNewForm('markdown')">
-      <i class="fas fa-microchip text-md text-blueGray-800"></i>
-      <span class="tooltip-text">Create markdown!</span>
-    </button>
-    <button type="button" class="text-white mr-6 cursor-pointer hover-text" @click="addNewForm('image')">
-      <i class="fas fa-file text-md text-blueGray-800"></i>
-      <span class="tooltip-text">Create image!</span>
-    </button>
-    <button type="button" class="text-white mr-6 cursor-pointer hover-text" @click="addNewForm('checklist')">
-      <i class="fas fa-sitemap text-md text-blueGray-800"></i>
-      <span class="tooltip-text">Create checklist!</span>
-    </button>
-  </div>
-
   <div class="form">
     <div class="">
-      <div class="form-version mb-8" v-if="formList.length">
+      <div class="form-version" v-if="formList.length">
         <draggable
             :list="formList"
             item-key="name"
@@ -28,110 +13,118 @@
           <template #item="{ element, index }">
             <div class="list-group-item flex items-start gap-x-4 mb-6 description-panel">
               <button type="button" class="text-white cursor-pointer handle">
-                <i class="fas fa-grip-vertical text-xl text-blueGray-400"></i>
+                <DragIcon />
               </button>
 
               <template v-if="element.type === 'markdown'">
-                <v-md-editor v-if="editLists[index]" v-model="element.content" height="230px"
-                             :disabled-menus="[]"/>
+                <div class="form-group bg-white rounded-[10px] w-full">
+                  <div class="content p-[14px] flex justify-between items-start gap-x-4">
+                    <div class="w-full">
+                      <v-md-editor v-if="editLists[index]" v-model="element.content" height="270px"
+                                   :disabled-menus="[]"/>
 
-                <v-md-preview v-else :text="element.content" class="cursor-pointer"></v-md-preview>
+                      <v-md-preview v-else :text="element.content"></v-md-preview>
+                    </div>
+
+                    <div class="actions flex gap-x-1 items-center">
+                      <EditIcon class="cursor-pointer" @click="editItem(index)"/>
+                      <TrashIcon class="cursor-pointer" @click="removeFormItem(index)"></TrashIcon>
+                    </div>
+                  </div>
+                </div>
               </template>
 
               <template v-else-if="element.type === 'image'">
-                <div v-if="editLists[index]" class="cursor-pointer w-full md:w-[500px] mb-4">
-                  <Dropzone
-                      :maxFiles="Number(1)"
-                      :maxFileSize="200000000"
-                      ref="dropZoneRef"
-                      :uploadOnDrop="true"
-                      :multipleUpload="false"
-                      :multiple="1"
-                      @sending="saveFiles($event,index)"
-                      :parallelUpload="1"
-                  />
-                  <input
-                      v-model="element.path"
-                      disabled
-                      type="text"
-                      class="mt-2 border-0 px-3 py-3 placeholder-blueGray-300 cursor-not-allowed text-blueGray-600 bg-white rounded text-sm shadow focus:outline-none focus:ring w-full ease-linear transition-all duration-150"
-                      placeholder="Image Path"
-                  />
+                <div class="form-group bg-white rounded-[10px] w-full">
+                  <div class="content p-[14px] flex justify-between items-start gap-x-4">
+                    <div>
+                      <div v-if="editLists[index]" class="cursor-pointer w-full md:w-[500px] mb-4">
+                        <input
+                            v-model="element.path"
+                            disabled
+                            type="text"
+                            class="mt-2 border-0 px-3 py-3 placeholder-blueGray-300 cursor-not-allowed text-blueGray-600 bg-white rounded text-sm shadow focus:outline-none focus:ring w-full ease-linear transition-all duration-150"
+                            placeholder="Image Path"
+                        />
+                      </div>
+                      <img v-else :src="element.path" alt="upload-img" class="w-[120px] h-[120px] object-cover">
+                    </div>
+
+                    <div class="actions flex gap-x-1 items-center">
+                      <EditIcon class="cursor-pointer" @click="editItem(index)"/>
+                      <TrashIcon class="cursor-pointer" @click="removeFormItem(index)"></TrashIcon>
+                    </div>
+                  </div>
                 </div>
-
-                <img v-else :src="element.path" alt="upload-img" class="w-[250px] h-[150px] object-cover">
               </template>
-
 
               <template v-else-if="element.type === 'checklist'">
-                <form v-if="editLists[index]" class="form-group mb-4" @keypress="pressEnter($event,index)" :id="`check-${index}`">
-                  <div class="flex gap-x-2 items-start">
-                    <input
-                        :id="`title-input-${index}`"
-                        v-model="element.title"
-                        type="text"
-                        class="border-0 px-3 py-3 placeholder-blueGray-300 text-blueGray-600 bg-white rounded text-sm shadow focus:outline-none focus:ring w-full ease-linear transition-all duration-150"
-                        placeholder="Checklist Title"
-                    />
-                  </div>
+                <div class="form-group bg-white rounded-[10px] w-full">
+                  <div class="content p-[14px] flex justify-between items-start gap-x-4">
+                    <div>
+                      <div v-if="editLists[index]" class="content px-3 pb-3 pt-2">
+                        <form class="form-group" @keypress="pressEnter($event,index)" :id="`check-${index}`">
+                          <div class="flex gap-x-2 items-start">
+                            <input
+                                :id="`title-input-${index}`"
+                                v-model="element.title"
+                                type="text"
+                                class="w-[250px] pl-3 pr-3 py-[5px] placeholder-[#797A7B] bg-white border border-light-bg-c rounded-[6px] text-sm focus:outline-none focus:ring ease-linear transition-all duration-150"
+                                placeholder="Checklist Title"
+                            />
+                            <Button
+                                @on-click="addNewCheckboxItem(index)"
+                                :label="'Add New'"
+                                version="yellow"
+                                size="medium"
+                            />
+                          </div>
 
-                  <button type="button"
-                          class="bg-blueGray-800 mt-1 text-white active:bg-blueGray-600 text-xs font-bold px-2 py-1 rounded shadow hover:shadow-lg outline-none focus:outline-none ease-linear transition-all duration-150"
-                          @click="addNewCheckboxItem(index)">
-                    Add New
-                  </button>
+                          <div class="flex items-center mt-4" v-for="(el,i) in element.elements" :key="`${index}-${i}`">
+                            <input
+                                :id="`${el.label}-${i}`"
+                                v-model="el.checked"
+                                type="checkbox"
+                                class="accent-green-c w-4 h-4 border-0 flex pl-8 pr-3 py-3 rounded-[6px] text-sm ease-linear transition-all duration-150 cursor-pointer"
+                            />
+                            <label :for="`${el.label}-${i}`"
+                                   class="text-md text-blueGray-500 font-medium cursor-pointer ml-2 whitespace-nowrap">
+                              <input
+                                  v-model="el.label"
+                                  type="text"
+                                  class="w-[200px] pl-3 pr-3 py-[5px] placeholder-[#797A7B] bg-white border border-light-bg-c rounded-[6px] text-sm focus:outline-none focus:ring ease-linear transition-all duration-150"
+                                  placeholder="Checkbox Title"
+                              />
+                            </label>
+                            <TrashIcon class="cursor-pointer ml-1" @click="removeCheckboxItem(index,i)"></TrashIcon>
+                          </div>
+                        </form>
+                      </div>
+                      <div v-else class="">
+                        <span class="text-black-c font-medium text-md mb-2 block">{{ element.title }}</span>
+                        <div class="flex items-center mb-3 gap-x-2" v-for="(el,i) in element.elements" :key="`${index}-${i}`">
+                          <input
+                              :id="`${el.label}-${i}`"
+                              v-model="el.checked"
+                              @change="editItem(index)"
+                              type="checkbox"
+                              class="accent-green-c w-3 h-3 border-0 flex pl-8 pr-3 py-3 rounded-[6px] text-sm ease-linear transition-all duration-150 cursor-pointer"
+                          />
 
-                  <div class="flex items-center mt-4" v-for="(el,i) in element.elements" :key="`${index}-${i}`">
-                    <input
-                        :id="`${el.label}-${i}`"
-                        v-model="el.checked"
-                        type="checkbox"
-                        class="border-0 flex pl-8 pr-3 py-3 placeholder-blueGray-300 text-blueGray-600 rounded text-sm ease-linear transition-all duration-150 cursor-pointer"
-                    />
-                    <label :for="`${el.label}-${i}`"
-                           class="text-md text-blueGray-500 font-medium cursor-pointer ml-2 whitespace-nowrap">
-                      <input
-                          v-model="el.label"
-                          type="text"
-                          class="border-0 px-3 py-1 placeholder-blueGray-300 text-blueGray-600 bg-white rounded text-sm shadow focus:outline-none focus:ring w-full ease-linear transition-all duration-150"
-                          placeholder="Checkbox Title"
-                      />
-                    </label>
-                    <button type="button" class="text-white ml-2 cursor-pointer" @click="removeCheckboxItem(index,i)">
-                      <i class="fas fa-window-close text-md text-red-500"></i>
-                    </button>
-                  </div>
-                </form>
+                          <label :for="`${el.label}-${i}`" class="text-xs text-black-c cursor-pointer whitespace-nowrap">
+                            {{ el.label }}
+                          </label>
+                        </div>
+                      </div>
+                    </div>
 
-                <div v-else class="form-group mb-4">
-                  <div class="flex gap-x-2 items-start">
-                    <span class="text-blueGray-500 font-medium text-lg">{{ element.title }}</span>
-                  </div>
-
-                  <div class="flex items-center mb-2" v-for="(el,i) in element.elements" :key="`${index}-${i}`">
-                    <input
-                        :id="`${el.label}-${i}`"
-                        v-model="el.checked"
-                        @change="editItem(index)"
-                        type="checkbox"
-                        class="border-0 flex pl-8 pr-3 py-3 placeholder-blueGray-300 text-blueGray-600 rounded text-sm ease-linear transition-all duration-150"
-                    />
-
-                    <label :for="`${el.label}-${i}`" class="text-md text-blueGray-500 font-medium ml-2 whitespace-nowrap">
-                      {{ el.label }}
-                    </label>
+                    <div class="actions flex gap-x-1 items-center">
+                      <EditIcon class="cursor-pointer" @click="editItem(index)"/>
+                      <TrashIcon class="cursor-pointer" @click="removeFormItem(index)"></TrashIcon>
+                    </div>
                   </div>
                 </div>
               </template>
-
-              <div class="actions mr-6 flex gap-x-2">
-                <button type="button" class="text-white cursor-pointer" @click="editItem(index)">
-                  <i class="fas fa-pen-square text-xl text-blueGray-500"></i>
-                </button>
-                <button v-if="editLists[index]" type="button" class="text-white cursor-pointer" @click="removeFormItem(index)">
-                  <i class="fas fa-window-close text-xl text-red-500"></i>
-                </button>
-              </div>
             </div>
           </template>
         </draggable>
@@ -149,6 +142,14 @@ import 'dropzone-vue/dist/dropzone-vue.common.css';
 import {catchErrors} from "../../utils";
 import {useAttachmentsStore} from "../../store/attachments";
 import draggable from 'vuedraggable'
+import DragIcon from "../Svg/DragIcon.vue";
+import ChecklistIcon from "../Svg/ChecklistIcon.vue";
+import EditIcon from "../Svg/EditIcon.vue";
+import TrashIcon from "../Svg/TrashIcon.vue";
+import MarkdownIcon from "../Svg/MarkdownIcon.vue";
+import ImageIcon from "../Svg/ImageIcon.vue";
+import PaperClipIcon from "../Svg/PaperClipIcon.vue";
+import Button from '../Button/Button.vue'
 
 const emit = defineEmits(['update:modelValue', 'edit'])
 const props = defineProps({
@@ -157,6 +158,10 @@ const props = defineProps({
     default: () => []
   },
   taskId: {
+    type: String,
+    default: ''
+  },
+  blockName: {
     type: String,
     default: ''
   },
@@ -173,6 +178,9 @@ const dragging = ref(false)
 
 
 //Watch
+watch(()=>props.blockName,(val)=>{
+  if (val) addNewForm(val)
+})
 watch(formList, (val) => {
   emit('update:modelValue', formList.value)
 },
@@ -318,8 +326,8 @@ onMounted(() => {
 }
 
 .ghost {
-  opacity: 0.5;
-  background: #c8ebfb;
+  opacity: 0.2;
+  background: rgba(248, 212, 135, 0.5);
 }
 
 .handle {

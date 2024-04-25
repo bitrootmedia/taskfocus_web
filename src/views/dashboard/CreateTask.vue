@@ -1,75 +1,39 @@
 <template>
-  <div class="main-container">
+  <div class="main-container pt-6">
     <h2 v-if="tempProject" class="text-md block text-blueGray-700 mb-4 sm:mb-8">Project: <b>{{ tempProject.name }}</b>
     </h2>
 
-    <form @submit="createTask">
-      <div class="flex items-center items-baseline gap-x-8 mb-3">
-        <div class="relative w-2/4">
-          <input
-              v-model="name"
-              type="text"
-              class="border-0 px-3 py-3 placeholder-blueGray-300 text-blueGray-600 bg-white rounded text-sm shadow focus:outline-none focus:ring w-full ease-linear transition-all duration-150"
-              placeholder="Task Name"
-          />
+    <form @submit="createTask($event)">
+      <div class="flex items-center items-baseline gap-x-4 mb-3">
+        <div class="relative w-[250px]">
+          <Input placeholder="Task Name" v-model:value="name"/>
           <span class="text-xs font-medium text-red-600" v-if="v$.name.$error"> {{
               v$.name.$errors[0].$message
             }} </span>
         </div>
 
-        <button
-            @click="createTask"
+        <Button
+            @on-click="createTask"
+            label="Submit"
             :disabled="loading"
-            class="bg-blueGray-800 text-white active:bg-blueGray-600 text-sm font-bold px-6 py-3 rounded shadow hover:shadow-lg outline-none focus:outline-none ease-linear transition-all duration-150"
-            type="button"
-        >
-          Next
-        </button>
+            size="medium"
+            version="yellow"
+        />
       </div>
 
       <div>
-        <div class="flex items-center">
-          <input
-              id="addQueue"
-              v-model="addQueue"
-              type="checkbox"
-              class="border-0 flex pl-8 pr-3 py-3 placeholder-blueGray-300 text-blueGray-600 rounded text-sm ease-linear transition-all duration-150 cursor-pointer"
-          />
-          <label for="addQueue" class="text-md text-blueGray-500 font-medium cursor-pointer ml-2 whitespace-nowrap">Add
-            to my queue</label>
-        </div>
-        <div v-if="addQueue" class="flex items-center gap-x-6">
-          <div class="flex items-center">
-            <input
-                id="positionTop"
-                v-model="position"
-                type="radio"
-                name="position"
-                value="top"
-                class="border-0 flex pl-8 pr-3 py-3 placeholder-blueGray-300 text-blueGray-600 rounded text-sm ease-linear transition-all duration-150 cursor-pointer"
-            />
-            <label for="positionTop"
-                   class="text-md text-blueGray-500 font-medium cursor-pointer ml-2 whitespace-nowrap">Add to the top</label>
-          </div>
+        <CheckBox id="addQueue" label="Add to my queue" v-model:value="addQueue"/>
 
-          <div class="flex items-center">
-            <input
-                id="positionBottom"
-                v-model="position"
-                value="bottom"
-                type="radio"
-                name="position"
-                class="border-0 flex pl-8 pr-3 py-3 placeholder-blueGray-300 text-blueGray-600 rounded text-sm ease-linear transition-all duration-150 cursor-pointer"
-            />
-            <label for="positionBottom"
-                   class="text-md text-blueGray-500 font-medium cursor-pointer ml-2 whitespace-nowrap">Add to the bottom</label>
-          </div>
+        <div v-if="addQueue" class="flex items-center gap-x-6">
+          <Radio id="positionTop" label="Add to the top" v-model:value="position" version="top" name="position"/>
+          <Radio id="positionBottom" label="Add to the bottom" v-model:value="position" version="bottom"
+                 name="position"/>
         </div>
       </div>
     </form>
 
     <div class="mt-8" v-if="searchedTasks.length && name.length > 2">
-      <h3 class="font-semibold text-xl block text-blueGray-700 mb-4">Similar Tasks Found</h3>
+      <h3 class="font-semibold text-lg text-black-c block mb-[10px]">Similar Tasks Found</h3>
 
       <DataTable :headers="headers" @sorting="sorting">
         <template v-slot:tableBody>
@@ -85,7 +49,7 @@
           <template v-else>
             <tr v-if="!searchedTasks.length">
               <td :colspan="headers.length">
-                <p class="flex text-center px-4 justify-center py-8 text-blueGray-500 font-medium">
+                <p class="flex text-center px-4 justify-center py-8 text-black-c font-medium">
                   No data found
                 </p>
               </td>
@@ -94,7 +58,7 @@
             <tbody>
             <tr v-for="element in searchedTasks" :key="element.id">
               <td class="border-t-0 px-3 align-middle border-l-0 border-r-0 text-xs whitespace-nowrap p-4">
-                     <span v-if="element.title" class="cursor-pointer font-semibold" @click="toLink(element)">{{
+                     <span v-if="element.title" class="cursor-pointer" @click="toLink(element)">{{
                          element.title
                        }}</span>
                 <span v-else>-</span>
@@ -138,6 +102,10 @@ import DataTable from "./../../components/Table/DataTable.vue"
 import Pagination from './../../components/Pagination/Pagination.vue'
 import Loader from './../../components/Loader/Loader.vue'
 import {usePaginate} from "../../composables/usePaginate";
+import Button from '../../components/Button/Button.vue'
+import Input from '../../components/Input/Input.vue'
+import CheckBox from "../../components/CheckBox/CheckBox.vue";
+import Radio from "../../components/Radio/Radio.vue";
 
 const taskStore = useTasksStore()
 const toast = useToast()
@@ -199,8 +167,7 @@ const fetchSearchedTasks = async () => {
 }
 
 const createTask = async (e) => {
-  e.preventDefault()
-
+  if (e) e.preventDefault()
   try {
     loading.value = true
     const isValid = await v$.value.$validate();

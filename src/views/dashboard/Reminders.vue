@@ -1,5 +1,5 @@
 <template>
-  <div class="main-container">
+  <div class="main-container pt-6">
     <Loader v-if="loading" />
 
     <div class="content " v-else>
@@ -16,7 +16,7 @@
       </div>
 
       <div v-else>
-        <p class="flex text-center px-4 justify-center py-8 text-blueGray-500 text-3xl font-medium">
+        <p class="flex text-center px-4 justify-center py-8 text-black-c text-3xl font-medium">
           No data found
         </p>
       </div>

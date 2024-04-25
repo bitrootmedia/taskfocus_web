@@ -4,36 +4,32 @@
     <div class="relative mx-auto w-full h-full">
       <!--content-->
       <div class="border-0 rounded-lg shadow-lg relative flex flex-col w-full outline-none focus:outline-none">
-        <div class="sticky top-0 z-[2] bg-slate-400">
+        <div class="sticky top-0 z-[4] bg-white">
           <div class="flex justify-between gap-x-3 py-2 main-container">
             <div>
-              <button
+              <Button
                   v-if="ownerOfMedia.isAuth"
-                  @click="openModal(ownerOfMedia.attachmentId)"
-                  class="bg-red-500 whitespace-nowrap text-white active:bg-blueGray-600 text-sm font-bold px-2 sm:px-4 py-3 rounded shadow hover:shadow-lg outline-none focus:outline-none ease-linear transition-all duration-150"
-                  type="button"
-              >
-                Delete
-              </button>
+                  @on-click="openModal(ownerOfMedia.attachmentId)"
+                  label="Delete"
+                  size="medium"
+                  version="red"
+              />
             </div>
 
 
             <div class="flex gap-x-3">
-              <button
-                  @click="downloadTemplate(active.path)"
-                  class="bg-blueGray-800 whitespace-nowrap text-white active:bg-blueGray-600 text-sm font-bold px-2 sm:px-4 py-3 rounded shadow hover:shadow-lg outline-none focus:outline-none ease-linear transition-all duration-150"
-                  type="button"
-              >
-                Download
-              </button>
-
-              <button
-                  @click="emit('close')"
-                  class="bg-blueGray-800 whitespace-nowrap text-white active:bg-blueGray-600 text-sm font-bold px-2 sm:px-4 py-3 rounded shadow hover:shadow-lg outline-none focus:outline-none ease-linear transition-all duration-150"
-                  type="button"
-              >
-                Close
-              </button>
+              <Button
+                  @on-click="downloadTemplate(active.path)"
+                  label="Download"
+                  size="medium"
+                  version="yellow"
+              />
+              <Button
+                  @on-click="emit('close')"
+                  label="Close"
+                  size="medium"
+                  version="green"
+              />
             </div>
 
           </div>
@@ -61,7 +57,8 @@
 
 <script setup>
 import ConfirmDeleteModal from './ConfirmDeleteModal.vue'
-import {ref} from "vue";
+import {ref, watch} from "vue";
+import Button from '../Button/Button.vue'
 
 const emit = defineEmits(['close', 'update', 'delete'])
 const props = defineProps({
@@ -83,6 +80,11 @@ const props = defineProps({
 
 const confirmModal = ref(false)
 const activeId = ref(null)
+
+watch(()=>props.showModal,(val)=>{
+  const sidebar = document.getElementById('sidebar')
+  sidebar.style.zIndex = val ? '1' : '2'
+})
 
 const openModal = (id) => {
   confirmModal.value = true

@@ -5,25 +5,23 @@
       <!--content-->
       <div class="border-0 rounded-lg shadow-lg relative flex flex-col w-full bg-white outline-none focus:outline-none">
         <!--header-->
-        <div class="flex items-center justify-between p-5 border-b border-solid border-blueGray-200 rounded-t">
-          <h3 class="text-3xl font-semibold">
-            Reminder
-          </h3>
+        <div class="py-3">
+          <div class="flex items-center justify-between rounded-t p-3 border-b border-light-bg-c">
+            <h3 class="text-[22px] text-black-c font-semibold">
+              Reminder
+            </h3>
 
-          <div>
-            <span class="cursor-pointer" @click="close">
-               <i class="fas fa-window-close mr-2 text-3xl text-blueGray-400"/>
-            </span>
+            <CloseBlackIcon class="cursor-pointer" @click="emit('close')"/>
           </div>
         </div>
         <!--body-->
-        <div class="relative p-6 flex-auto">
+        <div class="relative p-3 flex-auto">
           <Loader v-if="loading"/>
 
           <div v-else class="content">
-            <div class="relative w-full mb-3">
+            <div class="relative w-full mb-4">
               <label
-                  class="block uppercase text-blueGray-600 text-xs font-bold mb-2"
+                  class="block text-black-c text-xs font-semibold mb-1"
                   htmlFor="grid-date"
               >
                 Date
@@ -32,16 +30,16 @@
                   id="grid-date"
                   v-model="form.date"
                   type="datetime-local"
-                  class="border-0 px-3 py-3 placeholder-blueGray-300 text-blueGray-600 bg-white rounded text-sm shadow focus:outline-none focus:ring w-full ease-linear transition-all duration-150"
+                  class="px-3 py-[5px] placeholder-[#797A7B] text-[#797A7B] bg-white border border-light-bg-c rounded-[6px] text-sm focus:outline-none focus:ring w-full ease-linear transition-all duration-150"
                   placeholder="Date"
               />
               <span class="text-xs font-medium text-red-600"
                     v-if="v$.date.$error"> {{ v$.date.$errors[0].$message }} </span>
             </div>
 
-            <div class="relative w-full mb-3">
+            <div class="relative w-full mb-4">
               <label
-                  class="block uppercase text-blueGray-600 text-xs font-bold mb-2"
+                  class="block text-black-c text-xs font-semibold mb-1"
                   htmlFor="grid-label"
               >
                 Label
@@ -50,20 +48,20 @@
                   id="grid-label"
                   v-model="form.label"
                   type="text"
-                  class="border-0 px-3 py-3 placeholder-blueGray-300 text-blueGray-600 bg-white rounded text-sm shadow focus:outline-none focus:ring w-full ease-linear transition-all duration-150"
+                  class="px-3 py-[5px] placeholder-[#797A7B] text-[#797A7B] bg-white border border-light-bg-c rounded-[6px] text-sm focus:outline-none focus:ring w-full ease-linear transition-all duration-150"
                   placeholder="Label"
               />
             </div>
 
-            <div class="relative w-full mb-3">
+            <div class="relative w-full mb-4">
               <label
-                  class="block uppercase text-blueGray-600 text-xs font-bold mb-2"
+                  class="block text-black-c text-xs font-semibold mb-1"
                   htmlFor="grid-label"
               >
                 User
               </label>
               <select v-model="form.user" placeholder="Select User"
-                      class="border-0 px-3 py-3 placeholder-blueGray-300 text-blueGray-600 bg-white rounded text-sm shadow focus:outline-none focus:ring w-full ease-linear transition-all duration-150"
+                      class="pl-3 pr-8 py-[5px] placeholder-[#797A7B] text-[#797A7B] bg-white border border-light-bg-c rounded-[6px] text-sm focus:outline-none focus:ring w-full ease-linear transition-all duration-150"
               >
                 <option :value="user.id" v-for="(user) in users" :key="user.id">{{ user.first_name }}
                   {{ user.last_name }}
@@ -75,14 +73,13 @@
             </div>
 
             <div class="relative w-full">
-              <button
-                  @click="createReminder"
+              <Button
+                  @on-click="createReminder"
                   :disabled="btnLoad"
-                  class="mt-2 bg-blueGray-800 whitespace-nowrap text-white active:bg-blueGray-600 text-sm font-bold px-2 sm:px-4 py-2 rounded shadow hover:shadow-lg outline-none focus:outline-none ease-linear transition-all duration-150"
-                  type="button"
-              >
-                Create
-              </button>
+                  :label="'Create'"
+                  version="dark-small"
+                  size="small"
+              />
             </div>
           </div>
         </div>
@@ -101,6 +98,8 @@ import {useCookies} from "vue3-cookies";
 import {useToast} from "vue-toastification";
 import {required} from "@vuelidate/validators";
 import {useVuelidate} from "@vuelidate/core";
+import CloseBlackIcon from "../Svg/CloseBlackIcon.vue";
+import Button from '../Button/Button.vue'
 
 const btnLoad = ref(false);
 const checkIn = ref(null);

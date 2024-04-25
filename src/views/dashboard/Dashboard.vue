@@ -1,11 +1,11 @@
 <template>
-  <div class="main-container">
-    <div v-if="task" class="working-task mt-4">
+  <div class="main-container pt-6 pb-6">
+    <div v-if="task" class="working-task text-black-c text-sm">
       Currently working on:
-      <span class="underline cursor-pointer text-blue-500" @click="toLink('task')">{{ task.title }}</span>
+      <span class="underline cursor-pointer" @click="toLink('task')">{{ task.title }}</span>
      <template v-if="task.project?.title">
        in project
-       <span class="underline cursor-pointer text-blue-500" @click="toLink('project')">{{task.project.title}}</span>
+       <span class="underline cursor-pointer" @click="toLink('project')">{{task.project.title}}</span>
      </template>
     </div>
 
