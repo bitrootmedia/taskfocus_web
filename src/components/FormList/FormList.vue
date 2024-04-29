@@ -165,6 +165,10 @@ const props = defineProps({
     type: String,
     default: ''
   },
+  firstOne: {
+    type: Boolean,
+    default: false
+  },
 })
 
 //Store
@@ -181,11 +185,12 @@ const dragging = ref(false)
 watch(()=>props.blockName,(val)=>{
   if (val) addNewForm(val)
 })
+watch(()=>props.updateValue,(val)=>{
+  formList.value = val
+})
 watch(formList, (val) => {
-  emit('update:modelValue', formList.value)
-},
-    { deep: true }
-)
+  emit('update:modelValue', val)
+})
 
 
 //Methods
@@ -297,7 +302,10 @@ const saveFiles = async (e, index) => {
 
 onMounted(() => {
   formList.value = JSON.parse(JSON.stringify(props.modelValue))
-  editLists.value = Array.from({length: props.modelValue.length}, i => i = false);
+  if (props.firstOne) editLists.value = [true]
+  else {
+    editLists.value = Array.from({length: props.modelValue.length}, i => i = false);
+  }
 })
 
 </script>
