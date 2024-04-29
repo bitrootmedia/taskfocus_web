@@ -26,6 +26,7 @@
 
           <div>
             <FormList
+                :firstOne="firstOne"
                 :block-name="blockName"
                 :key="keyList"
                 :task-id="task.id"
@@ -603,6 +604,7 @@ const form = ref({
   position: '',
   blocks: [],
 })
+const firstOne = ref(false)
 const writeComment = ref(false)
 const writeNote = ref(false)
 const showLogs = ref(false)
@@ -686,6 +688,10 @@ const closeTask = async (notes) => {
 
 const addNewForm = (name) => {
   blockName.value = name
+
+  setTimeout(()=>{
+    blockName.value = ''
+  },500)
 }
 
 const bgConvert = (progress) => {
@@ -850,6 +856,16 @@ const fetchTask = async (noLoad = false) => {
       if (resp.data.responsible?.id) form.value.user = resp.data.responsible.id
       if (resp.data.responsible?.id) form.value.owner = resp.data.responsible.id
       backgroundSize.value = `${resp.data.progress || 0}% 100%`
+      firstOne.value = false
+
+      if (form.value.blocks?.length === 0) {
+        form.value.blocks = [{
+          type: 'markdown',
+          content: "",
+        }]
+        firstOne.value = true
+        isEditPanel.value.blocks = true
+      }
 
       await fetchTaskTotalTime()
     }
@@ -1216,8 +1232,6 @@ onMounted(() => {
     fetchProjectAccess()
     fetchTaskAccess()
     fetchQueueAccess()
-
-    if (form.value.blocks?.length === 0) addNewForm('markdown')
   }, 600)
 
   setTimeout(() => {
