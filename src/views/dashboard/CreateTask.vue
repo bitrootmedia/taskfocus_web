@@ -90,7 +90,7 @@
 </template>
 
 <script setup>
-import {onBeforeRouteLeave} from 'vue-router'
+import {onBeforeRouteLeave, useRoute} from 'vue-router'
 import {ref, onMounted, computed, watch} from "vue";
 import {catchErrors} from "../../utils";
 import {useVuelidate} from '@vuelidate/core'
@@ -110,6 +110,7 @@ import Radio from "../../components/Radio/Radio.vue";
 const taskStore = useTasksStore()
 const toast = useToast()
 const router = useRouter()
+const route = useRoute()
 
 // ValidationRules
 const rules = {
@@ -172,9 +173,10 @@ const createTask = async (e) => {
     loading.value = true
     const isValid = await v$.value.$validate();
     if (isValid) {
+      const projectId = route.hash ? route.hash.substring(1) : ''
       const data = {
         title: name.value,
-        project: tempProject.value?.id || null,
+        project: projectId || tempProject.value?.id || null,
 
       }
 
@@ -182,7 +184,6 @@ const createTask = async (e) => {
         data.add_to_user_queue = addQueue.value
         data.queue_position = position.value
       }
-
       const resp = await taskStore.createTask(data)
       name.value = ''
       await toast.success("Task created");

@@ -25,7 +25,7 @@
           </button>
 
           <button
-              @click="router.push('/dashboard/create-task')"
+              @click="router.push(`/dashboard/create-task#${projectId}`)"
               class="whitespace-nowrap bg-orange-c flex items-center justify-center gap-x-1 px-3 py-1 text-[13px] font-medium rounded-[6px] hover:bg-orange-c-900 outline-none focus:outline-none ease-linear transition-all duration-150"
               type="button"
           >
