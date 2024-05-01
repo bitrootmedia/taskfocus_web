@@ -318,6 +318,8 @@
           </li>
         </ul>
       </div>
+
+      <span class="text-gray-500 text-xs ml-1 mb-1">Version 1.1</span>
     </div>
 
     <div v-if="userStore.showPanel.show" class="w-full flex md:hidden justify-center gap-x-1 mt-4 pb-1">
