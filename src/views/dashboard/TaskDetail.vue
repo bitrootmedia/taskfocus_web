@@ -51,7 +51,7 @@
           </div>
 
           <div class="mb-10">
-            <CommentsDataTable :showCreateBtn="false" v-model:showBtnResult="writeComment" :task-id="task.id"
+            <CommentsDataTable v-model:showCreateBtn="showCreateBtnComment" v-model:showBtnResult="writeComment" :task-id="task.id"
                                :task-name="task.title" :is-task="true"/>
           </div>
 
@@ -573,6 +573,7 @@ const router = useRouter()
 const toast = useToast()
 const {cookies} = useCookies();
 
+const showCreateBtnComment = ref(false)
 const keyList = ref(0)
 const btnLoad = ref(false)
 const loading = ref(false)
