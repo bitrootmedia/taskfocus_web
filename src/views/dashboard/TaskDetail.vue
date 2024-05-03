@@ -875,7 +875,7 @@ const fetchTask = async (noLoad = false) => {
       backgroundSize.value = `${resp.data.progress || 0}% 100%`
       firstOne.value = false
 
-      if (form.value.blocks?.length === 0) {
+      if (form.value.blocks?.length === 0 && !task.value.description) {
         form.value.blocks = [{
           type: 'markdown',
           content: "",
@@ -913,7 +913,6 @@ const fetchDictionary = async () => {
   try {
     const resp = await taskStore.fetchDictionary()
     urgencyLevelChoices.value = [[null,'NONE'],...resp.data.task_urgency_level_choices]
-    console.log(urgencyLevelChoices.value,'resp.data')
     dictionary.value = resp.data.task_status_choices
   } catch (e) {
     catchErrors(e)
