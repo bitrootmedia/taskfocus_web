@@ -1299,10 +1299,20 @@ fetchReminders()
   }
 }
 
+.right-side-content {
+  height: calc(100vh - 91px);
+  overflow-y: scroll;
+}
+
 @media (max-width: 600px) {
   .right-side {
     order: 1;
     width: 100%;
+  }
+
+  .right-side-content {
+    height: 100%;
+    overflow-y: hidden;
   }
 
   .right-side > div {
@@ -1313,10 +1323,5 @@ fetchReminders()
     width: 100%;
     order: 2
   }
-}
-
-.right-side-content {
-  height: calc(100vh - 91px);
-  overflow-y: scroll;
 }
 </style>
