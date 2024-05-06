@@ -296,6 +296,7 @@ watch(editCommentsIds, (val) => {
 
 // Methods
 const reply = (comment) => {
+  emit('update:showCreateBtn',true)
   writeComment.value = true
   message.value = `@${comment.author.username} `
 
@@ -387,6 +388,7 @@ const fetchComments = async (label = null) => {
 }
 
 const resetComment = () => {
+  emit('update:showCreateBtn',false)
   writeComment.value = false
   message.value = ''
   v$.value.$reset()

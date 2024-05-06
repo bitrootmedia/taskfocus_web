@@ -51,7 +51,7 @@
           </div>
 
           <div class="mb-10">
-            <CommentsDataTable :showCreateBtn="false" v-model:showBtnResult="writeComment" :task-id="task.id"
+            <CommentsDataTable v-model:showCreateBtn="showCreateBtnComment" v-model:showBtnResult="writeComment" :task-id="task.id"
                                :task-name="task.title" :is-task="true"/>
           </div>
 
@@ -272,6 +272,20 @@
                     class="px-3 py-[5px] w-full sm:w-[150px] placeholder-[#797A7B] text-[#797A7B] bg-white border border-light-bg-c rounded-[6px] text-sm focus:outline-none focus:ring ease-linear transition-all duration-150"
                     placeholder="Position"
                 />
+              </div>
+
+              <div class="flex items-center gap-x-1">
+                <span class="inline-block text-sm text-light-c">Priority:</span>
+                <div v-if="!isEditPanel.urgency_level"
+                     class="uppercase cursor-pointer text-sm text-black-c font-semibold flex items-center gap-x-1">
+                  <span>{{ task.urgency_level || 'N/A' }}</span>
+                  <PencilSmallIcon class="cursor-pointer" @click="isEditPanel.urgency_level = true"/>
+                </div>
+                <select v-else v-model="form.urgency_level" placeholder="Select User"
+                        class="pl-3 pr-8 py-[5px] placeholder-[#797A7B] text-[#797A7B] bg-white border border-light-bg-c rounded-[6px] text-sm focus:outline-none focus:ring w-full ease-linear transition-all duration-150"
+                >
+                  <option :value="item[0]" v-for="(item) in urgencyLevelChoices" :key="item[0]">{{ item[1] }}</option>
+                </select>
               </div>
 
               <div class="flex items-center gap-x-1">
@@ -542,6 +556,7 @@ const defaultEditValues = {
   tag: false,
   is_urgent: false,
   position: false,
+  urgency_level: false,
   owner: false,
   estimated_work_hours: false,
   blocks: false
@@ -558,6 +573,7 @@ const router = useRouter()
 const toast = useToast()
 const {cookies} = useCookies();
 
+const showCreateBtnComment = ref(false)
 const keyList = ref(0)
 const btnLoad = ref(false)
 const loading = ref(false)
@@ -584,6 +600,7 @@ const users = ref([])
 const usersList = ref([])
 const usersQueue = ref([])
 const dictionary = ref([])
+const urgencyLevelChoices = ref([])
 const haveTaskAccess = ref([])
 const haveTaskAccessIds = ref([])
 const haveQueueAccess = ref([])
@@ -602,6 +619,7 @@ const form = ref({
   tag: '',
   is_urgent: '',
   position: '',
+  urgency_level: '',
   blocks: [],
 })
 const firstOne = ref(false)
@@ -858,7 +876,7 @@ const fetchTask = async (noLoad = false) => {
       backgroundSize.value = `${resp.data.progress || 0}% 100%`
       firstOne.value = false
 
-      if (form.value.blocks?.length === 0) {
+      if (form.value.blocks?.length === 0 && !task.value.description) {
         form.value.blocks = [{
           type: 'markdown',
           content: "",
@@ -895,6 +913,7 @@ const fetchProject = async () => {
 const fetchDictionary = async () => {
   try {
     const resp = await taskStore.fetchDictionary()
+    urgencyLevelChoices.value = [[null,'NONE'],...resp.data.task_urgency_level_choices]
     dictionary.value = resp.data.task_status_choices
   } catch (e) {
     catchErrors(e)
@@ -966,6 +985,7 @@ const updateTask = async (noLoad) => {
       tag: form.value.tag,
       is_urgent: form.value.is_urgent,
       position: form.value.position,
+      urgency_level: form.value.urgency_level,
       blocks: form.value.blocks,
     }
 
@@ -1279,10 +1299,20 @@ fetchReminders()
   }
 }
 
+.right-side-content {
+  height: calc(100vh - 91px);
+  overflow-y: scroll;
+}
+
 @media (max-width: 600px) {
   .right-side {
     order: 1;
     width: 100%;
+  }
+
+  .right-side-content {
+    height: 100%;
+    overflow-y: hidden;
   }
 
   .right-side > div {
@@ -1293,10 +1323,5 @@ fetchReminders()
     width: 100%;
     order: 2
   }
-}
-
-.right-side-content {
-  height: calc(100vh - 91px);
-  overflow-y: scroll;
 }
 </style>
