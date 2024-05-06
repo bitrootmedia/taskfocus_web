@@ -123,6 +123,10 @@ const updateTask = async (title) => {
 
     await taskStore.updateTask(data)
   } catch (e) {
+    if (e.response?.data?.title[0] === 'This field may not be blank.'){
+      taskTitle.value = task.value.title
+    }
+
     catchErrors(e)
   }
 }

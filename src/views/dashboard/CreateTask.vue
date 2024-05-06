@@ -12,10 +12,11 @@
             }} </span>
         </div>
 
+        {{disabled}}
         <Button
             @on-click="createTask"
             label="Submit"
-            :disabled="loading"
+            :disabled="disabled"
             size="medium"
             version="yellow"
         />
@@ -119,6 +120,7 @@ const rules = {
 
 // State
 const loading = ref(false)
+const disabled = ref(false)
 const name = ref('')
 const addQueue = ref(false)
 const position = ref('top')
@@ -170,7 +172,7 @@ const fetchSearchedTasks = async () => {
 const createTask = async (e) => {
   if (e) e.preventDefault()
   try {
-    loading.value = true
+    disabled.value = true
     const isValid = await v$.value.$validate();
     if (isValid) {
       const projectId = route.hash ? route.hash.substring(1) : ''
@@ -192,7 +194,7 @@ const createTask = async (e) => {
   } catch (e) {
     catchErrors(e)
   } finally {
-    loading.value = false
+    disabled.value = false
   }
 }
 

@@ -49,7 +49,7 @@ const v$ = useVuelidate(rules, { name })
 
 // Methods
 const createProject = async(e)=>{
-  e.preventDefault()
+  if(e) e.preventDefault()
   try {
     loading.value = true
     const isValid = await v$.value.$validate();
