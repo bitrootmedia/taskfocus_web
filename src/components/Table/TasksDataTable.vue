@@ -418,6 +418,7 @@ const fetchTasks = async (label = null) => {
       createdAtBefore: form.value.createdAtBefore,
       responsible: form.value.showCurrentUser ? currentUser.value : null,
     }
+    console.log(options,'options')
     const resp = await tasksStore.fetchTasks(options)
     tasks.value = resp.data.results
     tempData.value = resp.data.results
