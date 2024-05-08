@@ -49,6 +49,7 @@ export const useTasksStore = defineStore('tasks', {
             if (payload?.sorting) url += `&ordering=${payload.sorting}`
             if (payload?.search) url += `&query=${payload.search}`
             if (payload?.tag) url += `&tag=${payload.tag}`
+            if (payload?.urgency_level) url += `&urgency_level=${payload.urgency_level}`
             if (payload?.projectSearch) url += `&project__title=${payload.projectSearch}`
             if (payload?.isClosed) url += `&is_closed=false`
             if (payload?.responsible) url += `&responsible=${payload.responsible.pk}`

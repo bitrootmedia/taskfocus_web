@@ -92,7 +92,17 @@
                   placeholder="Search by tag"
               />
             </div>
+          </div>
 
+          <div class="w-[250px]">
+            <select v-model="form.urgencyLevel"
+                    class="pl-3 pr-8 py-[5px] placeholder-[#797A7B] text-[#797A7B] bg-white border border-light-bg-c rounded-[6px] text-sm focus:outline-none focus:ring w-full ease-linear transition-all duration-150"
+            >
+              <option class="" value="" disabled selected>Select Priority</option>
+              <option :value="priority[0]" v-for="(priority,index) in urgencyLevelChoices" :key="index">
+                {{ priority[1] }}
+              </option>
+            </select>
           </div>
 
           <div class="flex gap-x-6 w-[250px]">
@@ -233,6 +243,9 @@
                     <span>{{ element.tag || '-' }}</span>
                   </td>
                   <td class="border-t-0 px-3 align-middle border-l-0 border-r-0 text-xs whitespace-nowrap p-4">
+                    <span>{{ element.urgency_level || '-' }}</span>
+                  </td>
+                  <td class="border-t-0 px-3 align-middle border-l-0 border-r-0 text-xs whitespace-nowrap p-4">
                     <TableProgressbar :progress="element.progress"/>
                   </td>
                   <td class="border-t-0 px-3 align-middle border-l-0 border-r-0 text-xs whitespace-nowrap p-4">
@@ -341,11 +354,13 @@ const typeBefore = ref('text')
 const tasks = ref([])
 const users = ref([])
 const tempData = ref([])
+const urgencyLevelChoices = ref([])
 const form = ref({
   hideClosed: true,
   showCurrentUser: false,
   isUrgent: false,
   status: '',
+  urgencyLevel: '',
   owner: '',
   responsibleUser: '',
   createdAtAfter: '',
@@ -373,6 +388,7 @@ const headers = computed(() => {
     {id: 4, label: 'Owner', sorting: true, sortLabel: 'owner'},
     {id: 5, label: 'Responsible', sorting: true, sortLabel: 'responsible'},
     {id: 7, label: 'Tag', sorting: true, sortLabel: 'tag'},
+    {id: 14, label: 'Priority', sorting: true, sortLabel: 'urgency_level'},
     {id: 8, label: 'Progress', sorting: true, sortLabel: 'progress'},
     {id: 9, label: 'Closed', sorting: true, sortLabel: 'is_closed'},
     {id: 10, label: 'Created at', sorting: true, sortLabel: 'created_at'},
@@ -406,6 +422,7 @@ const fetchTasks = async (label = null) => {
       query: paginate.query.value,
       search: filter.search.value,
       tag: filter.tagSearch.value,
+      urgency_level: form.value.urgencyLevel,
       projectSearch: filter.projectSearch.value,
       id: props.projectId,
       sorting: label || "-updated_at",
@@ -418,7 +435,6 @@ const fetchTasks = async (label = null) => {
       createdAtBefore: form.value.createdAtBefore,
       responsible: form.value.showCurrentUser ? currentUser.value : null,
     }
-    console.log(options,'options')
     const resp = await tasksStore.fetchTasks(options)
     tasks.value = resp.data.results
     tempData.value = resp.data.results
@@ -522,6 +538,16 @@ const createTask = () => {
   router.push('/dashboard/create-task')
 }
 
+const fetchDictionary = async () => {
+  try {
+    const resp = await tasksStore.fetchDictionary()
+    urgencyLevelChoices.value = [[null,'NONE'],...resp.data.task_urgency_level_choices]
+    console.log(urgencyLevelChoices.value,'urgencyLevelChoices.valu')
+  } catch (e) {
+    catchErrors(e)
+  }
+}
+
 // Composables
 const paginate = usePaginate(fetchTasks, null)
 const filter = useFilter(tasks, fetchTasks)
@@ -529,5 +555,6 @@ const filter = useFilter(tasks, fetchTasks)
 // Run Functions
 fetchTasks()
 fetchUsers()
+fetchDictionary()
 
 </script>
