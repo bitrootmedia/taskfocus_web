@@ -21,6 +21,7 @@
                   <div class="content p-[14px] flex justify-between items-start gap-x-4">
                     <div class="w-full">
                       <v-md-editor v-if="editLists[index]" v-model="element.content" height="270px"
+                                   @save="saveMarkdown"
                                    :disabled-menus="[]"/>
 
                       <v-md-preview v-else :text="element.content"></v-md-preview>
@@ -47,7 +48,7 @@
                             placeholder="Image Path"
                         />
                       </div>
-                      <img v-else :src="element.path" alt="upload-img" class="w-[120px] h-[120px] object-cover">
+                      <img v-else :src="element.path" alt="upload-img" class="w-[120px] h-[120px] object-cover" @click="openModal(element)">
                     </div>
 
                     <div class="actions flex gap-x-1 items-center">
@@ -131,6 +132,13 @@
       </div>
     </div>
   </div>
+
+  <AttachmentMediaModal
+      :show-modal="popUp"
+      :active="activeSrc"
+      :owner-of-media="ownerOfMedia"
+      @close="popUp = false"
+  />
 </template>
 
 
@@ -143,15 +151,12 @@ import {catchErrors} from "../../utils";
 import {useAttachmentsStore} from "../../store/attachments";
 import draggable from 'vuedraggable'
 import DragIcon from "../Svg/DragIcon.vue";
-import ChecklistIcon from "../Svg/ChecklistIcon.vue";
 import EditIcon from "../Svg/EditIcon.vue";
 import TrashIcon from "../Svg/TrashIcon.vue";
-import MarkdownIcon from "../Svg/MarkdownIcon.vue";
-import ImageIcon from "../Svg/ImageIcon.vue";
-import PaperClipIcon from "../Svg/PaperClipIcon.vue";
 import Button from '../Button/Button.vue'
+import AttachmentMediaModal from '../Modals/AttachmentMediaModal.vue'
 
-const emit = defineEmits(['update:modelValue', 'edit'])
+const emit = defineEmits(['update:modelValue', 'edit', 'updateTask'])
 const props = defineProps({
   modelValue: {
     type: Array,
@@ -179,6 +184,11 @@ const attachmentsStore = useAttachmentsStore()
 const editLists = ref([])
 const formList = ref([])
 const dragging = ref(false)
+const popUp = ref(false)
+const ownerOfMedia = ref({})
+const activeSrc = ref({
+  isAuth: false
+})
 
 
 //Watch
@@ -194,15 +204,32 @@ watch(formList, (val) => {
 
 
 //Methods
+const openModal = (element) => {
+  popUp.value = true
+
+  ownerOfMedia.value = {
+    isAuth: false,
+    attachmentId: element.id
+  }
+
+  activeSrc.value = {
+    src: element.thumbnail_path,
+    path: element.file_path,
+  }
+}
+
 const pressEnter = (e,index)=>{
   if (e.keyCode === 13){
     addNewCheckboxItem(index)
   }
-
 }
 
 const changeDrag = () => {
   emit('edit')
+}
+
+const saveMarkdown = ()=>{
+  emit('updateTask')
 }
 
 const addNewCheckboxItem = (index) => {

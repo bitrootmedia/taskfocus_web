@@ -13,7 +13,7 @@
        >
          {{ route.name || 'Dashboard' }}
        </a>
-       <div v-else class="cursor-pointer inline-flex font-semibold text-[22px] text-black-c" contenteditable="true"  plaintext-only="true" @input="saveData($event)">{{ taskTitle }}</div>
+       <div v-else class="cursor-pointer inline-flex font-semibold text-[22px] text-black-c" contenteditable="true" ref="editable" v-focus-end plaintext-only="true" @focus="moveCursorToEnd" @input="saveData($event)">{{ taskTitle }}</div>
 
        <div v-if="userStore.showPanel.show" class="hidden md:flex gap-x-4 flex-wrap">
          <Button
@@ -81,6 +81,7 @@ const router = useRouter()
 const route = useRoute()
 const task = ref({})
 const taskTitle = ref('')
+const editable = ref(null);
 
 
 //Watch
@@ -134,6 +135,7 @@ const updateTask = async (title) => {
 const saveData = async(e)=>{
   const plainText = e.target.innerText.replace(/&nbsp;/g, ' ');
   taskTitle.value = plainText
+  moveCursorToEnd()
   await updateTask(plainText)
 }
 
@@ -149,6 +151,15 @@ const logout = async () => {
     await router.push('/')
   }
 }
+
+const moveCursorToEnd = () => {
+  const range = document.createRange();
+  const sel = window.getSelection();
+  range.selectNodeContents(editable.value);
+  range.collapse(false);
+  sel.removeAllRanges();
+  sel.addRange(range);
+};
 </script>
 
 <style scoped>
