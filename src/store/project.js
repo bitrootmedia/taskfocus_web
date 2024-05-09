@@ -11,12 +11,12 @@ if (token) {
 
 export const useProjectStore = defineStore('project', {
     state: () => ({
-
+        project: {},
     }),
 
-    // getters: {
-    //     currentUser: (state) => state.user,
-    // },
+    getters: {
+        currentProject: (state) => state.project,
+    },
 
     actions: {
         async fetchProjects(payload) {
@@ -34,7 +34,9 @@ export const useProjectStore = defineStore('project', {
         },
 
         async fetchProjectById(payload) {
-            return await axios.get(`${config.BASE_API_URL}/project/${payload.id}`)
+            const resp = await axios.get(`${config.BASE_API_URL}/project/${payload.id}`)
+            this.project = resp.data
+            return resp
         },
 
         async createProject(payload) {
