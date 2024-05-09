@@ -145,7 +145,7 @@
         <div class="flex flex-col mb-3 border-b border-light-bg-c">
           <div class="flex sm:hidden gap-x-4 sm:gap-x-10 items-center flex-wrap pb-2" >
             <div class="flex items-center gap-x-2">
-              <h2 class="text-md font-semibold text-black-c cursor-pointer lg:whitespace-nowrap" ref="editable" v-focus-end plaintext-only="true" @focus="moveCursorToEnd" contenteditable="true" @input="saveData($event)">
+              <h2 class="text-lg font-semibold text-black-c cursor-pointer lg:whitespace-nowrap" ref="editable" v-focus-end plaintext-only="true" @focus="moveCursorToEnd" contenteditable="true" @input="saveData($event)">
                 {{ taskTitle }}</h2>
             </div>
           </div>
@@ -1183,7 +1183,6 @@ const updateTaskTitle = async (title) => {
       id: task.value.id,
       title: title,
     }
-
     await taskStore.updateTask(data)
     await toast.success("Task title updated");
   } catch (e) {

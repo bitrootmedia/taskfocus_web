@@ -542,7 +542,6 @@ const fetchDictionary = async () => {
   try {
     const resp = await tasksStore.fetchDictionary()
     urgencyLevelChoices.value = [[null,'NONE'],...resp.data.task_urgency_level_choices]
-    console.log(urgencyLevelChoices.value,'urgencyLevelChoices.valu')
   } catch (e) {
     catchErrors(e)
   }
