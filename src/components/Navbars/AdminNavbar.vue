@@ -6,14 +6,15 @@
         class="w-full mx-auto items-center flex justify-between md:flex-nowrap flex-wrap"
     >
      <div class="flex justify-between items-center main-container pl-0 flex-wrap gap-y-2">
+       <div v-if="route.name === 'Task Detail'" class="cursor-pointer inline-flex font-semibold text-[22px] text-black-c" contenteditable="true" ref="editable" v-focus-end plaintext-only="true" @focus="moveCursorToEnd" @input="saveData($event,'task')">{{ taskTitle }}</div>
+       <div v-else-if="route.name === 'Project Detail'" class="cursor-pointer inline-flex font-semibold text-[22px] text-black-c" contenteditable="true" ref="editable" v-focus-end plaintext-only="true" @focus="moveCursorToEnd" @input="saveData($event,'project')">{{ projectTitle }}</div>
        <a
-           v-if="route.name !== 'Task Detail'"
+           v-else
            class="text-black text-[22px] uppercase hidden md:inline-block font-semibold"
            href="javascript:void(0)"
        >
          {{ route.name || 'Dashboard' }}
        </a>
-       <div v-else class="cursor-pointer inline-flex font-semibold text-[22px] text-black-c" contenteditable="true" ref="editable" v-focus-end plaintext-only="true" @focus="moveCursorToEnd" @input="saveData($event)">{{ taskTitle }}</div>
 
        <div v-if="userStore.showPanel.show" class="hidden md:flex gap-x-4 flex-wrap">
          <Button
@@ -72,15 +73,19 @@ import LogoutIcon from "../Svg/LogoutIcon.vue";
 import Button from '../Button/Button.vue'
 import {useTasksStore} from "../../store/tasks";
 import {catchErrors} from "../../utils";
+import {useProjectStore} from "../../store/project";
 
 const userStore = useUserStore()
 const taskStore = useTasksStore()
+const projectStore = useProjectStore()
 const {cookies} = useCookies();
 const toast = useToast()
 const router = useRouter()
 const route = useRoute()
 const task = ref({})
+const project = ref({})
 const taskTitle = ref('')
+const projectTitle = ref('')
 const editable = ref(null);
 
 
@@ -89,6 +94,13 @@ watch(taskStore.$state,(val)=>{
   if (Object.keys(val.task).length){
     task.value = val.task
     taskTitle.value = val.task.title
+  }
+})
+
+watch(projectStore.$state,(val)=>{
+  if (Object.keys(val.project).length){
+    project.value = val.project
+    projectTitle.value = val.project.title
   }
 })
 
@@ -115,6 +127,21 @@ const isAuthOwner = computed(() => {
 
 
 // Methods
+const updateProjectTitle = async (title) => {
+  try {
+    const data = {
+      id: project.value.id,
+      title: title,
+    }
+    await projectStore.updateProject(data)
+  } catch (e) {
+    if (e.response?.data?.title[0] === 'This field may not be blank.'){
+      projectTitle.value = project.value.title
+    }
+    catchErrors(e)
+  }
+}
+
 const updateTask = async (title) => {
   try {
     const data = {
@@ -127,16 +154,21 @@ const updateTask = async (title) => {
     if (e.response?.data?.title[0] === 'This field may not be blank.'){
       taskTitle.value = task.value.title
     }
-
     catchErrors(e)
   }
 }
 
-const saveData = async(e)=>{
+const saveData = async(e,type)=>{
   const plainText = e.target.innerText.replace(/&nbsp;/g, ' ');
-  taskTitle.value = plainText
+  if (type === 'task'){
+    taskTitle.value = plainText
+    moveCursorToEnd()
+    return await updateTask(plainText)
+  }
+
+  projectTitle.value = plainText
   moveCursorToEnd()
-  await updateTask(plainText)
+  await updateProjectTitle(plainText)
 }
 
 const logout = async () => {
