@@ -32,6 +32,7 @@
                 :task-id="task.id"
                 v-model="form.blocks"
                 @edit="isEditPanel.blocks = true"
+                @updateTask="updateTask"
             />
           </div>
 
@@ -142,6 +143,13 @@
     <div class="right-side bg-white">
       <div class="right-side-content w-full bg-white py-6 px-[14px]">
         <div class="flex flex-col mb-3 border-b border-light-bg-c">
+          <div class="flex sm:hidden gap-x-4 sm:gap-x-10 items-center flex-wrap pb-2" >
+            <div class="flex items-center gap-x-2">
+              <h2 class="text-md font-semibold text-black-c cursor-pointer lg:whitespace-nowrap" ref="editable" v-focus-end plaintext-only="true" @focus="moveCursorToEnd" contenteditable="true" @input="saveData($event)">
+                {{ taskTitle }}</h2>
+            </div>
+          </div>
+
           <div class="flex gap-x-4 sm:gap-x-10 items-center flex-wrap pb-2" v-if="task?.project?.id">
             <div class="flex items-center gap-x-2">
               <span class="text-sm text-light-c whitespace-nowrap">In project:</span>
@@ -199,7 +207,7 @@
 
                 <PencilSmallIcon class="cursor-pointer ml-1" @click="isEditPanel.progress = true"/>
               </div>
-              <div v-else class="w-[250px] range-slider">
+              <div v-else class="w-[220px] range-slider">
                 <input type="range" min="0" max="100" step="1" v-model="form.progress" @input="updateSlider"
                        :style="{backgroundSize: backgroundSize}">
                 <div class="data text-light-c text-sm">Progress: {{ form.progress }}/100</div>
@@ -607,6 +615,8 @@ const haveQueueAccess = ref([])
 const haveQueueAccessIds = ref([])
 const haveProjectAccessIds = ref([])
 const haveProjectAccess = ref([])
+const taskTitle = ref('')
+const editable = ref(null);
 const isEditPanel = ref({...defaultEditValues})
 const form = ref({
   title: '',
@@ -884,7 +894,7 @@ const fetchTask = async (noLoad = false) => {
         firstOne.value = true
         isEditPanel.value.blocks = true
       }
-
+      taskTitle.value = task.value.title
       await fetchTaskTotalTime()
     }
 
@@ -894,6 +904,15 @@ const fetchTask = async (noLoad = false) => {
     loading.value = false
   }
 }
+
+const moveCursorToEnd = () => {
+  const range = document.createRange();
+  const sel = window.getSelection();
+  range.selectNodeContents(editable.value);
+  range.collapse(false);
+  sel.removeAllRanges();
+  sel.addRange(range);
+};
 
 const fetchProject = async () => {
   const project = task.value?.project
@@ -1152,7 +1171,10 @@ const fetchReminders = async () => {
 }
 
 const saveData = async (e) => {
-  await updateTaskTitle(e.target.innerHTML)
+  const plainText = e.target.innerText.replace(/&nbsp;/g, ' ');
+  taskTitle.value = plainText
+  moveCursorToEnd()
+  await updateTaskTitle(plainText)
 }
 
 const updateTaskTitle = async (title) => {
