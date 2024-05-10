@@ -65,9 +65,6 @@
                   <td class="border-t-0 px-3 align-middle border-l-0 border-r-0 text-xs whitespace-nowrap p-4">
                     <span>{{ element.tag || '-' }}</span>
                   </td>
-                  <td class="border-t-0 px-3 align-middle border-l-0 border-r-0 text-xs whitespace-nowrap p-4">
-                    <span>{{ element.progress || 0 }}%</span>
-                  </td>
                 </tr>
               </template>
             </draggable>
@@ -111,7 +108,6 @@ const headers = [
   {id: 1, label: 'Project', sorting: true, sortLabel: 'title'},
   {id: 2, label: 'Owner'},
   {id: 3, label: 'Tag'},
-  {id: 4, label: 'Progress'},
 ]
 
 const loading = ref(false)

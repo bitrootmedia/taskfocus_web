@@ -2,6 +2,7 @@
   <div class="inline-flex items-center gap-x-1">
     <input
         :id="id"
+        :checked="value ? 'on' : ''"
         :value="value"
         @input="$emit('update:value', $event.target.checked)"
         type="checkbox"
