@@ -1,6 +1,6 @@
 <template>
   <nav
-      class="sticky top-0 bg-white border-b border-[#E5E7E7] w-full z-[1] md:flex-row md:flex-nowrap md:justify-start hidden md:flex items-center pl-[50px] pr-4 pt-[30px] pb-[27px]"
+      class="sticky top-0 bg-white border-b border-[#E5E7E7] w-full z-[2] md:flex-row md:flex-nowrap md:justify-start hidden md:flex items-center pl-[50px] pr-4 pt-[30px] pb-[27px]"
   >
     <div
         class="w-full mx-auto items-center flex justify-between md:flex-nowrap flex-wrap"

@@ -46,7 +46,7 @@
       </template>
 
       <template v-if="!showCreateBtn && showBtnResult">
-        <div class="w-full items-center gap-x-6" >
+        <div class="w-full items-center gap-x-6">
           <div class="w-full">
             <v-md-editor
                 autofocus
@@ -91,7 +91,7 @@
     </div>
 
     <div class="comments mt-5">
-      <ul >
+      <ul>
         <li v-for="comment in comments" :key="comment.id" class="mb-5">
           <div class="">
             <div class="flex mb-2">
@@ -207,7 +207,7 @@
 <script setup>
 import Pagination from './../Pagination/Pagination.vue'
 import {onMounted, onUnmounted, ref} from "vue";
-import {catchErrors} from "../../utils";
+import {catchErrors, pusherEventNames} from "../../utils";
 import {convertDateTime} from "../../utils";
 import {useRoute, useRouter} from "vue-router";
 import {usePaginate} from "../../composables/usePaginate";
@@ -225,6 +225,9 @@ import PlusIcon from "../Svg/PlusIcon.vue";
 import Button from "../Button/Button.vue"
 import UserIcon from "../Svg/UserIcon.vue";
 import Input from '../Input/Input.vue'
+import {usePusher} from "../../composables/usePusher";
+
+
 const emit = defineEmits()
 const props = defineProps({
   projectId: {
@@ -259,7 +262,7 @@ const props = defineProps({
     type: Boolean,
     default: true
   },
-  showBtnResult:{
+  showBtnResult: {
     type: Boolean,
     default: false
   }
@@ -270,6 +273,7 @@ const rules = {
   message: {required},
 }
 
+const {pusher, channel, setPusherChannel} = usePusher()
 const commentsStore = useCommentsStore()
 const attachmentsStore = useAttachmentsStore()
 const toast = useToast()
@@ -288,15 +292,9 @@ let timer = null
 
 const v$ = useVuelidate(rules, {message})
 
-
-watch(editCommentsIds, (val) => {
-  if (val.length) stopTimer()
-  else startTimer()
-})
-
 // Methods
 const reply = (comment) => {
-  emit('update:showCreateBtn',true)
+  emit('update:showCreateBtn', true)
   writeComment.value = true
   message.value = `@${comment.author.username} `
 
@@ -388,11 +386,11 @@ const fetchComments = async (label = null) => {
 }
 
 const resetComment = () => {
-  emit('update:showCreateBtn',false)
+  emit('update:showCreateBtn', false)
   writeComment.value = false
   message.value = ''
   v$.value.$reset()
-  if (!props.showCreateBtn) emit('update:showBtnResult',false)
+  if (!props.showCreateBtn) emit('update:showBtnResult', false)
 }
 
 const toLink = (type) => {
@@ -417,8 +415,7 @@ const sendComment = async (e) => {
       await toast.success("Comment created");
       message.value = ''
       v$.value.$reset()
-      if (!props.showCreateBtn) emit('update:showBtnResult',false)
-      await fetchComments()
+      if (!props.showCreateBtn) emit('update:showBtnResult', false)
     }
   } catch (e) {
     catchErrors(e)
@@ -432,26 +429,16 @@ const sorting = (label) => {
   fetchComments(label)
 }
 
-const startTimer = () => {
-  timer = setInterval(() => {
-    fetchComments()
-  }, 15000)
-}
-
-const stopTimer = () => {
-  clearInterval(timer)
-  timer = null
-}
-
 onMounted(() => {
-  if (route.name === 'Task Detail') startTimer()
-
   const host = window.location.host
   domain.value = host.replace('www.', '')
 })
 
-onUnmounted(() => {
-  stopTimer()
+
+// Config Pusher
+setPusherChannel(route.params.id)
+channel.value.bind(pusherEventNames.comment_created, (data) => {
+  fetchComments()
 });
 
 // Composables
