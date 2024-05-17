@@ -296,12 +296,6 @@
                 </select>
               </div>
 
-              <div class="flex items-center gap-x-1">
-                <span class="inline-block text-sm text-light-c">Urgent:</span>
-
-                <Switch v-model:value="form.is_urgent"/>
-              </div>
-
               <div class="flex gap-x-1 flex-wrap">
                 <span class="text-sm text-light-c whitespace-nowrap">Task Access:</span>
 

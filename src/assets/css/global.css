@@ -175,7 +175,6 @@ tr:nth-child(odd) {
     font-weight: 400 !important;
     line-height: normal !important;
     font-family: "Inter", sans-serif !important;
-    max-width: 724px;
 }
 
 @media (max-width: 991px) {
