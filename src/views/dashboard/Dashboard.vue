@@ -24,11 +24,15 @@
 <script setup>
 import {useRouter} from "vue-router";
 import UserTasksQueue from "../../components/Table/UserTasksQueue.vue";
-import {catchErrors} from "../../utils";
-import {ref} from "vue";
+import {catchErrors, pusherEventNames} from "../../utils";
+import {onMounted, ref, watch} from "vue";
 import {useTasksStore} from "../../store/tasks";
 import UrgentTasks from "../../components/Lists/UrgentTasks.vue";
+import {usePusher} from "../../composables/usePusher";
+import {useCookies} from "vue3-cookies";
 
+const {channel, events, bindEvent, setPusherChannel} = usePusher()
+const {cookies} = useCookies();
 const router = useRouter()
 const tasksStore = useTasksStore()
 const task = ref(null)
@@ -49,6 +53,18 @@ const fetchCurrentTask = async()=>{
     catchErrors(e)
   }
 }
+
+watch(events,(val)=>{
+  console.log(val,'changed')
+})
+
+onMounted(()=>{
+  const user = cookies.get('task_focus_user')
+  if (user){
+    setPusherChannel(`USR_${user.pk}`)
+    bindEvent(pusherEventNames.current_task_update, fetchCurrentTask);
+  }
+})
 
 // Run Functions
 fetchCurrentTask()

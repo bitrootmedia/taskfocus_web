@@ -30,9 +30,11 @@
                 :block-name="blockName"
                 :key="keyList"
                 :task-id="task.id"
+                :deletedBlockList="deletedBlockList"
                 v-model="form.blocks"
                 @edit="isEditPanel.blocks = true"
                 @updateTask="updateTask"
+                @updateDeleteList="updateDeleteList"
             />
           </div>
 
@@ -418,14 +420,14 @@
           <div class="flex gap-x-4 gap-y-2 flex align-center flex-wrap">
             <div
                 class="w-full border border-light-bg-c bg-white rounded-[6px] px-3 py-2 h-8 flex items-center gap-x-2 cursor-pointer"
-                @click="addNewForm('markdown')">
+                @click="addNewForm('MARKDOWN')">
               <MarkdownIcon/>
               <span class="tooltip-text text-[13px] font-semibold text-black-c">Create markdown</span>
             </div>
 
             <div
                 class="w-full border border-light-bg-c bg-white rounded-[6px] px-3 py-2 h-8 flex items-center gap-x-2 cursor-pointer"
-                @click="addNewForm('checklist')">
+                @click="addNewForm('CHECKLIST')">
               <ChecklistIcon/>
               <span class="tooltip-text text-[13px] font-semibold text-black-c">Create checklist</span>
             </div>
@@ -489,7 +491,7 @@
 
 <script setup>
 import {computed, onBeforeUnmount, onMounted, ref, watch} from "vue";
-import {catchErrors} from "../../utils";
+import {catchErrors, pusherEventNames} from "../../utils";
 import {useRoute, useRouter} from "vue-router";
 import {useTasksStore} from "../../store/tasks";
 import Loader from "./../../components/Loader/Loader.vue"
@@ -529,6 +531,7 @@ import NotesIcon from "../../components/Svg/NotesIcon.vue"
 import PaperClipIcon from "../../components/Svg/PaperClipIcon.vue";
 import ConfirmCloseModal from './../../components/Modals/ConfirmCloseModal.vue'
 import Dropzone from 'dropzone-vue';
+import {usePusher} from "../../composables/usePusher";
 
 // ValidationRules
 const rules = {
@@ -565,6 +568,7 @@ const defaultEditValues = {
 }
 
 // State
+const {setPusherChannel} = usePusher()
 const taskStore = useTasksStore()
 const projectStore = useProjectStore()
 const userStore = useUserStore()
@@ -626,6 +630,7 @@ const form = ref({
   urgency_level: '',
   blocks: [],
 })
+const deletedBlockList = ref([])
 const firstOne = ref(false)
 const writeComment = ref(false)
 const writeNote = ref(false)
@@ -880,15 +885,8 @@ const fetchTask = async (noLoad = false) => {
       backgroundSize.value = `${resp.data.progress || 0}% 100%`
       firstOne.value = false
 
-      if (form.value.blocks?.length === 0 && !task.value.description) {
-        form.value.blocks = [{
-          type: 'markdown',
-          content: "",
-        }]
-        firstOne.value = true
-        isEditPanel.value.blocks = true
-      }
       taskTitle.value = task.value.title
+      await fetchTaskBlocks()
       await fetchTaskTotalTime()
     }
 
@@ -896,6 +894,26 @@ const fetchTask = async (noLoad = false) => {
     catchErrors(e)
   } finally {
     loading.value = false
+  }
+}
+
+
+const fetchTaskBlocks = async()=>{
+  try {
+    const resp = await taskStore.fetchTaskBlocks({id: task.value.id})
+    form.value.blocks = resp.data.results
+
+    if (resp.data.results.length === 0 && !task.value.description){
+        form.value.blocks = [{
+          block_type: 'MARKDOWN',
+          content: "",
+          position: 0
+        }]
+        firstOne.value = true
+        isEditPanel.value.blocks = true
+    }
+  }catch (e) {
+    console.log(e,'e')
   }
 }
 
@@ -999,18 +1017,50 @@ const updateTask = async (noLoad) => {
       is_urgent: form.value.is_urgent,
       position: form.value.position,
       urgency_level: form.value.urgency_level,
-      blocks: form.value.blocks,
     }
 
+    await blockCall(form.value.blocks, task.value.id)
     await taskStore.updateTask(data)
-    await toast.success("Task updated");
+    toast.success("Task updated");
     keyList.value += 1
     isEditPanel.value = {...defaultEditValues}
-    await hidePanel()
+    hidePanel()
     await fetchTask(noLoad)
   } catch (e) {
     catchErrors(e)
   }
+}
+
+const blockCall = async (blocks,id)=>{
+  try {
+    const creationBlocks = blocks.filter((item)=>!item.id)
+    const updatedBlocks = blocks.filter((item)=>item.is_edit)
+
+    if (creationBlocks?.length){
+      creationBlocks.map(async(block)=>{
+        const obj = {id, block}
+        await taskStore.createTaskBlocks(obj)
+      })
+    }
+
+    if(updatedBlocks?.length){
+      updatedBlocks.map(async(block)=>{
+        await taskStore.updateTaskBlocks(block)
+      })
+    }
+
+    if (deletedBlockList.value?.length){
+      deletedBlockList.value.map(async(id)=>{
+        await taskStore.deleteTaskBlocks(id)
+      })
+    }
+  }catch (e) {
+    console.log(e,'e')
+  }
+}
+
+const updateDeleteList = (id)=>{
+  deletedBlockList.value.push(id)
 }
 
 const fetchUsers = async () => {
@@ -1221,10 +1271,13 @@ const saveImageFiles = async (e) => {
       updateKey.value += 1
       toast.success("Attachment uploaded");
       const obj = {
-        type: 'image',
-        path: resp.data.attachments[0].file_path,
+        block_type: 'IMAGE',
+        content:{
+          path: resp.data.attachments[0].file_path,
+        }
       }
       form.value.blocks.push(obj)
+      isEditPanel.value.blocks = true
     }
   } catch (e) {
     catchErrors(e)
@@ -1274,6 +1327,10 @@ onMounted(() => {
 
     fetchUsers()
   }, 700)
+
+
+  const user = cookies.get('task_focus_user')
+  if (user) setPusherChannel(`USR_${user.pk}`)
 })
 
 

@@ -227,7 +227,6 @@ import UserIcon from "../Svg/UserIcon.vue";
 import Input from '../Input/Input.vue'
 import {usePusher} from "../../composables/usePusher";
 
-
 const emit = defineEmits()
 const props = defineProps({
   projectId: {
@@ -273,7 +272,7 @@ const rules = {
   message: {required},
 }
 
-const {pusher, channel, setPusherChannel} = usePusher()
+const {bindEvent ,setPusherChannel} = usePusher()
 const commentsStore = useCommentsStore()
 const attachmentsStore = useAttachmentsStore()
 const toast = useToast()
@@ -437,9 +436,7 @@ onMounted(() => {
 
 // Config Pusher
 setPusherChannel(route.params.id)
-channel.value.bind(pusherEventNames.comment_created, (data) => {
-  fetchComments()
-});
+bindEvent(pusherEventNames.comment_created,fetchComments)
 
 // Composables
 const options = {
