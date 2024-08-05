@@ -228,8 +228,55 @@ const pressEnter = (e,index)=>{
   }
 }
 
-const changeDrag = () => {
-  emit('edit')
+const changeDrag = async (e) => {
+  // try {
+  //   const newIndex = e.moved.newIndex
+  //   const oldIndex = e.moved.oldIndex
+  //   let aboveItemId = null
+  //   let belowItemId = null
+  //
+  //   if (+newIndex > +oldIndex) {
+  //     // top-bottom
+  //     if (newIndex !== 0) {
+  //       const findItem = formList.value.find((item, index) => index === newIndex)
+  //       aboveItemId = findItem?.id
+  //     }
+  //
+  //     if (newIndex !== formList.value.length) {
+  //       const nextItem = formList.value.find((item, index) => index === newIndex + 1)
+  //       belowItemId = nextItem?.id
+  //     }
+  //   } else {
+  //     // bottom-top
+  //     if (newIndex !== 0) {
+  //       const findItem = formList.value.find((item, index) => index === newIndex - 1)
+  //       aboveItemId = findItem?.id
+  //     }
+  //
+  //     if (newIndex !== formList.value.length) {
+  //       const nextItem = formList.value.find((item, index) => index === newIndex)
+  //       belowItemId = nextItem?.id
+  //     }
+  //   }
+  //
+  //   console.log(formList.value,'formList')
+  //   console.log(belowItemId,'belowItemId')
+  //   console.log(aboveItemId,'aboveItemId')
+
+    emit('edit')
+
+    // const data = {
+    //   id: e.moved.element.id,
+    //   task_above_id: aboveItemId,
+    // }
+    //
+    // if (props.projectId) data.project_id = props.projectId
+    // else data.user_task_queue_id = belowItemId
+    //
+    // await tasksStore.updateOrder(data)
+  // } catch (e) {
+  //   catchErrors(e)
+  // }
 }
 
 const saveMarkdown = ()=>{
