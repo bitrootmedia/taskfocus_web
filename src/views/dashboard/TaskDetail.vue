@@ -906,7 +906,9 @@ const fetchTaskBlocks = async()=>{
     if (resp.data.results.length === 0 && !task.value.description){
         form.value.blocks = [{
           block_type: 'MARKDOWN',
-          content: "",
+          content: {
+            markdown: ''
+          },
           position: 0
         }]
         firstOne.value = true

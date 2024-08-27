@@ -20,11 +20,11 @@
                 <div class="form-group bg-white rounded-[10px] w-full">
                   <div class="content p-[14px] flex justify-between items-start gap-x-4">
                     <div class="w-full">
-                      <v-md-editor v-if="editLists[index]" v-model="element.content" height="270px"
+                      <v-md-editor v-if="editLists[index]" v-model="element.content.markdown" height="270px"
                                    @save="saveMarkdown"
                                    :disabled-menus="[]"/>
 
-                      <v-md-preview v-else :text="element.content"></v-md-preview>
+                      <v-md-preview v-else :text="element.content.markdown"></v-md-preview>
                     </div>
 
                     <div class="actions flex gap-x-1 items-center">
@@ -298,7 +298,9 @@ const addNewForm = (version) => {
   let obj = {
     MARKDOWN: {
       block_type: version,
-      content: "",
+      content: {
+        markdown: ''
+      },
       position: formList.value.length || 0
     },
     IMAGE: {
@@ -362,7 +364,6 @@ const saveFiles = async (e, index) => {
 
 onMounted(() => {
   formList.value = JSON.parse(JSON.stringify(props.modelValue))
-  console.log(formList.value,'1111111111')
   if (props.firstOne) editLists.value = [true]
   else {
     editLists.value = Array.from({length: props.modelValue.length}, i => i = false);
