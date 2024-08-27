@@ -23,6 +23,7 @@ import enUS from '@kangc/v-md-editor/lib/lang/en-US';
 import Prism from 'prismjs';
 import 'prismjs/components/prism-json';
 import hljs from 'highlight.js';
+import {usePusher} from "./composables/usePusher";
 
 
 VMdEditor.use(vuepressTheme, { Prism });
@@ -42,6 +43,9 @@ const cookieOptions = {
 const toastOptions = {
     position: "bottom-left",
 }
+
+const {initPusher} = usePusher()
+initPusher()
 
 
 createApp(App).use(router).use(Toast,toastOptions).use(VueCookies,cookieOptions).use(pinia).use(VMdEditor).use(VMdPreview).use(VMdPreviewHtml).mount('#app')
