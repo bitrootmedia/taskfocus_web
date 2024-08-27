@@ -229,54 +229,26 @@ const pressEnter = (e,index)=>{
 }
 
 const changeDrag = async (e) => {
-  // try {
-  //   const newIndex = e.moved.newIndex
-  //   const oldIndex = e.moved.oldIndex
-  //   let aboveItemId = null
-  //   let belowItemId = null
-  //
-  //   if (+newIndex > +oldIndex) {
-  //     // top-bottom
-  //     if (newIndex !== 0) {
-  //       const findItem = formList.value.find((item, index) => index === newIndex)
-  //       aboveItemId = findItem?.id
-  //     }
-  //
-  //     if (newIndex !== formList.value.length) {
-  //       const nextItem = formList.value.find((item, index) => index === newIndex + 1)
-  //       belowItemId = nextItem?.id
-  //     }
-  //   } else {
-  //     // bottom-top
-  //     if (newIndex !== 0) {
-  //       const findItem = formList.value.find((item, index) => index === newIndex - 1)
-  //       aboveItemId = findItem?.id
-  //     }
-  //
-  //     if (newIndex !== formList.value.length) {
-  //       const nextItem = formList.value.find((item, index) => index === newIndex)
-  //       belowItemId = nextItem?.id
-  //     }
-  //   }
-  //
-  //   console.log(formList.value,'formList')
-  //   console.log(belowItemId,'belowItemId')
-  //   console.log(aboveItemId,'aboveItemId')
+  try {
+    const newIndex = e.moved.newIndex
+    const oldIndex = e.moved.oldIndex
+
+    formList.value[newIndex] = {
+      ...formList.value[newIndex],
+      position: newIndex,
+      is_edit: true,
+    }
+    formList.value[oldIndex] = {
+      ...formList.value[oldIndex],
+      position: oldIndex,
+      is_edit: true,
+    }
 
     emit('edit')
 
-    // const data = {
-    //   id: e.moved.element.id,
-    //   task_above_id: aboveItemId,
-    // }
-    //
-    // if (props.projectId) data.project_id = props.projectId
-    // else data.user_task_queue_id = belowItemId
-    //
-    // await tasksStore.updateOrder(data)
-  // } catch (e) {
-  //   catchErrors(e)
-  // }
+  } catch (e) {
+    catchErrors(e)
+  }
 }
 
 const saveMarkdown = ()=>{
@@ -327,12 +299,14 @@ const addNewForm = (version) => {
     MARKDOWN: {
       block_type: version,
       content: "",
+      position: formList.value.length || 0
     },
     IMAGE: {
       block_type: version,
       content:{
         path: "",
-      }
+      },
+      position: formList.value.length || 0
     },
     CHECKLIST: {
       block_type: version,
@@ -344,7 +318,8 @@ const addNewForm = (version) => {
             checked: false,
           },
         ],
-      }
+      },
+      position: formList.value.length || 0
     }
   }
 
@@ -387,6 +362,7 @@ const saveFiles = async (e, index) => {
 
 onMounted(() => {
   formList.value = JSON.parse(JSON.stringify(props.modelValue))
+  console.log(formList.value,'1111111111')
   if (props.firstOne) editLists.value = [true]
   else {
     editLists.value = Array.from({length: props.modelValue.length}, i => i = false);
