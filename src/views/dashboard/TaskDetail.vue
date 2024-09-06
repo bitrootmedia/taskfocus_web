@@ -54,7 +54,8 @@
           </div>
 
           <div class="mb-10">
-            <CommentsDataTable v-model:showCreateBtn="showCreateBtnComment" v-model:showBtnResult="writeComment" :task-id="task.id"
+            <CommentsDataTable v-model:showCreateBtn="showCreateBtnComment" v-model:showBtnResult="writeComment"
+                               :task-id="task.id"
                                :task-name="task.title" :is-task="true"/>
           </div>
 
@@ -145,9 +146,11 @@
     <div class="right-side bg-white">
       <div class="right-side-content w-full bg-white py-6 px-[14px]">
         <div class="flex flex-col mb-3 border-b border-light-bg-c">
-          <div class="flex sm:hidden gap-x-4 sm:gap-x-10 items-center flex-wrap pb-2" >
+          <div class="flex sm:hidden gap-x-4 sm:gap-x-10 items-center flex-wrap pb-2">
             <div class="flex items-center gap-x-2">
-              <h2 class="text-lg font-semibold text-black-c cursor-pointer lg:whitespace-nowrap" ref="editable" v-focus-end plaintext-only="true" @focus="moveCursorToEnd" contenteditable="true" @input="saveData($event)">
+              <h2 class="text-lg font-semibold text-black-c cursor-pointer lg:whitespace-nowrap" ref="editable"
+                  v-focus-end plaintext-only="true" @focus="moveCursorToEnd" contenteditable="true"
+                  @input="saveData($event)">
                 {{ taskTitle }}</h2>
             </div>
           </div>
@@ -285,6 +288,12 @@
               </div>
 
               <div class="flex items-center gap-x-1">
+                <span class="inline-block text-sm text-light-c">Urgent:</span>
+
+                <Switch v-model:value="form.is_urgent"/>
+              </div>
+
+              <div class="flex items-center gap-x-1">
                 <span class="inline-block text-sm text-light-c">Priority:</span>
                 <div v-if="!isEditPanel.urgency_level"
                      class="uppercase cursor-pointer text-sm text-black-c font-semibold flex items-center gap-x-1">
@@ -297,6 +306,7 @@
                   <option :value="item[0]" v-for="(item) in urgencyLevelChoices" :key="item[0]">{{ item[1] }}</option>
                 </select>
               </div>
+
 
               <div class="flex gap-x-1 flex-wrap">
                 <span class="text-sm text-light-c whitespace-nowrap">Task Access:</span>
@@ -716,9 +726,9 @@ const closeTask = async (notes) => {
 const addNewForm = (name) => {
   blockName.value = name
 
-  setTimeout(()=>{
+  setTimeout(() => {
     blockName.value = ''
-  },500)
+  }, 500)
 }
 
 const bgConvert = (progress) => {
@@ -898,24 +908,24 @@ const fetchTask = async (noLoad = false) => {
 }
 
 
-const fetchTaskBlocks = async()=>{
+const fetchTaskBlocks = async () => {
   try {
     const resp = await taskStore.fetchTaskBlocks({id: task.value.id})
     form.value.blocks = resp.data.results
 
-    if (resp.data.results.length === 0 && !task.value.description){
-        form.value.blocks = [{
-          block_type: 'MARKDOWN',
-          content: {
-            markdown: ''
-          },
-          position: 0
-        }]
-        firstOne.value = true
-        isEditPanel.value.blocks = true
+    if (resp.data.results.length === 0 && !task.value.description) {
+      form.value.blocks = [{
+        block_type: 'MARKDOWN',
+        content: {
+          markdown: ''
+        },
+        position: 0
+      }]
+      firstOne.value = true
+      isEditPanel.value.blocks = true
     }
-  }catch (e) {
-    console.log(e,'e')
+  } catch (e) {
+    console.log(e, 'e')
   }
 }
 
@@ -946,7 +956,7 @@ const fetchProject = async () => {
 const fetchDictionary = async () => {
   try {
     const resp = await taskStore.fetchDictionary()
-    urgencyLevelChoices.value = [[null,'NONE'],...resp.data.task_urgency_level_choices]
+    urgencyLevelChoices.value = [[null, 'NONE'], ...resp.data.task_urgency_level_choices]
     dictionary.value = resp.data.task_status_choices
   } catch (e) {
     catchErrors(e)
@@ -1033,35 +1043,35 @@ const updateTask = async (noLoad) => {
   }
 }
 
-const blockCall = async (blocks,id)=>{
+const blockCall = async (blocks, id) => {
   try {
-    const creationBlocks = blocks.filter((item)=>!item.id)
-    const updatedBlocks = blocks.filter((item)=>item.is_edit)
+    const creationBlocks = blocks.filter((item) => !item.id)
+    const updatedBlocks = blocks.filter((item) => item.is_edit)
 
-    if (creationBlocks?.length){
-      creationBlocks.map(async(block)=>{
+    if (creationBlocks?.length) {
+      creationBlocks.map(async (block) => {
         const obj = {id, block}
         await taskStore.createTaskBlocks(obj)
       })
     }
 
-    if(updatedBlocks?.length){
-      updatedBlocks.map(async(block)=>{
+    if (updatedBlocks?.length) {
+      updatedBlocks.map(async (block) => {
         await taskStore.updateTaskBlocks(block)
       })
     }
 
-    if (deletedBlockList.value?.length){
-      deletedBlockList.value.map(async(id)=>{
+    if (deletedBlockList.value?.length) {
+      deletedBlockList.value.map(async (id) => {
         await taskStore.deleteTaskBlocks(id)
       })
     }
-  }catch (e) {
-    console.log(e,'e')
+  } catch (e) {
+    console.log(e, 'e')
   }
 }
 
-const updateDeleteList = (id)=>{
+const updateDeleteList = (id) => {
   deletedBlockList.value.push(id)
 }
 
@@ -1274,7 +1284,7 @@ const saveImageFiles = async (e) => {
       toast.success("Attachment uploaded");
       const obj = {
         block_type: 'IMAGE',
-        content:{
+        content: {
           path: resp.data.attachments[0].file_path,
         }
       }
