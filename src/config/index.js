@@ -14,4 +14,6 @@ export default {
     URGENT_TASKS: import.meta.env.VITE_URGENT_TASKS,
     NOTES: import.meta.env.VITE_NOTES,
     LOGO_URL: import.meta.env.VITE_LOGO_URL,
+    PUSHER_APP_ID: import.meta.env.VITE_PUSHER_APP_ID,
+    PUSHER_HOST: import.meta.env.VITE_PUSHER_HOST,
 }

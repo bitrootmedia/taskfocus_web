@@ -80,6 +80,22 @@ export const useTasksStore = defineStore('tasks', {
             return resp
         },
 
+        async fetchTaskBlocks(payload){
+            return await axios.get(`${config.BASE_API_URL}/task-block-list/${payload.id}`)
+        },
+
+        async createTaskBlocks(payload){
+            return await axios.post(`${config.BASE_API_URL}/task-block-list/${payload.id}`,payload.block)
+        },
+
+        async updateTaskBlocks(payload){
+            return await axios.put(`${config.BASE_API_URL}/task-block/${payload.id}`,payload)
+        },
+
+        async deleteTaskBlocks(payload){
+            return await axios.delete(`${config.BASE_API_URL}/task-block/${payload}`)
+        },
+
         async fetchTaskTime(payload){
             return await axios.get(`${config.BASE_API_URL}/task-total-time/${payload.id}`)
         },

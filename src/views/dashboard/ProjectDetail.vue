@@ -11,45 +11,8 @@
                   {{ projectTitle }}</h2>
               </div>
             </div>
-<!--            <div>-->
-<!--              <h1 v-if="!isEditTitle" class="text-3xl font-bold text-blueGray-700 mb-4 cursor-pointer"-->
-<!--                  @click="isEditTitle = true">{{ project.title }}</h1>-->
-<!--              <div v-else class="mb-2">-->
-<!--                <input-->
-<!--                    v-model="form.title"-->
-<!--                    type="text"-->
-<!--                    class="border-0 px-3 py-3 placeholder-blueGray-300 text-blueGray-600 bg-white rounded text-sm shadow focus:outline-none focus:ring w-full ease-linear transition-all duration-150"-->
-<!--                    placeholder="Project Title"-->
-<!--                />-->
-<!--                <span class="text-xs font-medium text-red-600" v-if="v$.title.$error"> {{-->
-<!--                    v$.title.$errors[0].$message-->
-<!--                  }} </span>-->
-<!--              </div>-->
-<!--            </div>-->
-
 
             <div class="description-panel">
-              <div class="mb-2 sm:mb-4">
-                <div class="inline-flex items-center" v-if="!isEditProgress">
-                  <span class="inline-block text-light-c text-sm mr-2">Progress:</span>
-
-                  <div class="cursor-pointer flex items-center">
-                    <div class="w-[180px] h-2 bg-blueGray-200 rounded-md">
-                        <span class="progress block h-2 rounded-md flex items-center justify-center"
-                              :style="{width: `${project.progress || 0}%`, background: `${bgConvert(project.progress)}`}">
-                        </span>
-                    </div>
-                  </div>
-
-                  <PencilSmallIcon class="cursor-pointer ml-1" @click="isEditProgress = true"/>
-                </div>
-                <div v-else class="mb-2 w-80 range-slider w-[180px]">
-                  <input type="range" min="0" max="100" step="1" v-model="form.progress" @input="updateSlider"
-                         :style="{backgroundSize: backgroundSize}">
-                  <div class="data text-light-c text-sm">Progress: {{ form.progress }}/100</div>
-                </div>
-              </div>
-
               <div class="mb-2 sm:mb-4">
                 <div class="flex items-center gap-x-1">
                   <span class="inline-block text-sm text-light-c">Urgent:</span>

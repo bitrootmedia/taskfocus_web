@@ -95,3 +95,8 @@ export const catchErrors = (e) => {
 
     return toast.error('Something went wrong')
 }
+
+export const pusherEventNames = {
+    'comment_created': 'comment_created',
+    'current_task_update': 'current_task_update',
+}

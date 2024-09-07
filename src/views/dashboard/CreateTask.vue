@@ -12,7 +12,6 @@
             }} </span>
         </div>
 
-        {{disabled}}
         <Button
             @on-click="createTask"
             label="Submit"
