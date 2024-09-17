@@ -287,10 +287,16 @@
                 />
               </div>
 
-              <div class="flex items-center gap-x-1">
+              <div class="flex items-center gap-x-1 w-full">
                 <span class="inline-block text-sm text-light-c">Urgent:</span>
 
                 <Switch v-model:value="form.is_urgent"/>
+              </div>
+
+              <div class="flex items-center gap-x-1 w-full">
+                <span class="inline-block text-sm text-light-c">Pin:</span>
+
+                <Switch v-model:value="form.is_pinned"/>
               </div>
 
               <div class="flex items-center gap-x-1">
@@ -570,6 +576,7 @@ const defaultEditValues = {
   user: false,
   tag: false,
   is_urgent: false,
+  is_pinned: false,
   position: false,
   urgency_level: false,
   owner: false,
@@ -636,6 +643,7 @@ const form = ref({
   progress: '',
   tag: '',
   is_urgent: '',
+  is_pinned: '',
   position: '',
   urgency_level: '',
   blocks: [],
@@ -701,6 +709,11 @@ watch(() => form.value.is_urgent, (newValue, oldValue) => {
   if (firstLoad.value) return updateTask(true)
 
   firstLoad.value = true
+})
+
+watch(() => form.value.is_pinned, async (newValue, oldValue) => {
+  if (newValue) return await taskStore.pinTask({id: task.value.id})
+  await taskStore.unPinTask({id: task.value.id})
 })
 
 // Methods
@@ -894,6 +907,8 @@ const fetchTask = async (noLoad = false) => {
       if (resp.data.responsible?.id) form.value.owner = resp.data.responsible.id
       backgroundSize.value = `${resp.data.progress || 0}% 100%`
       firstOne.value = false
+
+      console.log(resp.data,'resp.data')
 
       taskTitle.value = task.value.title
       await fetchTaskBlocks()

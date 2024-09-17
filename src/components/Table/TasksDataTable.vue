@@ -21,7 +21,7 @@
               class="bg-white flex items-center justify-center gap-x-1 px-3 py-[3px] border border-light-bg-c rounded-[6px] outline-none focus:outline-none ease-linear transition-all duration-150"
               type="button"
           >
-            <FilterIcon />
+            <FilterIcon/>
           </button>
 
           <button
@@ -30,7 +30,7 @@
               type="button"
           >
             New task
-            <PlusIcon />
+            <PlusIcon/>
           </button>
         </div>
 
@@ -66,7 +66,7 @@
             >
               <option class="" value="" disabled selected>Select Owner</option>
               <option :value="user.id" v-for="(user) in users" :key="user.id">
-                {{user.first_name ? `${user.first_name} ${user.last_name}` : `${user.username}`}}
+                {{ user.first_name ? `${user.first_name} ${user.last_name}` : `${user.username}` }}
               </option>
             </select>
           </div>
@@ -77,7 +77,7 @@
             >
               <option class="" value="" disabled selected>Select Responsible</option>
               <option :value="user.id" v-for="(user) in users" :key="user.id">
-                {{user.first_name ? `${user.first_name} ${user.last_name}` : `${user.username}`}}
+                {{ user.first_name ? `${user.first_name} ${user.last_name}` : `${user.username}` }}
               </option>
             </select>
           </div>
@@ -143,7 +143,8 @@
                 type="checkbox"
                 class="accent-green-c w-4 h-4 border-0 flex pl-8 pr-3 py-3 rounded-[6px] text-sm ease-linear transition-all duration-150 cursor-pointer"
             />
-            <label for="hideClosed" class="text-sm text-[#474D66] cursor-pointer whitespace-nowrap">Hide closed tasks</label>
+            <label for="hideClosed" class="text-sm text-[#474D66] cursor-pointer whitespace-nowrap">Hide closed
+              tasks</label>
           </div>
 
           <div class="inline-flex items-center gap-x-1 mr-4">
@@ -208,21 +209,21 @@
             >
               <template #item="{element}">
                 <tr :class="{'cursor-move': !isDragDisabled}">
-                  <td class="border-t-0 px-3 align-middle border-l-0 border-r-0 text-xs whitespace-nowrap p-4">
-                   <span v-if="element.title" class="cursor-pointer" @click="toLink(element)">{{
-                       element.title
-                     }}</span>
+                  <td class="border-t-0 align-middle border-l-0 border-r-0 text-xs whitespace-nowrap">
+                    <router-link v-if="element.title" :to="`/dashboard/task/${element.id}`" class="p-4">
+                      {{ element.title }}
+                    </router-link>
                     <span v-else>-</span>
                   </td>
                   <td class="border-t-0 px-3 align-middle border-l-0 border-r-0 text-xs whitespace-nowrap p-4">
                     <span>{{ element.status || '-' }}</span>
                   </td>
 
-                  <td class="border-t-0 px-3 align-middle border-l-0 border-r-0 text-xs whitespace-nowrap p-4"
+                  <td class="border-t-0 align-middle border-l-0 border-r-0 text-xs whitespace-nowrap"
                       v-if="hideCreate">
-                   <span v-if="element.project?.title" class="cursor-pointer" @click="toLink(element.project,true)">{{
-                       element.project.title
-                     }}</span>
+                    <router-link v-if="element.project?.title" :to="`/dashboard/project/${element.id}`" class="p-4">
+                      {{ element.project.title }}
+                    </router-link>
                     <span v-else>-</span>
                   </td>
 
@@ -375,9 +376,9 @@ watch(() => props.haveProjectAccessIds, (newValue, oldValue) => {
   }
 })
 
-watch(()=>form.value, (newValue, oldValue) => {
+watch(() => form.value, (newValue, oldValue) => {
   fetchTasks()
-},{ deep: true })
+}, {deep: true})
 
 
 // Computed
@@ -455,7 +456,7 @@ const fetchUsers = async () => {
       last_name: '',
       username: '',
     })
-    users.value = [...users.value,...resp.data.results]
+    users.value = [...users.value, ...resp.data.results]
   } catch (e) {
     catchErrors(e)
   }
@@ -506,7 +507,7 @@ const changeDrag = async (e) => {
   }
 }
 
-const clearFilters = ()=>{
+const clearFilters = () => {
   form.value = {
     hideClosed: true,
     showCurrentUser: false,
@@ -516,17 +517,12 @@ const clearFilters = ()=>{
     responsibleUser: '',
     createdAtAfter: '',
     createdAtBefore: '',
-}
+  }
   filter.resetAll()
 }
 
 const sorting = (label) => {
   fetchTasks(label)
-}
-
-const toLink = (item, isProject) => {
-  const type = isProject ? 'project' : 'task'
-  router.push(`/dashboard/${type}/${item.id}`)
 }
 
 const createTask = () => {
@@ -541,7 +537,7 @@ const createTask = () => {
 const fetchDictionary = async () => {
   try {
     const resp = await tasksStore.fetchDictionary()
-    urgencyLevelChoices.value = [[null,'NONE'],...resp.data.task_urgency_level_choices]
+    urgencyLevelChoices.value = [[null, 'NONE'], ...resp.data.task_urgency_level_choices]
   } catch (e) {
     catchErrors(e)
   }

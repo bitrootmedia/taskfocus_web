@@ -51,15 +51,18 @@
                 item-key="id">
               <template #item="{element}">
                 <tr :class="{'cursor-move': !isDragDisabled}">
-                  <td class="border-t-0 px-6 align-middle border-l-0 border-r-0 text-xs whitespace-nowrap p-4">
-                    <span class="cursor-pointer" @click="toLink(element)">{{ element.title }}</span>
+                  <td class="border-t-0 align-middle border-l-0 border-r-0 text-xs whitespace-nowrap">
+                    <router-link :to="`/dashboard/project/${element.id}`" class="p-4">{{
+                        element.title || '-'
+                      }}
+                    </router-link>
                   </td>
                   <td class="border-t-0 px-6 align-middle border-l-0 border-r-0 text-xs whitespace-nowrap p-4">
                     <div>
                       <span v-if="element.owner?.first_name || element.owner?.last_name">{{
                           element.owner?.first_name
                         }} {{ element.owner?.last_name }}</span>
-                        <span v-else>{{ element.owner?.username }}</span>
+                      <span v-else>{{ element.owner?.username }}</span>
                     </div>
                   </td>
                   <td class="border-t-0 px-3 align-middle border-l-0 border-r-0 text-xs whitespace-nowrap p-4">
@@ -117,7 +120,7 @@ const projects = ref([])
 const hideClosed = ref(true)
 
 
-watch( hideClosed, (newValue, oldValue) => {
+watch(hideClosed, (newValue, oldValue) => {
   fetchProjects()
 })
 
@@ -145,10 +148,6 @@ const fetchProjects = async (label) => {
 
 const sorting = (label) => {
   fetchProjects(label)
-}
-
-const toLink = (item) => {
-  router.push(`/dashboard/project/${item.id}`)
 }
 
 // Composables

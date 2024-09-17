@@ -23,11 +23,11 @@
 
            <tbody>
             <tr v-for="element in users" :key="element.id">
-             <td class="border-t-0 px-3 align-middle border-l-0 border-r-0 text-xs whitespace-nowrap p-4">
-               <span class="cursor-pointer" @click="toLink(`/dashboard/users-tasks/${element.id}`)">{{ element.first_name }} {{ element.last_name }}</span>
+             <td class="border-t-0 align-middle border-l-0 border-r-0 text-xs whitespace-nowrap">
+               <router-link :to="`/dashboard/users-tasks/${element.id}`" class="p-4">{{ element.first_name }} {{ element.last_name }}</router-link>
              </td>
              <td class="border-t-0 px-3 align-middle border-l-0 border-r-0 text-xs whitespace-nowrap p-4">
-               <span class="cursor-pointer" @click="toLink(`/dashboard/users-tasks/${element.id}`)">{{ element.username }}</span>
+               <router-link :to="`/dashboard/users-tasks/${element.id}`" class="p-4">{{ element.username }}</router-link>
              </td>
            </tr>
            </tbody>

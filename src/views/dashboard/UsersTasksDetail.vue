@@ -5,13 +5,17 @@
 
     <div v-if="currentTask" class="working-task mb-3 text-black-c text-sm">
       Currently working on:
-      <span class="underline cursor-pointer" @click="toLinkPage('task')">{{
-          currentTask.title
-        }}</span>
+      <router-link :to="`/dashboard/task/${currentTask.id}`"
+                   class="underline cursor-pointer">
+        {{ currentTask.title }}
+      </router-link>
       <template v-if="currentTask.project?.title">
         in project
-        <span class="underline cursor-pointer"
-              @click="toLinkPage('project')">{{ currentTask.project.title }}</span>
+
+        <router-link :to="`/dashboard/project/${currentTask.project.id}`"
+                     class="underline cursor-pointer">
+          {{ currentTask.project.title }}
+        </router-link>
       </template>
     </div>
 
@@ -63,13 +67,17 @@
                 >
                   <template #item="{element}">
                     <tr :class="{'cursor-move': !isDragDisabled}">
-                      <td class="border-t-0 px-3 align-middle border-l-0 border-r-0 text-xs whitespace-nowrap p-4">
-                      <span @click.stop="toLink(`/dashboard/task/${element.task?.id}`)"
-                            class="cursor-pointer">{{ element.task.title || '-' }}</span>
+                      <td class="border-t-0 align-middle border-l-0 border-r-0 text-xs whitespace-nowrap">
+                        <router-link :to="`/dashboard/task/${element.task?.id}`" class="p-4">{{
+                            element.task.title || '-'
+                          }}
+                        </router-link>
                       </td>
                       <td class="border-t-0 px-3 align-middle border-l-0 border-r-0 text-xs whitespace-nowrap p-4">
-                      <span @click.stop="toLink(`/dashboard/project/${element.task.project?.id}`)"
-                            class="cursor-pointer">{{ element.task.project?.title || '-' }}</span>
+                        <router-link :to="`/dashboard/project/${element.task.project?.id}`" class="p-4">{{
+                            element.task.project?.title || '-'
+                          }}
+                        </router-link>
                       </td>
                     </tr>
                   </template>
@@ -121,9 +129,11 @@
                 >
                   <template #item="{element}">
                     <tr :class="{'cursor-move': false}">
-                      <td class="border-t-0 px-3 align-middle border-l-0 border-r-0 text-xs whitespace-nowrap p-4">
-                      <span @click.stop="toLink(`/dashboard/project/${element.id}`)"
-                            class="cursor-pointer">{{ element.title || '-' }}</span>
+                      <td class="border-t-0 align-middle border-l-0 border-r-0 text-xs whitespace-nowrap p-4">
+                        <router-link :to="`/dashboard/project/${element?.id}`">{{
+                            element.title || '-'
+                          }}
+                        </router-link>
                       </td>
                     </tr>
                   </template>
@@ -170,8 +180,10 @@
                   <template #item="{element}">
                     <tr :class="{'cursor-move': false}">
                       <td class="border-t-0 px-3 align-middle border-l-0 border-r-0 text-xs whitespace-nowrap p-4">
-                      <span @click.stop="toLink(`/dashboard/task/${element.id}`)"
-                            class="cursor-pointer">{{ element.title || '-' }}</span>
+                        <router-link :to="`/dashboard/task/${element?.id}`">{{
+                            element.title || '-'
+                          }}
+                        </router-link>
                       </td>
                     </tr>
                   </template>
