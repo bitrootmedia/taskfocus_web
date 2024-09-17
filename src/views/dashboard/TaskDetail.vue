@@ -712,16 +712,8 @@ watch(() => form.value.is_urgent, (newValue, oldValue) => {
 })
 
 watch(() => form.value.is_pinned, async (newValue, oldValue) => {
-  console.log(task.value, '111111111')
   if (newValue) return await taskStore.pinTask({id: task.value.id})
   await taskStore.unPinTask({id: task.value.id})
-
-
-  // if (firstLoad.value) return updateTask(true)
-  //
-  // firstLoad.value = true
-
-  // updateTask(true)
 })
 
 // Methods
