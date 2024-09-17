@@ -5,9 +5,9 @@
       <!--content-->
       <div class="border-0 rounded-lg shadow-lg relative flex flex-col w-full bg-white outline-none focus:outline-none">
         <div class="relative p-4 flex-auto">
-          <h2 class="text-[22px] text-black-c font-semibold">Are you sure you want to close this task?</h2>
+          <h2 class="text-[22px] text-black-c font-semibold">Are you sure you want to close this {{ version === 'project' ? 'project' : 'task' }}?</h2>
 
-          <div class="mt-4">
+          <div class="mt-4" v-if="version !== 'project'">
             <input
                 v-model="notes"
                 type="text"
@@ -47,6 +47,10 @@ const props = defineProps({
     type: Boolean,
     default: false
   },
+  version:{
+    type: String,
+    default: 'task'
+  }
 })
 
 const notes = ref('')

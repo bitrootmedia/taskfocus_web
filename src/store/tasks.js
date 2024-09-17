@@ -112,6 +112,20 @@ export const useTasksStore = defineStore('tasks', {
             return await axios.patch(`${config.BASE_API_URL}/task/${id}`,payload)
         },
 
+        async pinTask(payload) {
+            const id = payload.id
+            return await axios.post(`${config.BASE_API_URL}/pin-task/${id}`)
+        },
+
+        async unPinTask(payload) {
+            const id = payload.id
+            return await axios.delete(`${config.BASE_API_URL}/pin-task/${id}`)
+        },
+
+        async fetchPinnedTasks(payload) {
+            return await axios.get(`${config.BASE_API_URL}/pinned-tasks`)
+        },
+
         async startTask(payload) {
             return await axios.post(`${config.BASE_API_URL}/task-start-work/${payload.id}`)
         },

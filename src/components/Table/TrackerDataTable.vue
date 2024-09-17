@@ -39,9 +39,10 @@
                 </td>
                 <td class="border-t-0 px-3 align-middle border-l-0 border-r-0 text-xs whitespace-nowrap p-4"
                     v-if="!taskId">
-                  <span v-if="element.task" class="cursor-pointer" @click="toLink(element.task)">{{
-                      element.task.title
-                    }}</span>
+                  <router-link v-if="element.task" :to="`/dashboard/task/${element.task?.id}`" class="p-4">{{
+                      element.task.title || '-'
+                    }}
+                  </router-link>
                   <span v-else>-</span>
                 </td>
                 <td class="border-t-0 px-3 align-middle border-l-0 border-r-0 text-xs whitespace-nowrap p-4">
@@ -187,10 +188,6 @@ const fetchTasksTracker = async (label = null) => {
   } finally {
     loading.value = false
   }
-}
-
-const toLink = (item) => {
-  router.push(`/dashboard/task/${item.id}`)
 }
 
 const sorting = (label) => {

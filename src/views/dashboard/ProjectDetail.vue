@@ -5,14 +5,44 @@
       <div class="bg-white border-b border-[#E5E7E7] px-6 py-6 mb-[30px]">
         <div class="header flex flex-col md:flex-row justify-between gap-x-2 lg:gap-x-10">
           <div class="w-full md:w-2/4">
-            <div class="flex sm:hidden gap-x-4 sm:gap-x-10 items-center flex-wrap pb-2" >
+            <div class="flex sm:hidden gap-x-4 sm:gap-x-10 items-center flex-wrap pb-2">
               <div class="flex items-center gap-x-2">
-                <h2 class="text-lg font-semibold text-black-c cursor-pointer lg:whitespace-nowrap" ref="editable" v-focus-end plaintext-only="true" @focus="moveCursorToEnd" contenteditable="true" @input="saveData($event)">
+                <h2 class="text-lg font-semibold text-black-c cursor-pointer lg:whitespace-nowrap" ref="editable"
+                    v-focus-end plaintext-only="true" @focus="moveCursorToEnd" contenteditable="true"
+                    @input="saveData($event)">
                   {{ projectTitle }}</h2>
               </div>
             </div>
 
             <div class="description-panel">
+              <div v-if="isAuthOwner" class="mb-2 sm:mb-4">
+                <Button
+                    v-if="isAuthOwner && project.is_closed"
+                    class="max-w-[200px] justify-center"
+                    @on-click="updateProject('false')"
+                    label="Reopen Project"
+                    size="medium"
+                    version="green"
+                />
+
+                <Button
+                    v-else-if="isAuthOwner"
+                    class="max-w-[200px] justify-center"
+                    @on-click="confirmModal = true"
+                    label="Close Project"
+                    size="medium"
+                    version="green"
+                />
+              </div>
+
+              <ConfirmCloseModal
+                  version="project"
+                  :show-modal="confirmModal"
+                  @close="confirmModal = false"
+                  @update="updateProject('true')"
+              />
+
+
               <div class="mb-2 sm:mb-4">
                 <div class="flex items-center gap-x-1">
                   <span class="inline-block text-sm text-light-c">Urgent:</span>
@@ -161,6 +191,7 @@ import OwnersModal from '../../components/Modals/OwnersModal.vue'
 import Switch from '../../components/Switch/Switch.vue'
 import PencilSmallIcon from "../../components/Svg/PencilSmallIcon.vue";
 import Button from '../../components/Button/Button.vue'
+import ConfirmCloseModal from "../../components/Modals/ConfirmCloseModal.vue";
 
 // ValidationRules
 const rules = {
@@ -185,6 +216,7 @@ let showModal = ref(false)
 let showOwnersModal = ref(false)
 let firstLoad = ref(false)
 const project = ref({})
+const confirmModal = ref(false)
 const haveProjectAccess = ref([])
 const haveProjectAccessIds = ref([])
 const users = ref([])
@@ -199,15 +231,6 @@ const form = ref({
 })
 
 const v$ = useVuelidate(rules, form)
-
-
-// Watch
-watch(() => form.value.is_closed, (newValue, oldValue) => {
-  if (firstLoad.value) return updateProject()
-
-  firstLoad.value = true
-})
-
 
 // Computed
 const isAuthOwner = computed(() => {
@@ -245,7 +268,7 @@ const updateProjectOwner = async (owner) => {
   }
 }
 
-const saveData = async(e)=>{
+const saveData = async (e) => {
   const plainText = e.target.innerText.replace(/&nbsp;/g, ' ');
   projectTitle.value = plainText
   moveCursorToEnd()
@@ -289,6 +312,7 @@ const fetchProject = async () => {
       loading.value = true
       const resp = await projectStore.fetchProjectById({id})
       project.value = resp.data
+      console.log(project.value, 'project.value')
 
       Object.keys(resp.data).forEach((key) => {
         form.value[key] = resp.data[key]
@@ -336,14 +360,14 @@ const fetchProjectAccess = async () => {
 }
 
 
-const updateProject = async () => {
+const updateProject = async (isClosed) => {
   try {
     btnLoad.value = true
     const data = {
       id: route.params.id,
       title: form.value.title,
       description: form.value.description,
-      is_closed: form.value.is_closed,
+      is_closed: isClosed === 'true' ? true : isClosed === 'false' ? false : form.value.is_closed,
       progress: form.value.progress || 0,
     }
     await projectStore.updateProject(data)
@@ -352,6 +376,10 @@ const updateProject = async () => {
     isEditTitle.value = false
     isEditDesc.value = false
     isEditProgress.value = false
+
+    if (isClosed) {
+      confirmModal.value = false
+    }
   } catch (e) {
     catchErrors(e)
   } finally {
