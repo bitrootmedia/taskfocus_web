@@ -2,22 +2,28 @@
   <div class="main-container pt-6 pb-6">
     <div v-if="task" class="working-task text-black-c text-sm">
       Currently working on:
-      <span class="underline cursor-pointer" @click="toLink('task')">{{ task.title }}</span>
-     <template v-if="task.project?.title">
-       in project
-       <span class="underline cursor-pointer" @click="toLink('project')">{{task.project.title}}</span>
-     </template>
+      <router-link :to="`/dashboard/task/${task.id}`"
+                   class="underline cursor-pointer">
+        {{ task.title }}
+      </router-link>
+      <template v-if="task.project?.title">
+        in project
+        <router-link :to="`/dashboard/project/${task.project.id}`"
+                     class="underline cursor-pointer">
+          {{ task.project.title }}
+        </router-link>
+      </template>
     </div>
 
     <div class="content">
       <div class="mb-10 flex flex-col md:flex-row gap-0 md:gap-8">
-        <UrgentTasks />
+        <UrgentTasks/>
 
         <PinnedTasks :pinnedTasks="pinnedTasks" :loading="loading"/>
       </div>
 
       <div class="mb-10">
-        <UserTasksQueue />
+        <UserTasksQueue/>
       </div>
     </div>
   </div>
@@ -43,37 +49,32 @@ const loading = ref(true)
 const pinnedTasks = ref([])
 
 // Methods
-const toLink = (type)=>{
-  if (type === 'task') return router.push(`/dashboard/task/${task.value.id}`)
-  else return router.push(`/dashboard/project/${task.value.project.id}`)
-}
-
-const fetchCurrentTask = async()=>{
-  try{
+const fetchCurrentTask = async () => {
+  try {
     const resp = await tasksStore.fetchWorkingTask()
-    if (resp.data && Object.keys(resp.data).length){
+    if (resp.data && Object.keys(resp.data).length) {
       task.value = resp.data
     }
-  }catch (e) {
+  } catch (e) {
     catchErrors(e)
   }
 }
 
-const fetchPinnedTasks = async ()=>{
-  try{
+const fetchPinnedTasks = async () => {
+  try {
     const resp = await tasksStore.fetchPinnedTasks()
     pinnedTasks.value = resp.data.results
-    console.log(resp.data.results,'resp')
-  }catch (e) {
+    console.log(resp.data.results, 'resp')
+  } catch (e) {
     catchErrors(e)
-  }finally {
+  } finally {
     loading.value = false
   }
 }
 
-onMounted(()=>{
+onMounted(() => {
   const user = cookies.get('task_focus_user')
-  if (user){
+  if (user) {
     setPusherChannel(`USR_${user.pk}`)
     bindEvent(pusherEventNames.current_task_update, fetchCurrentTask);
   }

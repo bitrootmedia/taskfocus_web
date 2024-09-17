@@ -8,22 +8,25 @@
       <h3 class="font-bold mb-2 block md:hidden">Urgent Tasks</h3>
 
       <ul>
-        <li v-for="task in tasks" :key="task.id"
-            class="w-full mb-3 border border-light-bg-c rounded-[4px] px-4 py-3 cursor-pointer bg-[#E44B2A] flex justify-between items-center"
-            @click="router.push(`/dashboard/task/${task.id}`)">
-          <div>
-            <p class="text-black-c mb-1">
-              <span class="font-semibold text-white"> {{ task.title }}</span>
-            </p>
-            <div class="mt-1 text-sm text-white" v-if="task?.project?.id">
+
+        <li v-for="task in tasks" :key="task.id">
+          <router-link :to="`/dashboard/task/${task.id}`"
+                       class="w-full mb-3 border border-light-bg-c rounded-[4px] px-4 py-3 cursor-pointer bg-[#E44B2A] flex justify-between items-center">
+            <div>
+              <p class="text-black-c mb-1">
+                <span class="font-semibold text-white"> {{ task.title }}</span>
+              </p>
+              <div class="mt-1 text-sm text-white" v-if="task?.project?.id">
             <span class="block">
               Project link:
-              <span class="underline" @click.stop="toLink(`/dashboard/project/${task.project.id}`)">{{ task.project.title }}</span>
+              <span class="underline"
+                    @click.stop="toLink(`/dashboard/project/${task.project.id}`)">{{ task.project.title }}</span>
             </span>
+              </div>
             </div>
-          </div>
+            <span class="text-xl text-white">&#9888;</span>
+          </router-link>
 
-          <span class="text-xl text-white">&#9888;</span>
         </li>
       </ul>
     </div>
@@ -56,7 +59,7 @@ const currentUser = computed(() => {
 })
 
 //Methods
-const toLink = (link)=>{
+const toLink = (link) => {
   router.push(link)
 }
 
