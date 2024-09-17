@@ -3,11 +3,13 @@
     <Loader/>
   </div>
 
-  <div v-else-if="tasks.length" class="mt-4">
-    <div class="content">
+  <div v-else-if="tasks.length" class="mt-4 w-full">
+    <div class="content w-full">
+      <h3 class="font-bold mb-2 block md:hidden">Urgent Tasks</h3>
+
       <ul>
         <li v-for="task in tasks" :key="task.id"
-            class="w-full lg:w-[650px] mb-3 border border-light-bg-c rounded-[4px] px-4 py-3 cursor-pointer bg-[#E44B2A] flex justify-between items-center"
+            class="w-full mb-3 border border-light-bg-c rounded-[4px] px-4 py-3 cursor-pointer bg-[#E44B2A] flex justify-between items-center"
             @click="router.push(`/dashboard/task/${task.id}`)">
           <div>
             <p class="text-black-c mb-1">

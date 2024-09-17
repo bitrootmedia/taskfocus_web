@@ -10,8 +10,10 @@
     </div>
 
     <div class="content">
-      <div class="mb-10">
+      <div class="mb-10 flex flex-col md:flex-row gap-0 md:gap-8">
         <UrgentTasks />
+
+        <PinnedTasks :pinnedTasks="pinnedTasks" :loading="loading"/>
       </div>
 
       <div class="mb-10">
@@ -25,9 +27,10 @@
 import {useRouter} from "vue-router";
 import UserTasksQueue from "../../components/Table/UserTasksQueue.vue";
 import {catchErrors, pusherEventNames} from "../../utils";
-import {onMounted, ref, watch} from "vue";
+import {onMounted, ref} from "vue";
 import {useTasksStore} from "../../store/tasks";
 import UrgentTasks from "../../components/Lists/UrgentTasks.vue";
+import PinnedTasks from "../../components/Lists/PinnedTasks.vue";
 import {usePusher} from "../../composables/usePusher";
 import {useCookies} from "vue3-cookies";
 
@@ -36,6 +39,8 @@ const {cookies} = useCookies();
 const router = useRouter()
 const tasksStore = useTasksStore()
 const task = ref(null)
+const loading = ref(true)
+const pinnedTasks = ref([])
 
 // Methods
 const toLink = (type)=>{
@@ -54,9 +59,17 @@ const fetchCurrentTask = async()=>{
   }
 }
 
-watch(events,(val)=>{
-  console.log(val,'changed')
-})
+const fetchPinnedTasks = async ()=>{
+  try{
+    const resp = await tasksStore.fetchPinnedTasks()
+    pinnedTasks.value = resp.data.results
+    console.log(resp.data.results,'resp')
+  }catch (e) {
+    catchErrors(e)
+  }finally {
+    loading.value = false
+  }
+}
 
 onMounted(()=>{
   const user = cookies.get('task_focus_user')
@@ -68,4 +81,5 @@ onMounted(()=>{
 
 // Run Functions
 fetchCurrentTask()
+fetchPinnedTasks()
 </script>
