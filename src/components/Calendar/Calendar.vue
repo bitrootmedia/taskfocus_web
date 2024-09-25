@@ -74,8 +74,7 @@ const onViewChange = (type) => {
 };
 
 const eventClick = (event) => {
-  console.log('Event clicked:', event);
-  // router.push(`/dashboard/task/${event.id}`)
+  router.push(`/dashboard/task/${event.task_id}`)
 };
 
 const fetchEvents = async () => {
@@ -90,7 +89,6 @@ const fetchEvents = async () => {
       end_date: filters.value.end,
     }
     const resp = await taskStore.fetchEvents(options)
-    console.log(resp, 'resp')
     events.value = resp.data.events
   } catch (e) {
     catchErrors(e)
