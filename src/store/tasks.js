@@ -156,6 +156,11 @@ export const useTasksStore = defineStore('tasks', {
             return await axios.get(url)
         },
 
+        async fetchEvents(payload){
+            let url = `${config.BASE_API_URL}/work_session_breakdown`
+            return await axios.post(url, payload)
+        },
+
         async fetchTaskAccess(payload) {
             const id = payload.id
             return await axios.get(`${config.BASE_API_URL}/task-accesses?task=${id}`)
