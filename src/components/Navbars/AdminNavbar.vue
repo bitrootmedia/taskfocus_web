@@ -30,10 +30,10 @@
              version="green"
          />
        </div>
-       <div v-if="task.is_closed" class="text-md font-semibold text-red-c">
+       <div v-if="route.name === 'Task Detail' && task.is_closed" class="text-md font-semibold text-red-c">
          THIS TASK IS CLOSED
        </div>
-       <div v-if="project.is_closed" class="text-md font-semibold text-red-c">
+       <div v-if="route.name === 'Project Detail' && project.is_closed" class="text-md font-semibold text-red-c">
          THIS PROJECT IS CLOSED
        </div>
      </div>
