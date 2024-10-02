@@ -5,7 +5,7 @@
       style="height: 800px"
       :events="events"
       :selected-date="currentDate"
-      :time-from="9 * 60"
+      :time-from="0"
       :time-step="30"
       default-view="week"
       events-count-on-year-view
