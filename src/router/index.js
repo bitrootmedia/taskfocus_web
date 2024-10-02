@@ -25,9 +25,9 @@ import Logs from "../views/dashboard/Logs.vue";
 import Attachments from "../views/dashboard/Attachments.vue";
 import Settings from "../views/dashboard/Settings.vue";
 import Reminders from "../views/dashboard/Reminders.vue";
-import {useUserStore} from "../store/user";
 import Notifications from "../views/dashboard/Notifications.vue";
 import TasksTracking from "../views/dashboard/TasksTracking.vue";
+import {useUserStore} from "../store/user";
 import axios from "axios";
 
 // routes

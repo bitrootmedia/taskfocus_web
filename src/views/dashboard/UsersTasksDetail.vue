@@ -94,7 +94,18 @@
       </template>
 
       <div class="mb-8" v-else-if="activeTab === 2">
-        <TrackerDataTable :hide-create="true" :user-id="currentUser.id"/>
+        <ul class="inline-flex align-center overflow-hidden mb-3 mt-2">
+          <li v-for="(tab,index) in ['Tracker', 'Calendar']" :key="index+1"
+              @click="activeNestTab = index+1" class="text-black-c text-lg cursor-pointer px-4 pt-2 pb-1"
+              :class="{'border-b-2 border-green-c font-semibold': activeNestTab === index + 1}">
+            {{ tab }}
+          </li>
+        </ul>
+
+        <TrackerDataTable v-if="activeNestTab === 1" :hide-create="true" :user-id="currentUser.id"/>
+
+        <Calendar v-else/>
+
       </div>
 
       <template v-else-if="activeTab === 3">
@@ -218,6 +229,7 @@ import {useUserStore} from "../../store/user";
 import {useTasksStore} from "../../store/tasks";
 import {useProjectStore} from "../../store/project";
 import config from "../../config";
+import Calendar from "../../components/Calendar/Calendar.vue";
 
 const route = useRoute()
 const router = useRouter()
@@ -237,6 +249,7 @@ const tasksAccess = ref([])
 const currentUser = ref(null)
 const currentTask = ref(null)
 const activeTab = ref(1)
+const activeNestTab = ref(1)
 
 
 // Computed

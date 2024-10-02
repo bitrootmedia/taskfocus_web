@@ -415,6 +415,7 @@ const sendComment = async (e) => {
       message.value = ''
       v$.value.$reset()
       if (!props.showCreateBtn) emit('update:showBtnResult', false)
+      fetchComments()
     }
   } catch (e) {
     catchErrors(e)
