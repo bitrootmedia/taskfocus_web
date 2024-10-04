@@ -15,6 +15,21 @@
               <p class="text-black-c mb-1">
                 <span class="font-semibold text-black-c"> {{ task.title }}</span>
               </p>
+              <div class="mt-1 text-sm text-white flex space-x-2">
+                <span v-if="task.status" class="inline-flex items-center rounded-md bg-green-50 px-2 py-1 text-xs font-medium text-green-700 ring-1 ring-inset ring-green-600/20">
+                  {{task.status}}
+                </span>
+
+                <span v-if="task.urgency_level" class="inline-flex items-center rounded-md bg-red-50 px-2 py-1 text-xs font-medium text-red-700 ring-1 ring-inset ring-red-600/10">
+                  {{task.urgency_level}}
+                </span>
+
+                <span v-if="task.tag" class="inline-flex items-center rounded-md bg-yellow-50 px-2 py-1 text-xs font-medium text-yellow-800 ring-1 ring-inset ring-yellow-600/20">
+                  {{task.tag}}
+                </span>
+
+              </div>
+
               <div class="mt-1 text-sm text-black-c" v-if="task?.project?.id">
             <span class="block">
               Project link:

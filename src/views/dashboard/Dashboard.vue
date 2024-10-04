@@ -18,7 +18,6 @@
     <div class="content">
       <div class="mb-10 flex flex-col md:flex-row gap-0 md:gap-8">
         <UrgentTasks/>
-
         <PinnedTasks :pinnedTasks="pinnedTasks" :loading="loading"/>
       </div>
 
