@@ -316,6 +316,25 @@
               </a>
             </router-link>
           </li>
+
+          <li class="items-center">
+            <router-link to="/dashboard/notes" exact v-slot="{ href, navigate, isActive, isExactActive }">
+              <a
+                  :href="href"
+                  @click="navigate"
+                  class="flex gap-x-2 items-center text-lg py-3 font-medium"
+                  :class="[
+                  isExactActive
+                    ? 'bg-[#41525B] text-orange-c hover:text-orange-c-600'
+                    : 'text-white hover:text-orange-c',
+                    closePanel ? 'text-center pl-[38px]' : 'pl-4'
+                ]"
+              >
+                <NewTaskIcon :isExactActive="isExactActive"/>
+                {{ !closePanel ? 'Notes' : '' }}
+              </a>
+            </router-link>
+          </li>
         </ul>
       </div>
 
