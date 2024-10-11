@@ -35,7 +35,7 @@
                   class="px-4 py-4 border-b border-[#E5E7E7] cursor-pointer hover:bg-gray-200 transition">
                 <div class="flex items-center justify-between mb-1.5">
                   <span class="text-sm text-gray-400 block">{{ convertDateTime(note.created_at) }}</span>
-                  <TrashIcon class="cursor-pointer text-red bg-red" @click.stop="deleteNote(note)"></TrashIcon>
+                  <TrashIcon class="cursor-pointer text-red bg-red" @click.stop="openModal(note)"></TrashIcon>
                 </div>
 
                 <h5 class="font-bold text-2xl line-clamp-1 truncate mb-1">{{ note.title }}</h5>
@@ -53,7 +53,7 @@
                   class="px-4 py-4 border-b border-[#E5E7E7] cursor-pointer hover:bg-gray-200 transition">
                 <div class="flex items-center justify-between mb-1.5">
                   <span class="text-sm text-gray-400 block">{{ convertDateTime(note.created_at) }}</span>
-                  <TrashIcon class="cursor-pointer text-red bg-red" @click.stop="deleteNote(note)"></TrashIcon>
+                  <TrashIcon class="cursor-pointer text-red bg-red" @click.stop="openModal(note)"></TrashIcon>
                 </div>
 
                 <h5 class="font-bold text-2xl line-clamp-1 truncate mb-1">{{ note.title }}</h5>
@@ -91,15 +91,22 @@
         </div>
       </div>
     </div>
+
+    <NoteConfirmModal
+        :show-modal="showModal"
+        @close="showModal = false"
+        @update="deleteNote"
+    />
+
   </div>
 
 </template>
 
 <script setup>
-
 import {ref} from "vue";
 import {catchErrors, convertDateTime} from "../../utils/index.js";
 import Loader from "../../components/Loader/Loader.vue";
+import NoteConfirmModal from "../../components/Modals/NoteConfirmModal.vue";
 import {useNotesStore} from "../../store/notes.js";
 import Button from "../../components/Button/Button.vue";
 import TrashIcon from "../../components/Svg/TrashIcon.vue";
@@ -111,6 +118,8 @@ const notesStore = useNotesStore()
 
 
 //State
+const currentDelete = ref(null)
+const showModal = ref(false)
 const active = ref(null)
 const loading = ref(true);
 const showSidebar = ref(false);
@@ -128,7 +137,7 @@ const resetData = () => {
 
 const addNote = async () => {
   try {
-    await notesStore.createAuthNote({content: '.'})
+    await notesStore.createAuthNote({content: 'Unnamed'})
     await fetchNotes(true)
     toast.success("Successfully note added");
   } catch (e) {
@@ -136,10 +145,17 @@ const addNote = async () => {
   }
 }
 
-const deleteNote = async (note) => {
+const openModal = (note)=>{
+  showModal.value = true
+  currentDelete.value = note
+}
+
+const deleteNote = async () => {
   try {
-    await notesStore.deleteAuthNote(note)
+    await notesStore.deleteAuthNote(currentDelete.value)
     await fetchNotes(true)
+    currentDelete.value = null
+    showModal.value = false
     toast.success("Successfully note deleted");
   } catch (e) {
     catchErrors(e)
