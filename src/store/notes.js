@@ -27,13 +27,13 @@ export const useNotesStore = defineStore('notes', {
         },
 
         async createNote(payload) {
-            return await axios.post(`${config.BASE_API_URL}/private-notes?task=${payload.task}`,payload)
+            return await axios.post(`${config.BASE_API_URL}/private-notes?task=${payload.task}`, payload)
         },
 
         async updateNote(payload) {
             const id = payload.id
             delete payload.id
-            return await axios.put(`${config.BASE_API_URL}/private-note/${id}`,payload)
+            return await axios.put(`${config.BASE_API_URL}/private-note/${id}`, payload)
         },
 
         async deleteNote(payload) {
@@ -41,5 +41,26 @@ export const useNotesStore = defineStore('notes', {
             delete payload.id
             return await axios.delete(`${config.BASE_API_URL}/private-note/${id}`)
         },
+
+        async fetchAuthNotes() {
+            return await axios.get(`${config.BASE_API_URL}/notes`)
+        },
+
+        async createAuthNote(payload) {
+            return await axios.post(`${config.BASE_API_URL}/notes`, payload)
+        },
+
+        async deleteAuthNote(payload) {
+            const id = payload.id
+            delete payload.id
+            return await axios.delete(`${config.BASE_API_URL}/note/${id}`)
+        },
+
+        async updateAuthNote(payload) {
+            const id = payload.id
+            delete payload.id
+            return await axios.put(`${config.BASE_API_URL}/note/${id}`, payload)
+        },
+
     },
 })

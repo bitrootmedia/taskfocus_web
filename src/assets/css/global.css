@@ -214,7 +214,13 @@ tr:nth-child(odd) {
     min-height: 100px;
 }
 
-
+.text-line-2 {
+    overflow: hidden;
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+    white-space: pre-wrap;
+}
 .text-line-3 {
     overflow: hidden;
     display: -webkit-box;
@@ -291,5 +297,10 @@ input{
 }
 [contenteditable] {
     outline: 0 solid transparent;
+}
+
+textarea {
+    resize: none;
+    outline: none;
 }
 

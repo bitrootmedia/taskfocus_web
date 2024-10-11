@@ -27,6 +27,7 @@ import Settings from "../views/dashboard/Settings.vue";
 import Reminders from "../views/dashboard/Reminders.vue";
 import Notifications from "../views/dashboard/Notifications.vue";
 import TasksTracking from "../views/dashboard/TasksTracking.vue";
+import Notes from "../views/dashboard/Notes.vue";
 import {useUserStore} from "../store/user";
 import axios from "axios";
 
@@ -142,6 +143,11 @@ const routes = [
                 path: "/dashboard/notifications",
                 component: Notifications,
                 name: 'Notifications',
+            },
+            {
+                path: "/dashboard/notes",
+                component: Notes,
+                name: 'Notes',
             },
         ],
     },
