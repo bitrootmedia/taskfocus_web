@@ -4,9 +4,9 @@
       <Loader v-if="loading"/>
 
       <div v-else>
-        <div class="header flex justify-between md:justify-end mb-4">
+        <div class="header flex md:hidden justify-between md:justify-end mb-4">
           <Button
-              class="block md:hidden max-w-[200px] justify-center"
+              class="max-w-[200px] justify-center"
               :label="showSidebar ? 'Hide List' : 'Show List'"
               size="big"
               version="green"
@@ -22,15 +22,18 @@
           />
         </div>
 
-        <span class="w-full h-[1px] bg-[#E5E7E7] block mb-4"></span>
+        <span class="w-full h-[1px] bg-[#E5E7E7] block md:hidden mb-4"></span>
 
         <div v-if="notes.length" class="flex">
+
           <div
               v-if="showSidebar"
+              id="scrollSection"
+              @scroll="scrollHandler"
               class="mobile-version fixed left-0 bg-white sidebar notifications-wrapper min-w-[220px] max-w-[220px] overflow-y-auto border-r border-[#E5E7E7] h-[calc(100vh-165px)]">
             <ul class="">
               <li v-for="note in notes" :key="note.id"
-                  @click="selectNote(note)"
+                  @click="selectNote(note, true)"
                   :class="{'bg-light-bg-c': active.id === note.id}"
                   class="px-4 py-4 border-b border-[#E5E7E7] cursor-pointer hover:bg-gray-200 transition">
                 <div class="flex items-center justify-between mb-1.5">
@@ -44,23 +47,39 @@
             </ul>
           </div>
 
-          <div
-              class="hidden md:block sidebar notifications-wrapper min-w-[300px] max-w-[300px] overflow-y-auto border-r border-[#E5E7E7] h-[calc(100vh-180px)]">
-            <ul class="">
-              <li v-for="note in notes" :key="note.id"
-                  @click="selectNote(note)"
-                  :class="{'bg-light-bg-c': active.id === note.id}"
-                  class="px-4 py-4 border-b border-[#E5E7E7] cursor-pointer hover:bg-gray-200 transition">
-                <div class="flex items-center justify-between mb-1.5">
-                  <span class="text-sm text-gray-400 block">{{ convertDateTime(note.created_at) }}</span>
-                  <TrashIcon class="cursor-pointer text-red bg-red" @click.stop="openModal(note)"></TrashIcon>
-                </div>
 
-                <h5 class="font-bold text-2xl line-clamp-1 truncate mb-1">{{ note.title }}</h5>
-                <p class="text-sm text-gray-400 text-line-2 ">{{ note.content }}</p>
-              </li>
-            </ul>
+          <div>
+            <Button
+                class="hidden md:flex max-w-[200px] justify-center mb-2"
+                label="Add New Note"
+                size="big"
+                version="green"
+                @on-click="addNote"
+            />
+
+            <div
+                id="scrollSection"
+                @scroll="scrollHandler"
+                class="hidden md:block sidebar notifications-wrapper min-w-[300px] max-w-[300px] overflow-y-auto border-r border-[#E5E7E7] h-[calc(100vh-155px)]">
+              <ul class="">
+                <li v-for="note in notes" :key="note.id"
+                    @click="selectNote(note)"
+                    :class="{'bg-light-bg-c': active.id === note.id}"
+                    class="px-4 py-4 border-b border-[#E5E7E7] cursor-pointer hover:bg-gray-200 transition">
+                  <div class="flex items-center justify-between mb-1.5">
+                    <span class="text-sm text-gray-400 block">{{ convertDateTime(note.updated_at) }}</span>
+                    <TrashIcon class="cursor-pointer text-red bg-red" @click.stop="openModal(note)"></TrashIcon>
+                  </div>
+
+                  <h5 class="font-bold text-2xl line-clamp-1 truncate mb-1">{{ note.title }}</h5>
+                  <p class="text-sm text-gray-400 text-line-2 ">{{ note.content }}</p>
+                </li>
+              </ul>
+
+              <Loader v-if="infiniteLoading"/>
+            </div>
           </div>
+
 
           <div class="content w-full">
             <div class="bg-white h-full p-4 md:p-8">
@@ -85,9 +104,18 @@
         </div>
 
         <div v-else>
-          <p class="flex text-center px-4 justify-center py-8 text-black-c text-3xl font-medium">
+          <p class="flex text-center px-4 justify-center pt-8 pb-4 text-black-c text-3xl font-medium">
             No data found
           </p>
+          <div class="text-center">
+            <Button
+                class="max-w-[200px] justify-center"
+                label="Add New Note"
+                size="big"
+                version="green"
+                @on-click="addNote"
+            />
+          </div>
         </div>
       </div>
     </div>
@@ -122,13 +150,17 @@ const currentDelete = ref(null)
 const showModal = ref(false)
 const active = ref(null)
 const loading = ref(true);
+const infiniteLoading = ref(false);
+const total = ref(0);
 const showSidebar = ref(false);
+const query = ref('page=1&page_size=8');
 const notes = ref([])
 
 
 //Methods
-const selectNote = (note) => {
+const selectNote = (note, isMobile) => {
   active.value = JSON.parse(JSON.stringify(note))
+  if (isMobile) showSidebar.value = false
 }
 const resetData = () => {
   const findItem = notes.value.find((item) => item.id === active.value.id)
@@ -145,7 +177,7 @@ const addNote = async () => {
   }
 }
 
-const openModal = (note)=>{
+const openModal = (note) => {
   showModal.value = true
   currentDelete.value = note
 }
@@ -164,25 +196,52 @@ const deleteNote = async () => {
 
 const updateNote = async () => {
   try {
-    const resp =  await notesStore.updateAuthNote(active.value)
-    await fetchNotes()
+    const resp = await notesStore.updateAuthNote(active.value)
+    await fetchNotes(true)
     active.value = resp.data
     toast.success("Successfully note updated");
+
+    const scrollSection = document.getElementById('scrollSection')
+    scrollSection.scrollTo({ top: 0, behavior: 'smooth' });
   } catch (e) {
     catchErrors(e)
   }
 }
 
+const scrollHandler = () => {
+  if (infiniteLoading.value || notes.value.length === total.value) return
+
+  const scrollSection = document.getElementById('scrollSection')
+  const offset = 40
+
+  let bottomOfWindow = scrollSection.offsetHeight + scrollSection.scrollTop + offset > scrollSection.scrollHeight;
+  if (bottomOfWindow) {
+    infiniteLoading.value = true
+    fetchNotes()
+  }
+}
+
 const fetchNotes = async (needUpdate) => {
   try {
-    const resp = await notesStore.fetchAuthNotes()
-    notes.value = resp.data.results.sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
+    const options = {
+      query: needUpdate ? 'page=1&page_size=8' : query.value,
+    }
+    const resp = await notesStore.fetchAuthNotes(options)
+    const sortedItems = resp.data.results.sort((a, b) => new Date(b.updated_at) - new Date(a.updated_at));
+    total.value = resp.data.count
 
-    if (resp.data.results.length && needUpdate) active.value = JSON.parse(JSON.stringify(resp.data.results[0]))
+    if (resp.data.next) {
+      const splitItem = resp.data.next.split('?')
+      query.value = splitItem[1]
+    }
+
+    notes.value = needUpdate ? sortedItems : [...notes.value, ...sortedItems]
+    if (notes.value.length && needUpdate) active.value = JSON.parse(JSON.stringify(notes.value[0]))
   } catch (e) {
     catchErrors(e)
   } finally {
     loading.value = false
+    infiniteLoading.value = false
   }
 }
 

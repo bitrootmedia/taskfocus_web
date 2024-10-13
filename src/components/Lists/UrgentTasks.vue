@@ -8,7 +8,6 @@
       <h3 class="font-bold mb-2 block md:hidden">Urgent Tasks</h3>
 
       <ul>
-
         <li v-for="task in tasks" :key="task.id">
           <router-link :to="`/dashboard/task/${task.id}`"
                        class="w-full mb-3 border border-light-bg-c rounded-[4px] px-4 py-3 cursor-pointer bg-[#E44B2A] flex justify-between items-center">
@@ -43,6 +42,12 @@
 
         </li>
       </ul>
+
+      <Pagination
+          v-if="paginate.pagination.value.total > 1 && !loading"
+          :pagination="paginate.pagination.value"
+          v-model:query="paginate.query.value"
+      />
     </div>
   </div>
 </template>
@@ -55,6 +60,9 @@ import {computed, ref} from "vue";
 import VMdEditor, {xss} from '@kangc/v-md-editor';
 import {useRouter} from "vue-router";
 import {useCookies} from "vue3-cookies";
+import {usePaginate} from "../../composables/usePaginate";
+import config from "../../config/index.js";
+import Pagination from "../Pagination/Pagination.vue";
 
 const {cookies} = useCookies()
 const router = useRouter()
@@ -82,15 +90,24 @@ const fetchTasks = async () => {
     const options = {
       is_urgent: true,
       responsible: currentUser.value,
+      pagination: paginate.pagination.value,
+      query: paginate.query.value,
     }
     const resp = await tasksStore.fetchTasks(options)
     tasks.value = resp.data.results
+    paginate.updatePagination(resp)
   } catch (e) {
     catchErrors(e)
   } finally {
     loading.value = false
   }
 }
+
+// Composables
+const options = {
+  pageSize: config.URGENT
+}
+const paginate = usePaginate(fetchTasks, options)
 
 // Run Functions
 fetchTasks()
