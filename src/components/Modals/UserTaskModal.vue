@@ -124,6 +124,7 @@ const listOfUsers = computed(() => {
 
 //Watch
 watch(search, (val) => {
+  if (val.length) showAll.value = true
   emit('fetch-users', val)
 })
 

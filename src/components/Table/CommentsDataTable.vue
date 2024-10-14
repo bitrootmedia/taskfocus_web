@@ -2,6 +2,13 @@
   <div class="content mt-4" v-if="comments.length || showBtnResult">
     <h2 class="font-semibold text-lg text-black-c block mb-3">Comments</h2>
 
+    <ul class="flex flex-wrap gap-2" v-if="!showCreateBtn && showBtnResult">
+      <li v-for="user in users" class="px-2 py-1 rounded-full bg-amber-300 flex items-center cursor-pointer"
+          @click="selectUser(user)">
+        <span class="text-xs">{{ user.username }}</span>
+      </li>
+    </ul>
+
     <form v-if="!hideCreate" @submit="sendComment($event)">
       <template v-if="showCreateBtn">
         <div v-if="!writeComment"
@@ -46,7 +53,7 @@
       </template>
 
       <template v-if="!showCreateBtn && showBtnResult">
-        <div class="w-full items-center gap-x-6">
+        <div class="w-full items-center gap-x-6 mt-1.5">
           <div class="w-full">
             <v-md-editor
                 autofocus
@@ -90,7 +97,7 @@
       </div>
     </div>
 
-    <div class="comments mt-5">
+    <div class="comments mt-1.5">
       <ul>
         <li v-for="comment in comments" :key="comment.id" class="mb-5">
           <div class="">
@@ -100,7 +107,7 @@
                </span>
 
               <div class="flex items-center">
-                <div class="flex items-center gap-x-2">
+                <div class="flex items-center gap-x-1">
                    <span v-if="comment.author?.first_name || comment.author?.last_name"
                          class="text-black-c text-sm font-semibold">{{
                        comment.author?.first_name
@@ -115,6 +122,13 @@
                   }}</span>
               </div>
             </div>
+
+            <ul class="flex flex-wrap gap-2" v-if="editCommentsIds.includes(comment.id)">
+              <li v-for="user in users" class="px-2 py-1 rounded-full bg-amber-300 flex items-center cursor-pointer"
+                  @click="selectUser(user, comment)">
+                <span class="text-xs">{{ user.username }}</span>
+              </li>
+            </ul>
 
             <div class="mb-2">
               <p class="text-[11px] text-black-c">
@@ -264,6 +278,10 @@ const props = defineProps({
   showBtnResult: {
     type: Boolean,
     default: false
+  },
+  users: {
+    type: Array,
+    default: () => []
   }
 })
 
@@ -272,7 +290,7 @@ const rules = {
   message: {required},
 }
 
-const {bindEvent ,setPusherChannel} = usePusher()
+const {bindEvent, setPusherChannel} = usePusher()
 const commentsStore = useCommentsStore()
 const attachmentsStore = useAttachmentsStore()
 const toast = useToast()
@@ -384,6 +402,20 @@ const fetchComments = async (label = null) => {
   }
 }
 
+const selectUser = (user, comment) => {
+  const symbol = comment.content.length ? ' @' : '@'
+  const text = symbol + user.username + ' '
+
+  if (comment) {
+    comment.content = comment.content + text
+    return
+  }
+
+  message.value = message.value + text
+  const textarea = document.getElementsByTagName('textarea')
+  if (textarea) textarea[0].focus()
+}
+
 const resetComment = () => {
   emit('update:showCreateBtn', false)
   writeComment.value = false
@@ -437,7 +469,7 @@ onMounted(() => {
 
 // Config Pusher
 setPusherChannel(route.params.id)
-bindEvent(pusherEventNames.comment_created,fetchComments)
+bindEvent(pusherEventNames.comment_created, fetchComments)
 
 // Composables
 const options = {
