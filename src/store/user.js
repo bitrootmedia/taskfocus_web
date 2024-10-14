@@ -41,7 +41,7 @@ export const useUserStore = defineStore('user', {
 
         async fetchUsers(payload) {
             let url = `${config.BASE_API_URL}/users?`
-            if (payload) url += `&username=${payload}`
+            if (payload) url += `&search=${payload}`
 
             return await axios.get(url)
         },

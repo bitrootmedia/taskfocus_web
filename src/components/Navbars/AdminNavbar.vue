@@ -24,7 +24,7 @@
 
         <div v-if="userStore.showPanel.show || titleData.isEdit" class="hidden md:flex gap-x-4 flex-wrap">
           <Button
-              @on-click="titleData.isEdit ? saveData() : userStore.showPanel.update"
+              @on-click="titleData.isEdit ? saveData() : userStore.showPanel.update()"
               label="Save Changes"
               size="medium"
               version="yellow"
@@ -151,6 +151,7 @@ const discardChanges = () => {
     plainText: task.value.title,
   }
   taskTitle.value = task.value.title
+  userStore.showPanel.close()
 }
 
 const updateProjectTitle = async (title) => {
