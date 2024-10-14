@@ -54,9 +54,14 @@
           </div>
 
           <div class="mb-10">
-            <CommentsDataTable v-model:showCreateBtn="showCreateBtnComment" v-model:showBtnResult="writeComment"
-                               :task-id="task.id"
-                               :task-name="task.title" :is-task="true"/>
+            <CommentsDataTable
+                v-model:showCreateBtn="showCreateBtnComment"
+                v-model:showBtnResult="writeComment"
+                :task-id="task.id"
+                :task-name="task.title"
+                :is-task="true"
+                :users="usersList"
+            />
           </div>
 
           <div class="mb-10">
@@ -908,9 +913,6 @@ const fetchTask = async (noLoad = false) => {
       if (resp.data.responsible?.id) form.value.owner = resp.data.responsible.id
       backgroundSize.value = `${resp.data.progress || 0}% 100%`
       firstOne.value = false
-
-      console.log(resp.data,'resp.data')
-
       taskTitle.value = task.value.title
       await fetchTaskBlocks()
       await fetchTaskTotalTime()
