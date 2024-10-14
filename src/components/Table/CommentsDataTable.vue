@@ -107,7 +107,7 @@
                      }} {{ comment.author?.last_name }}
                    </span>
                   <span class="text-black-c text-sm font-semibold cursor-pointer"
-                        @click="reply(comment)">(@{{ comment.author?.username }})</span>
+                        @click="isAuthOwner(comment) ? null : reply(comment)">(@{{ comment.author?.username }})</span>
                 </div>
 
                 <span class="text-[11px] ml-2 text-light-c font-semibold">{{
@@ -183,7 +183,7 @@
                     <span class="underline text-black-c text-xs cursor-pointer"
                           @click="editComment(comment)">Edit</span>
 
-                    <span class="underline text-black-c text-xs cursor-pointer"
+                    <span v-if="!isAuthOwner(comment)" class="underline text-black-c text-xs cursor-pointer"
                           @click="reply(comment)">Reply</span>
                   </div>
                 </template>

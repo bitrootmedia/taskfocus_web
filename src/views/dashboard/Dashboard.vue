@@ -18,7 +18,15 @@
     <div class="content">
       <div class="mb-10 flex flex-col md:flex-row gap-0 md:gap-8">
         <UrgentTasks/>
-        <PinnedTasks :pinnedTasks="pinnedTasks" :loading="loading"/>
+
+        <div class="w-full">
+          <PinnedTasks :pinnedTasks="pinnedTasks" :loading="loading"/>
+          <Pagination
+              v-if="paginate.pagination.value.total > 1 && !loading"
+              :pagination="paginate.pagination.value"
+              v-model:query="paginate.query.value"
+          />
+        </div>
       </div>
 
       <div class="mb-10">
@@ -29,7 +37,6 @@
 </template>
 
 <script setup>
-import {useRouter} from "vue-router";
 import UserTasksQueue from "../../components/Table/UserTasksQueue.vue";
 import {catchErrors, pusherEventNames} from "../../utils";
 import {onMounted, ref} from "vue";
@@ -38,10 +45,12 @@ import UrgentTasks from "../../components/Lists/UrgentTasks.vue";
 import PinnedTasks from "../../components/Lists/PinnedTasks.vue";
 import {usePusher} from "../../composables/usePusher";
 import {useCookies} from "vue3-cookies";
+import Pagination from "../../components/Pagination/Pagination.vue";
+import {usePaginate} from "../../composables/usePaginate";
+import config from "../../config/index.js";
 
-const {channel, events, bindEvent, setPusherChannel} = usePusher()
+const {bindEvent, setPusherChannel} = usePusher()
 const {cookies} = useCookies();
-const router = useRouter()
 const tasksStore = useTasksStore()
 const task = ref(null)
 const loading = ref(true)
@@ -61,9 +70,14 @@ const fetchCurrentTask = async () => {
 
 const fetchPinnedTasks = async () => {
   try {
-    const resp = await tasksStore.fetchPinnedTasks()
+    const options = {
+      pagination: paginate.pagination.value,
+      query: paginate.query.value,
+    }
+
+    const resp = await tasksStore.fetchPinnedTasks(options)
     pinnedTasks.value = resp.data.results
-    console.log(resp.data.results, 'resp')
+    paginate.updatePagination(resp)
   } catch (e) {
     catchErrors(e)
   } finally {
@@ -78,6 +92,12 @@ onMounted(() => {
     bindEvent(pusherEventNames.current_task_update, fetchCurrentTask);
   }
 })
+
+// Composables
+const options = {
+  pageSize: config.PINED
+}
+const paginate = usePaginate(fetchPinnedTasks, options)
 
 // Run Functions
 fetchCurrentTask()

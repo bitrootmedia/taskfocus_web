@@ -123,7 +123,11 @@ export const useTasksStore = defineStore('tasks', {
         },
 
         async fetchPinnedTasks(payload) {
-            return await axios.get(`${config.BASE_API_URL}/pinned-tasks`)
+            let url = `${config.BASE_API_URL}/pinned-tasks?`
+
+            if (payload?.query) url += `&${payload.query}`
+
+            return await axios.get(url)
         },
 
         async startTask(payload) {

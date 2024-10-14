@@ -42,8 +42,10 @@ export const useNotesStore = defineStore('notes', {
             return await axios.delete(`${config.BASE_API_URL}/private-note/${id}`)
         },
 
-        async fetchAuthNotes() {
-            return await axios.get(`${config.BASE_API_URL}/notes`)
+        async fetchAuthNotes(payload) {
+            let url = `${config.BASE_API_URL}/notes?`
+            if (payload?.query) url += `&${payload.query}`
+            return await axios.get(url)
         },
 
         async createAuthNote(payload) {
