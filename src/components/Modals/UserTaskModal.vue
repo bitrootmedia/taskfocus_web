@@ -20,7 +20,17 @@
           <Loader v-if="loading"/>
 
           <div v-else class="content">
-            <div class="mb-3 flex justify-end">
+            <div class="mb-4 flex justify-between items-center">
+              <div class="relative">
+                <SearchIcon class="fas fa-search mr-2 text-sm text-blueGray-300 absolute top-1 left-2"/>
+                <input
+                    v-model="search"
+                    type="text"
+                    class="pl-9 pr-3 py-[5px] placeholder-[#797A7B] text-[#797A7B] bg-white border border-light-bg-c rounded-[6px] text-sm focus:outline-none focus:ring w-full ease-linear transition-all duration-150"
+                    placeholder="Search..."
+                />
+              </div>
+
               <Button
                   @on-click="showAll = !showAll"
                   :label="showAll ? 'Hide all users' : 'Show all users'"
@@ -31,7 +41,8 @@
 
             <ul>
               <li v-for="user in listOfUsers" :key="user.id" class="flex justify-between items-center gap-x-1 mb-2">
-                <span class="text-[13px] text-light-c font-medium" v-if="user.first_name || user.last_name">{{ user.first_name }} {{ user.last_name }}</span>
+                <span class="text-[13px] text-light-c font-medium"
+                      v-if="user.first_name || user.last_name">{{ user.first_name }} {{ user.last_name }}</span>
                 <span class="text-[13px] text-light-c font-medium" v-else>{{ user.username }}</span>
                 <Button
                     @on-click="haveTaskAccessIds.includes(user.id) ? removeUser(user) : assignUser(user)"
@@ -52,15 +63,16 @@
 
 <script setup>
 import {catchErrors} from "../../utils";
-import {computed, onBeforeUnmount, onMounted, ref} from "vue";
+import {computed, onBeforeUnmount, onMounted, ref, watch} from "vue";
 import Loader from "./../../components/Loader/Loader.vue"
 import {useTasksStore} from "../../store/tasks";
 import {useCookies} from "vue3-cookies";
 import {useToast} from "vue-toastification";
 import CloseBlackIcon from "../Svg/CloseBlackIcon.vue";
 import Button from '../Button/Button.vue'
+import SearchIcon from "../Svg/SearchIcon.vue";
 
-const emit = defineEmits(['close', 'update'])
+const emit = defineEmits(['close', 'update', 'fetch-users'])
 const props = defineProps({
   showModal: {
     type: Boolean,
@@ -99,13 +111,20 @@ const {cookies} = useCookies();
 const toast = useToast()
 
 // State
+const search = ref('')
 const showAll = ref(false)
 const btnLoad = ref(false)
 const loading = ref(false)
 const componentModalRef = ref()
 
 const listOfUsers = computed(() => {
-  return showAll.value ? props.allUsers : props.users
+  return showAll.value || search.length ? props.allUsers : props.users
+})
+
+
+//Watch
+watch(search, (val) => {
+  emit('fetch-users', val)
 })
 
 // Methods

@@ -11,7 +11,7 @@ if (token) {
 
 export const useUserStore = defineStore('user', {
     state: () => ({
-        panel:{
+        panel: {
             show: false,
             callback: null,
         }
@@ -23,8 +23,8 @@ export const useUserStore = defineStore('user', {
     },
 
     actions: {
-         setShowPanel(payload) {
-             this.panel = payload
+        setShowPanel(payload) {
+            this.panel = payload
         },
         async login(payload) {
             return await axios.post(`${config.BASE_API_URL}/auth/login/`, payload)
@@ -36,11 +36,14 @@ export const useUserStore = defineStore('user', {
             const headers = {
                 Authorization: `Token ${payload}`
             }
-            return await axios.get(`${config.BASE_API_URL}/auth/user/`,{headers})
+            return await axios.get(`${config.BASE_API_URL}/auth/user/`, {headers})
         },
 
         async fetchUsers(payload) {
-            return await axios.get(`${config.BASE_API_URL}/users`)
+            let url = `${config.BASE_API_URL}/users?`
+            if (payload) url += `&username=${payload}`
+
+            return await axios.get(url)
         },
 
         async fetchCurrentUser(payload) {

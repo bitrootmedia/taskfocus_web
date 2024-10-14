@@ -88,6 +88,7 @@
               :have-task-access="haveTaskAccess"
               :have-task-access-ids="haveTaskAccessIds"
               :btn-title="'Manage Task Users'"
+              @fetch-users="fetchUsers"
               @close="showUsersModal = false"
               @update="updateTasks"
           />
@@ -1090,9 +1091,9 @@ const updateDeleteList = (id) => {
   deletedBlockList.value.push(id)
 }
 
-const fetchUsers = async () => {
+const fetchUsers = async (search) => {
   try {
-    const resp = await userStore.fetchUsers()
+    const resp = await userStore.fetchUsers(search)
     users.value = [
       {
         first_name: 'None',

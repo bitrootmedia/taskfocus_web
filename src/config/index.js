@@ -11,6 +11,8 @@ export default {
     PROJECT_POPUP: import.meta.env.VITE_PROJECT_POPUP,
     REMINDERS: import.meta.env.VITE_REMINDERS,
     REMINDERS_ALL: import.meta.env.VITE_REMINDERS_ALL,
+    PINED: import.meta.env.VITE_PINED,
+    URGENT: import.meta.env.VITE_URGENT,
     URGENT_TASKS: import.meta.env.VITE_URGENT_TASKS,
     NOTES: import.meta.env.VITE_NOTES,
     LOGO_URL: import.meta.env.VITE_LOGO_URL,

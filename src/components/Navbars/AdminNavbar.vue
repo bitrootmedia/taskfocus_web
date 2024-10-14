@@ -5,38 +5,44 @@
     <div
         class="w-full mx-auto items-center flex justify-between md:flex-nowrap flex-wrap"
     >
-     <div class="flex justify-between items-center main-container pl-0 flex-wrap gap-y-2">
-       <div v-if="route.name === 'Task Detail'" class="cursor-pointer inline-flex font-semibold text-[22px] text-black-c" contenteditable="true" ref="editable" v-focus-end plaintext-only="true" @focus="moveCursorToEnd" @input="saveData($event,'task')">{{ taskTitle }}</div>
-       <div v-else-if="route.name === 'Project Detail'" class="cursor-pointer inline-flex font-semibold text-[22px] text-black-c" contenteditable="true" ref="editable" v-focus-end plaintext-only="true" @focus="moveCursorToEnd" @input="saveData($event,'project')">{{ projectTitle }}</div>
-       <a
-           v-else
-           class="text-black text-[22px] uppercase hidden md:inline-block font-semibold"
-           href="javascript:void(0)"
-       >
-         {{ route.name || 'Dashboard' }}
-       </a>
+      <div class="flex justify-between items-center main-container pl-0 flex-wrap gap-y-2">
+        <input v-if="route.name === 'Task Detail'"
+               class="cursor-pointer inline-flex font-semibold text-[22px] text-black-c outline-0"
+               v-model="taskTitle"
+               @input="changeTitle($event,'task')"/>
+        <input v-else-if="route.name === 'Project Detail'"
+               class="cursor-pointer inline-flex font-semibold text-[22px] text-black-c outline-0"
+               v-model="projectTitle"
+               @input="changeTitle($event,'project')"/>
+        <a
+            v-else
+            class="text-black text-[22px] uppercase hidden md:inline-block font-semibold"
+            href="javascript:void(0)"
+        >
+          {{ route.name || 'Dashboard' }}
+        </a>
 
-       <div v-if="userStore.showPanel.show" class="hidden md:flex gap-x-4 flex-wrap">
-         <Button
-             @on-click="userStore.showPanel.update"
-             label="Save Changes"
-             size="medium"
-             version="yellow"
-         />
-         <Button
-             @on-click="userStore.showPanel.close"
-             label="Discard Changes"
-             size="medium"
-             version="green"
-         />
-       </div>
-       <div v-if="route.name === 'Task Detail' && task.is_closed" class="text-md font-semibold text-red-c">
-         THIS TASK IS CLOSED
-       </div>
-       <div v-if="route.name === 'Project Detail' && project.is_closed" class="text-md font-semibold text-red-c">
-         THIS PROJECT IS CLOSED
-       </div>
-     </div>
+        <div v-if="userStore.showPanel.show || titleData.isEdit" class="hidden md:flex gap-x-4 flex-wrap">
+          <Button
+              @on-click="titleData.isEdit ? saveData() : userStore.showPanel.update"
+              label="Save Changes"
+              size="medium"
+              version="yellow"
+          />
+          <Button
+              @on-click="discardChanges"
+              label="Discard Changes"
+              size="medium"
+              version="green"
+          />
+        </div>
+        <div v-if="route.name === 'Task Detail' && task.is_closed" class="text-md font-semibold text-red-c">
+          THIS TASK IS CLOSED
+        </div>
+        <div v-if="route.name === 'Project Detail' && project.is_closed" class="text-md font-semibold text-red-c">
+          THIS PROJECT IS CLOSED
+        </div>
+      </div>
 
       <div class="flex items-center">
         <div>
@@ -93,18 +99,23 @@ const project = ref({})
 const taskTitle = ref('')
 const projectTitle = ref('')
 const editable = ref(null);
+const titleData = ref({
+  isEdit: false,
+  type: 'task',
+  planText: ''
+});
 
 
 //Watch
-watch(taskStore.$state,(val)=>{
-  if (Object.keys(val.task).length){
+watch(taskStore.$state, (val) => {
+  if (Object.keys(val.task).length) {
     task.value = val.task
     taskTitle.value = val.task.title
   }
 })
 
-watch(projectStore.$state,(val)=>{
-  if (Object.keys(val.project).length){
+watch(projectStore.$state, (val) => {
+  if (Object.keys(val.project).length) {
     project.value = val.project
     projectTitle.value = val.project.title
   }
@@ -133,6 +144,15 @@ const isAuthOwner = computed(() => {
 
 
 // Methods
+const discardChanges = () => {
+  titleData.value = {
+    ...titleData.value,
+    isEdit: false,
+    plainText: task.value.title,
+  }
+  taskTitle.value = task.value.title
+}
+
 const updateProjectTitle = async (title) => {
   try {
     const data = {
@@ -141,7 +161,7 @@ const updateProjectTitle = async (title) => {
     }
     await projectStore.updateProject(data)
   } catch (e) {
-    if (e.response?.data?.title[0] === 'This field may not be blank.'){
+    if (e.response?.data?.title[0] === 'This field may not be blank.') {
       projectTitle.value = project.value.title
     }
     catchErrors(e)
@@ -156,25 +176,31 @@ const updateTask = async (title) => {
     }
 
     await taskStore.updateTask(data)
+    titleData.value = {
+      ...titleData.value,
+      isEdit: false,
+      plainText: '',
+    }
   } catch (e) {
-    if (e.response?.data?.title[0] === 'This field may not be blank.'){
+    if (e.response?.data?.title[0] === 'This field may not be blank.') {
       taskTitle.value = task.value.title
     }
     catchErrors(e)
   }
 }
 
-const saveData = async(e,type)=>{
-  const plainText = e.target.innerText.replace(/&nbsp;/g, ' ');
-  if (type === 'task'){
-    taskTitle.value = plainText
-    moveCursorToEnd()
-    return await updateTask(plainText)
+const changeTitle = (e, type) => {
+  titleData.value = {isEdit: true, type}
+}
+
+const saveData = async () => {
+  const {type} = titleData.value
+
+  if (type === 'task') {
+    return await updateTask(taskTitle.value)
   }
 
-  projectTitle.value = plainText
-  moveCursorToEnd()
-  await updateProjectTitle(plainText)
+  await updateProjectTitle(projectTitle.value)
 }
 
 const logout = async () => {
@@ -190,18 +216,18 @@ const logout = async () => {
   }
 }
 
-const moveCursorToEnd = () => {
-  const range = document.createRange();
-  const sel = window.getSelection();
-  range.selectNodeContents(editable.value);
-  range.collapse(false);
-  sel.removeAllRanges();
-  sel.addRange(range);
-};
+// const moveCursorToEnd = () => {
+//   const range = document.createRange();
+//   const sel = window.getSelection();
+//   range.selectNodeContents(editable.value);
+//   range.collapse(false);
+//   sel.removeAllRanges();
+//   sel.addRange(range);
+// };
 </script>
 
 <style scoped>
-.main-container{
+.main-container {
   padding-left: 0 !important;
 }
 </style>
