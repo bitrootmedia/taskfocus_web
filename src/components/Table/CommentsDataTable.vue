@@ -403,14 +403,15 @@ const fetchComments = async (label = null) => {
 }
 
 const selectUser = (user, comment) => {
-  const symbol = comment.content.length ? ' @' : '@'
-  const text = symbol + user.username + ' '
-
   if (comment) {
+    const symbol = comment.content.length ? ' @' : '@'
+    const text = symbol + user.username + ' '
     comment.content = comment.content + text
     return
   }
 
+  const symbol = message.value.length ? ' @' : '@'
+  const text = symbol + user.username + ' '
   message.value = message.value + text
   const textarea = document.getElementsByTagName('textarea')
   if (textarea) textarea[0].focus()
