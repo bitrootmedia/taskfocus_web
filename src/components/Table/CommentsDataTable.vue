@@ -4,8 +4,8 @@
 
     <ul class="flex flex-wrap gap-2" v-if="!showCreateBtn && showBtnResult">
       <li v-for="user in users" class="px-2 py-1 rounded-full bg-amber-300 flex items-center cursor-pointer"
-          @click="selectUser(user)">
-        <span class="text-xs">{{ user.username }}</span>
+          @click="selectUser(user.user)">
+        <span class="text-xs">{{ user.user.username }}</span>
       </li>
     </ul>
 
@@ -20,6 +20,13 @@
         </div>
 
         <div class="w-full items-center gap-x-6" v-else>
+          <ul class="flex flex-wrap gap-2 mb-1.5" >
+            <li v-for="user in users" class="px-2 py-1 rounded-full bg-amber-300 flex items-center cursor-pointer"
+                @click="selectUser(user.user)">
+              <span class="text-xs">{{ user.user.username }}</span>
+            </li>
+          </ul>
+
           <div class="w-full">
             <v-md-editor
                 autofocus
@@ -125,8 +132,8 @@
 
             <ul class="flex flex-wrap gap-2" v-if="editCommentsIds.includes(comment.id)">
               <li v-for="user in users" class="px-2 py-1 rounded-full bg-amber-300 flex items-center cursor-pointer"
-                  @click="selectUser(user, comment)">
-                <span class="text-xs">{{ user.username }}</span>
+                  @click="selectUser(user.user, comment)">
+                <span class="text-xs">{{ user.user.username }}</span>
               </li>
             </ul>
 
@@ -176,7 +183,6 @@
               </div>
 
               <div class="flex gap-x-3 items-center mt-1">
-                <template v-if="isAuthOwner(comment)">
                   <div v-if="editCommentsIds.includes(comment.id)" class="flex gap-x-3">
                     <Button
                         @on-click="updateComment(comment)"
@@ -194,14 +200,11 @@
                     />
                   </div>
                   <div v-else class="flex items-center gap-x-2">
-                    <span class="underline text-black-c text-xs cursor-pointer"
+                    <span v-if="isAuthOwner(comment)" class="underline text-black-c text-xs cursor-pointer"
                           @click="editComment(comment)">Edit</span>
-
                     <span v-if="!isAuthOwner(comment)" class="underline text-black-c text-xs cursor-pointer"
                           @click="reply(comment)">Reply</span>
                   </div>
-                </template>
-
               </div>
             </div>
           </div>
