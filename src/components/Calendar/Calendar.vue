@@ -23,12 +23,13 @@ import {ref} from "vue";
 import {catchErrors} from "../../utils/index.js";
 import {useTasksStore} from "../../store/tasks.js";
 import {useCookies} from "vue3-cookies";
-import {useRouter} from "vue-router";
+import {useRoute, useRouter} from "vue-router";
 
 //Store
 const {cookies} = useCookies();
 const taskStore = useTasksStore()
 const router = useRouter()
+const route = useRoute()
 
 
 //State
@@ -55,8 +56,6 @@ const onViewChange = (type) => {
   let start = ''
   let end = ''
 
-  console.log(type,'type')
-
   if (type.view === 'day') {
     start = end = moment(type.startDate).format("YYYY-MM-DD");
   }
@@ -79,12 +78,11 @@ const eventClick = (event) => {
 
 const fetchEvents = async () => {
   try {
-    const user = cookies.get('task_focus_user')
-
+    const userId = route.params.id
     if (!filters.value.start && !filters.value.end) await setDefaultDate()
 
     const options = {
-      user_id: user.pk,
+      user_id: userId,
       start_date: filters.value.start,
       end_date: filters.value.end,
     }
