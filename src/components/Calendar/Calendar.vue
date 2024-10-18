@@ -22,11 +22,9 @@ import moment from "moment";
 import {ref} from "vue";
 import {catchErrors} from "../../utils/index.js";
 import {useTasksStore} from "../../store/tasks.js";
-import {useCookies} from "vue3-cookies";
 import {useRoute, useRouter} from "vue-router";
 
 //Store
-const {cookies} = useCookies();
 const taskStore = useTasksStore()
 const router = useRouter()
 const route = useRoute()
