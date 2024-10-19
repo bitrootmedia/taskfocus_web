@@ -60,7 +60,7 @@
                 :task-id="task.id"
                 :task-name="task.title"
                 :is-task="true"
-                :users="usersList"
+                :users="commentsUsersList()"
             />
           </div>
 
@@ -513,11 +513,11 @@
 
 <script setup>
 import {computed, onBeforeUnmount, onMounted, ref, watch} from "vue";
-import {catchErrors, pusherEventNames} from "../../utils";
+import {catchErrors} from "../../utils";
 import {useRoute, useRouter} from "vue-router";
 import {useTasksStore} from "../../store/tasks";
 import Loader from "./../../components/Loader/Loader.vue"
-import {required, helpers} from "@vuelidate/validators";
+import {helpers, required} from "@vuelidate/validators";
 import {useVuelidate} from "@vuelidate/core";
 import ProjectsModal from "../../components/Modals/ProjectsModal.vue";
 import AttachmentsDataTable from "../../components/Table/AttachmentsDataTable.vue";
@@ -698,6 +698,13 @@ const showPanel = computed(() => {
   const arr = Object.values(isEditPanel.value)
   return arr.includes(true)
 })
+
+const commentsUsersList = () => {
+  const users = [...haveTaskAccess.value, ...haveProjectAccess.value]
+  return users.filter((item, index, self) =>
+      index === self.findIndex((t) => t.id === item.id)
+  )
+}
 
 //Watch
 watch(showPanel, (val) => {
