@@ -5,13 +5,13 @@
     <div
         class="w-full mx-auto items-center flex justify-between md:flex-nowrap flex-wrap"
     >
-      <div class="flex justify-between items-center main-container pl-0 flex-wrap gap-y-2">
+      <div class="flex justify-between items-center flex-n] main-container pl-0 flex-nowrap gap-2">
         <input v-if="route.name === 'Task Detail'"
-               class="cursor-pointer inline-flex font-semibold text-[22px] text-black-c outline-0"
+               class="w-full cursor-pointer inline-flex font-semibold text-[22px] text-black-c outline-0"
                v-model="taskTitle"
                @input="changeTitle($event,'task')"/>
         <input v-else-if="route.name === 'Project Detail'"
-               class="cursor-pointer inline-flex font-semibold text-[22px] text-black-c outline-0"
+               class="w-full cursor-pointer inline-flex font-semibold text-[22px] text-black-c outline-0"
                v-model="projectTitle"
                @input="changeTitle($event,'project')"/>
         <a
@@ -22,7 +22,7 @@
           {{ route.name || 'Dashboard' }}
         </a>
 
-        <div v-if="userStore.showPanel.show || titleData.isEdit" class="hidden md:flex gap-x-4 flex-wrap">
+        <div v-if="userStore.showPanel.show || titleData.isEdit" class="hidden md:flex gap-x-4 flex-wrap md:flex-nowrap">
           <Button
               @on-click="titleData.isEdit ? saveData() : userStore.showPanel.update()"
               label="Save Changes"
