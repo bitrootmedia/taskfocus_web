@@ -1,0 +1,173 @@
+<template>
+  <div class="main-container">
+    <div class="content mt-6 mb-6">
+      <Loader v-if="loading"/>
+
+      <div v-else>
+        <div class="flex justify-between items-center">
+          <h1 class="font-semibold text-[24px] text-black-c cursor-pointer" v-if="!isUpdate" @click="showInput">
+            {{ board.name }}
+          </h1>
+          <input v-show="isUpdate"
+                 id="boardName"
+                 class="px-2 py-2 cursor-pointer inline-flex font-semibold text-black-c outline-0 w-[300px]"
+                 v-model="boardName"
+                 @blur="updateBoard"
+          />
+
+          <Button
+              v-if="isUpdate"
+              @on-click="updateBoard"
+              label="Save Name"
+              size="medium"
+              version="green"
+          />
+
+          <div v-else class="flex items-center gap-x-4">
+            <Button
+                @on-click="showCardModal = true"
+                label="Add New Card"
+                size="medium"
+                version="green"
+            />
+
+            <GearDropdown/>
+          </div>
+        </div>
+
+        <div v-if="board.cards.length" class="mt-8">
+
+          <draggable v-model="board.cards" direction="horizontal"
+                     class="p-2 list-group flex flex-row gap-8 overflow-x-auto"
+                     item-key="name"
+                     ghost-class="ghost"
+                     @change="changeDrag">
+            <template #item="{element}">
+              <BoardCard :card="element" @fetchBoard="fetchBoard" class="list-group-item cursor-move"/>
+            </template>
+          </draggable>
+        </div>
+
+        <CreateBoardCard
+            :show-modal="showCardModal"
+            @close="showCardModal = false"
+            @create="createCard"
+        />
+      </div>
+    </div>
+  </div>
+</template>
+
+<script setup>
+import Loader from "../../components/Loader/Loader.vue";
+import {useBoardsStore} from "../../store/boards.js";
+import {ref} from "vue";
+import {catchErrors} from "../../utils/index.js";
+import {useRoute, useRouter} from "vue-router";
+import Button from "../../components/Button/Button.vue";
+import CreateBoardCard from "../../components/Modals/CreateBoardCard.vue";
+import {useToast} from "vue-toastification";
+import BoardCard from "../../components/Board/BoardCard.vue";
+import draggable from 'vuedraggable'
+import SettingsIcon from "../../components/Svg/SettingsIcon.vue";
+import GearDropdown from "../../components/Board/GearDropdown.vue";
+
+
+//Store
+const boardsStore = useBoardsStore()
+const route = useRoute()
+const router = useRouter()
+const toast = useToast()
+
+
+//State
+const loading = ref(true);
+const showCardModal = ref(false);
+const isUpdate = ref(false)
+const board = ref('')
+const boardName = ref('')
+
+
+//Methods
+const changeDrag = async (e) => {
+  try {
+    const current = e.moved.element
+    const newIndex = e.moved.newIndex
+    const data = {
+      card: current.id,
+      position: newIndex,
+    }
+
+    await boardsStore.updateBoardCardMove(data)
+  } catch (e) {
+    catchErrors(e)
+  }
+}
+
+const showInput = () => {
+  isUpdate.value = true
+
+  const input = document.getElementById('boardName')
+  setTimeout(() => {
+    input.focus()
+  }, 100)
+}
+
+const createCard = async (input) => {
+  try {
+    const data = {
+      board: route.params.id,
+      name: input,
+      position: board.value.cards.length || 0,
+    }
+    await boardsStore.createBoardCard(data)
+    toast.success("Successfully created!");
+    await fetchBoard()
+  } catch (e) {
+    catchErrors(e)
+  }
+}
+
+const updateBoard = async () => {
+  try {
+    const data = {
+      id: route.params.id,
+      name: boardName.value
+    }
+    await boardsStore.updateBoard(data)
+    toast.success("Successfully updated!");
+    await fetchBoard()
+    isUpdate.value = false
+  } catch (e) {
+    catchErrors(e)
+  }
+}
+
+const fetchBoard = async () => {
+  try {
+    const data = {
+      id: route.params.id
+    }
+    const resp = await boardsStore.fetchBoard(data)
+    resp.data.cards.sort((a, b) => a.position - b.position);
+    resp.data.cards.forEach(card => {
+      card.card_items.sort((a, b) => a.position - b.position);
+    });
+
+    board.value = resp.data
+    boardName.value = board.value.name
+    console.log(board.value, 'board.value')
+  } catch (e) {
+    catchErrors(e)
+  } finally {
+    loading.value = false
+  }
+}
+
+//Run functions
+fetchBoard()
+</script>
+
+<style scoped>
+
+</style>
