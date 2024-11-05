@@ -19,15 +19,15 @@
 
           <div class="flex justify-center gap-x-3 mt-8">
             <Button
-                @on-click="emit('close')"
-                :label="'Cancel'"
-                version="yellow"
-                size="medium"
-            />
-            <Button
                 @on-click="createTask"
                 :label="'Create'"
                 version="green"
+                size="medium"
+            />
+            <Button
+                @on-click="emit('close')"
+                :label="'Close'"
+                version="yellow"
                 size="medium"
             />
           </div>

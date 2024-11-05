@@ -107,20 +107,12 @@
                 size="medium"
             />
 
-            <div class="flex justify-end gap-x-3">
-              <Button
-                  @on-click="isEdit ? updateCardItem() : createNewCardItem()"
-                  :label="isEdit ? 'Update' : 'Create'"
-                  version="green"
-                  size="medium"
-              />
-              <Button
-                  @on-click="closeModal"
-                  :label="'Cancel'"
-                  version="yellow"
-                  size="medium"
-              />
-            </div>
+            <Button
+                @on-click="isEdit ? updateCardItem() : createNewCardItem()"
+                :label="isEdit ? 'Update' : 'Create'"
+                version="green"
+                size="medium"
+            />
           </div>
 
           <div v-else class="flex justify-end gap-x-3 mt-4 border-t border-light-bg-c pt-4">
@@ -251,7 +243,7 @@ const closeModal = () => {
   resetData()
 }
 
-const resetData = ()=>{
+const resetData = () => {
   projects.value = []
   tasks.value = []
   step.value = 0

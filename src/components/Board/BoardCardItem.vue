@@ -1,17 +1,17 @@
 <template>
   <div class="bg-white rounded-md px-2 py-2 border border-[#E5E7E7] shadow-sm mb-2 cursor-pointer"
-       >
+       @click="openModal(cardItem)">
     {{ cardItem.comment }}
   </div>
 
-<!--  <NewCardItem-->
-<!--      :show-modal="showPanel"-->
-<!--      :isEdit="true"-->
-<!--      :editItem="editItem"-->
-<!--      @close="showPanel = false"-->
-<!--      @delete="deleteCardItem"-->
-<!--      @update="updateCard"-->
-<!--  />-->
+  <NewCardItem
+      :show-modal="showPanel"
+      :isEdit="true"
+      :editItem="editItem"
+      @close="showPanel = false"
+      @delete="deleteCardItem"
+      @update="updateCard"
+  />
 </template>
 
 <script setup>
