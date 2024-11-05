@@ -8,11 +8,11 @@
           @click="deleteBoard">
         Delete Board
       </li>
-      <li class="text-sm flex items-center gap-x-1 py-1 px-4 whitespace-nowrap cursor-pointer hover:bg-light-bg-c transition-all ease-in-out">
+      <li class="text-sm flex items-center gap-x-1 py-1 px-4 whitespace-nowrap cursor-pointer hover:bg-light-bg-c transition-all ease-in-out"
+          @click="$emit('update:value', true)">
         Manage Board Users
       </li>
     </ul>
-
   </div>
 </template>
 

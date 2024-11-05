@@ -35,33 +35,19 @@
         </div>
       </div>
 
-
-      <div v-if="showNewPanel" class="mt-3">
-        <textarea class="w-full px-2 inline-flex text-black-c outline-0 mb-2" v-model="comment"></textarea>
-
-        <div class="flex items-center gap-2.5">
-          <Button
-              @on-click="saveCardItem"
-              label="Save"
-              size="small"
-              version="green"
-          />
-          <Button
-              @on-click="cancelItem"
-              label="Cancel"
-              size="small"
-              version="gray"
-          />
-        </div>
-      </div>
       <div
-          v-else
           class="flex items-center gap-1 cursor-pointer font-semibold mt-2 px-2 py-1 hover:bg-light-bg-c transition-all duration-150 ease-in-out"
           @click="showNewPanel = true">
         <PlusIcon size="12"/>
         <span class="text-light-c text-sm">Add new card item</span>
       </div>
     </div>
+
+    <NewCardItem
+        :show-modal="showNewPanel"
+        @close="showNewPanel = false"
+        @create="saveCardItem"
+    />
   </div>
 </template>
 
@@ -73,9 +59,9 @@ import {useBoardsStore} from "../../store/boards.js";
 import {useToast} from "vue-toastification";
 import {ref} from "vue";
 import PlusIcon from "../Svg/PlusIcon.vue";
-import Button from "../Button/Button.vue";
 import BoardCardItem from "./BoardCardItem.vue";
 import draggable from 'vuedraggable'
+import NewCardItem from "../Modals/NewCardItem.vue";
 
 const emit = defineEmits(['fetchBoard'])
 const props = defineProps({
@@ -95,7 +81,6 @@ const boardsStore = useBoardsStore()
 const isUpdate = ref(false)
 const cardName = ref(props.card.name || '')
 const showNewPanel = ref(false);
-const comment = ref('');
 
 
 //Methods
@@ -115,28 +100,22 @@ const changeDrag = async (e) => {
   }
 }
 
-const saveCardItem = async () => {
-  if (!comment.value) return toast.error("Text required");
-
+const saveCardItem = async (form) => {
   try {
     const data = {
       card: props.card.id,
-      comment: comment.value,
+      comment: form.comment,
+      task: form.selectedTask,
+      project: form.selectedProject,
       position: props.card.card_items.length || 0
     }
 
     await boardsStore.createBoardCardItem(data)
     emit('fetchBoard')
     toast.success("Successfully created!");
-    comment.value = ''
-    showNewPanel.value = false
   } catch (e) {
     catchErrors(e)
   }
-}
-
-const cancelItem = () => {
-  showNewPanel.value = false
 }
 
 const showInput = () => {

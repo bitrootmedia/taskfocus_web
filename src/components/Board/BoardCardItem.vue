@@ -7,9 +7,6 @@
 
 <script setup>
 import {ref} from "vue";
-import Button from "../Button/Button.vue";
-import {useBoardsStore} from "../../store/boards.js";
-import {useToast} from "vue-toastification";
 
 const emit = defineEmits(['fetchBoard'])
 const props = defineProps({

@@ -31,7 +31,7 @@
                 version="green"
             />
 
-            <GearDropdown/>
+            <GearDropdown v-if="isAuthOwner" v-model:value="showBoardUsersModal"/>
           </div>
         </div>
 
@@ -53,6 +53,15 @@
             @close="showCardModal = false"
             @create="createCard"
         />
+
+        <BoardManageUsers
+            :show-modal="showBoardUsersModal"
+            :users="users"
+            :boardUsers="boardUsers"
+            @close="showBoardUsersModal = false"
+            @update="fetchBoardUsers"
+        />
+
       </div>
     </div>
   </div>
@@ -61,7 +70,7 @@
 <script setup>
 import Loader from "../../components/Loader/Loader.vue";
 import {useBoardsStore} from "../../store/boards.js";
-import {ref} from "vue";
+import {ref, computed} from "vue";
 import {catchErrors} from "../../utils/index.js";
 import {useRoute, useRouter} from "vue-router";
 import Button from "../../components/Button/Button.vue";
@@ -69,24 +78,41 @@ import CreateBoardCard from "../../components/Modals/CreateBoardCard.vue";
 import {useToast} from "vue-toastification";
 import BoardCard from "../../components/Board/BoardCard.vue";
 import draggable from 'vuedraggable'
-import SettingsIcon from "../../components/Svg/SettingsIcon.vue";
+import BoardManageUsers from "../../components/Modals/BoardManageUsers.vue";
 import GearDropdown from "../../components/Board/GearDropdown.vue";
+import {useUserStore} from "../../store/user.js";
+import {useCookies} from "vue3-cookies";
 
 
 //Store
-const boardsStore = useBoardsStore()
+const {cookies} = useCookies();
 const route = useRoute()
 const router = useRouter()
 const toast = useToast()
+const usersStore = useUserStore()
+const boardsStore = useBoardsStore()
 
 
 //State
 const loading = ref(true);
 const showCardModal = ref(false);
+const showBoardUsersModal = ref(false);
 const isUpdate = ref(false)
+const users = ref([])
+const boardUsers = ref([])
 const board = ref('')
 const boardName = ref('')
 
+
+// Computed
+const isAuthOwner = computed(() => {
+  if (!cookies.get('task_focus_user')) return ''
+
+  const user = cookies.get('task_focus_user')
+
+  const boardOwnerId = board.value.owner
+  return user.pk === boardOwnerId
+})
 
 //Methods
 const changeDrag = async (e) => {
@@ -143,6 +169,28 @@ const updateBoard = async () => {
   }
 }
 
+const fetchUsers = async () => {
+  try {
+    const resp = await usersStore.fetchUsers()
+    const authUser = cookies.get('task_focus_user')?.pk
+    users.value = resp.data.results.filter((item) => item.id !== authUser)
+  } catch (e) {
+    catchErrors(e)
+  }
+}
+
+const fetchBoardUsers = async () => {
+  try {
+    const data = {
+      id: route.params.id
+    }
+    const resp = await boardsStore.fetchBoardUsers(data)
+    boardUsers.value = resp.data.results.map((item) => item.user)
+  } catch (e) {
+    catchErrors(e)
+  }
+}
+
 const fetchBoard = async () => {
   try {
     const data = {
@@ -166,6 +214,8 @@ const fetchBoard = async () => {
 
 //Run functions
 fetchBoard()
+fetchBoardUsers()
+fetchUsers()
 </script>
 
 <style scoped>

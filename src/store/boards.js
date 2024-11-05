@@ -72,5 +72,18 @@ export const useBoardsStore = defineStore('boards', {
         async deleteBoardCardItem(payload) {
             return await axios.delete(`${config.BASE_API_URL}/card-item-detail/${payload.id}`)
         },
+
+        //Board Users
+        async fetchBoardUsers(payload) {
+            let url = `${config.BASE_API_URL}/board-users/${payload.id}`
+            return await axios.get(url)
+        },
+
+        async assignBoardUser(payload) {
+            return await axios.post(`${config.BASE_API_URL}/board-users/${payload.id}`, payload)
+        },
+        async removeBoardUser(payload) {
+            return await axios.delete(`${config.BASE_API_URL}/board-users/${payload.id}`, payload)
+        },
     },
 })
