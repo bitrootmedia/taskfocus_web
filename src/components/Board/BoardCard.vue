@@ -21,7 +21,6 @@
       <div class="content notifications-wrapper overflow-y-auto max-h-[500px] pr-1">
         <div v-if="card.card_items.length">
 
-
           <draggable v-model="card.card_items"
                      direction="vertical"
                      class="list-group"
@@ -29,7 +28,9 @@
                      ghost-class="ghost"
                      @change="changeDrag">
             <template #item="{element}">
-              <BoardCardItem :cardItem="element" @fetchBoard="emit('fetchBoard')" class="list-group-item cursor-move"/>
+              <div>
+                <BoardCardItem :cardItem="element" @fetchBoard="emit('fetchBoard')" class="list-group-item cursor-move"/>
+              </div>
             </template>
           </draggable>
         </div>

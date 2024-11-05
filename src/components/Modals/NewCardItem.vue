@@ -2,12 +2,10 @@
   <div v-if="showModal"
        class="overflow-x-hidden overflow-y-auto fixed inset-0 z-50 outline-none focus:outline-none justify-center items-center flex">
     <div class="relative my-6 mx-auto w-[390px]">
-      <!--content-->
       <div class="border-0 rounded-lg shadow-lg relative flex flex-col w-full bg-white outline-none focus:outline-none">
         <div class="py-3">
           <div class="flex items-center justify-between rounded-t p-3 border-b border-light-bg-c">
-            <h2 class="text-[22px] text-black-c font-semibold">Create New Card Item</h2>
-
+            <h2 class="text-[22px] text-black-c font-semibold">{{ isEdit ? "Edit" : 'Create New' }} Card Item</h2>
             <CloseBlackIcon class="cursor-pointer" @click="emit('close')"/>
           </div>
         </div>
@@ -51,7 +49,7 @@
                 </div>
               </div>
 
-              <ul class="mt-3 max-h-[300px] overflow-y-auto">
+              <ul class="mt-3 notifications-wrapper max-h-[300px] overflow-y-auto pr-2">
                 <li v-for="task in tasks" :key="task.id" class="flex justify-between items-center gap-x-1 mb-2">
                   <span class="text-[13px] text-light-c font-medium">{{ task.title }}</span>
                   <Button
@@ -96,27 +94,36 @@
 
             <div v-if="step === 3">
               <textarea
-                  class="min-h-[150px] w-full px-2 inline-flex text-black-c outline-0 mb-2 border border-light-bg-c"
+                  class="min-h-[150px] w-full px-2 py-2 inline-flex text-black-c outline-0 mb-2 border border-light-bg-c"
                   v-model="form.comment"></textarea>
             </div>
           </div>
 
-          <div v-if="step === 0" class="flex justify-end gap-x-3 mt-8 border-t border-light-bg-c pt-4">
+          <div v-if="step === 0" class="flex justify-between items-center mt-8 border-t border-light-bg-c pt-4">
             <Button
-                @on-click="createNewCardItem"
-                :label="'Create'"
-                version="green"
+                @on-click="emit('delete')"
+                :label="'Delete'"
+                version="red"
                 size="medium"
             />
-            <Button
-                @on-click="closeModal"
-                :label="'Cancel'"
-                version="yellow"
-                size="medium"
-            />
+
+            <div class="flex justify-end gap-x-3">
+              <Button
+                  @on-click="isEdit ? updateCardItem() : createNewCardItem()"
+                  :label="isEdit ? 'Update' : 'Create'"
+                  version="green"
+                  size="medium"
+              />
+              <Button
+                  @on-click="closeModal"
+                  :label="'Cancel'"
+                  version="yellow"
+                  size="medium"
+              />
+            </div>
           </div>
 
-          <div v-else class="flex justify-end gap-x-3 mt-8 border-t border-light-bg-c pt-4">
+          <div v-else class="flex justify-end gap-x-3 mt-4 border-t border-light-bg-c pt-4">
             <Button
                 @on-click="step = 0"
                 :label="'Back'"
@@ -134,7 +141,7 @@
 <script setup>
 import Button from '../Button/Button.vue'
 import Input from "../Input/Input.vue";
-import {ref} from "vue";
+import {watch, ref} from "vue";
 import CloseBlackIcon from "../Svg/CloseBlackIcon.vue";
 import SearchIcon from "../Svg/SearchIcon.vue";
 import {catchErrors} from "../../utils/index.js";
@@ -147,10 +154,19 @@ const props = defineProps({
     type: Boolean,
     default: false
   },
+  isEdit: {
+    type: Boolean,
+    default: false
+  },
   activeId: {
     type: String,
     default: ''
   },
+  editItem: {
+    type: Object,
+    default: () => {
+    }
+  }
 })
 
 //Store
@@ -168,6 +184,23 @@ const form = ref({
   selectedProject: null,
   taskSearch: '',
   projectSearch: '',
+})
+
+
+//Watch
+watch(() => props.showModal, (val) => {
+  if (val && props.isEdit) {
+    form.value = {
+      comment: props.editItem?.comment,
+      selectedTask: props.editItem?.task?.id,
+      selectedProject: props.editItem?.project?.id,
+      taskSearch: props.editItem?.task?.title,
+      projectSearch: props.editItem?.project?.title,
+    }
+
+    if (props.editItem?.task?.id) searchTask()
+    if (props.editItem?.project?.id) searchProject()
+  }
 })
 
 
@@ -215,6 +248,10 @@ const searchProject = async () => {
 
 const closeModal = () => {
   emit('close')
+  resetData()
+}
+
+const resetData = ()=>{
   projects.value = []
   tasks.value = []
   step.value = 0
@@ -227,8 +264,14 @@ const closeModal = () => {
   }
 }
 
-const createNewCardItem = () => {
+const createNewCardItem = async () => {
   emit('create', form.value)
+  closeModal()
+}
+
+const updateCardItem = async () => {
+  emit('update', form.value)
+  resetData()
 }
 
 </script>

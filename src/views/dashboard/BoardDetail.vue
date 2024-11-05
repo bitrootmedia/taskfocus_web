@@ -87,7 +87,6 @@ import {useCookies} from "vue3-cookies";
 //Store
 const {cookies} = useCookies();
 const route = useRoute()
-const router = useRouter()
 const toast = useToast()
 const usersStore = useUserStore()
 const boardsStore = useBoardsStore()
@@ -204,7 +203,6 @@ const fetchBoard = async () => {
 
     board.value = resp.data
     boardName.value = board.value.name
-    console.log(board.value, 'board.value')
   } catch (e) {
     catchErrors(e)
   } finally {
