@@ -1,6 +1,6 @@
 <template>
   <div v-if="showModal"
-       class="overflow-x-hidden overflow-y-auto fixed inset-0 z-50 outline-none focus:outline-none justify-center items-center flex">
+       class="cursor-default overflow-x-hidden overflow-y-auto fixed inset-0 z-50 outline-none focus:outline-none justify-center items-center flex">
     <div class="relative my-6 mx-auto w-[390px]">
       <div class="border-0 rounded-lg shadow-lg relative flex flex-col w-full bg-white outline-none focus:outline-none">
         <div class="py-3">
@@ -99,20 +99,36 @@
             </div>
           </div>
 
-          <div v-if="step === 0" class="flex justify-between items-center mt-8 border-t border-light-bg-c pt-4">
-            <Button
-                @on-click="emit('delete')"
-                :label="'Delete'"
-                version="red"
-                size="medium"
-            />
+          <div v-if="step === 0">
+            <div v-if="isEdit" class="flex justify-between items-center mt-8 border-t border-light-bg-c pt-4">
+              <Button
+                  @on-click="emit('delete')"
+                  :label="'Delete'"
+                  version="red"
+                  size="medium"
+              />
+              <Button
+                  @on-click="updateCardItem"
+                  :label="'Update'"
+                  version="green"
+                  size="medium"
+              />
+            </div>
 
-            <Button
-                @on-click="isEdit ? updateCardItem() : createNewCardItem()"
-                :label="isEdit ? 'Update' : 'Create'"
-                version="green"
-                size="medium"
-            />
+            <div v-else class="flex justify-center items-center gap-4 mt-8 border-t border-light-bg-c pt-4">
+              <Button
+                  @on-click="createNewCardItem"
+                  :label="'Create'"
+                  version="green"
+                  size="medium"
+              />
+              <Button
+                  @on-click="emit('close')"
+                  :label="'Close'"
+                  version="yellow"
+                  size="medium"
+              />
+            </div>
           </div>
 
           <div v-else class="flex justify-end gap-x-3 mt-4 border-t border-light-bg-c pt-4">

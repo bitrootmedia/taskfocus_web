@@ -1,5 +1,5 @@
 <template>
-  <div class="border border-[#E5E7E7] px-3 py-2 rounded-md shadow-md min-w-[300px] max-w-[300px] h-fit">
+  <div class="border border-[#B7B7B7] px-3 py-2 rounded-md shadow-md min-w-[300px] max-w-[300px] h-fit cursor-move">
     <div class="flex justify-between items-center gap-4 border-b border-[#E5E7E7] pb-2">
       <span class="min-w-[120px] cursor-pointer font-semibold" v-if="!isUpdate" @click="showInput">{{
           card.name
@@ -20,7 +20,6 @@
     <div class="mt-4">
       <div class="content notifications-wrapper overflow-y-auto max-h-[500px] pr-1">
         <div v-if="card.card_items.length">
-
           <draggable v-model="card.card_items"
                      direction="vertical"
                      class="list-group"
@@ -29,7 +28,7 @@
                      @change="changeDrag">
             <template #item="{element}">
               <div>
-                <BoardCardItem :cardItem="element" @fetchBoard="emit('fetchBoard')" class="list-group-item cursor-move"/>
+                <BoardCardItem :cardItem="element" @fetchBoard="emit('fetchBoard')" class="list-group-item"/>
               </div>
             </template>
           </draggable>
@@ -43,13 +42,13 @@
         <span class="text-light-c text-sm">Add new card item</span>
       </div>
     </div>
-
-    <NewCardItem
-        :show-modal="showNewPanel"
-        @close="showNewPanel = false"
-        @create="saveCardItem"
-    />
   </div>
+
+  <NewCardItem
+      :show-modal="showNewPanel"
+      @close="showNewPanel = false"
+      @create="saveCardItem"
+  />
 </template>
 
 <script setup>

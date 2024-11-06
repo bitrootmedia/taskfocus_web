@@ -35,15 +35,16 @@
           </div>
         </div>
 
-        <div v-if="board.cards.length" class="mt-8">
-
+        <div v-if="board?.cards?.length" class="mt-8">
           <draggable v-model="board.cards" direction="horizontal"
-                     class="p-2 list-group flex flex-row gap-8 overflow-x-auto"
+                     class="p-2 horizontal-wrapper list-group flex flex-row gap-8 overflow-x-auto"
                      item-key="name"
                      ghost-class="ghost"
                      @change="changeDrag">
             <template #item="{element}">
-              <BoardCard :card="element" @fetchBoard="fetchBoard" class="list-group-item cursor-move"/>
+              <div>
+                <BoardCard :card="element" @fetchBoard="fetchBoard" class="list-group-item"/>
+              </div>
             </template>
           </draggable>
         </div>

@@ -244,6 +244,22 @@ tr:nth-child(odd) {
     border-radius: 8px;
 }
 
+.horizontal-wrapper::-webkit-scrollbar {
+    width: 4px;
+    border-radius: 2px;
+    height: 4px;
+}
+
+.horizontal-wrapper::-webkit-scrollbar-track {
+    background-color: transparent;
+    border-radius: 6px;
+}
+
+.horizontal-wrapper::-webkit-scrollbar-thumb {
+    background-color: #c1bfbf;
+    border-radius: 8px;
+}
+
 .rotate-180 {
     transform: rotate(180deg);
 }

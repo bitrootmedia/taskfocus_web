@@ -330,7 +330,7 @@
                     closePanel ? 'text-center pl-[38px]' : 'pl-4'
                 ]"
               >
-                <NewTaskIcon :isExactActive="isExactActive"/>
+                <NotesSvgIcon :isExactActive="isExactActive"/>
                 {{ !closePanel ? 'Notes' : '' }}
               </a>
             </router-link>
@@ -349,7 +349,7 @@
                     closePanel ? 'text-center pl-[38px]' : 'pl-4'
                 ]"
               >
-                <NewTaskIcon :isExactActive="isExactActive"/>
+                <BoardsIcon :isExactActive="isExactActive"/>
                 {{ !closePanel ? 'Boards' : '' }}
               </a>
             </router-link>
@@ -423,6 +423,9 @@ import moment from "moment";
 import {useTasksStore} from "../../store/tasks";
 import Button from '../Button/Button.vue'
 import ConfirmCloseModal from '../Modals/ConfirmCloseModal.vue'
+import NotesIcon from "../Svg/NotesIcon.vue";
+import NotesSvgIcon from "../Svg/NotesSvgIcon.vue";
+import BoardsIcon from "../Svg/BoardsIcon.vue";
 
 const emit = defineEmits(['update:closePanel'])
 const props = defineProps({

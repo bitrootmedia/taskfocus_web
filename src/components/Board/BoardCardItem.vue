@@ -1,7 +1,11 @@
 <template>
-  <div class="bg-white rounded-md px-2 py-2 border border-[#E5E7E7] shadow-sm mb-2 cursor-pointer"
-       @click="openModal(cardItem)">
-    {{ cardItem.comment }}
+  <div class="bg-white rounded-md px-2 py-2 border border-[#E5E7E7] shadow-sm mb-2 cursor-move relative group">
+    <span>{{ cardItem.comment }}</span>
+
+    <span @click="openModal(cardItem)"
+          class="flex opacity-0 group-hover:opacity-100 transition-all ease-in-out justify-center items-center absolute right-1.5 top-1.5 bg-white rounded-full w-6 h-6 shadow-md">
+      <EditIcon class="cursor-pointer"/>
+    </span>
   </div>
 
   <NewCardItem
@@ -20,6 +24,7 @@ import {catchErrors} from "../../utils/index.js";
 import {useBoardsStore} from "../../store/boards.js";
 import {useToast} from "vue-toastification";
 import NewCardItem from "../Modals/NewCardItem.vue";
+import EditIcon from "../Svg/EditIcon.vue";
 
 const emit = defineEmits(['fetchBoard'])
 const props = defineProps({
