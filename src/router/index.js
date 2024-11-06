@@ -28,6 +28,8 @@ import Reminders from "../views/dashboard/Reminders.vue";
 import Notifications from "../views/dashboard/Notifications.vue";
 import TasksTracking from "../views/dashboard/TasksTracking.vue";
 import Notes from "../views/dashboard/Notes.vue";
+import Boards from "../views/dashboard/Boards.vue";
+import BoardDetail from "../views/dashboard/BoardDetail.vue";
 import {useUserStore} from "../store/user";
 import axios from "axios";
 
@@ -148,6 +150,16 @@ const routes = [
                 path: "/dashboard/notes",
                 component: Notes,
                 name: 'Notes',
+            },
+            {
+                path: "/dashboard/boards",
+                component: Boards,
+                name: 'Boards',
+            },
+            {
+                path: "/dashboard/board/:id",
+                component: BoardDetail,
+                name: 'Board Detail',
             },
         ],
     },
