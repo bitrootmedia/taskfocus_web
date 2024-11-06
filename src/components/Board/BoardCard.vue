@@ -19,15 +19,17 @@
 
     <div class="mt-4">
       <div class="content notifications-wrapper overflow-y-auto max-h-[500px] pr-1">
-        <div v-if="card.card_items.length">
+        <div>
           <draggable v-model="card.card_items"
-                     direction="vertical"
+                     group="items"
                      class="list-group"
-                     item-key="name"
+                     item-key="id"
                      ghost-class="ghost"
-                     @change="changeDrag">
+                     @change="changeDrag"
+                     @end="onDragEnd"
+          >
             <template #item="{element}">
-              <div>
+              <div :data-column-id="card.id">
                 <BoardCardItem :cardItem="element" @fetchBoard="emit('fetchBoard')" class="list-group-item"/>
               </div>
             </template>
@@ -69,6 +71,10 @@ const props = defineProps({
     type: Object,
     default: false
   },
+  cards: {
+    type: Array,
+    default: false
+  },
 })
 
 
@@ -84,7 +90,32 @@ const showNewPanel = ref(false);
 
 
 //Methods
+const onDragEnd = async (event) => {
+  if (!event.pullMode) return
+
+  try {
+    const eventTo = event.to
+    const newIndex = event.newDraggableIndex
+
+    const newColumnId = eventTo.children[0]?.getAttribute('data-column-id')
+    const currentCard = props.cards.find((item) => item.id === newColumnId)
+    const currentItem = currentCard.card_items[newIndex]
+
+    const data = {
+      item: currentItem.id,
+      card: newColumnId,
+      position: newIndex,
+    }
+
+    await boardsStore.updateBoardCardItemMove(data)
+  } catch (e) {
+    catchErrors(e)
+  }
+}
+
 const changeDrag = async (e) => {
+  if (!e.moved) return
+
   try {
     const current = e.moved.element
     const newIndex = e.moved.newIndex
