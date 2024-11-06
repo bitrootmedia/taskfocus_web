@@ -49,7 +49,7 @@
           <Notifications/>
         </div>
 
-        <span class="text-black text-sm mr-4 flex items-center gap-x-2">
+        <span class="text-black text-sm mr-4 flex items-center gap-x-2 whitespace-nowrap">
            <IconWrapper>
             <template #icon>
               <UserIcon/>
