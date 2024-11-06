@@ -82,7 +82,6 @@ const props = defineProps({
 const toast = useToast()
 const boardsStore = useBoardsStore()
 
-
 //State
 const isUpdate = ref(false)
 const cardName = ref(props.card.name || '')
@@ -135,9 +134,9 @@ const saveCardItem = async (form) => {
   try {
     const data = {
       card: props.card.id,
-      comment: form.comment,
-      task: form.selectedTask,
-      project: form.selectedProject,
+      comment: form.comment || '',
+      task: form.selectedTask || null,
+      project: form.selectedProject || null,
       position: props.card.card_items.length || 0
     }
 
