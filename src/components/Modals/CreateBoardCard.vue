@@ -13,9 +13,9 @@
         </div>
 
         <div class="relative p-4 flex-auto">
-          <div class="relative w-full">
+          <form @submit="createTask($event)" class="relative w-full">
             <Input placeholder="Title of Card" v-model:value="name"/>
-          </div>
+          </form>
 
           <div class="flex justify-center gap-x-3 mt-8">
             <Button
@@ -59,7 +59,9 @@ const props = defineProps({
 const toast = useToast()
 const name = ref('')
 
-const createTask = async()=>{
+const createTask = async(e)=>{
+  if (e) e.preventDefault()
+
   if (!name.value.length) return toast.error("Name is required");
 
   await emit('create', name.value)
