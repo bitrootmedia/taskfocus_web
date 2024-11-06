@@ -53,9 +53,9 @@
                 <li v-for="task in tasks" :key="task.id" class="flex justify-between items-center gap-x-1 mb-2">
                   <span class="text-[13px] text-light-c font-medium">{{ task.title }}</span>
                   <Button
-                      @on-click="task.id === form.selectedTask ? removeItem('task') : assignItem(task,'task')"
-                      :label="task.id === form.selectedTask? 'Remove' : 'Assign'"
-                      :version="task.id === form.selectedTask ? 'red-small' : 'green-small'"
+                      @on-click="assignItem(task,'task')"
+                      :label="'Assign'"
+                      :version="'green-small'"
                       size="small"
                   />
                 </li>
@@ -83,9 +83,9 @@
                     class="flex justify-between items-center gap-x-1 mb-2">
                   <span class="text-[13px] text-light-c font-medium">{{ project.title }}</span>
                   <Button
-                      @on-click="project.id === form.selectedProject ? removeItem('project') : assignItem(project,'project')"
-                      :label="project.id === form.selectedProject? 'Remove' : 'Assign'"
-                      :version="project.id === form.selectedProject ? 'red-small' : 'green-small'"
+                      @on-click="assignItem(project,'project')"
+                      :label="'Assign'"
+                      :version="'green-small'"
                       size="small"
                   />
                 </li>
@@ -93,46 +93,24 @@
             </div>
 
             <div v-if="step === 3">
-              <textarea
-                  class="min-h-[150px] w-full px-2 py-2 inline-flex text-black-c outline-0 mb-2 border border-light-bg-c"
-                  v-model="form.comment"></textarea>
+              <form @submit="createNewCardItem($event)">
+                <textarea
+                    class="min-h-[150px] w-full px-2 py-2 inline-flex text-black-c outline-0 mb-2 border border-light-bg-c"
+                    v-model="form.comment"></textarea>
+              </form>
             </div>
           </div>
 
-          <div v-if="step === 0">
-            <div v-if="isEdit" class="flex justify-between items-center mt-8 border-t border-light-bg-c pt-4">
-              <Button
-                  @on-click="emit('delete')"
-                  :label="'Delete'"
-                  version="red"
-                  size="medium"
-              />
-              <Button
-                  @on-click="updateCardItem"
-                  :label="'Update'"
-                  version="green"
-                  size="medium"
-              />
-            </div>
-
-            <div v-else class="flex justify-center items-center gap-4 mt-8 border-t border-light-bg-c pt-4">
-              <Button
-                  @on-click="createNewCardItem"
-                  :label="'Create'"
-                  version="green"
-                  size="medium"
-              />
-              <Button
-                  @on-click="emit('close')"
-                  :label="'Close'"
-                  version="yellow"
-                  size="medium"
-              />
-            </div>
-          </div>
-
-          <div v-else class="flex justify-end gap-x-3 mt-4 border-t border-light-bg-c pt-4">
+          <div class="flex justify-center items-center gap-4 mt-8 border-t border-light-bg-c pt-4">
             <Button
+                v-if="step === 3"
+                @on-click="createNewCardItem"
+                :label="'Create'"
+                version="green"
+                size="medium"
+            />
+            <Button
+                v-if="step !== 0"
                 @on-click="step = 0"
                 :label="'Back'"
                 version="yellow"
@@ -214,20 +192,10 @@ watch(() => props.showModal, (val) => {
 
 //Methods
 const assignItem = (item, version) => {
-  if (version === 'task') {
-    form.value.selectedTask = item.id
-  }
-  if (version === 'project') {
-    form.value.selectedProject = item.id
-  }
-}
-const removeItem = (version) => {
-  if (version === 'task') {
-    form.value.selectedTask = null
-  }
-  if (version === 'project') {
-    form.value.selectedProject = null
-  }
+  if (version === 'task') form.value.selectedTask = item.id
+  if (version === 'project') form.value.selectedProject = item.id
+
+  createNewCardItem()
 }
 
 const searchTask = async () => {
@@ -272,14 +240,11 @@ const resetData = () => {
   }
 }
 
-const createNewCardItem = async () => {
+const createNewCardItem = async (e) => {
+  if (e) e.preventDefault()
+
   emit('create', form.value)
   closeModal()
-}
-
-const updateCardItem = async () => {
-  emit('update', form.value)
-  resetData()
 }
 
 </script>

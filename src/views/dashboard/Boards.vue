@@ -4,9 +4,9 @@
       <Loader v-if="loading"/>
 
       <div v-else>
-        <div class="header flex items-center gap-x-4">
+        <form @submit="createBoard($event)" class="header flex items-center gap-x-4">
           <div class="relative w-[250px]">
-            <Input placeholder="Title of Board" v-model:value="name"/>
+            <Input placeholder="Title" v-model:value="name"/>
           </div>
 
           <Button
@@ -15,7 +15,7 @@
               size="medium"
               version="green"
           />
-        </div>
+        </form>
 
         <div class="mt-6 mb-6">
           <DataTable :headers="headers">
@@ -89,10 +89,12 @@ import {useCookies} from "vue3-cookies";
 import DataTable from "../../components/Table/DataTable.vue";
 import draggable from 'vuedraggable'
 import {useUserStore} from "../../store/user.js";
+import {useRouter} from "vue-router";
 
 
 //Store
 const toast = useToast()
+const router = useRouter()
 const boardsStore = useBoardsStore()
 const usersStore = useUserStore()
 const {cookies} = useCookies();
@@ -126,7 +128,9 @@ const userName = (id) => {
   return findItem.first_name || findItem.last_name ? findItem.first_name + '' + findItem.last_name : findItem.username
 }
 
-const createBoard = async () => {
+const createBoard = async (e) => {
+  if (e) e.preventDefault()
+
   try {
     if (!name.value.length) return toast.error("Name is required");
 
@@ -135,8 +139,8 @@ const createBoard = async () => {
       owner: authUser.value.pk
     }
 
-    await boardsStore.createBoard(data)
-    await fetchBoards()
+    const resp = await boardsStore.createBoard(data)
+    await router.push(`/dashboard/board/${resp.data.id}`)
     toast.success("Successfully created!");
   } catch (e) {
     catchErrors(e)
