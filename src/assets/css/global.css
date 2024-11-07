@@ -221,6 +221,7 @@ tr:nth-child(odd) {
     -webkit-line-clamp: 2;
     white-space: pre-wrap;
 }
+
 .text-line-3 {
     overflow: hidden;
     display: -webkit-box;
@@ -280,10 +281,11 @@ table tbody tr td, table tbody tr td span {
     line-height: normal;
 }
 
-table tbody tr{
+table tbody tr {
     border-bottom: 1px solid #E5E7E7;
 }
-table tbody tr:last-child{
+
+table tbody tr:last-child {
     border-bottom: none;
 }
 
@@ -303,14 +305,16 @@ table tbody tr:last-child{
 /*    height: 32px;*/
 /*}*/
 
-.dropzone__box{
+.dropzone__box {
     height: 36px;
     min-height: 36px;
     opacity: 0;
 }
-input{
+
+input {
     color: #182128 !important;
 }
+
 [contenteditable] {
     outline: 0 solid transparent;
 }
@@ -319,4 +323,12 @@ textarea {
     resize: none;
     outline: none;
 }
+
+@media (max-height: 700px) {
+    .small-scroll {
+        height: 460px;
+        overflow-y: auto;
+    }
+}
+
 

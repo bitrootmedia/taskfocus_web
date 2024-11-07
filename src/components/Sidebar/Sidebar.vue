@@ -81,7 +81,7 @@
           </div>
         </form>
 
-        <ul class="md:flex-col md:min-w-full flex flex-col list-none">
+        <ul class="small-scroll md:flex-col md:min-w-full flex flex-col list-none">
           <li class="items-center">
             <router-link
                 to="/dashboard"

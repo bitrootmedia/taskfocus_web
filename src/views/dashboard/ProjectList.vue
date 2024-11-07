@@ -113,7 +113,7 @@ const headers = [
   {id: 3, label: 'Tag'},
 ]
 
-const loading = ref(false)
+const loading = ref(true)
 let drag = ref(false)
 const search = ref('')
 const projects = ref([])
@@ -128,7 +128,6 @@ watch(hideClosed, (newValue, oldValue) => {
 // Methods
 const fetchProjects = async (label) => {
   try {
-    loading.value = true
     const options = {
       pagination: paginate.pagination.value,
       query: paginate.query.value,
