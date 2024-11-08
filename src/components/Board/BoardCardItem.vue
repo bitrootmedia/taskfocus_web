@@ -1,5 +1,6 @@
 <template>
-  <div class="bg-white rounded-md px-2 py-2 border border-[#E5E7E7] shadow-sm mb-2 cursor-move relative group">
+  <div
+      class="flex justify-between bg-white rounded-md px-2 py-2 border border-[#E5E7E7] shadow-sm mb-2 cursor-move relative group">
     <div v-if="cardItem.task" @click="toLink(cardItem.task,'task')">
       Task: <span class="underline cursor-pointer">{{ cardItem.task.title }}</span>
     </div>
@@ -10,10 +11,10 @@
 
     <span v-if="cardItem.comment">{{ cardItem.comment }}</span>
 
-    <span @click="deleteCardItem"
-          class="flex opacity-0 group-hover:opacity-100 transition-all ease-in-out justify-center items-center absolute right-1.5 top-1.5 bg-white rounded-full w-6 h-6 shadow-md">
-      <TrashIcon class="cursor-pointer"/>
-    </span>
+    <div
+        class="flex opacity-0 group-hover:opacity-100 transition-all ease-in-out justify-center items-center bg-white rounded-full w-6 h-6 shadow-md">
+      <IconDropdown :cardItem="cardItem" @deleteCardItem="deleteCardItem" @convertTextToTask="convertToTask"/>
+    </div>
   </div>
 </template>
 
@@ -22,8 +23,9 @@ import {ref} from "vue";
 import {catchErrors} from "../../utils/index.js";
 import {useBoardsStore} from "../../store/boards.js";
 import {useToast} from "vue-toastification";
-import TrashIcon from "../Svg/TrashIcon.vue";
 import {useRouter} from "vue-router";
+import IconDropdown from "../Dropdowns/IconDropdown.vue";
+import {useTasksStore} from "../../store/tasks.js";
 
 const emit = defineEmits(['fetchBoard'])
 const props = defineProps({
@@ -36,6 +38,7 @@ const props = defineProps({
 
 const router = useRouter()
 const boardsStore = useBoardsStore()
+const taskStore = useTasksStore()
 const toast = useToast()
 
 //State
@@ -53,6 +56,38 @@ const deleteCardItem = async () => {
     emit('fetchBoard')
     toast.success("Successfully deleted!");
     showPanel.value = false
+  } catch (e) {
+    catchErrors(e)
+  }
+}
+
+const convertToTask = async () => {
+  try {
+    const data = {
+      title: props.cardItem.comment,
+    }
+    const resp = await taskStore.createTask(data)
+    await saveCardItem(resp.data.id)
+    await deleteCardItem()
+    emit('fetchBoard')
+    toast.success("Successfully converted!");
+    close()
+  } catch (e) {
+    catchErrors()
+  }
+}
+
+const saveCardItem = async (taskId) => {
+  try {
+    const data = {
+      card: props.cardItem.card,
+      task: taskId,
+      comment: '',
+      project: null,
+      position: props.cardItem.position || 0
+    }
+
+    await boardsStore.createBoardCardItem(data)
   } catch (e) {
     catchErrors(e)
   }

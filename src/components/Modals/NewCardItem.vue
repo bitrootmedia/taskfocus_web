@@ -49,7 +49,7 @@
                 </div>
               </div>
 
-              <ul class="mt-3 notifications-wrapper max-h-[300px] overflow-y-auto pr-2">
+              <ul class="mt-3 notifications-wrapper max-h-[320px] overflow-y-auto pr-2">
                 <li v-for="task in tasks" :key="task.id" class="flex justify-between items-center gap-x-1 mb-2">
                   <span class="text-[13px] text-light-c font-medium">{{ task.title }}</span>
                   <Button
@@ -78,7 +78,7 @@
                 </div>
               </div>
 
-              <ul class="mt-3 max-h-[300px] overflow-y-auto">
+              <ul class="mt-3 max-h-[320px] overflow-y-auto">
                 <li v-for="project in projects" :key="project.id"
                     class="flex justify-between items-center gap-x-1 mb-2">
                   <span class="text-[13px] text-light-c font-medium">{{ project.title }}</span>
@@ -133,6 +133,7 @@ import SearchIcon from "../Svg/SearchIcon.vue";
 import {catchErrors} from "../../utils/index.js";
 import {useTasksStore} from "../../store/tasks.js";
 import {useProjectStore} from "../../store/project.js";
+import config from "../../config/index.js";
 
 const emit = defineEmits(['close', 'create'])
 const props = defineProps({
@@ -162,6 +163,8 @@ const projectStore = useProjectStore()
 
 //State
 const step = ref(0)
+const firstLoadTask = ref(false)
+const firstLoadProject = ref(false)
 const tasks = ref([])
 const projects = ref([])
 const form = ref({
@@ -202,9 +205,14 @@ const searchTask = async () => {
   try {
     const options = {
       search: form.value.taskSearch,
+      query: 'page=1&page_size=10'
     }
+
+    if (!firstLoadTask.value) delete options.search
+
     const resp = await tasksStore.fetchTasks(options)
     tasks.value = resp.data.results
+    if (!firstLoadTask.value) firstLoadTask.value = true
   } catch (e) {
     catchErrors(e)
   }
@@ -214,9 +222,13 @@ const searchProject = async () => {
   try {
     const options = {
       search: form.value.projectSearch,
+      query: 'page=1&page_size=10'
     }
+
+    if (!firstLoadProject.value) delete options.search
     const resp = await projectStore.fetchProjects(options)
     projects.value = resp.data.results
+    if (!firstLoadProject.value) firstLoadProject.value = true
   } catch (e) {
     catchErrors(e)
   }
@@ -247,4 +259,6 @@ const createNewCardItem = async (e) => {
   closeModal()
 }
 
+searchTask()
+searchProject()
 </script>

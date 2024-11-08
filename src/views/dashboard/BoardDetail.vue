@@ -38,7 +38,7 @@
         <div v-if="board?.cards?.length" class="mt-8">
           <draggable v-model="board.cards"
                      group="columns"
-                     class="p-2 horizontal-wrapper list-group flex flex-row gap-8 overflow-x-auto"
+                     class="px-2 py-2 pb-6 horizontal-wrapper list-group flex flex-row gap-8 overflow-x-auto overflow-y-hidden"
                      item-key="id"
                      ghost-class="ghost"
                      @change="changeDrag">
@@ -116,14 +116,8 @@ const isAuthOwner = computed(() => {
 })
 
 //Methods
-const handleItemDrop = (event)=> {
-  const { oldColumnId, newColumnId, item } = event;
-  console.log(`Item ${item.id} moved from column ${oldColumnId} to column ${newColumnId}`);
-}
-
 const changeDrag = async (e) => {
   try {
-    console.log(e,'0000000')
     const current = e.moved.element
     const newIndex = e.moved.newIndex
     const data = {
