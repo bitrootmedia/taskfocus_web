@@ -176,6 +176,10 @@
             <!--              {{ currentTaskTotalTime?.hours || '00' }}hs {{ currentTaskTotalTime?.minutes || "00" }}m-->
             <!--            </h3>-->
 
+            <div v-if="route.name === 'Task Detail' && task.is_closed" class="text-md font-semibold text-red-c mb-2">
+              THIS TASK IS CLOSED
+            </div>
+
             <Button
                 v-if="isAuthOwner && task.is_closed"
                 class="w-full justify-center mb-2"
@@ -1398,7 +1402,6 @@ fetchReminders()
 
 .right-side > div {
   position: sticky;
-  top: 91px;
 }
 
 @media (max-width: 767px) {
@@ -1409,7 +1412,6 @@ fetchReminders()
 }
 
 .right-side-content {
-  height: calc(100vh - 91px);
   overflow-y: scroll;
 }
 

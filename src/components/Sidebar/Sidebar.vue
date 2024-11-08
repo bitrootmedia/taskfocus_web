@@ -184,43 +184,43 @@
             </router-link>
           </li>
 
-          <li class="items-center" v-if="userConfig?.extra_menu_links">
-            <router-link to="/dashboard/comments" exact v-slot="{ href, navigate, isActive, isExactActive }">
-              <a
-                  :href="href"
-                  @click="navigate"
-                  class="flex gap-x-2 items-center text-lg py-3 font-medium block"
-                  :class="[
-                  isExactActive
-                    ? 'bg-[#41525B] text-orange-c hover:text-orange-c-600'
-                    : 'text-white hover:text-orange-c',
-                     closePanel ? 'text-center pl-[38px]' : 'pl-4'
-                ]"
-              >
-                <CommentsIcon :isExactActive="isExactActive"/>
-                {{ !closePanel ? 'Comments' : '' }}
-              </a>
-            </router-link>
-          </li>
+          <!--          <li class="items-center" v-if="userConfig?.extra_menu_links">-->
+          <!--            <router-link to="/dashboard/comments" exact v-slot="{ href, navigate, isActive, isExactActive }">-->
+          <!--              <a-->
+          <!--                  :href="href"-->
+          <!--                  @click="navigate"-->
+          <!--                  class="flex gap-x-2 items-center text-lg py-3 font-medium block"-->
+          <!--                  :class="[-->
+          <!--                  isExactActive-->
+          <!--                    ? 'bg-[#41525B] text-orange-c hover:text-orange-c-600'-->
+          <!--                    : 'text-white hover:text-orange-c',-->
+          <!--                     closePanel ? 'text-center pl-[38px]' : 'pl-4'-->
+          <!--                ]"-->
+          <!--              >-->
+          <!--                <CommentsIcon :isExactActive="isExactActive"/>-->
+          <!--                {{ !closePanel ? 'Comments' : '' }}-->
+          <!--              </a>-->
+          <!--            </router-link>-->
+          <!--          </li>-->
 
-          <li class="items-center" v-if="userConfig?.extra_menu_links">
-            <router-link to="/dashboard/attachments" exact v-slot="{ href, navigate, isActive, isExactActive }">
-              <a
-                  :href="href"
-                  @click="navigate"
-                  class="flex gap-x-2 items-center text-lg py-3 font-medium block"
-                  :class="[
-                  isExactActive
-                    ? 'bg-[#41525B] text-orange-c hover:text-orange-c-600'
-                    : 'text-white hover:text-orange-c',
-                     closePanel ? 'text-center pl-[38px]' : 'pl-4'
-                ]"
-              >
-                <AttachmentsIcon :isExactActive="isExactActive"/>
-                {{ !closePanel ? 'Attachments' : '' }}
-              </a>
-            </router-link>
-          </li>
+          <!--          <li class="items-center" v-if="userConfig?.extra_menu_links">-->
+          <!--            <router-link to="/dashboard/attachments" exact v-slot="{ href, navigate, isActive, isExactActive }">-->
+          <!--              <a-->
+          <!--                  :href="href"-->
+          <!--                  @click="navigate"-->
+          <!--                  class="flex gap-x-2 items-center text-lg py-3 font-medium block"-->
+          <!--                  :class="[-->
+          <!--                  isExactActive-->
+          <!--                    ? 'bg-[#41525B] text-orange-c hover:text-orange-c-600'-->
+          <!--                    : 'text-white hover:text-orange-c',-->
+          <!--                     closePanel ? 'text-center pl-[38px]' : 'pl-4'-->
+          <!--                ]"-->
+          <!--              >-->
+          <!--                <AttachmentsIcon :isExactActive="isExactActive"/>-->
+          <!--                {{ !closePanel ? 'Attachments' : '' }}-->
+          <!--              </a>-->
+          <!--            </router-link>-->
+          <!--          </li>-->
 
           <li class="items-center">
             <router-link to="/dashboard/notifications" exact v-slot="{ href, navigate, isActive, isExactActive }">
@@ -237,47 +237,49 @@
               >
                 <NotificationsIcon :isExactActive="isExactActive"/>
                 {{ !closePanel ? 'Notifications' : '' }}
+
+                <Notifications/>
               </a>
             </router-link>
           </li>
 
-          <li class="items-center" v-if="userConfig?.extra_menu_links">
-            <router-link to="/dashboard/logs" exact v-slot="{ href, navigate, isActive, isExactActive }">
-              <a
-                  :href="href"
-                  @click="navigate"
-                  class="flex gap-x-2 items-center text-lg py-3 font-medium block"
-                  :class="[
-                  isExactActive
-                    ? 'bg-[#41525B] text-orange-c hover:text-orange-c-600'
-                    : 'text-white hover:text-orange-c',
-                     closePanel ? 'text-center pl-[38px]' : 'pl-4'
-                ]"
-              >
-                <LogsIcon :isExactActive="isExactActive"/>
-                {{ !closePanel ? 'Logs' : '' }}
-              </a>
-            </router-link>
-          </li>
+          <!--          <li class="items-center" v-if="userConfig?.extra_menu_links">-->
+          <!--            <router-link to="/dashboard/logs" exact v-slot="{ href, navigate, isActive, isExactActive }">-->
+          <!--              <a-->
+          <!--                  :href="href"-->
+          <!--                  @click="navigate"-->
+          <!--                  class="flex gap-x-2 items-center text-lg py-3 font-medium block"-->
+          <!--                  :class="[-->
+          <!--                  isExactActive-->
+          <!--                    ? 'bg-[#41525B] text-orange-c hover:text-orange-c-600'-->
+          <!--                    : 'text-white hover:text-orange-c',-->
+          <!--                     closePanel ? 'text-center pl-[38px]' : 'pl-4'-->
+          <!--                ]"-->
+          <!--              >-->
+          <!--                <LogsIcon :isExactActive="isExactActive"/>-->
+          <!--                {{ !closePanel ? 'Logs' : '' }}-->
+          <!--              </a>-->
+          <!--            </router-link>-->
+          <!--          </li>-->
 
-          <li class="items-center" v-if="userConfig?.extra_menu_links">
-            <router-link to="/dashboard/tasks-tracking" exact v-slot="{ href, navigate, isActive, isExactActive }">
-              <a
-                  :href="href"
-                  @click="navigate"
-                  class="flex gap-x-2 items-center text-lg py-3 font-medium block"
-                  :class="[
-                  isExactActive
-                     ? 'bg-[#41525B] text-orange-c hover:text-orange-c-600'
-                    : 'text-white hover:text-orange-c',
-                     closePanel ? 'text-center pl-[38px]' : 'pl-4'
-                ]"
-              >
-                <TimeTrackerIcon :isExactActive="isExactActive"/>
-                {{ !closePanel ? 'Time Tracker' : '' }}
-              </a>
-            </router-link>
-          </li>
+          <!--          <li class="items-center" v-if="userConfig?.extra_menu_links">-->
+          <!--            <router-link to="/dashboard/tasks-tracking" exact v-slot="{ href, navigate, isActive, isExactActive }">-->
+          <!--              <a-->
+          <!--                  :href="href"-->
+          <!--                  @click="navigate"-->
+          <!--                  class="flex gap-x-2 items-center text-lg py-3 font-medium block"-->
+          <!--                  :class="[-->
+          <!--                  isExactActive-->
+          <!--                     ? 'bg-[#41525B] text-orange-c hover:text-orange-c-600'-->
+          <!--                    : 'text-white hover:text-orange-c',-->
+          <!--                     closePanel ? 'text-center pl-[38px]' : 'pl-4'-->
+          <!--                ]"-->
+          <!--              >-->
+          <!--                <TimeTrackerIcon :isExactActive="isExactActive"/>-->
+          <!--                {{ !closePanel ? 'Time Tracker' : '' }}-->
+          <!--              </a>-->
+          <!--            </router-link>-->
+          <!--          </li>-->
 
           <li class="items-center">
             <router-link to="/dashboard/users" exact v-slot="{ href, navigate, isActive, isExactActive }">
@@ -357,8 +359,14 @@
         </ul>
       </div>
 
-      <span class="text-gray-500 text-xs ml-1 mb-1 hidden sm:block">Version 1.7.2</span>
+      <div>
+        <span class="mt-4 cursor-pointer flex gap-x-2 items-center text-lg py-3 font-medium text-white hover:text-orange-c pl-1" @click="logout">
+          Logout {{ fullName }}
+        </span>
+        <span class="text-gray-500 text-xs ml-1 mb-1 hidden sm:block">Version 1.7.2</span>
+      </div>
     </div>
+
 
     <div v-if="userStore.showPanel.show" class="w-full flex md:hidden justify-center gap-x-1 mt-4 pb-1">
       <Button
@@ -426,6 +434,8 @@ import ConfirmCloseModal from '../Modals/ConfirmCloseModal.vue'
 import NotesIcon from "../Svg/NotesIcon.vue";
 import NotesSvgIcon from "../Svg/NotesSvgIcon.vue";
 import BoardsIcon from "../Svg/BoardsIcon.vue";
+import IconWrapper from "../Svg/IconWrapper/IconWrapper.vue";
+import LogoutIcon from "../Svg/LogoutIcon.vue";
 
 const emit = defineEmits(['update:closePanel'])
 const props = defineProps({
@@ -449,8 +459,8 @@ const task = ref({})
 
 
 //Watch
-watch(taskStore.$state,(val)=>{
-  if (Object.keys(val.task).length){
+watch(taskStore.$state, (val) => {
+  if (Object.keys(val.task).length) {
     task.value = val.task
   }
 })
