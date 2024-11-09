@@ -16,6 +16,10 @@
 
             <div class="description-panel">
               <div v-if="isAuthOwner" class="mb-2 sm:mb-4">
+                <div v-if="route.name === 'Project Detail' && project.is_closed" class="mb-2 text-md font-semibold text-red-c">
+                  THIS PROJECT IS CLOSED
+                </div>
+
                 <Button
                     v-if="isAuthOwner && project.is_closed"
                     class="max-w-[200px] justify-center"

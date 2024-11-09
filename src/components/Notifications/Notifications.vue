@@ -1,14 +1,15 @@
 <template>
   <div ref="componentRef">
-    <div class="text-white relative mr-4 cursor-pointer" @click="show = !show">
-      <IconWrapper>
-        <template #icon>
-          <BellIcon />
-        </template>
-      </IconWrapper>
+<!--    @click="show = !show"-->
+    <div class="text-white relative mr-4 cursor-pointer">
+<!--      <IconWrapper>-->
+<!--        <template #icon>-->
+<!--          <BellIcon />-->
+<!--        </template>-->
+<!--      </IconWrapper>-->
       <span
           v-if="notificationsStore.notificationsCount"
-          class="absolute text-xs rounded-full w-4 h-4 text-white flex items-center justify-center bg-red-c top-0 -right-2">{{
+          class="absolute text-xs rounded-full w-4 h-4 text-white flex items-center justify-center bg-red-c -top-4 -right-3">{{
           notificationsStore.notificationsCount
         }}</span>
     </div>

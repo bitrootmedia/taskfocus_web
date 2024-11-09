@@ -285,7 +285,7 @@ import {computed, ref, watch} from "vue";
 import {useTasksStore} from "../../store/tasks";
 import {catchErrors} from "../../utils";
 import draggable from 'vuedraggable'
-import {convertDate, convertDayDiff, convertDayDiffCon} from "../../utils";
+import {convertDate} from "../../utils";
 import {useRouter} from "vue-router";
 import {usePaginate} from "../../composables/usePaginate";
 import {useFilter} from "../../composables/useFilter";
@@ -349,7 +349,7 @@ const {cookies} = useCookies();
 
 const isDragDisabled = false
 const showFilters = ref(false)
-const loading = ref(false)
+const loading = ref(true)
 const typeAfter = ref('text')
 const typeBefore = ref('text')
 const tasks = ref([])
@@ -417,7 +417,6 @@ const currentUser = computed(() => {
 // Methods
 const fetchTasks = async (label = null) => {
   try {
-    loading.value = true
     const options = {
       pagination: paginate.pagination.value,
       query: paginate.query.value,

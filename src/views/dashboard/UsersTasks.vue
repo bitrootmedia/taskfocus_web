@@ -93,7 +93,6 @@ const fetchUsers = async (label = null) => {
       sorting: label
     }
     const resp = await userStore.fetchUsersPage(options)
-    console.log(resp,'resp')
     users.value = resp.data.results
     paginate.updatePagination(resp)
   } catch (e) {
