@@ -1,6 +1,5 @@
 import {defineStore} from "pinia";
-import axios from "axios";
-import config from "../config"
+import axios from "./../axios.js";
 import {useCookies} from "vue3-cookies";
 
 const {cookies} = useCookies();
@@ -27,31 +26,31 @@ export const useUserStore = defineStore('user', {
             this.panel = payload
         },
         async login(payload) {
-            return await axios.post(`${config.BASE_API_URL}/auth/login/`, payload)
+            return await axios.post(`/auth/login/`, payload)
         },
-        async logout(payload) {
-            return await axios.post(`${config.BASE_API_URL}/auth/logout/`)
+        async logout() {
+            return await axios.post(`/auth/logout/`)
         },
         async fetchUser(payload) {
             const headers = {
                 Authorization: `Token ${payload}`
             }
-            return await axios.get(`${config.BASE_API_URL}/auth/user/`, {headers})
+            return await axios.get(`/auth/user/`, {headers})
         },
 
         async fetchUsers(payload) {
-            let url = `${config.BASE_API_URL}/users?`
+            let url = `/users?`
             if (payload) url += `&search=${payload}`
 
             return await axios.get(url)
         },
 
         async fetchCurrentUser(payload) {
-            return await axios.get(`${config.BASE_API_URL}/user/${payload.id}`)
+            return await axios.get(`/user/${payload.id}`)
         },
 
         async fetchUsersPage(payload) {
-            let url = `${config.BASE_API_URL}/users?`
+            let url = `/users?`
 
             if (payload?.query) url += `&${payload.query}`
             if (payload?.sorting) url += `&ordering=${payload.sorting}`
@@ -60,15 +59,15 @@ export const useUserStore = defineStore('user', {
         },
 
         async resetPassword(payload) {
-            return await axios.post(`${config.BASE_API_URL}/auth/password/reset/`, payload)
+            return await axios.post(`/auth/password/reset/`, payload)
         },
 
         async updatePassword(payload) {
-            return await axios.post(`${config.BASE_API_URL}/auth/password/change/`, payload)
+            return await axios.post(`/auth/password/change/`, payload)
         },
 
         async confirmPassword(payload) {
-            return await axios.post(`${config.BASE_API_URL}/auth/password/reset/confirm/`, payload)
+            return await axios.post(`/auth/password/reset/confirm/`, payload)
         },
     },
 })

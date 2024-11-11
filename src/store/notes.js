@@ -1,5 +1,5 @@
 import {defineStore} from "pinia";
-import axios from "axios";
+import axios from "./../axios.js";
 import config from "../config"
 import {useCookies} from "vue3-cookies";
 
@@ -16,7 +16,7 @@ export const useNotesStore = defineStore('notes', {
 
     actions: {
         async fetchNotes(payload) {
-            let url = `${config.BASE_API_URL}/private-notes?`
+            let url = `/private-notes?`
 
             if (payload?.id) url += `task=${payload.id}`
             if (payload?.query) url += `&${payload.query}`
@@ -27,41 +27,44 @@ export const useNotesStore = defineStore('notes', {
         },
 
         async createNote(payload) {
-            return await axios.post(`${config.BASE_API_URL}/private-notes?task=${payload.task}`, payload)
+            return await axios.post(`/private-notes?task=${payload.task}`, payload)
         },
 
         async updateNote(payload) {
             const id = payload.id
             delete payload.id
-            return await axios.put(`${config.BASE_API_URL}/private-note/${id}`, payload)
+            return await axios.put(`/private-note/${id}`, payload)
         },
 
         async deleteNote(payload) {
             const id = payload.id
             delete payload.id
-            return await axios.delete(`${config.BASE_API_URL}/private-note/${id}`)
+            return await axios.delete(`/private-note/${id}`)
         },
 
         async fetchAuthNotes(payload) {
-            let url = `${config.BASE_API_URL}/notes?`
+            let url = `/notes?`
             if (payload?.query) url += `&${payload.query}`
+            if (payload?.search) url += `&title=${payload.search}`
+            if (payload?.isClosed) url += `&is_closed=false`
+
             return await axios.get(url)
         },
 
         async createAuthNote(payload) {
-            return await axios.post(`${config.BASE_API_URL}/notes`, payload)
+            return await axios.post(`/notes`, payload)
         },
 
         async deleteAuthNote(payload) {
             const id = payload.id
             delete payload.id
-            return await axios.delete(`${config.BASE_API_URL}/note/${id}`)
+            return await axios.delete(`/note/${id}`)
         },
 
         async updateAuthNote(payload) {
             const id = payload.id
             delete payload.id
-            return await axios.put(`${config.BASE_API_URL}/note/${id}`, payload)
+            return await axios.put(`/note/${id}`, payload)
         },
 
     },

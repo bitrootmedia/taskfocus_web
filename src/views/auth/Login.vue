@@ -26,8 +26,13 @@
                       v-if="v$.password.$error"> {{ v$.password.$errors[0].$message }} </span>
               </div>
 
+              <div class="relative w-full mb-3">
+                <Input placeholder="Base Url" label="Base Url" v-model:value="baseUrl" type="text"/>
+              </div>
+
               <div class="flex justify-end">
-                <span @click="router.push('/reset-password')" class="cursor-pointer text-black-c text-xs underline font-semibold">
+                <span @click="router.push('/reset-password')"
+                      class="cursor-pointer text-black-c text-xs underline font-semibold">
                   Forgot Password?
                 </span>
 
@@ -60,9 +65,10 @@ import {useUserStore} from "../../store/user";
 import {catchErrors} from "../../utils";
 import {useVuelidate} from '@vuelidate/core'
 import {required} from '@vuelidate/validators'
-import axios from "axios";
+import axios from "./../../axios.js";
 import Button from '../../components/Button/Button.vue'
 import Input from '../../components/Input/Input.vue'
+import config from "../../config/index.js";
 
 const userStore = useUserStore()
 const {cookies} = useCookies();
@@ -78,6 +84,7 @@ const rules = {
 
 // State
 const loading = ref(false)
+const baseUrl = ref('')
 const form = ref({
   username: '',
   password: '',
@@ -96,6 +103,9 @@ const signIn = async () => {
     const isValid = await v$.value.$validate();
 
     if (isValid) {
+      if (baseUrl.value) await cookies.set('base_url', baseUrl.value)
+      axios.defaults.baseURL = baseUrl.value ? baseUrl.value : config.BASE_API_URL;
+
       const resp = await userStore.login(form.value)
       await cookies.set('task_focus_token', resp.data.key)
       axios.defaults.headers.common['Authorization'] = `Token ${resp.data.key}`

@@ -39,7 +39,6 @@
         <div v-if="showMobile">
           <Notifications :mode="'dark'"/>
         </div>
-        <span class="cursor-pointer font-medium text-white" @click="logout">Logout</span>
       </div>
       <!-- Collapse -->
       <div
@@ -360,7 +359,9 @@
       </div>
 
       <div>
-        <span class="mt-4 cursor-pointer flex gap-x-2 items-center text-lg py-3 font-medium text-white hover:text-orange-c pl-1" @click="logout">
+        <span
+            class="mt-4 cursor-pointer flex gap-x-2 items-center text-lg py-3 font-medium text-white hover:text-orange-c pl-1"
+            @click="logout">
           Logout {{ fullName }}
         </span>
         <span class="text-gray-500 text-xs ml-1 mb-1 hidden sm:block">Version 1.7.2</span>
@@ -412,7 +413,7 @@ import {useUserStore} from "../../store/user";
 import {useCookies} from "vue3-cookies";
 import {useToast} from "vue-toastification";
 import {useRouter} from "vue-router";
-import axios from "axios";
+import axios from "./../../axios.js";
 import Notifications from "../../components/Notifications/Notifications.vue";
 import DashboardIcon from "../Svg/DashboardIcon.vue";
 import ProjectsIcon from "../Svg/ProjectsIcon.vue";
@@ -524,10 +525,11 @@ const logout = async () => {
     await userStore.logout()
   } catch (e) {
   } finally {
-    cookies.remove('token')
-    cookies.remove('user')
-    toast.success("See you later!");
+    cookies.remove('task_focus_token')
+    cookies.remove('task_focus_user')
+    cookies.remove('base_url')
     delete axios.defaults.headers.common['Authorization'];
+    toast.success("See you later!");
     await router.push('/')
   }
 }

@@ -100,6 +100,7 @@ const updateProjectTitle = async (title) => {
       title: title,
     }
     await projectStore.updateProject(data)
+    userStore.showPanel.close()
   } catch (e) {
     if (e.response?.data?.title[0] === 'This field may not be blank.') {
       projectTitle.value = project.value.title
@@ -121,6 +122,7 @@ const updateTask = async (title) => {
       isEdit: false,
       plainText: '',
     }
+    userStore.showPanel.close()
   } catch (e) {
     if (e.response?.data?.title[0] === 'This field may not be blank.') {
       taskTitle.value = task.value.title

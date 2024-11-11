@@ -1,6 +1,5 @@
 import {defineStore} from "pinia";
-import axios from "axios";
-import config from "../config"
+import axios from "./../axios.js";
 import {useCookies} from "vue3-cookies";
 
 const {cookies} = useCookies();
@@ -20,7 +19,7 @@ export const useNotifications = defineStore('notifications', {
 
     actions: {
         async fetchNotifications(payload) {
-            let url = `${config.BASE_API_URL}/notifications?`
+            let url = `/notifications?`
 
             if (payload?.status) url += `&status=${payload.status}`
             if (payload?.query) url += `&${payload.query}`
@@ -37,7 +36,7 @@ export const useNotifications = defineStore('notifications', {
         },
 
         async markAsRead(payload) {
-            return await axios.post(`${config.BASE_API_URL}/notification-confirm/${payload.id}`)
+            return await axios.post(`/notification-confirm/${payload.id}`)
         },
     },
 })

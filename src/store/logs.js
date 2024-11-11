@@ -1,6 +1,5 @@
 import {defineStore} from "pinia";
-import axios from "axios";
-import config from "../config"
+import axios from "./../axios.js";
 import {useCookies} from "vue3-cookies";
 
 const {cookies} = useCookies();
@@ -16,7 +15,7 @@ export const useLogsStore = defineStore('logs', {
 
     actions: {
         async fetchLogs(payload) {
-            let url = `${config.BASE_API_URL}/logs?`
+            let url = `/logs?`
 
             if (payload?.id && payload.type === 'project') url += `project=${payload.id}`
             if (payload?.id && payload.type === 'task') url += `task=${payload.id}`
