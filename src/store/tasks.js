@@ -1,6 +1,5 @@
 import {defineStore} from "pinia";
-import axios from "axios";
-import config from "../config"
+import axios from "./../axios.js";
 import {useCookies} from "vue3-cookies";
 
 const {cookies} = useCookies();
@@ -20,10 +19,9 @@ export const useTasksStore = defineStore('tasks', {
         currentTask: (state) => state.task,
     },
 
-
     actions: {
         async fetchTasksTracker(payload) {
-            let url = `${config.BASE_API_URL}/task-sessions?`
+            let url = `/task-sessions?`
 
             if (payload?.id) url += `task=${payload.id}`
             if (payload?.query) url += `&${payload.query}`
@@ -37,11 +35,11 @@ export const useTasksStore = defineStore('tasks', {
         async updateTimeTracker(payload) {
             const id = payload.id
             delete payload.id
-            return await axios.patch(`${config.BASE_API_URL}/task-session/${id}`,payload)
+            return await axios.patch(`/task-session/${id}`,payload)
         },
 
         async fetchTasks(payload) {
-            let url = `${config.BASE_API_URL}/tasks?`
+            let url = `/tasks?`
 
             if (payload?.is_urgent) url += `is_urgent=true`
             if (payload?.id) url += `&project=${payload.id}`
@@ -67,63 +65,63 @@ export const useTasksStore = defineStore('tasks', {
             const id = payload.id
             delete payload.id
 
-            return await axios.post(`${config.BASE_API_URL}/task-position-change/${id}`,payload)
+            return await axios.post(`/task-position-change/${id}`,payload)
         },
 
         async createTask(payload) {
-            return await axios.post(`${config.BASE_API_URL}/tasks`,payload)
+            return await axios.post(`/tasks`,payload)
         },
 
         async fetchTaskById(payload){
-            const resp = await axios.get(`${config.BASE_API_URL}/task/${payload.id}`)
+            const resp = await axios.get(`/task/${payload.id}`)
             this.task = resp.data
             return resp
         },
 
         async fetchTaskBlocks(payload){
-            return await axios.get(`${config.BASE_API_URL}/task-block-list/${payload.id}`)
+            return await axios.get(`/task-block-list/${payload.id}`)
         },
 
         async createTaskBlocks(payload){
-            return await axios.post(`${config.BASE_API_URL}/task-block-list/${payload.id}`,payload.block)
+            return await axios.post(`/task-block-list/${payload.id}`,payload.block)
         },
 
         async updateTaskBlocks(payload){
-            return await axios.put(`${config.BASE_API_URL}/task-block/${payload.id}`,payload)
+            return await axios.put(`/task-block/${payload.id}`,payload)
         },
 
         async deleteTaskBlocks(payload){
-            return await axios.delete(`${config.BASE_API_URL}/task-block/${payload}`)
+            return await axios.delete(`/task-block/${payload}`)
         },
 
         async fetchTaskTime(payload){
-            return await axios.get(`${config.BASE_API_URL}/task-total-time/${payload.id}`)
+            return await axios.get(`/task-total-time/${payload.id}`)
         },
 
         async updateTaskOwner(payload) {
             const id = payload.id
             delete payload.id
-            return await axios.post(`${config.BASE_API_URL}/change-task-owner/${id}`,payload)
+            return await axios.post(`/change-task-owner/${id}`,payload)
         },
 
         async updateTask(payload) {
             const id = payload.id
             delete payload.id
-            return await axios.patch(`${config.BASE_API_URL}/task/${id}`,payload)
+            return await axios.patch(`/task/${id}`,payload)
         },
 
         async pinTask(payload) {
             const id = payload.id
-            return await axios.post(`${config.BASE_API_URL}/pin-task/${id}`)
+            return await axios.post(`/pin-task/${id}`)
         },
 
         async unPinTask(payload) {
             const id = payload.id
-            return await axios.delete(`${config.BASE_API_URL}/pin-task/${id}`)
+            return await axios.delete(`/pin-task/${id}`)
         },
 
         async fetchPinnedTasks(payload) {
-            let url = `${config.BASE_API_URL}/pinned-tasks?`
+            let url = `/pinned-tasks?`
 
             if (payload?.query) url += `&${payload.query}`
 
@@ -131,29 +129,29 @@ export const useTasksStore = defineStore('tasks', {
         },
 
         async startTask(payload) {
-            return await axios.post(`${config.BASE_API_URL}/task-start-work/${payload.id}`)
+            return await axios.post(`/task-start-work/${payload.id}`)
         },
 
         async stopTask(payload) {
-            return await axios.post(`${config.BASE_API_URL}/task-stop-work/${payload.id}`)
+            return await axios.post(`/task-stop-work/${payload.id}`)
         },
 
         async closeTask(payload) {
             const id = payload.id
             delete payload.id
-            return await axios.post(`${config.BASE_API_URL}/task-close/${id}`,payload)
+            return await axios.post(`/task-close/${id}`,payload)
         },
 
         async unCloseTask(payload) {
-            return await axios.post(`${config.BASE_API_URL}/task-unclose/${payload.id}`)
+            return await axios.post(`/task-unclose/${payload.id}`)
         },
 
         async fetchDictionary(payload){
-            return await axios.get(`${config.BASE_API_URL}/dictionary`)
+            return await axios.get(`/dictionary`)
         },
 
         async fetchWorkingTask(payload){
-            let url = `${config.BASE_API_URL}/current-task`
+            let url = `/current-task`
 
             if (payload?.id) url += `?user=${payload.id}`
 
@@ -161,26 +159,26 @@ export const useTasksStore = defineStore('tasks', {
         },
 
         async fetchEvents(payload){
-            let url = `${config.BASE_API_URL}/work_session_breakdown`
+            let url = `/work_session_breakdown`
             return await axios.post(url, payload)
         },
 
         async fetchTaskAccess(payload) {
             const id = payload.id
-            return await axios.get(`${config.BASE_API_URL}/task-accesses?task=${id}`)
+            return await axios.get(`/task-accesses?task=${id}`)
         },
 
         async assignUserToTask(payload) {
-            return await axios.post(`${config.BASE_API_URL}/task-accesses`,payload)
+            return await axios.post(`/task-accesses`,payload)
         },
 
         async removeUserFromTask(payload) {
             const id = payload.id
-            return await axios.delete(`${config.BASE_API_URL}/task-access/${id}`)
+            return await axios.delete(`/task-access/${id}`)
         },
 
         async fetchReminders(payload) {
-            let url = `${config.BASE_API_URL}/reminders?open_only=true`
+            let url = `/reminders?open_only=true`
 
             if (payload?.id) url += `&task=${payload.id}`
             if (payload?.query) url += `&${payload.query}`
@@ -189,11 +187,11 @@ export const useTasksStore = defineStore('tasks', {
         },
 
         async createReminders(payload) {
-            return await axios.post(`${config.BASE_API_URL}/reminders`,payload)
+            return await axios.post(`/reminders`,payload)
         },
 
         async closeReminder(payload) {
-            return await axios.post(`${config.BASE_API_URL}/reminder-close/${payload.id}`)
+            return await axios.post(`/reminder-close/${payload.id}`)
         },
     },
 })

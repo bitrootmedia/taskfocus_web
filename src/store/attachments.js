@@ -1,5 +1,5 @@
 import {defineStore} from "pinia";
-import axios from "axios";
+import axios from "./../axios.js";
 import config from "../config"
 import {useCookies} from "vue3-cookies";
 
@@ -16,7 +16,7 @@ export const useAttachmentsStore = defineStore('attachments', {
 
     actions: {
         async fetchAttachments(payload) {
-            let url = `${config.BASE_API_URL}/attachments?`
+            let url = `/attachments?`
 
             if (payload?.id && payload.type === 'project') url += `project=${payload.id}`
             if (payload?.id && payload.type === 'task') url += `task=${payload.id}`
@@ -27,7 +27,7 @@ export const useAttachmentsStore = defineStore('attachments', {
         },
 
         async uploadAttachments(payload) {
-            return await axios.post(`${config.BASE_API_URL}/upload`,payload,{
+            return await axios.post(`/upload`,payload,{
                 headers: {
                     "Content-Type": "multipart/form-data",
                 },
@@ -35,7 +35,7 @@ export const useAttachmentsStore = defineStore('attachments', {
         },
 
         async deleteAttachments(payload) {
-            return await axios.delete(`${config.BASE_API_URL}/attachment/${payload.id}`)
+            return await axios.delete(`/attachment/${payload.id}`)
         },
     },
 })

@@ -32,7 +32,7 @@ import Notes from "../views/dashboard/Notes.vue";
 import Boards from "../views/dashboard/Boards.vue";
 import BoardDetail from "../views/dashboard/BoardDetail.vue";
 import {useUserStore} from "../store/user";
-import axios from "axios";
+import axios from "./../axios.js";
 import CreateBoard from "../views/dashboard/CreateBoard.vue";
 
 // routes
@@ -197,6 +197,7 @@ router.beforeEach(async (to, from, next) => {
     if (to.name !== 'Login' && !token) {
         cookies.remove('task_focus_token')
         cookies.remove('task_focus_user')
+        cookies.remove('base_url')
         delete axios.defaults.headers.common['Authorization'];
         next({name: 'Login'})
     } else {

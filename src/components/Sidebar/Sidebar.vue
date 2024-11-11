@@ -413,7 +413,7 @@ import {useUserStore} from "../../store/user";
 import {useCookies} from "vue3-cookies";
 import {useToast} from "vue-toastification";
 import {useRouter} from "vue-router";
-import axios from "axios";
+import axios from "./../../axios.js";
 import Notifications from "../../components/Notifications/Notifications.vue";
 import DashboardIcon from "../Svg/DashboardIcon.vue";
 import ProjectsIcon from "../Svg/ProjectsIcon.vue";
@@ -527,6 +527,7 @@ const logout = async () => {
   } finally {
     cookies.remove('task_focus_token')
     cookies.remove('task_focus_user')
+    cookies.remove('base_url')
     delete axios.defaults.headers.common['Authorization'];
     toast.success("See you later!");
     await router.push('/')

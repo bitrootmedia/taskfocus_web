@@ -1,5 +1,5 @@
 import {defineStore} from "pinia";
-import axios from "axios";
+import axios from "./../axios.js";
 import config from "../config"
 import {useCookies} from "vue3-cookies";
 
@@ -16,7 +16,7 @@ export const useUsersTasksStore = defineStore('users-tasks', {
 
     actions: {
         async fetchUsersTasks(payload) {
-            let url = `${config.BASE_API_URL}/user-task-queue?`
+            let url = `/user-task-queue?`
 
             if (payload?.id) url += `user=${payload.id}`
             if (payload?.query) url += `&${payload.query}`
@@ -27,29 +27,29 @@ export const useUsersTasksStore = defineStore('users-tasks', {
         async updateOrder(payload) {
             const id = payload.id
             delete payload.id
-            return await axios.post(`${config.BASE_API_URL}/user-task-queue-position-change/${id}`, payload)
+            return await axios.post(`/user-task-queue-position-change/${id}`, payload)
         },
 
         async fetchWorkingTask(payload) {
-            const resp = await axios.get(`${config.BASE_API_URL}/current-task?user=${payload.id}`)
+            const resp = await axios.get(`/current-task?user=${payload.id}`)
             if (resp.data) return resp.data
             return null
         },
 
         async fetchUsersTasksQueue(payload) {
-            return await axios.get(`${config.BASE_API_URL}/user-task-queue-manage/${payload.id}`)
+            return await axios.get(`/user-task-queue-manage/${payload.id}`)
         },
 
         async assignUserToQueue(payload) {
             const id = payload.task
             delete payload.task
-            return await axios.post(`${config.BASE_API_URL}/user-task-queue-manage/${id}`,payload)
+            return await axios.post(`/user-task-queue-manage/${id}`,payload)
         },
 
         async removeUserFromQueue(payload) {
             const id = payload.task
             delete payload.task
-            return await axios.delete(`${config.BASE_API_URL}/user-task-queue-manage/${id}`,{ data: payload })
+            return await axios.delete(`/user-task-queue-manage/${id}`,{ data: payload })
         },
     },
 })
