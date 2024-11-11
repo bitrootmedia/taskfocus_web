@@ -47,6 +47,7 @@ const showPanel = ref(false)
 
 //Methods
 const toLink = (item, type) => {
+  if (item.title === '*****') return toast.error(`You dont have access to this ${type}!`);
   router.push(`/dashboard/${type}/${item.id}`)
 }
 

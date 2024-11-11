@@ -23,6 +23,7 @@ export const useBoardsStore = defineStore('boards', {
         async fetchBoards(payload) {
             let url = `${config.BASE_API_URL}/boards?`
             if (payload?.query) url += `&${payload.query}`
+            if (payload?.search) url += `&name=${payload.search}`
             return await axios.get(url)
         },
 
@@ -84,7 +85,9 @@ export const useBoardsStore = defineStore('boards', {
         },
 
         async removeBoardUser(payload) {
-            return await axios.delete(`${config.BASE_API_URL}/board-users/${payload.id}`, payload)
+            const id = payload.id
+            delete payload.id
+            return await axios.delete(`${config.BASE_API_URL}/board-users/${id}`, { data: payload })
         },
     },
 })

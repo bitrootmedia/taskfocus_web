@@ -522,13 +522,14 @@ const toggleCollapseShow = (classes) => {
 const logout = async () => {
   try {
     await userStore.logout()
-  } catch (e) {
-  } finally {
     cookies.remove('token')
     cookies.remove('user')
     toast.success("See you later!");
     delete axios.defaults.headers.common['Authorization'];
+
     await router.push('/')
+  } catch (e) {
+    console.log(e,'e')
   }
 }
 

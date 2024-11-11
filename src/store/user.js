@@ -29,7 +29,7 @@ export const useUserStore = defineStore('user', {
         async login(payload) {
             return await axios.post(`${config.BASE_API_URL}/auth/login/`, payload)
         },
-        async logout(payload) {
+        async logout() {
             return await axios.post(`${config.BASE_API_URL}/auth/logout/`)
         },
         async fetchUser(payload) {

@@ -102,7 +102,11 @@ const assignUser = async (user) => {
 const removeUser = async (user) => {
   try {
     btnLoad.value = true
-    await boardsStore.removeBoardUser({user: user.id})
+    const data = {
+      id: route.params.id,
+      user: user.id
+    }
+    await boardsStore.removeBoardUser(data)
     toast.success("Successfully removed");
     emit('update')
   } catch (e) {

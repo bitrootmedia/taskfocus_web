@@ -1,6 +1,7 @@
 import {createRouter, createWebHistory} from "vue-router";
 import config from "../config"
 import {useCookies} from "vue3-cookies";
+
 const {cookies} = useCookies()
 
 // layouts
@@ -32,6 +33,7 @@ import Boards from "../views/dashboard/Boards.vue";
 import BoardDetail from "../views/dashboard/BoardDetail.vue";
 import {useUserStore} from "../store/user";
 import axios from "axios";
+import CreateBoard from "../views/dashboard/CreateBoard.vue";
 
 // routes
 const routes = [
@@ -55,9 +57,9 @@ const routes = [
                 name: 'New Password'
             },
         ],
-        beforeEnter: (to, from,next) => {
+        beforeEnter: (to, from, next) => {
             const token = cookies.get('task_focus_token')
-            if (token) next({ name: 'Dashboard' })
+            if (token) next({name: 'Dashboard'})
             else next()
         },
     },
@@ -157,13 +159,18 @@ const routes = [
                 name: 'Boards',
             },
             {
+                path: "/dashboard/create-board",
+                component: CreateBoard,
+                name: 'Create Board',
+            },
+            {
                 path: "/dashboard/board/:id",
                 component: BoardDetail,
                 name: 'Board Detail',
             },
         ],
     },
-    { path: "/:pathMatch(.*)*", redirect: "/" },
+    {path: "/:pathMatch(.*)*", redirect: "/"},
 ];
 
 export const router = createRouter({
@@ -171,12 +178,12 @@ export const router = createRouter({
     routes,
 });
 
-router.beforeEach(async (to, from,next) => {
+router.beforeEach(async (to, from, next) => {
     const token = cookies.get('task_focus_token')
     const userStore = useUserStore()
     document.title = config.PROJECT_NAME || 'Task Focus';
 
-    if (userStore.showPanel.show && from.name === 'Task Detail'){
+    if (userStore.showPanel.show && from.name === 'Task Detail') {
         const obj = {
             show: false,
             close: null,
@@ -185,15 +192,14 @@ router.beforeEach(async (to, from,next) => {
         userStore.setShowPanel(obj)
     }
 
-    if (['Reset Password','New Password'].includes(to.name)) return next()
+    if (['Reset Password', 'New Password'].includes(to.name)) return next()
 
     if (to.name !== 'Login' && !token) {
         cookies.remove('task_focus_token')
         cookies.remove('task_focus_user')
         delete axios.defaults.headers.common['Authorization'];
-        next({ name: 'Login' })
-    }
-    else {
+        next({name: 'Login'})
+    } else {
         next()
     }
 })

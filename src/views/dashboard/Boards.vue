@@ -6,11 +6,11 @@
       <div v-else>
         <form @submit="createBoard($event)" class="header flex items-center gap-x-4">
           <div class="relative w-[250px]">
-            <Input placeholder="Title" v-model:value="name"/>
+            <Input placeholder="Search" v-model:value="filter.search.value" leftIcon/>
           </div>
 
           <Button
-              @on-click="createBoard"
+              @on-click="router.push('/dashboard/create-board')"
               label="Create Board"
               size="medium"
               version="green"
@@ -90,6 +90,7 @@ import DataTable from "../../components/Table/DataTable.vue";
 import draggable from 'vuedraggable'
 import {useUserStore} from "../../store/user.js";
 import {useRouter} from "vue-router";
+import {useFilter} from "../../composables/useFilter.js";
 
 
 //Store
@@ -114,7 +115,6 @@ const headers = [
 
 const authUser = computed(() => {
   if (!cookies.get('task_focus_user')) return ''
-
   return cookies.get('task_focus_user')
 })
 
@@ -124,13 +124,11 @@ const userName = (id) => {
   const findItem = users.value.find((item) => item.id === id)
   if (!findItem) return 'N/A'
 
-
   return findItem.first_name || findItem.last_name ? findItem.first_name + '' + findItem.last_name : findItem.username
 }
 
 const createBoard = async (e) => {
   if (e) e.preventDefault()
-
   try {
     if (!name.value.length) return toast.error("Name is required");
 
@@ -152,6 +150,7 @@ const fetchBoards = async () => {
     const options = {
       pagination: paginate.pagination.value,
       query: paginate.query.value,
+      search: filter.search.value,
     }
 
     const resp = await boardsStore.fetchBoards(options)
@@ -176,6 +175,7 @@ const fetchUsers = async () => {
 
 // Composables
 const paginate = usePaginate(fetchBoards, null)
+const filter = useFilter(boards, fetchBoards)
 
 //Run functions
 fetchBoards()
