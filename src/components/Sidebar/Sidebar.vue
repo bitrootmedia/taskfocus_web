@@ -360,7 +360,9 @@
       </div>
 
       <div>
-        <span class="mt-4 cursor-pointer flex gap-x-2 items-center text-lg py-3 font-medium text-white hover:text-orange-c pl-1" @click="logout">
+        <span
+            class="mt-4 cursor-pointer flex gap-x-2 items-center text-lg py-3 font-medium text-white hover:text-orange-c pl-1"
+            @click="logout">
           Logout {{ fullName }}
         </span>
         <span class="text-gray-500 text-xs ml-1 mb-1 hidden sm:block">Version 1.7.2</span>
@@ -522,14 +524,13 @@ const toggleCollapseShow = (classes) => {
 const logout = async () => {
   try {
     await userStore.logout()
-    cookies.remove('token')
-    cookies.remove('user')
-    toast.success("See you later!");
-    delete axios.defaults.headers.common['Authorization'];
-
-    await router.push('/')
   } catch (e) {
-    console.log(e,'e')
+  } finally {
+    cookies.remove('task_focus_token')
+    cookies.remove('task_focus_user')
+    delete axios.defaults.headers.common['Authorization'];
+    toast.success("See you later!");
+    await router.push('/')
   }
 }
 
