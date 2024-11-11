@@ -1,4 +1,47 @@
 <template>
+  <div class="bg-white border-b border-[#E5E7E7] px-6 py-6 mb-0 sm:mb-[30px]">
+    <div class="header flex flex-col justify-between mb-5 gap-y-3 ">
+      <div class="flex items-center gap-x-3 gap-y-3">
+        <div class="flex gap-x-6 w-full">
+          <div class="relative w-full">
+            <SearchIcon class="fas fa-search mr-2 text-sm text-blueGray-300 absolute top-1 left-2"/>
+            <input
+                v-model="filter.search.value"
+                type="text"
+                class="pl-9 pr-3 py-[5px] placeholder-[#797A7B] text-[#797A7B] bg-white border border-light-bg-c rounded-[6px] text-sm focus:outline-none focus:ring w-full ease-linear transition-all duration-150"
+                placeholder="Search by note"
+            />
+          </div>
+        </div>
+
+        <button
+            @click="addNote"
+            class="whitespace-nowrap bg-orange-c flex items-center justify-center gap-x-1 px-3 py-1 text-[13px] font-medium rounded-[6px] hover:bg-orange-c-900 outline-none focus:outline-none ease-linear transition-all duration-150"
+            type="button"
+        >
+          New note
+          <PlusIcon/>
+        </button>
+      </div>
+    </div>
+
+    <div class="actions flex flex-wrap justify-between items-center">
+      <div class="flex flex-wrap">
+        <div class="inline-flex items-center gap-x-1 mr-4">
+          <input
+              id="hideClosed"
+              v-model="hideClosed"
+              type="checkbox"
+              class="accent-green-c w-4 h-4 border-0 flex pl-8 pr-3 py-3 rounded-[6px] text-sm ease-linear transition-all duration-150 cursor-pointer"
+          />
+          <label for="hideClosed" class="text-sm text-[#474D66] cursor-pointer whitespace-nowrap">Hide archived
+            notes</label>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
   <div class="main-container">
     <div class="content mt-6 mb-6">
       <Loader v-if="loading"/>
@@ -49,18 +92,10 @@
 
 
           <div>
-            <Button
-                class="hidden md:flex max-w-[200px] justify-center mb-2"
-                label="Add New Note"
-                size="big"
-                version="green"
-                @on-click="addNote"
-            />
-
             <div
                 id="scrollSection"
                 @scroll="scrollHandler"
-                class="hidden md:block sidebar notifications-wrapper min-w-[300px] max-w-[300px] overflow-y-auto border-r border-[#E5E7E7] h-[calc(100vh-155px)]">
+                class="hidden md:block sidebar notifications-wrapper min-w-[300px] max-w-[300px] overflow-y-auto border-r border-[#E5E7E7] h-[calc(100vh-215px)]">
               <ul class="">
                 <li v-for="note in notes" :key="note.id"
                     @click="selectNote(note)"
@@ -131,7 +166,7 @@
 </template>
 
 <script setup>
-import {ref} from "vue";
+import {ref, watch} from "vue";
 import {catchErrors, convertDateTime} from "../../utils/index.js";
 import Loader from "../../components/Loader/Loader.vue";
 import NoteConfirmModal from "../../components/Modals/NoteConfirmModal.vue";
@@ -139,6 +174,9 @@ import {useNotesStore} from "../../store/notes.js";
 import Button from "../../components/Button/Button.vue";
 import TrashIcon from "../../components/Svg/TrashIcon.vue";
 import {useToast} from "vue-toastification";
+import SearchIcon from "../../components/Svg/SearchIcon.vue";
+import {useFilter} from "../../composables/useFilter.js";
+import PlusIcon from "../../components/Svg/PlusIcon.vue";
 
 //Store
 const toast = useToast()
@@ -148,6 +186,7 @@ const notesStore = useNotesStore()
 //State
 const currentDelete = ref(null)
 const showModal = ref(false)
+const hideClosed = ref(true)
 const active = ref(null)
 const loading = ref(true);
 const infiniteLoading = ref(false);
@@ -156,6 +195,11 @@ const showSidebar = ref(false);
 const query = ref('page=1&page_size=8');
 const notes = ref([])
 
+
+//Watch
+watch(() => hideClosed.value, (newValue, oldValue) => {
+  fetchNotes()
+}, {deep: true})
 
 //Methods
 const selectNote = (note, isMobile) => {
@@ -202,7 +246,7 @@ const updateNote = async () => {
     toast.success("Successfully note updated");
 
     const scrollSection = document.getElementById('scrollSection')
-    scrollSection.scrollTo({ top: 0, behavior: 'smooth' });
+    scrollSection.scrollTo({top: 0, behavior: 'smooth'});
   } catch (e) {
     catchErrors(e)
   }
@@ -224,6 +268,8 @@ const scrollHandler = () => {
 const fetchNotes = async (needUpdate) => {
   try {
     const options = {
+      search: filter.search.value,
+      hideClosed: hideClosed.value,
       query: needUpdate ? 'page=1&page_size=8' : query.value,
     }
     const resp = await notesStore.fetchAuthNotes(options)
@@ -244,6 +290,9 @@ const fetchNotes = async (needUpdate) => {
     infiniteLoading.value = false
   }
 }
+
+// Composables
+const filter = useFilter(notes, fetchNotes)
 
 // Run functions
 fetchNotes(true)

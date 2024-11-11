@@ -39,7 +39,6 @@
         <div v-if="showMobile">
           <Notifications :mode="'dark'"/>
         </div>
-        <span class="cursor-pointer font-medium text-white" @click="logout">Logout</span>
       </div>
       <!-- Collapse -->
       <div
