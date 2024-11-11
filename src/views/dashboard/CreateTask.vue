@@ -1,38 +1,56 @@
 <template>
-  <div class="main-container pt-6">
-    <h2 v-if="tempProject" class="text-md block text-blueGray-700 mb-4 sm:mb-8">Project: <b>{{ tempProject.name }}</b>
-    </h2>
-
+  <div class="bg-white border-b border-[#E5E7E7] px-6 py-6 mb-[30px]">
     <form @submit="createTask($event)">
-      <div class="flex items-center items-baseline gap-x-4 mb-3">
-        <div class="relative w-[250px]">
-          <Input placeholder="Task Name" v-model:value="name"/>
-          <span class="text-xs font-medium text-red-600" v-if="v$.name.$error"> {{
-              v$.name.$errors[0].$message
-            }} </span>
-        </div>
+      <div class="header flex flex-col justify-between mb-5 gap-y-3">
+        <div class="flex items-center gap-x-3 gap-y-3">
+          <div class="flex gap-x-6 w-full">
+            <div class="relative w-full">
+              <SearchIcon class="fas fa-search mr-2 text-sm text-blueGray-300 absolute top-1 left-2"/>
+              <input
+                  v-model="name"
+                  type="text"
+                  class="pl-9 pr-3 py-[5px] placeholder-[#797A7B] text-[#797A7B] bg-white border border-light-bg-c rounded-[6px] text-sm focus:outline-none focus:ring w-full ease-linear transition-all duration-150"
+                  placeholder="Task Name"
+              />
+            </div>
+          </div>
 
-        <Button
-            @on-click="createTask"
-            label="Submit"
-            :disabled="disabled"
-            size="medium"
-            version="yellow"
-        />
+          <button
+              @click="createTask"
+              :disabled="disabled"
+              class="whitespace-nowrap bg-orange-c flex items-center justify-center gap-x-1 px-3 py-1 text-[13px] font-medium rounded-[6px] hover:bg-orange-c-900 outline-none focus:outline-none ease-linear transition-all duration-150"
+              type="button"
+          >
+            New task
+            <PlusIcon/>
+          </button>
+        </div>
       </div>
 
-      <div>
-        <CheckBox id="addQueue" label="Add to my queue" v-model:value="addQueue"/>
+      <div class="actions flex flex-wrap justify-between items-center">
+        <div class="flex flex-wrap">
+          <div class="inline-flex items-center gap-x-1 mr-4">
+            <div>
+              <CheckBox id="addQueue" label="Add to my queue" v-model:value="addQueue"/>
 
-        <div v-if="addQueue" class="flex items-center gap-x-6">
-          <Radio id="positionTop" label="Add to the top" v-model:value="position" version="top" name="position"/>
-          <Radio id="positionBottom" label="Add to the bottom" v-model:value="position" version="bottom"
-                 name="position"/>
+              <div v-if="addQueue" class="flex items-center gap-x-6">
+                <Radio id="positionTop" label="Add to the top" v-model:value="position" version="top" name="position"/>
+                <Radio id="positionBottom" label="Add to the bottom" v-model:value="position" version="bottom"
+                       name="position"/>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </form>
+  </div>
 
-    <div class="mt-8" v-if="searchedTasks.length && name.length > 2">
+
+  <div class="main-container">
+    <h2 v-if="tempProject" class="text-md block text-blueGray-700 mb-4 sm:mb-8">Project: <b>{{ tempProject.name }}</b>
+    </h2>
+
+    <div v-if="searchedTasks.length && name.length > 2">
       <h3 class="font-semibold text-lg text-black-c block mb-[10px]">Similar Tasks Found</h3>
 
       <DataTable :headers="headers" @sorting="sorting">
@@ -106,6 +124,8 @@ import Button from '../../components/Button/Button.vue'
 import Input from '../../components/Input/Input.vue'
 import CheckBox from "../../components/CheckBox/CheckBox.vue";
 import Radio from "../../components/Radio/Radio.vue";
+import SearchIcon from "../../components/Svg/SearchIcon.vue";
+import PlusIcon from "../../components/Svg/PlusIcon.vue";
 
 const taskStore = useTasksStore()
 const toast = useToast()

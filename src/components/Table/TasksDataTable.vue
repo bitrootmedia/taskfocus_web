@@ -34,7 +34,6 @@
           </button>
         </div>
 
-
         <div v-if="showFilters" class="flex gap-3 flex-wrap">
           <div class="w-[250px]">
             <select v-model="form.status"
@@ -175,7 +174,6 @@
         </div>
       </div>
     </div>
-
 
     <div :class="type === 'project' ? '' : 'main-container' ">
       <DataTable :headers="headers" @sorting="sorting">
