@@ -69,7 +69,6 @@ export const catchErrors = (e) => {
     if (e.response.status === 403 && e.response.data.detail === invalidToken) {
         cookies.remove('task_focus_token')
         cookies.remove('task_focus_user')
-        cookies.remove('base_url')
         delete axios.defaults.headers.common['Authorization'];
         toast.error(invalidToken);
         setTimeout(() => {

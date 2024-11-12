@@ -197,7 +197,6 @@ router.beforeEach(async (to, from, next) => {
     if (to.name !== 'Login' && !token) {
         cookies.remove('task_focus_token')
         cookies.remove('task_focus_user')
-        cookies.remove('base_url')
         delete axios.defaults.headers.common['Authorization'];
         next({name: 'Login'})
     } else {
