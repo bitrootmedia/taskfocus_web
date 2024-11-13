@@ -26,7 +26,7 @@
                       v-if="v$.password.$error"> {{ v$.password.$errors[0].$message }} </span>
               </div>
 
-              <div class="relative w-full mb-3">
+              <div v-if="!cookieBaseUrl" class="relative w-full mb-3">
                 <Input placeholder="Base Url" label="Base Url" v-model:value="baseUrl" type="text"/>
               </div>
 
@@ -89,6 +89,7 @@ const form = ref({
   username: '',
   password: '',
 })
+const cookieBaseUrl = cookies.get('base_url')
 
 const v$ = useVuelidate(rules, form)
 
@@ -103,8 +104,7 @@ const signIn = async () => {
     const isValid = await v$.value.$validate();
 
     if (isValid) {
-      if (baseUrl.value) await cookies.set('base_url', baseUrl.value)
-      axios.defaults.baseURL = baseUrl.value ? baseUrl.value : config.BASE_API_URL;
+      axios.defaults.baseURL = cookieBaseUrl ? cookieBaseUrl : baseUrl.value ? baseUrl.value : config.BASE_API_URL;
 
       const resp = await userStore.login(form.value)
       await cookies.set('task_focus_token', resp.data.key)
