@@ -45,7 +45,7 @@ export const useNotesStore = defineStore('notes', {
         async fetchAuthNotes(payload) {
             let url = `/notes?`
             if (payload?.query) url += `&${payload.query}`
-            if (payload?.search) url += `&title=${payload.search}`
+            if (payload?.search) url += `&search=${payload.search}`
             if (payload?.isClosed) url += `&is_closed=false`
 
             return await axios.get(url)

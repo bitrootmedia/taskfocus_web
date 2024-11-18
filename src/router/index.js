@@ -34,6 +34,7 @@ import BoardDetail from "../views/dashboard/BoardDetail.vue";
 import {useUserStore} from "../store/user";
 import axios from "./../axios.js";
 import CreateBoard from "../views/dashboard/CreateBoard.vue";
+import Conversations from "../views/dashboard/Conversations.vue";
 
 // routes
 const routes = [
@@ -167,6 +168,11 @@ const routes = [
                 path: "/dashboard/board/:id",
                 component: BoardDetail,
                 name: 'Board Detail',
+            },
+            {
+                path: "/dashboard/conversations",
+                component: Conversations,
+                name: 'Conversations',
             },
         ],
     },

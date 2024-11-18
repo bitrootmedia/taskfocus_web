@@ -9,7 +9,7 @@
                 v-model="filter.search.value"
                 type="text"
                 class="pl-9 pr-3 py-[5px] placeholder-[#797A7B] text-[#797A7B] bg-white border border-light-bg-c rounded-[6px] text-sm focus:outline-none focus:ring w-full ease-linear transition-all duration-150"
-                placeholder="Search by project"
+                placeholder="Search by board"
             />
           </div>
 
@@ -108,7 +108,6 @@ import {useRouter} from "vue-router";
 import {useFilter} from "../../composables/useFilter.js";
 import SearchIcon from "../../components/Svg/SearchIcon.vue";
 import PlusIcon from "../../components/Svg/PlusIcon.vue";
-import CheckBox from "../../components/CheckBox/CheckBox.vue";
 
 
 //Store
