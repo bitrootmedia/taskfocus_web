@@ -26,13 +26,13 @@
           <i class="fas fa-bars text-white"></i>
         </button>
         <!-- Brand -->
-        <router-link
-            class="md:block text-left md:pb-2 text-blueGray-600 mr-0 inline-block whitespace-nowrap text-sm uppercase font-bold"
-            to="/"
-        >
+<!--        <router-link-->
+<!--            class="md:block text-left md:pb-2 text-blueGray-600 mr-0 inline-block whitespace-nowrap text-sm uppercase font-bold"-->
+<!--            to="/"-->
+<!--        >-->
           <img v-if="!closePanel" src="/public/logo-dark.png" alt="thumbnail" class="w-[140px]">
-          <img v-else src="/public/logo-closed.png" alt="thumbnail" class="w-[64px]">
-        </router-link>
+          <img v-else src="/public/logo-closed.png" alt="thumbnail" class="w-[64px] static">
+<!--        </router-link>-->
       </div>
       <!-- User -->
       <div class="flex md:hidden items-center">
@@ -355,6 +355,25 @@
               </a>
             </router-link>
           </li>
+
+<!--          <li class="items-center">-->
+<!--            <router-link to="/dashboard/conversations" exact v-slot="{ href, navigate, isActive, isExactActive }">-->
+<!--              <a-->
+<!--                  :href="href"-->
+<!--                  @click="navigate"-->
+<!--                  class="flex gap-x-2 items-center text-lg py-3 font-medium"-->
+<!--                  :class="[-->
+<!--                  isExactActive-->
+<!--                    ? 'bg-[#41525B] text-orange-c hover:text-orange-c-600'-->
+<!--                    : 'text-white hover:text-orange-c',-->
+<!--                    closePanel ? 'text-center pl-[38px]' : 'pl-4'-->
+<!--                ]"-->
+<!--              >-->
+<!--                <BoardsIcon :isExactActive="isExactActive"/>-->
+<!--                {{ !closePanel ? 'Conversations' : '' }}-->
+<!--              </a>-->
+<!--            </router-link>-->
+<!--          </li>-->
         </ul>
       </div>
 

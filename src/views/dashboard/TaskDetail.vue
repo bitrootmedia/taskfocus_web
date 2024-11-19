@@ -5,7 +5,9 @@
     <div class="left-side pt-6">
       <div>
         <div class="main-container pb-8">
-          <h1 class="inline-flex cursor-pointer mb-6 font-bold text-3xl" @click="showTitleEditPanel">{{ task.title }}</h1>
+          <h1 class="inline-flex cursor-pointer mb-6 font-bold text-3xl" @click="showTitleEditPanel">{{
+              task.title
+            }}</h1>
 
           <div class="text-blueGray-500 description-panel mb-6" v-if="task.description">
             <h2 class="font-semibold text-lg text-black-c block mb-3">Description</h2>
@@ -718,7 +720,7 @@ watch(showPanel, (val) => {
     const obj = {
       show: true,
       close: resetData,
-      update: updateTask,
+      update: () => updateTask(true),
     }
     userStore.setShowPanel(obj)
   }
@@ -740,7 +742,7 @@ const showTitleEditPanel = () => {
   const obj = {
     show: true,
     close: resetData,
-    update: updateTask,
+    update: () => updateTask(true),
   }
   userStore.setShowPanel(obj)
 }

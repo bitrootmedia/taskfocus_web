@@ -270,7 +270,7 @@ const fetchNotes = async (needUpdate) => {
     const options = {
       search: filter.search.value,
       hideClosed: hideClosed.value,
-      query: needUpdate ? 'page=1&page_size=8' : query.value,
+      query: needUpdate || filter.search.value ? 'page=1&page_size=8' : query.value,
     }
     const resp = await notesStore.fetchAuthNotes(options)
     const sortedItems = resp.data.results.sort((a, b) => new Date(b.updated_at) - new Date(a.updated_at));
@@ -281,7 +281,7 @@ const fetchNotes = async (needUpdate) => {
       query.value = splitItem[1]
     }
 
-    notes.value = needUpdate ? sortedItems : [...notes.value, ...sortedItems]
+    notes.value = needUpdate || filter.search.value ? sortedItems : [...notes.value, ...sortedItems]
     if (notes.value.length && needUpdate) active.value = JSON.parse(JSON.stringify(notes.value[0]))
   } catch (e) {
     catchErrors(e)
