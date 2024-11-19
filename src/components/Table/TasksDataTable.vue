@@ -34,7 +34,6 @@
           </button>
         </div>
 
-
         <div v-if="showFilters" class="flex gap-3 flex-wrap">
           <div class="w-[250px]">
             <select v-model="form.status"
@@ -176,7 +175,6 @@
       </div>
     </div>
 
-
     <div :class="type === 'project' ? '' : 'main-container' ">
       <DataTable :headers="headers" @sorting="sorting">
         <template v-slot:tableBody>
@@ -285,7 +283,7 @@ import {computed, ref, watch} from "vue";
 import {useTasksStore} from "../../store/tasks";
 import {catchErrors} from "../../utils";
 import draggable from 'vuedraggable'
-import {convertDate, convertDayDiff, convertDayDiffCon} from "../../utils";
+import {convertDate} from "../../utils";
 import {useRouter} from "vue-router";
 import {usePaginate} from "../../composables/usePaginate";
 import {useFilter} from "../../composables/useFilter";
@@ -349,7 +347,7 @@ const {cookies} = useCookies();
 
 const isDragDisabled = false
 const showFilters = ref(false)
-const loading = ref(false)
+const loading = ref(true)
 const typeAfter = ref('text')
 const typeBefore = ref('text')
 const tasks = ref([])
@@ -417,7 +415,6 @@ const currentUser = computed(() => {
 // Methods
 const fetchTasks = async (label = null) => {
   try {
-    loading.value = true
     const options = {
       pagination: paginate.pagination.value,
       query: paginate.query.value,

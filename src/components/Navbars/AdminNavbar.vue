@@ -1,5 +1,6 @@
 <template>
   <nav
+      v-if="userStore.showPanel.show || titleData.isEdit"
       class="sticky top-0 bg-white border-b border-[#E5E7E7] w-full z-[3] md:flex-row md:flex-nowrap md:justify-start hidden md:flex items-center pl-[50px] pr-4 pt-[30px] pb-[27px]"
   >
     <div
@@ -22,7 +23,7 @@
           {{ route.name || 'Dashboard' }}
         </a>
 
-        <div v-if="userStore.showPanel.show || titleData.isEdit" class="hidden md:flex gap-x-4 flex-wrap md:flex-nowrap">
+        <div class="hidden md:flex gap-x-4 flex-wrap md:flex-nowrap">
           <Button
               @on-click="titleData.isEdit ? saveData() : userStore.showPanel.update()"
               label="Save Changes"
@@ -36,35 +37,6 @@
               version="green"
           />
         </div>
-        <div v-if="route.name === 'Task Detail' && task.is_closed" class="text-md font-semibold text-red-c">
-          THIS TASK IS CLOSED
-        </div>
-        <div v-if="route.name === 'Project Detail' && project.is_closed" class="text-md font-semibold text-red-c">
-          THIS PROJECT IS CLOSED
-        </div>
-      </div>
-
-      <div class="flex items-center">
-        <div>
-          <Notifications/>
-        </div>
-
-        <span class="text-black text-sm mr-4 flex items-center gap-x-2 whitespace-nowrap">
-           <IconWrapper>
-            <template #icon>
-              <UserIcon/>
-            </template>
-          </IconWrapper>
-          {{ fullName }}
-        </span>
-        <span class="cursor-pointer text-black text-sm flex items-center gap-x-2" @click="logout">
-           <IconWrapper>
-            <template #icon>
-              <LogoutIcon/>
-            </template>
-          </IconWrapper>
-          Logout
-        </span>
       </div>
     </div>
   </nav>
@@ -73,15 +45,8 @@
 
 <script setup>
 import {useUserStore} from "../../store/user";
-import {useCookies} from "vue3-cookies";
-import {useToast} from "vue-toastification";
-import {useRoute, useRouter} from "vue-router";
-import {computed, ref, watch} from "vue";
-import axios from "axios";
-import Notifications from "../../components/Notifications/Notifications.vue";
-import IconWrapper from "../Svg/IconWrapper/IconWrapper.vue";
-import UserIcon from "../Svg/UserIcon.vue";
-import LogoutIcon from "../Svg/LogoutIcon.vue";
+import {useRoute} from "vue-router";
+import {ref, watch} from "vue";
 import Button from '../Button/Button.vue'
 import {useTasksStore} from "../../store/tasks";
 import {catchErrors} from "../../utils";
@@ -90,15 +55,11 @@ import {useProjectStore} from "../../store/project";
 const userStore = useUserStore()
 const taskStore = useTasksStore()
 const projectStore = useProjectStore()
-const {cookies} = useCookies();
-const toast = useToast()
-const router = useRouter()
 const route = useRoute()
 const task = ref({})
 const project = ref({})
 const taskTitle = ref('')
 const projectTitle = ref('')
-const editable = ref(null);
 const titleData = ref({
   isEdit: false,
   type: 'task',
@@ -121,28 +82,6 @@ watch(projectStore.$state, (val) => {
   }
 })
 
-
-// Computed
-const fullName = computed(() => {
-  if (!cookies.get('task_focus_user')) return ''
-
-  const user = cookies.get('task_focus_user')
-
-  if (user.first_name || user.last_name) return user.first_name + ' ' + user.last_name
-
-  return user.username
-})
-
-const isAuthOwner = computed(() => {
-  if (!cookies.get('task_focus_user')) return ''
-
-  const user = cookies.get('task_focus_user')
-  const taskOwnerId = task.value.owner?.id
-
-  return user.pk === taskOwnerId
-})
-
-
 // Methods
 const discardChanges = () => {
   titleData.value = {
@@ -161,6 +100,7 @@ const updateProjectTitle = async (title) => {
       title: title,
     }
     await projectStore.updateProject(data)
+    userStore.showPanel.close()
   } catch (e) {
     if (e.response?.data?.title[0] === 'This field may not be blank.') {
       projectTitle.value = project.value.title
@@ -182,6 +122,7 @@ const updateTask = async (title) => {
       isEdit: false,
       plainText: '',
     }
+    userStore.showPanel.close()
   } catch (e) {
     if (e.response?.data?.title[0] === 'This field may not be blank.') {
       taskTitle.value = task.value.title
@@ -203,28 +144,6 @@ const saveData = async () => {
 
   await updateProjectTitle(projectTitle.value)
 }
-
-const logout = async () => {
-  try {
-    await userStore.logout()
-  } catch (e) {
-  } finally {
-    cookies.remove('task_focus_token')
-    cookies.remove('task_focus_user')
-    delete axios.defaults.headers.common['Authorization'];
-    toast.success("See you later!");
-    await router.push('/')
-  }
-}
-
-// const moveCursorToEnd = () => {
-//   const range = document.createRange();
-//   const sel = window.getSelection();
-//   range.selectNodeContents(editable.value);
-//   range.collapse(false);
-//   sel.removeAllRanges();
-//   sel.addRange(range);
-// };
 </script>
 
 <style scoped>

@@ -1,6 +1,6 @@
 import {useToast} from 'vue-toastification'
 import moment from "moment";
-import axios from "axios";
+import axios from "./../axios.js";
 import {useRouter} from "vue-router";
 import {useCookies} from "vue3-cookies";
 

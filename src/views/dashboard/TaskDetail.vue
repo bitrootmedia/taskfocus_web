@@ -5,6 +5,10 @@
     <div class="left-side pt-6">
       <div>
         <div class="main-container pb-8">
+          <h1 class="inline-flex cursor-pointer mb-6 font-bold text-3xl" @click="showTitleEditPanel">{{
+              task.title
+            }}</h1>
+
           <div class="text-blueGray-500 description-panel mb-6" v-if="task.description">
             <h2 class="font-semibold text-lg text-black-c block mb-3">Description</h2>
             <b v-if="!task.description && !isEditPanel.description" class="cursor-pointer"
@@ -175,6 +179,10 @@
             <!--            <h3 class="text-[34px] text-black-c pb-3 w-full text-center" v-if="currentTaskTotalTime">-->
             <!--              {{ currentTaskTotalTime?.hours || '00' }}hs {{ currentTaskTotalTime?.minutes || "00" }}m-->
             <!--            </h3>-->
+
+            <div v-if="route.name === 'Task Detail' && task.is_closed" class="text-md font-semibold text-red-c mb-2">
+              THIS TASK IS CLOSED
+            </div>
 
             <Button
                 v-if="isAuthOwner && task.is_closed"
@@ -712,7 +720,7 @@ watch(showPanel, (val) => {
     const obj = {
       show: true,
       close: resetData,
-      update: updateTask,
+      update: () => updateTask(true),
     }
     userStore.setShowPanel(obj)
   }
@@ -730,6 +738,15 @@ watch(() => form.value.is_pinned, async (newValue, oldValue) => {
 })
 
 // Methods
+const showTitleEditPanel = () => {
+  const obj = {
+    show: true,
+    close: resetData,
+    update: () => updateTask(true),
+  }
+  userStore.setShowPanel(obj)
+}
+
 const closeTask = async (notes) => {
   try {
     const data = {
@@ -1398,7 +1415,6 @@ fetchReminders()
 
 .right-side > div {
   position: sticky;
-  top: 91px;
 }
 
 @media (max-width: 767px) {
@@ -1409,7 +1425,6 @@ fetchReminders()
 }
 
 .right-side-content {
-  height: calc(100vh - 91px);
   overflow-y: scroll;
 }
 

@@ -19,7 +19,7 @@ export const useFilter = (items, fetchCallback) => {
         if (newValue.length >= 3) {
             setTimeout(() => {
                 fetchCallback()
-            }, 500)
+            }, 1000)
         } else if (!items.value.length || newValue.length === 0) {
             fetchCallback()
         }

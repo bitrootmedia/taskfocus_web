@@ -1,5 +1,5 @@
 import {defineStore} from "pinia";
-import axios from "axios";
+import axios from "./../axios.js";
 import config from "../config"
 import {useCookies} from "vue3-cookies";
 
@@ -16,7 +16,7 @@ export const useCommentsStore = defineStore('comments', {
 
     actions: {
         async fetchComments(payload) {
-            let url = `${config.BASE_API_URL}/comments?`
+            let url = `/comments?`
 
             if (payload?.id && payload.type === 'project') url += `project=${payload.id}`
             if (payload?.id && payload.type === 'task') url += `task=${payload.id}`
@@ -28,13 +28,13 @@ export const useCommentsStore = defineStore('comments', {
         },
 
         async createComments(payload) {
-            return await axios.post(`${config.BASE_API_URL}/comments`,payload)
+            return await axios.post(`/comments`,payload)
         },
 
         async updateComment(payload) {
             const id = payload.id
             delete payload.id
-            return await axios.patch(`${config.BASE_API_URL}/comment/${id}`,payload)
+            return await axios.patch(`/comment/${id}`,payload)
         },
     },
 })

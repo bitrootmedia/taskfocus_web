@@ -1,27 +1,46 @@
 <template>
-  <div class="main-container pt-6">
-    <div class="header flex items-center gap-x-4">
-      <div class="relative w-[250px]">
-        <Input placeholder="Search" v-model:value="filter.search.value" leftIcon/>
+  <div class="bg-white border-b border-[#E5E7E7] px-6 py-6 mb-[30px]">
+    <div class="header flex flex-col justify-between mb-5 gap-y-3">
+      <div class="flex items-center gap-x-3 gap-y-3">
+        <div class="flex gap-x-6 w-full">
+          <div class="relative w-full">
+            <SearchIcon class="fas fa-search mr-2 text-sm text-blueGray-300 absolute top-1 left-2"/>
+            <input
+                v-model="filter.search.value"
+                type="text"
+                class="pl-9 pr-3 py-[5px] placeholder-[#797A7B] text-[#797A7B] bg-white border border-light-bg-c rounded-[6px] text-sm focus:outline-none focus:ring w-full ease-linear transition-all duration-150"
+                placeholder="Search by project"
+            />
+          </div>
+
+        </div>
+
+        <button
+            @click="router.push(`/dashboard/create-project`)"
+            class="whitespace-nowrap bg-orange-c flex items-center justify-center gap-x-1 px-3 py-1 text-[13px] font-medium rounded-[6px] hover:bg-orange-c-900 outline-none focus:outline-none ease-linear transition-all duration-150"
+            type="button"
+        >
+          New Project
+          <PlusIcon/>
+        </button>
       </div>
-
-      <Button
-          @on-click="router.push('/dashboard/create-project')"
-          label="Create Project"
-          size="medium"
-          version="green"
-      />
     </div>
 
-    <div class="mt-4">
-      <CheckBox
-          id="hideClosed"
-          label="Hide closed projects"
-          v-model:value="hideClosed"
-      />
+    <div class="actions flex flex-wrap justify-between items-center">
+      <div class="flex flex-wrap">
+        <div class="inline-flex items-center gap-x-1 mr-4">
+          <CheckBox
+              id="hideClosed"
+              label="Hide closed projects"
+              v-model:value="hideClosed"
+          />
+        </div>
+      </div>
     </div>
+  </div>
 
-    <div class="content mt-4">
+  <div class="main-container">
+    <div class="content">
       <DataTable :headers="headers" @sorting="sorting">
         <template v-slot:tableBody>
           <tr v-if="loading">
@@ -100,6 +119,9 @@ import {useFilter} from "../../composables/useFilter";
 import Button from '../../components/Button/Button.vue'
 import Input from '../../components/Input/Input.vue'
 import CheckBox from '../../components/CheckBox/CheckBox.vue'
+import SearchIcon from "../../components/Svg/SearchIcon.vue";
+import PlusIcon from "../../components/Svg/PlusIcon.vue";
+import FilterIcon from "../../components/Svg/FilterIcon.vue";
 
 const projectStore = useProjectStore()
 const {cookies} = useCookies();
@@ -113,7 +135,7 @@ const headers = [
   {id: 3, label: 'Tag'},
 ]
 
-const loading = ref(false)
+const loading = ref(true)
 let drag = ref(false)
 const search = ref('')
 const projects = ref([])
@@ -128,7 +150,6 @@ watch(hideClosed, (newValue, oldValue) => {
 // Methods
 const fetchProjects = async (label) => {
   try {
-    loading.value = true
     const options = {
       pagination: paginate.pagination.value,
       query: paginate.query.value,

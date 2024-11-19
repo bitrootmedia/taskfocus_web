@@ -26,20 +26,19 @@
           <i class="fas fa-bars text-white"></i>
         </button>
         <!-- Brand -->
-        <router-link
-            class="md:block text-left md:pb-2 text-blueGray-600 mr-0 inline-block whitespace-nowrap text-sm uppercase font-bold"
-            to="/"
-        >
+<!--        <router-link-->
+<!--            class="md:block text-left md:pb-2 text-blueGray-600 mr-0 inline-block whitespace-nowrap text-sm uppercase font-bold"-->
+<!--            to="/"-->
+<!--        >-->
           <img v-if="!closePanel" src="/public/logo-dark.png" alt="thumbnail" class="w-[140px]">
-          <img v-else src="/public/logo-closed.png" alt="thumbnail" class="w-[64px]">
-        </router-link>
+          <img v-else src="/public/logo-closed.png" alt="thumbnail" class="w-[64px] static">
+<!--        </router-link>-->
       </div>
       <!-- User -->
       <div class="flex md:hidden items-center">
         <div v-if="showMobile">
           <Notifications :mode="'dark'"/>
         </div>
-        <span class="cursor-pointer font-medium text-white" @click="logout">Logout</span>
       </div>
       <!-- Collapse -->
       <div
@@ -81,7 +80,7 @@
           </div>
         </form>
 
-        <ul class="md:flex-col md:min-w-full flex flex-col list-none">
+        <ul class="small-scroll md:flex-col md:min-w-full flex flex-col list-none">
           <li class="items-center">
             <router-link
                 to="/dashboard"
@@ -184,43 +183,43 @@
             </router-link>
           </li>
 
-          <li class="items-center" v-if="userConfig?.extra_menu_links">
-            <router-link to="/dashboard/comments" exact v-slot="{ href, navigate, isActive, isExactActive }">
-              <a
-                  :href="href"
-                  @click="navigate"
-                  class="flex gap-x-2 items-center text-lg py-3 font-medium block"
-                  :class="[
-                  isExactActive
-                    ? 'bg-[#41525B] text-orange-c hover:text-orange-c-600'
-                    : 'text-white hover:text-orange-c',
-                     closePanel ? 'text-center pl-[38px]' : 'pl-4'
-                ]"
-              >
-                <CommentsIcon :isExactActive="isExactActive"/>
-                {{ !closePanel ? 'Comments' : '' }}
-              </a>
-            </router-link>
-          </li>
+          <!--          <li class="items-center" v-if="userConfig?.extra_menu_links">-->
+          <!--            <router-link to="/dashboard/comments" exact v-slot="{ href, navigate, isActive, isExactActive }">-->
+          <!--              <a-->
+          <!--                  :href="href"-->
+          <!--                  @click="navigate"-->
+          <!--                  class="flex gap-x-2 items-center text-lg py-3 font-medium block"-->
+          <!--                  :class="[-->
+          <!--                  isExactActive-->
+          <!--                    ? 'bg-[#41525B] text-orange-c hover:text-orange-c-600'-->
+          <!--                    : 'text-white hover:text-orange-c',-->
+          <!--                     closePanel ? 'text-center pl-[38px]' : 'pl-4'-->
+          <!--                ]"-->
+          <!--              >-->
+          <!--                <CommentsIcon :isExactActive="isExactActive"/>-->
+          <!--                {{ !closePanel ? 'Comments' : '' }}-->
+          <!--              </a>-->
+          <!--            </router-link>-->
+          <!--          </li>-->
 
-          <li class="items-center" v-if="userConfig?.extra_menu_links">
-            <router-link to="/dashboard/attachments" exact v-slot="{ href, navigate, isActive, isExactActive }">
-              <a
-                  :href="href"
-                  @click="navigate"
-                  class="flex gap-x-2 items-center text-lg py-3 font-medium block"
-                  :class="[
-                  isExactActive
-                    ? 'bg-[#41525B] text-orange-c hover:text-orange-c-600'
-                    : 'text-white hover:text-orange-c',
-                     closePanel ? 'text-center pl-[38px]' : 'pl-4'
-                ]"
-              >
-                <AttachmentsIcon :isExactActive="isExactActive"/>
-                {{ !closePanel ? 'Attachments' : '' }}
-              </a>
-            </router-link>
-          </li>
+          <!--          <li class="items-center" v-if="userConfig?.extra_menu_links">-->
+          <!--            <router-link to="/dashboard/attachments" exact v-slot="{ href, navigate, isActive, isExactActive }">-->
+          <!--              <a-->
+          <!--                  :href="href"-->
+          <!--                  @click="navigate"-->
+          <!--                  class="flex gap-x-2 items-center text-lg py-3 font-medium block"-->
+          <!--                  :class="[-->
+          <!--                  isExactActive-->
+          <!--                    ? 'bg-[#41525B] text-orange-c hover:text-orange-c-600'-->
+          <!--                    : 'text-white hover:text-orange-c',-->
+          <!--                     closePanel ? 'text-center pl-[38px]' : 'pl-4'-->
+          <!--                ]"-->
+          <!--              >-->
+          <!--                <AttachmentsIcon :isExactActive="isExactActive"/>-->
+          <!--                {{ !closePanel ? 'Attachments' : '' }}-->
+          <!--              </a>-->
+          <!--            </router-link>-->
+          <!--          </li>-->
 
           <li class="items-center">
             <router-link to="/dashboard/notifications" exact v-slot="{ href, navigate, isActive, isExactActive }">
@@ -237,47 +236,49 @@
               >
                 <NotificationsIcon :isExactActive="isExactActive"/>
                 {{ !closePanel ? 'Notifications' : '' }}
+
+                <Notifications/>
               </a>
             </router-link>
           </li>
 
-          <li class="items-center" v-if="userConfig?.extra_menu_links">
-            <router-link to="/dashboard/logs" exact v-slot="{ href, navigate, isActive, isExactActive }">
-              <a
-                  :href="href"
-                  @click="navigate"
-                  class="flex gap-x-2 items-center text-lg py-3 font-medium block"
-                  :class="[
-                  isExactActive
-                    ? 'bg-[#41525B] text-orange-c hover:text-orange-c-600'
-                    : 'text-white hover:text-orange-c',
-                     closePanel ? 'text-center pl-[38px]' : 'pl-4'
-                ]"
-              >
-                <LogsIcon :isExactActive="isExactActive"/>
-                {{ !closePanel ? 'Logs' : '' }}
-              </a>
-            </router-link>
-          </li>
+          <!--          <li class="items-center" v-if="userConfig?.extra_menu_links">-->
+          <!--            <router-link to="/dashboard/logs" exact v-slot="{ href, navigate, isActive, isExactActive }">-->
+          <!--              <a-->
+          <!--                  :href="href"-->
+          <!--                  @click="navigate"-->
+          <!--                  class="flex gap-x-2 items-center text-lg py-3 font-medium block"-->
+          <!--                  :class="[-->
+          <!--                  isExactActive-->
+          <!--                    ? 'bg-[#41525B] text-orange-c hover:text-orange-c-600'-->
+          <!--                    : 'text-white hover:text-orange-c',-->
+          <!--                     closePanel ? 'text-center pl-[38px]' : 'pl-4'-->
+          <!--                ]"-->
+          <!--              >-->
+          <!--                <LogsIcon :isExactActive="isExactActive"/>-->
+          <!--                {{ !closePanel ? 'Logs' : '' }}-->
+          <!--              </a>-->
+          <!--            </router-link>-->
+          <!--          </li>-->
 
-          <li class="items-center" v-if="userConfig?.extra_menu_links">
-            <router-link to="/dashboard/tasks-tracking" exact v-slot="{ href, navigate, isActive, isExactActive }">
-              <a
-                  :href="href"
-                  @click="navigate"
-                  class="flex gap-x-2 items-center text-lg py-3 font-medium block"
-                  :class="[
-                  isExactActive
-                     ? 'bg-[#41525B] text-orange-c hover:text-orange-c-600'
-                    : 'text-white hover:text-orange-c',
-                     closePanel ? 'text-center pl-[38px]' : 'pl-4'
-                ]"
-              >
-                <TimeTrackerIcon :isExactActive="isExactActive"/>
-                {{ !closePanel ? 'Time Tracker' : '' }}
-              </a>
-            </router-link>
-          </li>
+          <!--          <li class="items-center" v-if="userConfig?.extra_menu_links">-->
+          <!--            <router-link to="/dashboard/tasks-tracking" exact v-slot="{ href, navigate, isActive, isExactActive }">-->
+          <!--              <a-->
+          <!--                  :href="href"-->
+          <!--                  @click="navigate"-->
+          <!--                  class="flex gap-x-2 items-center text-lg py-3 font-medium block"-->
+          <!--                  :class="[-->
+          <!--                  isExactActive-->
+          <!--                     ? 'bg-[#41525B] text-orange-c hover:text-orange-c-600'-->
+          <!--                    : 'text-white hover:text-orange-c',-->
+          <!--                     closePanel ? 'text-center pl-[38px]' : 'pl-4'-->
+          <!--                ]"-->
+          <!--              >-->
+          <!--                <TimeTrackerIcon :isExactActive="isExactActive"/>-->
+          <!--                {{ !closePanel ? 'Time Tracker' : '' }}-->
+          <!--              </a>-->
+          <!--            </router-link>-->
+          <!--          </li>-->
 
           <li class="items-center">
             <router-link to="/dashboard/users" exact v-slot="{ href, navigate, isActive, isExactActive }">
@@ -354,11 +355,38 @@
               </a>
             </router-link>
           </li>
+
+<!--          <li class="items-center">-->
+<!--            <router-link to="/dashboard/conversations" exact v-slot="{ href, navigate, isActive, isExactActive }">-->
+<!--              <a-->
+<!--                  :href="href"-->
+<!--                  @click="navigate"-->
+<!--                  class="flex gap-x-2 items-center text-lg py-3 font-medium"-->
+<!--                  :class="[-->
+<!--                  isExactActive-->
+<!--                    ? 'bg-[#41525B] text-orange-c hover:text-orange-c-600'-->
+<!--                    : 'text-white hover:text-orange-c',-->
+<!--                    closePanel ? 'text-center pl-[38px]' : 'pl-4'-->
+<!--                ]"-->
+<!--              >-->
+<!--                <BoardsIcon :isExactActive="isExactActive"/>-->
+<!--                {{ !closePanel ? 'Conversations' : '' }}-->
+<!--              </a>-->
+<!--            </router-link>-->
+<!--          </li>-->
         </ul>
       </div>
 
-      <span class="text-gray-500 text-xs ml-1 mb-1 hidden sm:block">Version 1.7.2</span>
+      <div>
+        <span
+            class="mt-4 cursor-pointer flex gap-x-2 items-center text-lg py-3 font-medium text-white hover:text-orange-c pl-1"
+            @click="logout">
+          Logout {{ fullName }}
+        </span>
+        <span class="text-gray-500 text-xs ml-1 mb-1 hidden sm:block">Version 1.7.2</span>
+      </div>
     </div>
+
 
     <div v-if="userStore.showPanel.show" class="w-full flex md:hidden justify-center gap-x-1 mt-4 pb-1">
       <Button
@@ -404,7 +432,7 @@ import {useUserStore} from "../../store/user";
 import {useCookies} from "vue3-cookies";
 import {useToast} from "vue-toastification";
 import {useRouter} from "vue-router";
-import axios from "axios";
+import axios from "./../../axios.js";
 import Notifications from "../../components/Notifications/Notifications.vue";
 import DashboardIcon from "../Svg/DashboardIcon.vue";
 import ProjectsIcon from "../Svg/ProjectsIcon.vue";
@@ -426,6 +454,8 @@ import ConfirmCloseModal from '../Modals/ConfirmCloseModal.vue'
 import NotesIcon from "../Svg/NotesIcon.vue";
 import NotesSvgIcon from "../Svg/NotesSvgIcon.vue";
 import BoardsIcon from "../Svg/BoardsIcon.vue";
+import IconWrapper from "../Svg/IconWrapper/IconWrapper.vue";
+import LogoutIcon from "../Svg/LogoutIcon.vue";
 
 const emit = defineEmits(['update:closePanel'])
 const props = defineProps({
@@ -449,8 +479,8 @@ const task = ref({})
 
 
 //Watch
-watch(taskStore.$state,(val)=>{
-  if (Object.keys(val.task).length){
+watch(taskStore.$state, (val) => {
+  if (Object.keys(val.task).length) {
     task.value = val.task
   }
 })
@@ -514,10 +544,10 @@ const logout = async () => {
     await userStore.logout()
   } catch (e) {
   } finally {
-    cookies.remove('token')
-    cookies.remove('user')
-    toast.success("See you later!");
+    cookies.remove('task_focus_token')
+    cookies.remove('task_focus_user')
     delete axios.defaults.headers.common['Authorization'];
+    toast.success("See you later!");
     await router.push('/')
   }
 }
