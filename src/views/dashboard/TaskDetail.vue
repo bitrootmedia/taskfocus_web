@@ -1027,7 +1027,7 @@ const resetData = () => {
 
   backgroundSize.value = `${task.value.progress || 0}% 100%`
 
-  fetchTask()
+  fetchTask(true)
 }
 
 const hidePanel = () => {
