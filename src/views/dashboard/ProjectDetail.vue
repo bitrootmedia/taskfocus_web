@@ -2,7 +2,7 @@
   <div class="main-container pt-2 pb-6">
     <Loader v-if="loading"/>
     <div v-else class="content">
-      <h1 class="inline-flex cursor-pointer mt-3 mb-6 font-bold text-3xl" @click="showTitleEditPanel">{{
+      <h1 v-if="!userStore.showPanel.show" class="inline-flex cursor-pointer mt-3 mb-6 font-bold text-3xl" @click="showTitleEditPanel">{{
           project.title
         }}</h1>
 
