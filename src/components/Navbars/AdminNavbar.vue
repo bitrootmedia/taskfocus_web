@@ -75,6 +75,7 @@ watch(taskStore.$state, (val) => {
   }
 })
 
+
 watch(projectStore.$state, (val) => {
   if (Object.keys(val.project).length) {
     project.value = val.project
@@ -84,22 +85,32 @@ watch(projectStore.$state, (val) => {
 
 // Methods
 const discardChanges = () => {
+  const type = route.name === 'Task Detail' ? 'task' : 'project'
+
   titleData.value = {
     ...titleData.value,
     isEdit: false,
-    plainText: task.value.title,
+    plainText: type === 'task' ? task.value.title : project.value.title,
   }
-  taskTitle.value = task.value.title
+  if (type === 'task') taskTitle.value = task.value.title
+  else projectTitle.value = project.value.title
   userStore.showPanel.close()
 }
 
 const updateProjectTitle = async (title) => {
+
   try {
     const data = {
       id: project.value.id,
       title: title,
     }
     await projectStore.updateProject(data)
+
+    titleData.value = {
+      ...titleData.value,
+      isEdit: false,
+      plainText: '',
+    }
     userStore.showPanel.close()
   } catch (e) {
     if (e.response?.data?.title[0] === 'This field may not be blank.') {
