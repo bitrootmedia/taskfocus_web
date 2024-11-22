@@ -5,7 +5,7 @@
     <div class="left-side pt-6">
       <div>
         <div class="main-container pb-8">
-          <h1 class="inline-flex cursor-pointer mb-6 font-bold text-3xl" @click="showTitleEditPanel">{{
+          <h1 v-if="!userStore.showPanel.show" class="inline-flex cursor-pointer mb-6 font-bold text-3xl" @click="showTitleEditPanel">{{
               task.title
             }}</h1>
 
@@ -327,6 +327,13 @@
                 </select>
               </div>
 
+              <div class="flex items-center gap-x-1">
+                <span class="inline-block text-sm text-light-c">Created Date:</span>
+                <div class="text-sm text-black-c font-semibold flex items-center gap-x-1">
+                  <span>{{ convertDate(task.created_at) }}</span>
+                </div>
+              </div>
+
 
               <div class="flex gap-x-1 flex-wrap">
                 <span class="text-sm text-light-c whitespace-nowrap">Task Access:</span>
@@ -521,7 +528,7 @@
 
 <script setup>
 import {computed, onBeforeUnmount, onMounted, ref, watch} from "vue";
-import {catchErrors} from "../../utils";
+import {catchErrors, convertDate, convertDateTime} from "../../utils";
 import {useRoute, useRouter} from "vue-router";
 import {useTasksStore} from "../../store/tasks";
 import Loader from "./../../components/Loader/Loader.vue"
@@ -1027,7 +1034,7 @@ const resetData = () => {
 
   backgroundSize.value = `${task.value.progress || 0}% 100%`
 
-  fetchTask()
+  fetchTask(true)
 }
 
 const hidePanel = () => {

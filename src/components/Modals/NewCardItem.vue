@@ -14,12 +14,14 @@
           <div class="relative w-full">
             <div v-if="step === 0" class="flex items-center gap-4">
               <Button
+                  v-if="!isEdit"
                   @on-click="step = 1"
                   :label="'Task'"
                   version="gray"
                   size="medium"
               />
               <Button
+                  v-if="!isEdit"
                   @on-click="step = 2"
                   :label="'Project'"
                   version="gray"
@@ -105,12 +107,12 @@
             <Button
                 v-if="step === 3"
                 @on-click="createNewCardItem"
-                :label="'Create'"
+                :label="isEdit ? 'Update' : 'Create'"
                 version="green"
                 size="medium"
             />
             <Button
-                v-if="step !== 0"
+                v-if="step !== 0 && !isEdit"
                 @on-click="step = 0"
                 :label="'Back'"
                 version="yellow"
@@ -133,9 +135,8 @@ import SearchIcon from "../Svg/SearchIcon.vue";
 import {catchErrors} from "../../utils/index.js";
 import {useTasksStore} from "../../store/tasks.js";
 import {useProjectStore} from "../../store/project.js";
-import config from "../../config/index.js";
 
-const emit = defineEmits(['close', 'create'])
+const emit = defineEmits(['close', 'create', 'update'])
 const props = defineProps({
   showModal: {
     type: Boolean,
@@ -146,6 +147,10 @@ const props = defineProps({
     default: false
   },
   activeId: {
+    type: String,
+    default: ''
+  },
+  comment: {
     type: String,
     default: ''
   },
@@ -162,7 +167,7 @@ const projectStore = useProjectStore()
 
 
 //State
-const step = ref(0)
+const step = ref(props.isEdit ? 3 : 0)
 const firstLoadTask = ref(false)
 const firstLoadProject = ref(false)
 const tasks = ref([])
@@ -255,7 +260,8 @@ const resetData = () => {
 const createNewCardItem = async (e) => {
   if (e) e.preventDefault()
 
-  emit('create', form.value)
+  if (props.isEdit) emit('update', form.value)
+  else emit('create', form.value)
   closeModal()
 }
 

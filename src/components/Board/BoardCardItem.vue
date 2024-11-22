@@ -13,8 +13,17 @@
 
     <div
         class="flex opacity-0 group-hover:opacity-100 transition-all ease-in-out justify-center items-center bg-white rounded-full w-6 h-6 shadow-md">
-      <IconDropdown :cardItem="cardItem" @deleteCardItem="deleteCardItem" @convertTextToTask="convertToTask"/>
+      <IconDropdown v-model:panel="showEditPanel" :cardItem="cardItem" @deleteCardItem="deleteCardItem" @convertTextToTask="convertToTask"/>
     </div>
+
+    <NewCardItem
+        :show-modal="showEditPanel"
+        is-edit
+        :editItem="cardItem"
+        @close="showEditPanel = false"
+        @create="saveCardItem"
+        @update="updateCardItem"
+    />
   </div>
 </template>
 
@@ -26,6 +35,7 @@ import {useToast} from "vue-toastification";
 import {useRouter} from "vue-router";
 import IconDropdown from "../Dropdowns/IconDropdown.vue";
 import {useTasksStore} from "../../store/tasks.js";
+import NewCardItem from "../Modals/NewCardItem.vue";
 
 const emit = defineEmits(['fetchBoard'])
 const props = defineProps({
@@ -43,7 +53,7 @@ const toast = useToast()
 
 //State
 const showPanel = ref(false)
-
+const showEditPanel = ref(false)
 
 //Methods
 const toLink = (item, type) => {
@@ -90,6 +100,24 @@ const saveCardItem = async (taskId) => {
 
     await boardsStore.createBoardCardItem(data)
   } catch (e) {
+    catchErrors(e)
+  }
+}
+
+const updateCardItem = async(form)=>{
+  try{
+    const data = {
+      id: props.cardItem.id,
+      card: props.cardItem.card,
+      task: null,
+      comment: form.comment,
+      project: null,
+      position: props.cardItem.position || 0
+    }
+
+    await boardsStore.updateBoardCardItem(data)
+    emit('fetchBoard')
+  }catch (e) {
     catchErrors(e)
   }
 }

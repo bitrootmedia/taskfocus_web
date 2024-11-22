@@ -15,6 +15,12 @@
           @click="emit('convertTextToTask')">
         Convert to task
       </li>
+
+      <li v-if="cardItem.comment"
+          class="text-sm flex items-center gap-x-1 py-1 px-4 whitespace-nowrap cursor-pointer hover:bg-light-bg-c transition-all ease-in-out"
+          @click="openEditPanel">
+        Edit
+      </li>
     </ul>
   </div>
 </template>
@@ -54,6 +60,11 @@ watch(showDropdown, (val) => {
 //Methods
 const close = () => {
   showDropdown.value = false
+}
+
+const openEditPanel = ()=>{
+  emit('update:panel',true)
+  close()
 }
 
 const handleOutsideClick = (e) => {

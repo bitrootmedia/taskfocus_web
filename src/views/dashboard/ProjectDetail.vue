@@ -2,18 +2,13 @@
   <div class="main-container pt-2 pb-6">
     <Loader v-if="loading"/>
     <div v-else class="content">
+      <h1 v-if="!userStore.showPanel.show" class="inline-flex cursor-pointer mt-3 mb-6 font-bold text-3xl" @click="showTitleEditPanel">{{
+          project.title
+        }}</h1>
+
       <div class="bg-white border-b border-[#E5E7E7] px-6 py-6 mb-[30px]">
         <div class="header flex flex-col md:flex-row justify-between gap-x-2 lg:gap-x-10">
           <div class="w-full md:w-2/4">
-            <div class="flex sm:hidden gap-x-4 sm:gap-x-10 items-center flex-wrap pb-2">
-              <div class="flex items-center gap-x-2">
-                <h2 class="text-lg font-semibold text-black-c cursor-pointer lg:whitespace-nowrap" ref="editable"
-                    v-focus-end plaintext-only="true" @focus="moveCursorToEnd" contenteditable="true"
-                    @input="saveData($event)">
-                  {{ projectTitle }}</h2>
-              </div>
-            </div>
-
             <div class="description-panel">
               <div v-if="isAuthOwner" class="mb-2 sm:mb-4">
                 <div v-if="route.name === 'Project Detail' && project.is_closed" class="mb-2 text-md font-semibold text-red-c">
@@ -246,6 +241,14 @@ const isAuthOwner = computed(() => {
 })
 
 // Methods
+const showTitleEditPanel = () => {
+  const obj = {
+    show: true,
+    close: resetData,
+    update: () => updateProject(),
+  }
+  userStore.setShowPanel(obj)
+}
 const updateSlider = (e) => {
   let clickedElement = e.target,
       min = clickedElement.min,
@@ -302,21 +305,33 @@ const updateProjectTitle = async (title) => {
   }
 }
 
+const hidePanel = () => {
+  const obj = {
+    show: false,
+    close: null,
+    update: null,
+  }
+  userStore.setShowPanel(obj)
+}
+
 const resetData = () => {
+  hidePanel()
+
   isEditDesc.value = isEditTitle.value = false
   isEditProgress.value = isEditProgress.value = false
   backgroundSize.value = `${project.value.progress || 0}% 100%`
   form.value = {...project.value}
+
+  fetchProject(true)
 }
 
-const fetchProject = async () => {
+const fetchProject = async (noLoad = false) => {
   try {
     const id = route.params.id
     if (id) {
-      loading.value = true
+      if (!noLoad) loading.value = true
       const resp = await projectStore.fetchProjectById({id})
       project.value = resp.data
-      console.log(project.value, 'project.value')
 
       Object.keys(resp.data).forEach((key) => {
         form.value[key] = resp.data[key]
@@ -324,6 +339,8 @@ const fetchProject = async () => {
 
       projectTitle.value = project.value.title
       backgroundSize.value = `${resp.data.progress || 0}% 100%`
+
+      hidePanel()
     }
   } catch (e) {
     catchErrors(e)
@@ -363,7 +380,6 @@ const fetchProjectAccess = async () => {
   }
 }
 
-
 const updateProject = async (isClosed) => {
   try {
     btnLoad.value = true
@@ -376,6 +392,7 @@ const updateProject = async (isClosed) => {
     }
     await projectStore.updateProject(data)
     await toast.success("Successfully project updated");
+    await hidePanel()
     await fetchProject()
     isEditTitle.value = false
     isEditDesc.value = false
