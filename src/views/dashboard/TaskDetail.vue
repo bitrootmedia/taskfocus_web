@@ -36,6 +36,7 @@
                 :task-id="task.id"
                 :deletedBlockList="deletedBlockList"
                 v-model="form.blocks"
+                :blocks="form.blocks"
                 @edit="isEditPanel.blocks = true"
                 @updateTask="updateTask"
                 @updateDeleteList="updateDeleteList"
@@ -1085,6 +1086,7 @@ const updateTask = async (noLoad) => {
     toast.success("Task updated");
     keyList.value += 1
     isEditPanel.value = {...defaultEditValues}
+    deletedBlockList.value = []
     hidePanel()
     await fetchTask(noLoad)
   } catch (e) {
