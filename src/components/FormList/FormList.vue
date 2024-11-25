@@ -13,7 +13,7 @@
           <template #item="{ element, index }">
             <div class="list-group-item flex items-start gap-x-4 mb-6 description-panel">
               <button type="button" class="text-white cursor-pointer handle">
-                <DragIcon />
+                <DragIcon/>
               </button>
 
               <template v-if="element.block_type === 'MARKDOWN'">
@@ -48,7 +48,8 @@
                             placeholder="Image Path"
                         />
                       </div>
-                      <img v-else :src="element.content.path" alt="upload-img" class="w-[120px] h-[120px] object-cover" @click="openModal(element)">
+                      <img v-else :src="element.content.path" alt="upload-img" class="w-[120px] h-[120px] object-cover"
+                           @click="openModal(element)">
                     </div>
 
                     <div class="actions flex gap-x-1 items-center">
@@ -81,7 +82,8 @@
                             />
                           </div>
 
-                          <div class="flex items-center mt-4" v-for="(el,i) in element.content.elements" :key="`${index}-${i}`">
+                          <div class="flex items-center mt-4" v-for="(el,i) in element.content.elements"
+                               :key="`${index}-${i}`">
                             <input
                                 :id="`${el.label}-${i}`"
                                 v-model="el.checked"
@@ -103,7 +105,8 @@
                       </div>
                       <div v-else class="">
                         <span class="text-black-c font-medium text-md mb-2 block">{{ element.content.title }}</span>
-                        <div class="flex items-center mb-3 gap-x-2" v-for="(el,i) in element.content.elements" :key="`${index}-${i}`">
+                        <div class="flex items-center mb-3 gap-x-2" v-for="(el,i) in element.content.elements"
+                             :key="`${index}-${i}`">
                           <input
                               :id="`${el.label}-${i}`"
                               v-model="el.checked"
@@ -112,7 +115,8 @@
                               class="accent-green-c w-3 h-3 border-0 flex pl-8 pr-3 py-3 rounded-[6px] text-sm ease-linear transition-all duration-150 cursor-pointer"
                           />
 
-                          <label :for="`${el.label}-${i}`" class="text-xs text-black-c cursor-pointer whitespace-nowrap">
+                          <label :for="`${el.label}-${i}`"
+                                 class="text-xs text-black-c cursor-pointer whitespace-nowrap">
                             {{ el.label }}
                           </label>
                         </div>
@@ -148,7 +152,6 @@ import VMdEditor from '@kangc/v-md-editor';
 import Dropzone from 'dropzone-vue';
 import 'dropzone-vue/dist/dropzone-vue.common.css';
 import {catchErrors} from "../../utils";
-import {useAttachmentsStore} from "../../store/attachments";
 import draggable from 'vuedraggable'
 import DragIcon from "../Svg/DragIcon.vue";
 import EditIcon from "../Svg/EditIcon.vue";
@@ -156,13 +159,17 @@ import TrashIcon from "../Svg/TrashIcon.vue";
 import Button from '../Button/Button.vue'
 import AttachmentMediaModal from '../Modals/AttachmentMediaModal.vue'
 
-const emit = defineEmits(['update:modelValue', 'updateDeleteList','edit', 'updateTask'])
+const emit = defineEmits(['update:modelValue', 'updateDeleteList', 'edit', 'updateTask'])
 const props = defineProps({
   modelValue: {
     type: Array,
     default: () => []
   },
   deletedBlockList: {
+    type: Array,
+    default: () => []
+  },
+  blocks: {
     type: Array,
     default: () => []
   },
@@ -180,9 +187,6 @@ const props = defineProps({
   },
 })
 
-//Store
-const attachmentsStore = useAttachmentsStore()
-
 
 //State
 const editLists = ref([])
@@ -196,15 +200,12 @@ const activeSrc = ref({
 
 
 //Watch
-watch(()=>props.blockName,(val)=>{
+watch(() => props.blockName, (val) => {
   if (val) addNewForm(val)
-})
-watch(()=>props.updateValue,(val)=>{
-  formList.value = val
 })
 watch(formList, (val) => {
   emit('update:modelValue', val)
-})
+}, {deep: true})
 
 
 //Methods
@@ -222,8 +223,8 @@ const openModal = (element) => {
   }
 }
 
-const pressEnter = (e,index)=>{
-  if (e.keyCode === 13){
+const pressEnter = (e, index) => {
+  if (e.keyCode === 13) {
     addNewCheckboxItem(index)
   }
 }
@@ -251,7 +252,7 @@ const changeDrag = async (e) => {
   }
 }
 
-const saveMarkdown = ()=>{
+const saveMarkdown = () => {
   emit('updateTask')
 }
 
@@ -261,12 +262,12 @@ const addNewCheckboxItem = (index) => {
     checked: false,
   })
 
-  setTimeout(()=>{
+  setTimeout(() => {
     const form = document.getElementById(`check-${index}`)
     const inputs = form.querySelectorAll('input')
     const lastItem = inputs[inputs.length - 1]
     lastItem.focus()
-  },100)
+  }, 100)
 }
 
 const editItem = (index) => {
@@ -274,12 +275,12 @@ const editItem = (index) => {
   formList.value[index].is_edit = true
   emit('edit')
 
-  setTimeout(()=>{
+  setTimeout(() => {
     const form = document.getElementById(`check-${index}`)
     const inputs = form.querySelectorAll('input')
     const lastItem = inputs[inputs.length - 1]
     lastItem.focus()
-  },100)
+  }, 100)
 }
 
 const removeCheckboxItem = (checklistIndex, elementIndex) => {
@@ -290,7 +291,7 @@ const removeFormItem = (index) => {
   const itemId = formList.value[index].id
   formList.value = formList.value.filter((item, i) => i !== index)
   editLists.value = editLists.value.filter((item, i) => i !== index)
-  emit('updateDeleteList',itemId)
+  emit('updateDeleteList', itemId)
   emit('edit')
 }
 
@@ -305,7 +306,7 @@ const addNewForm = (version) => {
     },
     IMAGE: {
       block_type: version,
-      content:{
+      content: {
         path: "",
       },
       position: formList.value.length || 0
@@ -331,38 +332,25 @@ const addNewForm = (version) => {
   else formList.value.push(obj[version])
   emit('edit')
 
-  setTimeout(()=>{
-    if (version === 'CHECKLIST'){
-      setTimeout(()=>{
+  setTimeout(() => {
+    if (version === 'CHECKLIST') {
+      setTimeout(() => {
         const form = document.getElementById(`check-${formList.value.length - 1}`)
         const inputs = form.querySelectorAll('input')
         const lastItem = inputs[inputs.length - 1]
         lastItem.focus()
-      },100)
+      }, 100)
     }
 
-  },100)
-}
-
-const saveFiles = async (e, index) => {
-  try {
-    const formData = new FormData();
-    for (var i = 0; i < e.length; i++) {
-      formData.append(e[i].name, e[i]);
-    }
-
-    if (props.taskId) {
-      formData.append('task_id', props.taskId);
-    }
-
-    const resp = await attachmentsStore.uploadAttachments(formData)
-    formList.value[index].content.path = resp.data.attachments[0].file_path
-  } catch (e) {
-    catchErrors(e)
-  }
+  }, 100)
 }
 
 onMounted(() => {
+  props.modelValue.map((item) => {
+    item.is_edit = false
+    return item
+  })
+
   formList.value = JSON.parse(JSON.stringify(props.modelValue))
   if (props.firstOne) editLists.value = [true]
   else {
