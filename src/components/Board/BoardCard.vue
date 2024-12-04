@@ -135,6 +135,7 @@ const saveCardItem = async (form) => {
     const data = {
       card: props.card.id,
       comment: form.comment || '',
+      board: form.selectedBoard || null,
       task: form.selectedTask || null,
       project: form.selectedProject || null,
       position: props.card.card_items.length || 0

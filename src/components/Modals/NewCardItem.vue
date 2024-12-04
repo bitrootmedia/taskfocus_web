@@ -33,6 +33,13 @@
                   version="gray"
                   size="medium"
               />
+
+              <Button
+                  @on-click="step = 4"
+                  :label="'Board'"
+                  version="gray"
+                  size="medium"
+              />
             </div>
 
             <div v-if="step === 1">
@@ -101,6 +108,35 @@
                     v-model="form.comment"></textarea>
               </form>
             </div>
+
+            <div v-if="step === 4">
+              <div class="w-full">
+                <span class="text-black-c font-semibold text-sm mb-1 block">Search boards</span>
+
+                <div class="relative w-full">
+                  <SearchIcon class="fas fa-search mr-2 text-sm text-blueGray-300 absolute top-1 left-2"/>
+                  <input
+                      v-model="form.boardSearch"
+                      type="text"
+                      class="w-full pl-9 pr-3 py-[5px] placeholder-[#797A7B] text-[#797A7B] bg-white border border-light-bg-c rounded-[6px] text-sm focus:outline-none focus:ring ease-linear transition-all duration-150"
+                      placeholder="Search..."
+                      @input="searchBoard"
+                  />
+                </div>
+              </div>
+
+              <ul class="mt-3 notifications-wrapper max-h-[320px] overflow-y-auto pr-2">
+                <li v-for="board in boards" :key="board.id" class="flex justify-between items-center gap-x-1 mb-2">
+                  <span class="text-[13px] text-light-c font-medium">{{ board.name }}</span>
+                  <Button
+                      @on-click="assignItem(board,'board')"
+                      :label="'Assign'"
+                      :version="'green-small'"
+                      size="small"
+                  />
+                </li>
+              </ul>
+            </div>
           </div>
 
           <div class="flex justify-center items-center gap-4 mt-8 border-t border-light-bg-c pt-4">
@@ -135,6 +171,7 @@ import SearchIcon from "../Svg/SearchIcon.vue";
 import {catchErrors} from "../../utils/index.js";
 import {useTasksStore} from "../../store/tasks.js";
 import {useProjectStore} from "../../store/project.js";
+import {useBoardsStore} from "../../store/boards.js";
 
 const emit = defineEmits(['close', 'create', 'update'])
 const props = defineProps({
@@ -162,21 +199,26 @@ const props = defineProps({
 })
 
 //Store
+const boardsStore = useBoardsStore()
 const tasksStore = useTasksStore()
 const projectStore = useProjectStore()
 
 
 //State
 const step = ref(props.isEdit ? 3 : 0)
+const firstLoadBoard = ref(false)
 const firstLoadTask = ref(false)
 const firstLoadProject = ref(false)
+const boards = ref([])
 const tasks = ref([])
 const projects = ref([])
 const form = ref({
   comment: '',
   selectedTask: null,
   selectedProject: null,
+  selectedBoard: null,
   taskSearch: '',
+  boardSearch: '',
   projectSearch: '',
 })
 
@@ -188,12 +230,19 @@ watch(() => props.showModal, (val) => {
       comment: props.editItem?.comment,
       selectedTask: props.editItem?.task?.id,
       selectedProject: props.editItem?.project?.id,
+      selectedBoard: props.editItem?.board?.id,
+      boardSearch: props.editItem?.board?.name,
       taskSearch: props.editItem?.task?.title,
       projectSearch: props.editItem?.project?.title,
     }
 
     if (props.editItem?.task?.id) searchTask()
     if (props.editItem?.project?.id) searchProject()
+    if (props.editItem?.board?.id) searchBoard()
+  } else if (val) {
+    searchTask()
+    searchProject()
+    searchBoard()
   }
 })
 
@@ -202,6 +251,7 @@ watch(() => props.showModal, (val) => {
 const assignItem = (item, version) => {
   if (version === 'task') form.value.selectedTask = item.id
   if (version === 'project') form.value.selectedProject = item.id
+  if (version === 'board') form.value.selectedBoard = item.id
 
   createNewCardItem()
 }
@@ -218,6 +268,23 @@ const searchTask = async () => {
     const resp = await tasksStore.fetchTasks(options)
     tasks.value = resp.data.results
     if (!firstLoadTask.value) firstLoadTask.value = true
+  } catch (e) {
+    catchErrors(e)
+  }
+}
+
+const searchBoard = async () => {
+  try {
+    const options = {
+      search: form.value.boardSearch,
+      query: 'page=1&page_size=10'
+    }
+
+    if (!firstLoadBoard.value) delete options.search
+
+    const resp = await boardsStore.fetchBoards(options)
+    boards.value = resp.data.results
+    if (!firstLoadBoard.value) firstLoadBoard.value = true
   } catch (e) {
     catchErrors(e)
   }
@@ -252,7 +319,9 @@ const resetData = () => {
     comment: '',
     selectedTask: null,
     selectedProject: null,
+    selectedBoard: null,
     taskSearch: '',
+    boardSearch: '',
     projectSearch: '',
   }
 }
@@ -264,7 +333,4 @@ const createNewCardItem = async (e) => {
   else emit('create', form.value)
   closeModal()
 }
-
-searchTask()
-searchProject()
 </script>
