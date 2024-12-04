@@ -36,6 +36,20 @@ export const useBoardsStore = defineStore('boards', {
             return await axios.delete(`/board/${payload.id}`)
         },
 
+        async pinBoard(payload) {
+            return await axios.post(`/pin-board/${payload.id}`)
+        },
+
+        async unpinBoard(payload) {
+            return await axios.delete(`/pin-board/${payload.id}`)
+        },
+
+        async fetchPinnedBoards(payload) {
+            let url = `/pinned-boards?`
+            if (payload?.query) url += `&${payload.query}`
+            return await axios.get(url)
+        },
+
         async updateBoard(payload) {
             return await axios.patch(`/board/${payload.id}`, payload)
         },
@@ -87,7 +101,7 @@ export const useBoardsStore = defineStore('boards', {
         async removeBoardUser(payload) {
             const id = payload.id
             delete payload.id
-            return await axios.delete(`/board-users/${id}`, { data: payload })
+            return await axios.delete(`/board-users/${id}`, {data: payload})
         },
     },
 })

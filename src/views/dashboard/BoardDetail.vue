@@ -31,7 +31,7 @@
                 version="green"
             />
 
-            <GearDropdown v-if="isAuthOwner" v-model:value="showBoardUsersModal"/>
+            <GearDropdown v-if="isAuthOwner" v-model:value="showBoardUsersModal" :board="board" @update="fetchBoard"/>
           </div>
         </div>
 

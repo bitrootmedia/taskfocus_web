@@ -27,6 +27,8 @@
               v-model:query="paginate.query.value"
           />
         </div>
+
+        <PinnedBoards/>
       </div>
 
       <div class="mb-10">
@@ -48,6 +50,7 @@ import {useCookies} from "vue3-cookies";
 import Pagination from "../../components/Pagination/Pagination.vue";
 import {usePaginate} from "../../composables/usePaginate";
 import config from "../../config/index.js";
+import PinnedBoards from "../../components/Lists/PinnedBoards.vue";
 
 const {bindEvent, setPusherChannel} = usePusher()
 const {cookies} = useCookies();

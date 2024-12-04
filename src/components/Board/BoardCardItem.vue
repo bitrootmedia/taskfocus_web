@@ -9,6 +9,10 @@
       Project: <span class="underline cursor-pointer">{{ cardItem.project.title }}</span>
     </div>
 
+    <div v-if="cardItem.board" @click="toLink(cardItem.board,'board')">
+      Board: <span class="underline cursor-pointer">{{ cardItem.board.name }}</span>
+    </div>
+
     <span v-if="cardItem.comment">{{ cardItem.comment }}</span>
 
     <div
