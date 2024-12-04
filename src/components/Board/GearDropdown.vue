@@ -12,6 +12,10 @@
           @click="$emit('update:value', true)">
         Manage Board Users
       </li>
+      <li class="text-sm flex items-center gap-x-1 py-1 px-4 whitespace-nowrap cursor-pointer hover:bg-light-bg-c transition-all ease-in-out"
+          @click="pinBoard">
+        {{ board.is_pinned ? 'Unpin' : 'Pin' }} Board
+      </li>
     </ul>
   </div>
 </template>
@@ -24,6 +28,14 @@ import {useBoardsStore} from "../../store/boards.js";
 import {useToast} from "vue-toastification";
 import {onBeforeUnmount, onMounted, ref} from "vue";
 
+
+const emit = defineEmits(['update'])
+const props = defineProps({
+  board: {
+    type: Object,
+    default: false
+  },
+})
 
 //Store
 const router = useRouter()
@@ -45,6 +57,23 @@ const deleteBoard = async () => {
     await boardsStore.deleteBoard(data)
     await router.push('/dashboard/boards')
     toast.success("Successfully deleted!");
+    close()
+  } catch (e) {
+    catchErrors(e)
+  }
+}
+
+const pinBoard = async () => {
+  try {
+    const data = {
+      id: route.params.id,
+    }
+
+    if (props.board.is_pinned) await boardsStore.unpinBoard(data)
+    else await boardsStore.pinBoard(data)
+
+    emit('update')
+    toast.success(`Successfully ${props.board.is_pinned ? 'unpinned' : 'pinned'}!`);
     close()
   } catch (e) {
     catchErrors(e)
