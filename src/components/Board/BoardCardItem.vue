@@ -5,8 +5,8 @@
       <div @click="toLink(cardItem.task,'task')">
         Task: <span class="underline cursor-pointer">{{ cardItem.task.title }}</span>
       </div>
-      <div class="text-sm my-1">Status: <span>{{ cardItem.task.status || 'N/A' }}</span></div>
-      <div class="text-sm">Responsible: <span>{{ cardItem.task.responsible?.username || 'N/A' }}</span></div>
+      <div class="text-xs my-1">Status: <span>{{ cardItem.task.status || 'N/A' }}</span></div>
+      <div class="text-xs">Responsible: <span>{{ cardItem.task.responsible?.username || 'N/A' }}</span></div>
     </div>
 
     <div v-if="cardItem.project" @click="toLink(cardItem.project,'project')">
