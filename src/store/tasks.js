@@ -83,15 +83,15 @@ export const useTasksStore = defineStore('tasks', {
         },
 
         async createTaskBlocks(payload){
-            return await axios.post(`/task-block-list/${payload.id}`,payload.block)
+            return await axios.post(`/task-block-create`,payload)
         },
 
         async updateTaskBlocks(payload){
-            return await axios.put(`/task-block/${payload.id}`,payload)
+            return await axios.put(`/task-block-update`,payload)
         },
 
         async deleteTaskBlocks(payload){
-            return await axios.delete(`/task-block/${payload}`)
+            return await axios.delete(`/task-block-delete`,{ data: payload})
         },
 
         async fetchTaskTime(payload){
