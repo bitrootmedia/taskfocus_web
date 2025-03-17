@@ -158,6 +158,7 @@ import EditIcon from "../Svg/EditIcon.vue";
 import TrashIcon from "../Svg/TrashIcon.vue";
 import Button from '../Button/Button.vue'
 import AttachmentMediaModal from '../Modals/AttachmentMediaModal.vue'
+import {useTasksStore} from "../../store/tasks.js";
 
 const emit = defineEmits(['update:modelValue', 'updateDeleteList', 'edit', 'updateTask'])
 const props = defineProps({
@@ -189,6 +190,7 @@ const props = defineProps({
 
 
 //State
+const taskStore = useTasksStore()
 const editLists = ref([])
 const formList = ref([])
 const dragging = ref(false)
@@ -232,22 +234,22 @@ const pressEnter = (e, index) => {
 const changeDrag = async (e) => {
   try {
     const newIndex = e.moved.newIndex
-    const oldIndex = e.moved.oldIndex
-
-    formList.value[newIndex] = {
-      ...formList.value[newIndex],
-      position: newIndex,
-      is_edit: true,
-    }
-    formList.value[oldIndex] = {
-      ...formList.value[oldIndex],
-      position: oldIndex,
-      is_edit: true,
-    }
-
-    emit('edit')
-
+    const blockId = e.moved.element.id
+    await changeBlockPosition(newIndex, blockId)
   } catch (e) {
+    catchErrors(e)
+  }
+}
+
+const changeBlockPosition = async(position, blockId)=>{
+  try {
+    const data = {
+      task: props.taskId,
+      block: blockId,
+      position: position
+    }
+    await taskStore.taskBlockMove(data)
+  }catch (e) {
     catchErrors(e)
   }
 }

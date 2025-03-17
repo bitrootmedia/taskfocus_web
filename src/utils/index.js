@@ -99,4 +99,8 @@ export const catchErrors = (e) => {
 export const pusherEventNames = {
     'comment_created': 'comment_created',
     'current_task_update': 'current_task_update',
+    'block_created': 'block_created',
+    'block_updated': 'block_updated',
+    'block_archived': 'block_archived',
+    'block_moved': 'block_moved',
 }

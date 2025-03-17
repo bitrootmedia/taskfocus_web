@@ -1,8 +1,12 @@
 <template>
   <div
       class="flex justify-between bg-white rounded-md px-2 py-2 border border-[#E5E7E7] shadow-sm mb-2 cursor-move relative group">
-    <div v-if="cardItem.task" @click="toLink(cardItem.task,'task')">
-      Task: <span class="underline cursor-pointer">{{ cardItem.task.title }}</span>
+    <div v-if="cardItem.task">
+      <div @click="toLink(cardItem.task,'task')">
+        Task: <span class="underline cursor-pointer">{{ cardItem.task.title }}</span>
+      </div>
+      <div class="text-xs my-1">Status: <span>{{ cardItem.task.status || 'N/A' }}</span></div>
+      <div class="text-xs">Responsible: <span>{{ cardItem.task.responsible?.username || 'N/A' }}</span></div>
     </div>
 
     <div v-if="cardItem.project" @click="toLink(cardItem.project,'project')">
@@ -17,7 +21,8 @@
 
     <div
         class="flex opacity-0 group-hover:opacity-100 transition-all ease-in-out justify-center items-center bg-white rounded-full w-6 h-6 shadow-md">
-      <IconDropdown v-model:panel="showEditPanel" :cardItem="cardItem" @deleteCardItem="deleteCardItem" @convertTextToTask="convertToTask"/>
+      <IconDropdown v-model:panel="showEditPanel" :cardItem="cardItem" @deleteCardItem="deleteCardItem"
+                    @convertTextToTask="convertToTask"/>
     </div>
 
     <NewCardItem
@@ -108,8 +113,8 @@ const saveCardItem = async (taskId) => {
   }
 }
 
-const updateCardItem = async(form)=>{
-  try{
+const updateCardItem = async (form) => {
+  try {
     const data = {
       id: props.cardItem.id,
       card: props.cardItem.card,
@@ -121,7 +126,7 @@ const updateCardItem = async(form)=>{
 
     await boardsStore.updateBoardCardItem(data)
     emit('fetchBoard')
-  }catch (e) {
+  } catch (e) {
     catchErrors(e)
   }
 }

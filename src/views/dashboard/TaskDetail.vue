@@ -529,7 +529,7 @@
 
 <script setup>
 import {computed, onBeforeUnmount, onMounted, ref, watch} from "vue";
-import {catchErrors, convertDate, convertDateTime} from "../../utils";
+import {catchErrors, convertDate, convertDateTime, pusherEventNames} from "../../utils";
 import {useRoute, useRouter} from "vue-router";
 import {useTasksStore} from "../../store/tasks";
 import Loader from "./../../components/Loader/Loader.vue"
@@ -607,7 +607,7 @@ const defaultEditValues = {
 }
 
 // State
-const {setPusherChannel} = usePusher()
+const {bindEvent, setPusherChannel} = usePusher()
 const taskStore = useTasksStore()
 const projectStore = useProjectStore()
 const userStore = useUserStore()
@@ -974,6 +974,7 @@ const fetchTaskBlocks = async () => {
       firstOne.value = true
       isEditPanel.value.blocks = true
     }
+    keyList.value += 1
   } catch (e) {
     console.log(e, 'e')
   }
@@ -1101,20 +1102,34 @@ const blockCall = async (blocks, id) => {
 
     if (creationBlocks?.length) {
       creationBlocks.map(async (block) => {
-        const obj = {id, block}
+        const obj = {
+          ...block,
+          task: id
+        }
         await taskStore.createTaskBlocks(obj)
       })
     }
 
     if (updatedBlocks?.length) {
       updatedBlocks.map(async (block) => {
-        await taskStore.updateTaskBlocks(block)
+        const obj = {
+          task: id,
+          block: block.id,
+          block_type: block.block_type,
+          content: block.content,
+          position: block.position,
+        }
+        await taskStore.updateTaskBlocks(obj)
       })
     }
 
     if (deletedBlockList.value?.length) {
-      deletedBlockList.value.map(async (id) => {
-        await taskStore.deleteTaskBlocks(id)
+      deletedBlockList.value.map(async (blockId) => {
+        const obj = {
+          block: blockId,
+          task: id
+        }
+        await taskStore.deleteTaskBlocks(obj)
       })
     }
   } catch (e) {
@@ -1411,6 +1426,14 @@ fetchTask()
 fetchDictionary()
 fetchCurrentTask()
 fetchReminders()
+
+
+// Config Pusher
+setPusherChannel(route.params.id)
+bindEvent(pusherEventNames.block_created, fetchTaskBlocks)
+bindEvent(pusherEventNames.block_updated, fetchTaskBlocks)
+bindEvent(pusherEventNames.block_archived, fetchTaskBlocks)
+bindEvent(pusherEventNames.block_moved, fetchTaskBlocks)
 </script>
 
 <style scoped>
