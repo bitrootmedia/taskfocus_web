@@ -1117,6 +1117,7 @@ const blockCall = async (blocks, id) => {
           block: block.id,
           block_type: block.block_type,
           content: block.content,
+          position: block.position,
         }
         await taskStore.updateTaskBlocks(obj)
       })

@@ -94,6 +94,10 @@ export const useTasksStore = defineStore('tasks', {
             return await axios.delete(`/task-block-delete`,{ data: payload})
         },
 
+        async taskBlockMove(payload){
+            return await axios.post(`/task-block-move`,payload)
+        },
+
         async fetchTaskTime(payload){
             return await axios.get(`/task-total-time/${payload.id}`)
         },
