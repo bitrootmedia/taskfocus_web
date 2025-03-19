@@ -21,7 +21,6 @@
                   <div class="content p-[14px] flex justify-between items-start gap-x-4">
                     <div class="w-full">
                       <v-md-editor v-if="editLists[index]" v-model="element.content.markdown" height="270px"
-                                   @save="saveMarkdown"
                                    :disabled-menus="[]"/>
 
                       <v-md-preview v-else :text="element.content.markdown"></v-md-preview>
@@ -352,7 +351,6 @@ onMounted(() => {
     item.is_edit = false
     return item
   })
-
   formList.value = JSON.parse(JSON.stringify(props.modelValue))
   if (props.firstOne) editLists.value = [true]
   else {

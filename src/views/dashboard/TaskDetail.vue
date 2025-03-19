@@ -5,7 +5,8 @@
     <div class="left-side pt-6">
       <div>
         <div class="main-container pb-8">
-          <h1 v-if="!userStore.showPanel.show" class="inline-flex cursor-pointer mb-6 font-bold text-3xl" @click="showTitleEditPanel">{{
+          <h1 v-if="!userStore.showPanel.show" class="inline-flex cursor-pointer mb-6 font-bold text-3xl"
+              @click="showTitleEditPanel">{{
               task.title
             }}</h1>
 
@@ -1428,12 +1429,58 @@ fetchCurrentTask()
 fetchReminders()
 
 
+const blockMoved = (data) => {
+  const positions = data.changed_positions
+
+  form.value.blocks = form.value.blocks.map((block) =>
+      positions[block.id] !== undefined
+          ? {...block, position: positions[block.id]}
+          : block
+  ).sort((a, b) => a.position - b.position);
+
+  keyList.value += 1
+}
+
+const blockDeleted = (data) => {
+  form.value.blocks = form.value.blocks.filter((item) => item.id !== data.archived_block)
+
+  if (Object.keys(data.changed_positions).length) {
+    return blockMoved(data)
+  }
+
+  keyList.value += 1
+}
+
+const blockUpdated = (data) => {
+  form.value.blocks = form.value.blocks.map(item =>
+      item.id === data.updated_block.id
+          ? {...data.updated_block, created_by: item.created_by}
+          : item
+  );
+
+  keyList.value += 1
+}
+
+const blockCreated = (data) => {
+  form.value.blocks.push(data.created_block)
+  form.value.blocks = Array.from(
+      new Map(form.value.blocks.map(item => [item.id, item])).values()
+  );
+
+  if (Object.keys(data.changed_positions).length) {
+    return blockMoved(data)
+  }
+
+  keyList.value += 1
+}
+
+
 // Config Pusher
 setPusherChannel(route.params.id)
-bindEvent(pusherEventNames.block_created, fetchTaskBlocks)
-bindEvent(pusherEventNames.block_updated, fetchTaskBlocks)
-bindEvent(pusherEventNames.block_archived, fetchTaskBlocks)
-bindEvent(pusherEventNames.block_moved, fetchTaskBlocks)
+bindEvent(pusherEventNames.block_created, blockCreated)
+bindEvent(pusherEventNames.block_updated, blockUpdated)
+bindEvent(pusherEventNames.block_archived, blockDeleted)
+bindEvent(pusherEventNames.block_moved, blockMoved)
 </script>
 
 <style scoped>
