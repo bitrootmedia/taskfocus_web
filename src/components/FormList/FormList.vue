@@ -270,6 +270,8 @@ const changeDrag = async (e) => {
   try {
     const newIndex = e.moved.newIndex
     const blockId = e.moved.element.id
+
+    if (!blockId) return
     await changeBlockPosition(newIndex, blockId)
   } catch (e) {
     catchErrors(e)
