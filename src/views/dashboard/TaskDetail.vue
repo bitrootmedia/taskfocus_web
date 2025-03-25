@@ -1464,8 +1464,16 @@ const blockUpdated = (data) => {
 const blockCreated = (data) => {
   form.value.blocks.push(data.created_block)
   form.value.blocks = Array.from(
-      new Map(form.value.blocks.map(item => [item.id, item])).values()
+      new Map(
+          form.value.blocks
+              .filter((item) => item.id)
+              .map((item) => [item.id, item])
+      ).values()
   );
+
+  firstOne.value = false
+  isEditPanel.blocks = false
+  hidePanel()
 
   if (Object.keys(data.changed_positions).length) {
     return blockMoved(data)

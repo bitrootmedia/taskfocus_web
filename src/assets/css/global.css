@@ -206,6 +206,10 @@ tr:nth-child(odd) {
     margin-bottom: 0 !important;
 }
 
+.github-markdown-body > p > img{
+    width: 150px;
+}
+
 .v-md-editor__preview-wrapper, .v-md-icon-preview {
     display: none !important;
 }

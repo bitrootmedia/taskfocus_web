@@ -70,11 +70,11 @@ const toLink = (item, type) => {
   router.push(`/dashboard/${type}/${item.id}`)
 }
 
-const deleteCardItem = async () => {
+const deleteCardItem = async (notShowToast) => {
   try {
     await boardsStore.deleteBoardCardItem({id: props.cardItem.id})
     emit('fetchBoard')
-    toast.success("Successfully deleted!");
+    if (!notShowToast) toast.success("Successfully deleted!");
     showPanel.value = false
   } catch (e) {
     catchErrors(e)
@@ -86,9 +86,10 @@ const convertToTask = async () => {
     const data = {
       title: props.cardItem.comment,
     }
+
     const resp = await taskStore.createTask(data)
     await saveCardItem(resp.data.id)
-    await deleteCardItem()
+    await deleteCardItem(true)
     emit('fetchBoard')
     toast.success("Successfully converted!");
     close()

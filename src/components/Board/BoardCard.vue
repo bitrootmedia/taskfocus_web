@@ -107,6 +107,7 @@ const onDragEnd = async (event) => {
     }
 
     await boardsStore.updateBoardCardItemMove(data)
+    emit('fetchBoard')
   } catch (e) {
     catchErrors(e)
   }
@@ -125,6 +126,7 @@ const changeDrag = async (e) => {
     }
 
     await boardsStore.updateBoardCardItemMove(data)
+    emit('fetchBoard')
   } catch (e) {
     catchErrors(e)
   }
