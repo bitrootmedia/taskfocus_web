@@ -3,29 +3,35 @@
 
     <div class="chat-wrapper flex gap-10">
       <div class="left-side w-1/2 space-y-4">
-        <div class="global-search border border-gray-600 h-[50px]">Global Search</div>
+        <GlobalSearch v-model:globalSearch="globalSearch"/>
 
         <div class="flex gap-4">
-          <div class="users-list w-1/2 border border-gray-600 h-[800px]">Users List</div>
-          <div class="threads-list w-1/2 border border-gray-600 h-[800px]">Threads List</div>
+          <UsersList v-model:activeUser="activeUser"/>
+
+          <ThreadsList v-model:activeThread="activeThread"/>
         </div>
       </div>
 
       <div class="right-side w-1/2 space-y-4">
+        <ChatInfo />
 
-        <div class="chat-info border border-gray-600 h-[100px]">
-          Chat Info
-        </div>
-
-        <div class="chat-content border border-gray-600 h-[750px]">
-          <h1>Chat</h1>
-        </div>
+        <Chat />
       </div>
     </div>
   </div>
 </template>
 
 <script setup>
+import {ref} from "vue";
+import GlobalSearch from "../../components/Chat/GlobalSearch.vue";
+import UsersList from "../../components/Chat/UsersList.vue";
+import ThreadsList from "../../components/Chat/ThreadsList.vue";
+import ChatInfo from "../../components/Chat/ChatInfo.vue";
+import Chat from "../../components/Chat/Chat.vue";
+
+const globalSearch = ref('')
+const activeUser = ref(null)
+const activeThread = ref(null)
 
 </script>
 
