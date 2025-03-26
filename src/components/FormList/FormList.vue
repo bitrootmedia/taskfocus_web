@@ -12,7 +12,7 @@
         >
           <template #item="{ element, index }">
             <div class="list-group-item flex items-start gap-x-4 mb-6 description-panel">
-              <button type="button" class="text-white cursor-pointer handle">
+              <button v-if="element.id" type="button" class="text-white cursor-pointer handle">
                 <DragIcon/>
               </button>
 
@@ -163,7 +163,6 @@ import Button from '../Button/Button.vue'
 import AttachmentMediaModal from '../Modals/AttachmentMediaModal.vue'
 import {useTasksStore} from "../../store/tasks.js";
 import {useAttachmentsStore} from "../../store/attachments.js";
-import config from "../../config/index.js";
 
 const emit = defineEmits(['update:modelValue', 'updateDeleteList', 'edit', 'updateTask'])
 const props = defineProps({
@@ -269,7 +268,13 @@ const pressEnter = (e, index) => {
 const changeDrag = async (e) => {
   try {
     const newIndex = e.moved.newIndex
+    const oldIndex = e.moved.oldIndex
     const blockId = e.moved.element.id
+
+    if (e.moved.element.isEdit){
+      editLists.value[newIndex] = true
+      editLists.value[oldIndex] = false
+    }
 
     if (!blockId) return
     await changeBlockPosition(newIndex, blockId)
@@ -337,6 +342,7 @@ const removeFormItem = (index) => {
 const addNewForm = (version) => {
   let obj = {
     MARKDOWN: {
+      isEdit: true,
       block_type: version,
       content: {
         markdown: ''
@@ -344,6 +350,7 @@ const addNewForm = (version) => {
       position: formList.value.length || 0
     },
     IMAGE: {
+      isEdit: true,
       block_type: version,
       content: {
         path: "",
@@ -351,6 +358,7 @@ const addNewForm = (version) => {
       position: formList.value.length || 0
     },
     CHECKLIST: {
+      isEdit: true,
       block_type: version,
       content: {
         title: "",
