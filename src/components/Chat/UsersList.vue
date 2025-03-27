@@ -11,7 +11,7 @@
     <ul v-if="users.length" class="mt-8">
       <li v-for="user in users"
           :key="user.id"
-          class="flex gap-x-1 items-center whitespace-nowrap mb-2 last:mb-0 px-3 py-1.5 cursor-pointer hover:bg-light-bg-c transition-all"
+          class="flex flex-wrap sm:flex-nowrap gap-x-1 items-center sm:whitespace-nowrap mb-2 last:mb-0 px-3 py-1.5 cursor-pointer hover:bg-light-bg-c transition-all"
           @click="emit('update:activeUser', user)"
       >
         <span class="text-[13px] text-light-c font-medium">{{ user.username }}</span>
@@ -44,8 +44,6 @@ const fetchUsers = async (search) => {
   try {
     const resp = await userStore.fetchUsers(search)
     users.value = resp.data.results
-
-    console.log(resp.data.results, 'resp')
   } catch (e) {
     catchErrors(e)
   }
