@@ -26,6 +26,20 @@ module.exports = {
       'red-c': '#E44B2A',
       'red-light-c': 'rgba(228, 75, 42, 0.20)',
     },
+    keyframes: {
+      typing: {
+        '0%, 80%, 100%': { opacity: '0', transform: 'translateY(0)' },
+        '40%': { opacity: '1' },
+      },
+      'typing-middle': {
+        '0%, 80%, 100%': { opacity: '0', transform: 'translateY(0)' },
+        '40%': { opacity: '1', transform: 'translateY(-3px)' },
+      },
+    },
+    animation: {
+      typing: 'typing 1.5s infinite',
+      'typing-middle': 'typing-middle 1.5s infinite',
+    },
     extend: {
       minHeight: {
         "screen-75": "75vh",
