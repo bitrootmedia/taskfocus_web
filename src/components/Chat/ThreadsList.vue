@@ -58,6 +58,12 @@ import {ref} from "vue";
 import Button from "../Button/Button.vue";
 
 const emit = defineEmits([''])
+const props = defineProps({
+  activeThread: {
+    type: Object,
+    required: false
+  }
+})
 
 //State
 const threads = ref([])
@@ -68,7 +74,3 @@ const startNewThread = () => {
 }
 
 </script>
-
-<style scoped>
-
-</style>

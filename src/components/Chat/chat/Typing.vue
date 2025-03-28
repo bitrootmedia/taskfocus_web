@@ -1,7 +1,3 @@
-<script setup>
-
-</script>
-
 <template>
   <div
       class="absolute -bottom-9 bg-gray-100 w-fit px-3 py-1 rounded-tr-[16px] rounded-tl-[16px] rounded-br-[16px] rounded-bl-[2px] text-secondary font-semibold">
@@ -13,6 +9,6 @@
   </div>
 </template>
 
-<style scoped>
+<script setup>
 
-</style>
+</script>
