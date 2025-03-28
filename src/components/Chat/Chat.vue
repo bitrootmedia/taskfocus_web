@@ -5,7 +5,7 @@
         class="transition-margin duration-400 ease-in-out z-30 relative"
     >
       <div class="bg-secondary">
-        <div ref="messagesContainer" class="content lg:px-4 py-4 min-h-[290px] h-[calc(100vh-450px)] md:h-[calc(100vh-340px)] lg:h-[calc(100vh-300px)] relative overflow-y-auto">
+        <div ref="messagesContainer" class="content lg:px-2 py-4 min-h-[290px] h-[calc(100vh-450px)] md:h-[calc(100vh-340px)] lg:h-[calc(100vh-300px)] relative overflow-y-auto">
 
           <div class="message-wrapper relative">
             <div class="message-item mb-6"
@@ -69,26 +69,26 @@ const messages = ref([
     is_mine: true,
     created_at: ' 2025-03-24 04:08:20'
   },
-  {
-    id: 4,
-    text: 'Several wineries in our portfolio use renewable energy, such as solar and wind power, to minimize their carbon footprint. For example, our partner, Cavit, operates fully on solar energy. Would you like details on how sustainability influences wine quality?',
-    is_mine: false,
-    user: 'Ann',
-    created_at: ' 2025-03-24 04:08:50'
-  },
-  {
-    id: 5,
-    text: 'How does sustainability improve wine quality?',
-    is_mine: true,
-    created_at: ' 2025-03-24 04:09:40'
-  },
-  {
-    id: 6,
-    text: 'Sustainable viticulture often results in healthier vineyards, which can lead to better grape quality and enhanced flavour in wines. Sustainable practices like minimal chemical use and healthier soil can create wines with greater complexity and character.',
-    is_mine: false,
-    user: 'Mike',
-    created_at: ' 2025-03-24 04:10:15'
-  }
+  // {
+  //   id: 4,
+  //   text: 'Several wineries in our portfolio use renewable energy, such as solar and wind power, to minimize their carbon footprint. For example, our partner, Cavit, operates fully on solar energy. Would you like details on how sustainability influences wine quality?',
+  //   is_mine: false,
+  //   user: 'Ann',
+  //   created_at: ' 2025-03-24 04:08:50'
+  // },
+  // {
+  //   id: 5,
+  //   text: 'How does sustainability improve wine quality?',
+  //   is_mine: true,
+  //   created_at: ' 2025-03-24 04:09:40'
+  // },
+  // {
+  //   id: 6,
+  //   text: 'Sustainable viticulture often results in healthier vineyards, which can lead to better grape quality and enhanced flavour in wines. Sustainable practices like minimal chemical use and healthier soil can create wines with greater complexity and character.',
+  //   is_mine: false,
+  //   user: 'Mike',
+  //   created_at: ' 2025-03-24 04:10:15'
+  // }
 ])
 
 
@@ -175,7 +175,3 @@ onMounted(() => {
 })
 
 </script>
-
-<style scoped>
-
-</style>

@@ -46,13 +46,13 @@
 
 <script setup>
 import {ref} from "vue";
+import CloseBlackIcon from "../../components/Svg/CloseBlackIcon.vue";
+import Button from "../../components/Button/Button.vue";
 import GlobalSearch from "../../components/Chat/GlobalSearch.vue";
 import UsersList from "../../components/Chat/UsersList.vue";
 import ThreadsList from "../../components/Chat/ThreadsList.vue";
 import ChatInfo from "../../components/Chat/ChatInfo.vue";
 import Chat from "../../components/Chat/Chat.vue";
-import CloseBlackIcon from "../../components/Svg/CloseBlackIcon.vue";
-import Button from "../../components/Button/Button.vue";
 
 const globalSearch = ref('')
 const activeUser = ref(null)
@@ -61,7 +61,3 @@ const activeThread = ref(null)
 const showMobileMenu = ref(false)
 
 </script>
-
-<style scoped>
-
-</style>
