@@ -223,7 +223,7 @@
 
 <script setup>
 import Pagination from './../Pagination/Pagination.vue'
-import {onMounted, onUnmounted, ref} from "vue";
+import {onMounted, ref} from "vue";
 import {catchErrors, pusherEventNames} from "../../utils";
 import {convertDateTime} from "../../utils";
 import {useRoute, useRouter} from "vue-router";

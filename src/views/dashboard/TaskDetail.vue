@@ -5,7 +5,8 @@
     <div class="left-side pt-6">
       <div>
         <div class="main-container pb-8">
-          <h1 v-if="!userStore.showPanel.show" class="inline-flex cursor-pointer mb-6 font-bold text-3xl" @click="showTitleEditPanel">{{
+          <h1 v-if="!userStore.showPanel.show" class="inline-flex cursor-pointer mb-6 font-bold text-3xl"
+              @click="showTitleEditPanel">{{
               task.title
             }}</h1>
 
@@ -529,7 +530,7 @@
 
 <script setup>
 import {computed, onBeforeUnmount, onMounted, ref, watch} from "vue";
-import {catchErrors, convertDate, convertDateTime} from "../../utils";
+import {catchErrors, convertDate, convertDateTime, pusherEventNames} from "../../utils";
 import {useRoute, useRouter} from "vue-router";
 import {useTasksStore} from "../../store/tasks";
 import Loader from "./../../components/Loader/Loader.vue"
@@ -607,7 +608,7 @@ const defaultEditValues = {
 }
 
 // State
-const {setPusherChannel} = usePusher()
+const {bindEvent, setPusherChannel} = usePusher()
 const taskStore = useTasksStore()
 const projectStore = useProjectStore()
 const userStore = useUserStore()
@@ -974,6 +975,7 @@ const fetchTaskBlocks = async () => {
       firstOne.value = true
       isEditPanel.value.blocks = true
     }
+    keyList.value += 1
   } catch (e) {
     console.log(e, 'e')
   }
@@ -1101,20 +1103,34 @@ const blockCall = async (blocks, id) => {
 
     if (creationBlocks?.length) {
       creationBlocks.map(async (block) => {
-        const obj = {id, block}
+        const obj = {
+          ...block,
+          task: id
+        }
         await taskStore.createTaskBlocks(obj)
       })
     }
 
     if (updatedBlocks?.length) {
       updatedBlocks.map(async (block) => {
-        await taskStore.updateTaskBlocks(block)
+        const obj = {
+          task: id,
+          block: block.id,
+          block_type: block.block_type,
+          content: block.content,
+          position: block.position,
+        }
+        await taskStore.updateTaskBlocks(obj)
       })
     }
 
     if (deletedBlockList.value?.length) {
-      deletedBlockList.value.map(async (id) => {
-        await taskStore.deleteTaskBlocks(id)
+      deletedBlockList.value.map(async (blockId) => {
+        const obj = {
+          block: blockId,
+          task: id
+        }
+        await taskStore.deleteTaskBlocks(obj)
       })
     }
   } catch (e) {
@@ -1411,6 +1427,68 @@ fetchTask()
 fetchDictionary()
 fetchCurrentTask()
 fetchReminders()
+
+
+const blockMoved = (data) => {
+  const positions = data.changed_positions
+
+  form.value.blocks = form.value.blocks.map((block) =>
+      positions[block.id] !== undefined
+          ? {...block, position: positions[block.id]}
+          : block
+  ).sort((a, b) => a.position - b.position);
+
+  keyList.value += 1
+}
+
+const blockDeleted = (data) => {
+  form.value.blocks = form.value.blocks.filter((item) => item.id !== data.archived_block)
+
+  if (Object.keys(data.changed_positions).length) {
+    return blockMoved(data)
+  }
+
+  keyList.value += 1
+}
+
+const blockUpdated = (data) => {
+  form.value.blocks = form.value.blocks.map(item =>
+      item.id === data.updated_block.id
+          ? {...data.updated_block, created_by: item.created_by}
+          : item
+  );
+
+  keyList.value += 1
+}
+
+const blockCreated = (data) => {
+  form.value.blocks.push(data.created_block)
+  form.value.blocks = Array.from(
+      new Map(
+          form.value.blocks
+              .filter((item) => item.id)
+              .map((item) => [item.id, item])
+      ).values()
+  );
+
+  firstOne.value = false
+  isEditPanel.blocks = false
+  hidePanel()
+
+  if (Object.keys(data.changed_positions).length) {
+    return blockMoved(data)
+  }
+
+  keyList.value += 1
+}
+
+
+// Config Pusher
+setPusherChannel(route.params.id)
+bindEvent(pusherEventNames.block_created, blockCreated)
+bindEvent(pusherEventNames.block_updated, blockUpdated)
+bindEvent(pusherEventNames.block_archived, blockDeleted)
+bindEvent(pusherEventNames.block_moved, blockMoved)
 </script>
 
 <style scoped>

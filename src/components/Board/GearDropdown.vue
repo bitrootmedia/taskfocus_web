@@ -4,11 +4,11 @@
 
     <ul ref="dropdown" v-if="showDropdown"
         class="absolute bg-white border border-[#E5E7E7] rounded-md shadow-sm min-w-[100px] right-0 top-[30px] py-2">
-      <li class="text-sm flex items-center gap-x-1 py-1 px-4 whitespace-nowrap cursor-pointer hover:bg-light-bg-c transition-all ease-in-out"
+      <li v-if="isAuthOwner" class="text-sm flex items-center gap-x-1 py-1 px-4 whitespace-nowrap cursor-pointer hover:bg-light-bg-c transition-all ease-in-out"
           @click="deleteBoard">
         Delete Board
       </li>
-      <li class="text-sm flex items-center gap-x-1 py-1 px-4 whitespace-nowrap cursor-pointer hover:bg-light-bg-c transition-all ease-in-out"
+      <li v-if="isAuthOwner" class="text-sm flex items-center gap-x-1 py-1 px-4 whitespace-nowrap cursor-pointer hover:bg-light-bg-c transition-all ease-in-out"
           @click="$emit('update:value', true)">
         Manage Board Users
       </li>
@@ -35,6 +35,10 @@ const props = defineProps({
     type: Object,
     default: false
   },
+  isAuthOwner:{
+    type: Boolean,
+    default: false
+  }
 })
 
 //Store

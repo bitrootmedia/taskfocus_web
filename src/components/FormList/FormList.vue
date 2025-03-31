@@ -20,9 +20,12 @@
                 <div class="form-group bg-white rounded-[10px] w-full">
                   <div class="content p-[14px] flex justify-between items-start gap-x-4">
                     <div class="w-full">
-                      <v-md-editor v-if="editLists[index]" v-model="element.content.markdown" height="270px"
-                                   @save="saveMarkdown"
-                                   :disabled-menus="[]"/>
+                      <v-md-editor v-if="editLists[index]"
+                                   v-model="element.content.markdown"
+                                   height="270px"
+                                   :disabled-menus="[]"
+                                   @upload-image="handleUploadImage"
+                      />
 
                       <v-md-preview v-else :text="element.content.markdown"></v-md-preview>
                     </div>
@@ -158,6 +161,9 @@ import EditIcon from "../Svg/EditIcon.vue";
 import TrashIcon from "../Svg/TrashIcon.vue";
 import Button from '../Button/Button.vue'
 import AttachmentMediaModal from '../Modals/AttachmentMediaModal.vue'
+import {useTasksStore} from "../../store/tasks.js";
+import {useAttachmentsStore} from "../../store/attachments.js";
+import config from "../../config/index.js";
 
 const emit = defineEmits(['update:modelValue', 'updateDeleteList', 'edit', 'updateTask'])
 const props = defineProps({
@@ -189,6 +195,8 @@ const props = defineProps({
 
 
 //State
+const attachmentsStore = useAttachmentsStore()
+const taskStore = useTasksStore()
 const editLists = ref([])
 const formList = ref([])
 const dragging = ref(false)
@@ -209,6 +217,35 @@ watch(formList, (val) => {
 
 
 //Methods
+const handleUploadImage = async (event, insertImage, files) => {
+  try {
+    const file = files[0]
+    const formData = new FormData();
+    formData.append(file.name, file);
+
+    if (props.projectId) {
+      formData.append('project_id', props.projectId);
+    }
+    if (props.taskId) {
+      formData.append('task_id', props.taskId);
+    }
+
+    const resp = await attachmentsStore.uploadAttachments(formData)
+    if (resp.data.attachments[0].file_path) {
+      insertImage({
+        url: resp.data.attachments[0].file_path,
+      });
+
+      // const url = config.BASE_API_URL.substring(0, config.BASE_API_URL.length - 4)
+      // insertImage({
+      //   url: url + resp.data.attachments[0].file_path,
+      // });
+    }
+  } catch (e) {
+    catchErrors(e)
+  }
+}
+
 const openModal = (element) => {
   popUp.value = true
 
@@ -232,21 +269,23 @@ const pressEnter = (e, index) => {
 const changeDrag = async (e) => {
   try {
     const newIndex = e.moved.newIndex
-    const oldIndex = e.moved.oldIndex
+    const blockId = e.moved.element.id
 
-    formList.value[newIndex] = {
-      ...formList.value[newIndex],
-      position: newIndex,
-      is_edit: true,
+    if (!blockId) return
+    await changeBlockPosition(newIndex, blockId)
+  } catch (e) {
+    catchErrors(e)
+  }
+}
+
+const changeBlockPosition = async (position, blockId) => {
+  try {
+    const data = {
+      task: props.taskId,
+      block: blockId,
+      position: position
     }
-    formList.value[oldIndex] = {
-      ...formList.value[oldIndex],
-      position: oldIndex,
-      is_edit: true,
-    }
-
-    emit('edit')
-
+    await taskStore.taskBlockMove(data)
   } catch (e) {
     catchErrors(e)
   }
@@ -350,7 +389,6 @@ onMounted(() => {
     item.is_edit = false
     return item
   })
-
   formList.value = JSON.parse(JSON.stringify(props.modelValue))
   if (props.firstOne) editLists.value = [true]
   else {

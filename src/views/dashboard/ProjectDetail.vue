@@ -41,15 +41,6 @@
                   @update="updateProject('true')"
               />
 
-
-              <div class="mb-2 sm:mb-4">
-                <div class="flex items-center gap-x-1">
-                  <span class="inline-block text-sm text-light-c">Urgent:</span>
-
-                  <Switch v-model:value="form.is_closed"/>
-                </div>
-              </div>
-
               <div class="mb-2 sm:mb-4">
                 <div v-if="!isEditDesc" class="w-fit">
                   <div class="flex items-center">
