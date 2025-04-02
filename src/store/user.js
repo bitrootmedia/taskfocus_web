@@ -69,5 +69,14 @@ export const useUserStore = defineStore('user', {
         async confirmPassword(payload) {
             return await axios.post(`/auth/password/reset/confirm/`, payload)
         },
+
+        async fetchBeaconQuery() {
+            return await axios.get(`/sideapp/home?source=browser`)
+        },
+
+        async createBeaconQuery(payload) {
+            return await axios.post(`/sideapp/home?source=browser`, payload)
+        },
+
     },
 })

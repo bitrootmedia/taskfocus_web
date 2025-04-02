@@ -9,6 +9,7 @@
           'btn-green bg-red-c text-white hover:bg-black-c hover:text-white h-8': version === 'red',
           'btn-green bg-red-c text-white hover:bg-black-c hover:text-white h-6': version === 'red-small',
           'border border-orange-c text-black-c bg-orange-c hover:bg-orange-c-900 h-8': version === 'yellow',
+          'border border-orange-400 text-black-c bg-orange-400 hover:bg-orange-500 h-8': version === 'orange',
           'border border-[#E5E7E7] hover:bg-black-c hover:text-white h-8': version === 'gray',
           'rounded-[6px]': !rounded,
           'rounded-[20px]': rounded,
@@ -43,7 +44,7 @@ const props = defineProps({
     type: String,
     default: ''
   },
-  //yellow,green,white,gray
+  //yellow,green,white,gray, orange
   version: {
     type: String,
     default: ''
