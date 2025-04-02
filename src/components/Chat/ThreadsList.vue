@@ -56,6 +56,8 @@
 <script setup>
 import {ref} from "vue";
 import Button from "../Button/Button.vue";
+import {catchErrors} from "../../utils/index.js";
+import {useConversationsStore} from "../../store/conversations.js";
 
 const emit = defineEmits([''])
 const props = defineProps({
@@ -65,6 +67,9 @@ const props = defineProps({
   }
 })
 
+//Store
+const conversationsStore= useConversationsStore()
+
 //State
 const threads = ref([])
 
@@ -73,4 +78,19 @@ const startNewThread = () => {
 
 }
 
+
+//Methods
+const fetchAllThreads = async()=>{
+  try {
+    const resp = await conversationsStore.fetchAllThreads()
+    console.log(resp.data.results,'resp.data.results')
+    threads.value = resp.data.results
+  } catch (e) {
+    catchErrors(e)
+  }
+}
+
+
+//Run Functions
+fetchAllThreads()
 </script>
