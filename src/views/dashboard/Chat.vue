@@ -23,7 +23,7 @@
         <div class="flex gap-2 sm:gap-4 h-[calc(100vh-170px)] sm:h-[calc(100vh-190px)]">
           <UsersList v-model:activeUser="activeUser"/>
 
-          <ThreadsList v-model:activeThread="activeThread"/>
+          <ThreadsList v-model:activeThread="activeThread" :activeUser="activeUser"/>
         </div>
       </div>
 

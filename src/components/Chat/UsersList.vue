@@ -8,18 +8,18 @@
         placeholder="Users Search..."
     />
 
-    <ul v-if="users.length" class="mt-8">
-      <li v-for="user in users"
-          :key="user.id"
+    <ul v-if="usersThreads.length" class="mt-8">
+      <li v-for="item in usersThreads"
+          :key="item.user.id"
           class="flex flex-wrap sm:flex-nowrap gap-x-1 items-center sm:whitespace-nowrap mb-2 last:mb-0 px-3 py-1.5 cursor-pointer hover:bg-light-bg-c transition-all text-light-c"
-          :class="{'bg-orange-c': activeUser?.id === user.id}"
-          @click="emit('update:activeUser', user)"
+          :class="{'bg-orange-c': activeUser?.id === item.user.id}"
+          @click="emit('update:activeUser', item.user)"
       >
-        <span class="text-[13px] font-medium">{{ user.username }}</span>
+        <span class="text-[13px] font-medium">{{ item.user.username }}</span>
 
-        <span class="text-[13px] font-medium">(3)</span>
+        <span v-if="item.unread_count" class="text-[13px] font-medium">({{item.unread_count}})</span>
 
-        <span class="text-[13px] font-medium">5 min ago</span>
+<!--        <span class="text-[13px] font-medium">5 min ago</span>-->
       </li>
     </ul>
   </div>
@@ -29,6 +29,7 @@
 import {ref} from "vue";
 import {catchErrors} from "../../utils/index.js";
 import {useUserStore} from "../../store/user.js";
+import {useConversationsStore} from "../../store/conversations.js";
 
 
 const emit = defineEmits([''])
@@ -39,17 +40,18 @@ const props = defineProps({
   }
 })
 //Store
-const userStore = useUserStore()
+const conversationsStore = useConversationsStore()
 
 //State
-const users = ref([])
+const usersThreads = ref([])
 
 
 //Methods
 const fetchUsers = async (search) => {
   try {
-    const resp = await userStore.fetchUsers(search)
-    users.value = resp.data.results
+    const resp = await conversationsStore.fetchAllUsersThreads(search)
+    usersThreads.value = resp.data
+    console.log(usersThreads.value,'usersThreads.value')
   } catch (e) {
     catchErrors(e)
   }

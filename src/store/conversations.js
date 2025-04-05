@@ -7,11 +7,25 @@ const token = cookies.get('task_focus_token')
 if (token) {
   axios.defaults.headers.common['Authorization'] = `Token ${token}`
 }
+const baseUrl = 'https://stage-api.ayeayecaptain.io'
+
 
 export const useConversationsStore = defineStore('conversations', {
   state: () => ({}),
 
   actions: {
+    async fetchAllUsersThreads(payload) {
+      let url = `/messenger/user-threads`
+
+      if (payload?.search) url += `&search=${payload.search}`
+
+      return await axios({
+        method:'get',
+        url: url,
+        baseURL: baseUrl,
+      })
+    },
+
     async fetchAllThreads(payload) {
       let url = `/messenger/threads/`
 
@@ -20,7 +34,7 @@ export const useConversationsStore = defineStore('conversations', {
       return await axios({
         method:'get',
         url: url,
-        baseURL: 'https://stage-api.ayeayecaptain.io',
+        baseURL: baseUrl,
       })
     },
 
@@ -32,7 +46,7 @@ export const useConversationsStore = defineStore('conversations', {
       return await axios({
         method:'get',
         url: url,
-        baseURL: 'https://stage-api.ayeayecaptain.io',
+        baseURL: baseUrl,
       })
     },
 
@@ -42,7 +56,7 @@ export const useConversationsStore = defineStore('conversations', {
       return await axios({
         method:'post',
         url: url,
-        baseURL: 'https://stage-api.ayeayecaptain.io',
+        baseURL: baseUrl,
         data: payload,
       })
     },
@@ -53,7 +67,7 @@ export const useConversationsStore = defineStore('conversations', {
       return await axios({
         method:'post',
         url: url,
-        baseURL: 'https://stage-api.ayeayecaptain.io',
+        baseURL: baseUrl,
         data: payload,
       })
     },
@@ -64,7 +78,7 @@ export const useConversationsStore = defineStore('conversations', {
       return await axios({
         method:'post',
         url: url,
-        baseURL: 'https://stage-api.ayeayecaptain.io',
+        baseURL: baseUrl,
         data: payload,
       })
     },
@@ -75,7 +89,7 @@ export const useConversationsStore = defineStore('conversations', {
       return await axios({
         method:'post',
         url: url,
-        baseURL: 'https://stage-api.ayeayecaptain.io',
+        baseURL: baseUrl,
         data: payload,
       })
     },
