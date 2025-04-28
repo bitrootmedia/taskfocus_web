@@ -8,7 +8,7 @@
         <div class="flex gap-4 h-[calc(100vh-107px)]">
           <UsersList v-model:activeUser="activeUser"/>
 
-          <ThreadsList v-model:activeThread="activeThread"/>
+          <ThreadsList v-model:activeThread="activeThread" :activeUser="activeUser"/>
         </div>
       </div>
 
@@ -38,7 +38,7 @@
 
         <ChatInfo />
 
-        <Chat />
+        <Chat :activeUser="activeUser" :activeThread="activeThread"/>
       </div>
     </div>
   </div>

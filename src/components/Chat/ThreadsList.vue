@@ -1,5 +1,6 @@
 <template>
-  <div class="users-list w-1/2 border border-light-bg-c rounded-[10px] px-4 py-3 bg-white shadow-md relative flex flex-col justify-between">
+  <div
+      class="users-list w-1/2 border border-light-bg-c rounded-[10px] px-4 py-3 bg-white shadow-md relative flex flex-col justify-between">
     <div>
       <div>
         <h2 class="text-center font-semibold text-2xl text-black-c block mb-1">Threads</h2>
@@ -11,33 +12,25 @@
         />
       </div>
 
-      <ul class="mt-8">
-        <li class="sm:whitespace-nowrap mb-2 last:mb-0 px-3 py-1.5 cursor-pointer hover:bg-light-bg-c transition-all">
-          <p class="text-[13px] text-light-c font-medium">Project A (9) 2 min ago</p>
+      <ul class="mt-8" v-if="threads.length">
+        <li v-for="thread in threads"
+            :key="thread.thread"
+            class="flex gap-x-1 items-center whitespace-nowrap mb-2 last:mb-0 px-3 py-1.5 cursor-pointer hover:bg-light-bg-c transition-all"
+            :class="{'bg-orange-c': activeThread?.thread === thread.thread}"
+            @click="emit('update:activeThread', thread)"
+        >
+          <div class="flex items-center flex-wrap gap-2 justify-between w-full text-light-c">
+            <div class="flex items-center">
+              <span class="text-md font-semibold truncate ">{{
+                  thread.project?.title || thread.task?.title
+                }}</span>
 
-          <div class="ml-2 flex flex-col">
-            <span class="text-[13px] text-light-c font-medium">- Task A1 (2)</span>
-            <span class="text-[13px] text-light-c font-medium">- Task A2 (7)</span>
+              <span v-if="thread.unread_count" class="text-xs font-medium">({{ thread.unread_count }})</span>
+            </div>
+
+            <span class="text-xs font-medium" v-if="thread.last_unread_message_date">{{ convertTimeAgo(thread.last_unread_message_date) }}</span>
           </div>
         </li>
-        <li class="sm:whitespace-nowrap mb-2 last:mb-0 px-3 py-1.5 cursor-pointer hover:bg-light-bg-c transition-all">
-          <p class="text-[13px] text-light-c font-medium">Task B</p>
-        </li>
-        <li class="sm:whitespace-nowrap mb-2 last:mb-0 px-3 py-1.5 cursor-pointer hover:bg-light-bg-c transition-all">
-          <p class="text-[13px] text-light-c font-medium">Task C</p>
-        </li>
-
-        <!--      <li v-for="user in users"-->
-        <!--          :key="user.id"-->
-        <!--          class="flex gap-x-1 items-center whitespace-nowrap mb-2 last:mb-0 px-3 py-1.5 cursor-pointer hover:bg-light-bg-c transition-all"-->
-        <!--          @click="emit('update:activeUser', user)"-->
-        <!--      >-->
-        <!--        <span class="text-[13px] text-light-c font-medium">{{ user.username }}</span>-->
-
-        <!--        <span class="text-[13px] text-light-c font-medium">(3)</span>-->
-
-        <!--        <span class="text-[13px] text-light-c font-medium">5 min ago</span>-->
-        <!--      </li>-->
       </ul>
     </div>
 
@@ -54,9 +47,9 @@
 </template>
 
 <script setup>
-import {ref} from "vue";
+import {ref, watch} from "vue";
 import Button from "../Button/Button.vue";
-import {catchErrors} from "../../utils/index.js";
+import {catchErrors, convertTimeAgo} from "../../utils/index.js";
 import {useConversationsStore} from "../../store/conversations.js";
 
 const emit = defineEmits([''])
@@ -64,14 +57,25 @@ const props = defineProps({
   activeThread: {
     type: Object,
     required: false
+  },
+  activeUser: {
+    type: Object,
+    required: false
   }
 })
 
 //Store
-const conversationsStore= useConversationsStore()
+const conversationsStore = useConversationsStore()
 
 //State
 const threads = ref([])
+
+
+watch(() => props.activeUser, (val) => {
+  if (val.id) {
+    fetchUserThreads(val.id)
+  }
+})
 
 
 const startNewThread = () => {
@@ -80,10 +84,19 @@ const startNewThread = () => {
 
 
 //Methods
-const fetchAllThreads = async()=>{
+const fetchUserThreads = async (id) => {
+  try {
+    const resp = await conversationsStore.fetchUserThreads({id})
+    threads.value = resp.data
+  } catch (e) {
+    catchErrors(e)
+  }
+}
+
+const fetchAllThreads = async () => {
   try {
     const resp = await conversationsStore.fetchAllThreads()
-    console.log(resp.data.results,'resp.data.results')
+    console.log(resp.data, '1111')
     threads.value = resp.data.results
   } catch (e) {
     catchErrors(e)

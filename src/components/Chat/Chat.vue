@@ -5,7 +5,8 @@
         class="transition-margin duration-400 ease-in-out z-30 relative"
     >
       <div class="bg-secondary">
-        <div ref="messagesContainer" class="content lg:px-2 py-4 min-h-[290px] h-[calc(100vh-450px)] md:h-[calc(100vh-340px)] lg:h-[calc(100vh-300px)] relative overflow-y-auto">
+        <div ref="messagesContainer"
+             class="content lg:px-2 py-4 min-h-[290px] h-[calc(100vh-450px)] md:h-[calc(100vh-340px)] lg:h-[calc(100vh-300px)] relative overflow-y-auto">
 
           <div class="message-wrapper relative">
             <div class="message-item mb-6"
@@ -13,16 +14,16 @@
                  v-for="message in messages" :key="message.id">
 
               <div class="message-header flex gap-2 items-center mb-[6px]"
-              :class="{'justify-end': message.is_mine}">
-                <span class="text-xs text-primary">{{ message.is_mine ? 'You' : message.user}}</span>
+                   :class="{'justify-end': authUser.pk === message.sender.id}">
+                <span class="text-xs text-primary">{{ authUser.pk === message.sender.id ? 'You' : message.sender.username }}</span>
 
                 <span class="text-xs text-sand">({{ dateFormat(message.created_at) }})</span>
               </div>
 
               <div class="message text-sm text-primary py-[10px] break-all px-4"
-                   :class="{'bg-light-bg-c rounded-tl-md rounded-bl-md rounded-br-md': message.is_mine,
-                  'bg-light-bg-c rounded-tr-md rounded-bl-md rounded-br-md': !message.is_mine}">
-                {{ message.text }}
+                   :class="{'bg-light-bg-c rounded-tl-md rounded-bl-md rounded-br-md': authUser.pk === message.sender.id,
+                  'bg-light-bg-c rounded-tr-md rounded-bl-md rounded-br-md': authUser.pk !== message.sender.id}">
+                {{ message.content }}
               </div>
             </div>
 
@@ -41,56 +42,54 @@
 </template>
 
 <script setup>
-import {ref, nextTick, onMounted} from "vue";
+import {ref, nextTick, onMounted, watch, computed} from "vue";
 import Typing from "./chat/Typing.vue";
+import {useCookies} from "vue3-cookies";
 import ChatContentFooter from "./chat/ChatContentFooter.vue";
+import {catchErrors, pusherEventNames} from "../../utils/index.js";
+import {useConversationsStore} from "../../store/conversations.js";
+import {usePusher} from "../../composables/usePusher.js";
+
+const {bindEvent, setPusherChannel} = usePusher()
+const conversationsStore = useConversationsStore()
+const {cookies} = useCookies();
 
 //State
 const text = ref('');
 const isTyping = ref(false);
 const messagesContainer = ref(null);
-const messages = ref([
-  {
-    id: 1,
-    text: 'Do you work with vegan wines?',
-    is_mine: true,
-    created_at: '2025-03-24 04:07:31'
-  },
-  {
-    id: 2,
-    text: 'Yes! Palm Bay offers several vegan wines. Here are some of our best selections:',
-    is_mine: false,
-    user: 'Mike',
-    created_at: ' 2025-03-24 04:07:50'
-  },
-  {
-    id: 3,
-    text: 'Yes! Palm Bay offers several vegan wines. Here are some of our best selections:',
-    is_mine: true,
-    created_at: ' 2025-03-24 04:08:20'
-  },
-  // {
-  //   id: 4,
-  //   text: 'Several wineries in our portfolio use renewable energy, such as solar and wind power, to minimize their carbon footprint. For example, our partner, Cavit, operates fully on solar energy. Would you like details on how sustainability influences wine quality?',
-  //   is_mine: false,
-  //   user: 'Ann',
-  //   created_at: ' 2025-03-24 04:08:50'
-  // },
-  // {
-  //   id: 5,
-  //   text: 'How does sustainability improve wine quality?',
-  //   is_mine: true,
-  //   created_at: ' 2025-03-24 04:09:40'
-  // },
-  // {
-  //   id: 6,
-  //   text: 'Sustainable viticulture often results in healthier vineyards, which can lead to better grape quality and enhanced flavour in wines. Sustainable practices like minimal chemical use and healthier soil can create wines with greater complexity and character.',
-  //   is_mine: false,
-  //   user: 'Mike',
-  //   created_at: ' 2025-03-24 04:10:15'
-  // }
-])
+const messages = ref([])
 
+const emit = defineEmits([''])
+const props = defineProps({
+  activeThread: {
+    type: Object,
+    required: false
+  },
+  activeUser: {
+    type: Object,
+    required: false
+  }
+})
+
+watch(() => props.activeThread, (val) => {
+  if (val.thread) {
+    fetchConversationByThreadId(val.thread)
+    setPusherChannel(props?.activeThread?.thread)
+  }
+})
+
+watch(() => props.activeUser, () => {
+  if (props.activeThread.thread) {
+    fetchConversationByThreadId(props.activeThread.thread)
+    setPusherChannel(props?.activeThread?.thread)
+  }
+})
+
+const authUser = computed(() => {
+  if (!cookies.get('task_focus_user')) return ''
+  return cookies.get('task_focus_user')
+})
 
 
 const dateFormat = (date) => {
@@ -123,42 +122,23 @@ const sendMessage = async () => {
   if (!inputArea.value) return
 
   try {
+
     const obj = {
-      id: messages.value.length + 2,
-      is_mine: true,
-      text: inputArea.value,
-      created_at: '2025-03-24 04:07:31'
+      thread: props.activeThread.thread,
+      content: inputArea.value,
+      sender: authUser.value.pk,
     }
 
-    messages.value.push(obj)
+    await conversationsStore.sendMessage(obj)
+    await fetchConversationByThreadId(props.activeThread.thread)
     inputArea.value = '';
-    isTyping.value = true
 
     await nextTick();
     scrollToBottom()
-    tempDelay()
   } catch (error) {
     console.error(error)
     console.log(error, 'error')
   }
-}
-
-const tempDelay = () => {
-  //TODO in future we will remove this code, only for test
-  setTimeout(async () => {
-    const obj = {
-      id: messages.value.length + 2,
-      is_mine: false,
-      user: 'Mike',
-      text: 'There are many variations of passages of Lorem Ipsum available, but the majority have suffered',
-      created_at: '2025-03-24 04:07:31'
-    }
-    messages.value.push(obj)
-    isTyping.value = false
-
-    await nextTick();
-    scrollToBottom()
-  }, 1000)
 }
 
 const scrollToBottom = () => {
@@ -173,5 +153,26 @@ const scrollToBottom = () => {
 onMounted(() => {
   scrollToBottom()
 })
+
+const fetchConversationByThreadId = async (id) => {
+  try {
+    const resp = await conversationsStore.fetchConversationByThreadId({id})
+    console.log(resp.data.results, 'resp')
+    messages.value = resp.data.results.reverse()
+
+    await nextTick();
+    scrollToBottom()
+  } catch (e) {
+    catchErrors(e)
+  }
+}
+
+const test = ()=>{
+  console.log('111111111')
+}
+
+// console.log(props.activeThread?.id, 'activeThread?.id')
+// Config Pusher
+bindEvent(pusherEventNames.message_added, test)
 
 </script>
