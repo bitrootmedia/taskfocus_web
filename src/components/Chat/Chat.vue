@@ -157,7 +157,6 @@ onMounted(() => {
 const fetchConversationByThreadId = async (id) => {
   try {
     const resp = await conversationsStore.fetchConversationByThreadId({id})
-    console.log(resp.data.results, 'resp')
     messages.value = resp.data.results.reverse()
 
     await nextTick();
