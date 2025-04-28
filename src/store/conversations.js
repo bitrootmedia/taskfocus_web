@@ -14,8 +14,8 @@ export const useConversationsStore = defineStore('conversations', {
   state: () => ({}),
 
   actions: {
-    async fetchAllUsersThreads(payload) {
-      let url = `/messenger/user-threads`
+    async fetchAllUsers(payload) {
+      let url = `/messenger/users`
 
       if (payload?.search) url += `&search=${payload.search}`
 
@@ -27,7 +27,7 @@ export const useConversationsStore = defineStore('conversations', {
     },
 
     async fetchAllThreads(payload) {
-      let url = `/messenger/threads/`
+      let url = `/messenger/threads`
 
       if (payload?.search) url += `&search=${payload.search}`
 
@@ -38,15 +38,34 @@ export const useConversationsStore = defineStore('conversations', {
       })
     },
 
-    async fetchAllDirectThreads(payload) {
-      let url = `/messenger/direct-threads/`
-
-      if (payload?.search) url += `&search=${payload.search}`
+    async fetchUserThreads(payload) {
+      let url = `/messenger/threads/${payload.id}`
 
       return await axios({
         method:'get',
         url: url,
         baseURL: baseUrl,
+      })
+    },
+
+    async fetchConversationByThreadId(payload) {
+      let url = `/messenger/conversations/${payload.id}`
+
+      return await axios({
+        method:'get',
+        url: url,
+        baseURL: baseUrl,
+      })
+    },
+
+    async sendMessage(payload) {
+      let url = `/messenger/conversations/${payload.thread}`
+
+      return await axios({
+        method:'post',
+        url: url,
+        baseURL: baseUrl,
+        data: payload,
       })
     },
 

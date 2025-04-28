@@ -8,18 +8,20 @@
         placeholder="Users Search..."
     />
 
-    <ul v-if="usersThreads.length" class="mt-8">
-      <li v-for="item in usersThreads"
+    <ul v-if="users.length" class="mt-8">
+      <li v-for="item in users"
           :key="item.user.id"
-          class="flex flex-wrap sm:flex-nowrap gap-x-1 items-center sm:whitespace-nowrap mb-2 last:mb-0 px-3 py-1.5 cursor-pointer hover:bg-light-bg-c transition-all text-light-c"
+          class="flex flex-wrap sm:flex-nowrap gap-x-1 items-center justify-between sm:whitespace-nowrap mb-2 last:mb-0 px-3 py-1.5 cursor-pointer hover:bg-light-bg-c transition-all text-light-c"
           :class="{'bg-orange-c': activeUser?.id === item.user.id}"
           @click="emit('update:activeUser', item.user)"
       >
-        <span class="text-[13px] font-medium">{{ item.user.username }}</span>
+        <div>
+          <span class="text-md font-semibold">{{ item.user.username }}</span>
 
-        <span v-if="item.unread_count" class="text-[13px] font-medium">({{item.unread_count}})</span>
+          <span v-if="item.unread_count" class="text-xs font-medium">({{item.unread_count}})</span>
+        </div>
 
-<!--        <span class="text-[13px] font-medium">5 min ago</span>-->
+        <span v-if="item.last_unread_message_date" class="text-xs font-medium">{{convertTimeAgo(item.last_unread_message_date)}}</span>
       </li>
     </ul>
   </div>
@@ -28,7 +30,7 @@
 <script setup>
 import {ref} from "vue";
 import {catchErrors} from "../../utils/index.js";
-import {useUserStore} from "../../store/user.js";
+import {convertTimeAgo} from "../../utils";
 import {useConversationsStore} from "../../store/conversations.js";
 
 
@@ -43,15 +45,15 @@ const props = defineProps({
 const conversationsStore = useConversationsStore()
 
 //State
-const usersThreads = ref([])
+const users = ref([])
 
 
 //Methods
 const fetchUsers = async (search) => {
   try {
-    const resp = await conversationsStore.fetchAllUsersThreads(search)
-    usersThreads.value = resp.data
-    console.log(usersThreads.value,'usersThreads.value')
+    const resp = await conversationsStore.fetchAllUsers(search)
+    users.value = resp.data
+    console.log(users.value,'users.value')
   } catch (e) {
     catchErrors(e)
   }
