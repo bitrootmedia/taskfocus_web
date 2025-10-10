@@ -104,6 +104,13 @@
               @update="updateTasks"
           />
 
+          <SendToBoardModal
+              :show-modal="sendBoardModal"
+              :task="task"
+              :btn-title="'Save'"
+              @close="sendBoardModal = false"
+          />
+
           <OwnersModal
               :show-modal="showOwnersModal"
               :task="task"
@@ -373,6 +380,14 @@
           <div class="flex flex-wrap gap-1">
             <Button
                 class="w-full justify-center"
+                @on-click="sendBoardModal = true"
+                label="Send to Board"
+                size="medium"
+                version="gray"
+                rounded
+            />
+            <Button
+                class="w-full justify-center"
                 v-if="isAuthOwner || isAuthProjectOwner"
                 @on-click="showOwnersModal = true"
                 label="Change Owner"
@@ -571,6 +586,7 @@ import PaperClipIcon from "../../components/Svg/PaperClipIcon.vue";
 import ConfirmCloseModal from './../../components/Modals/ConfirmCloseModal.vue'
 import Dropzone from 'dropzone-vue';
 import {usePusher} from "../../composables/usePusher";
+import SendToBoardModal from "../../components/Modals/SendToBoardModal.vue";
 
 // ValidationRules
 const rules = {
@@ -631,6 +647,7 @@ let showUsersModal = ref(false)
 let showUsersQueueModal = ref(false)
 let showResponsiblesModal = ref(false)
 let showOwnersModal = ref(false)
+let sendBoardModal = ref(false)
 let toggleActive = ref(false)
 let firstLoad = ref(false)
 const blockName = ref('')

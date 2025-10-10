@@ -103,5 +103,9 @@ export const useBoardsStore = defineStore('boards', {
             delete payload.id
             return await axios.delete(`/board-users/${id}`, {data: payload})
         },
+
+        async sendToBoard(payload) {
+            return await axios.post(`/tasks-send-to-board`, payload)
+        },
     },
 })
