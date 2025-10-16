@@ -1,23 +1,25 @@
 <template>
   <div
       class="flex justify-between bg-white rounded-md px-2 py-2 border border-[#E5E7E7] shadow-sm mb-2 cursor-move relative group">
-    <div v-if="cardItem.task">
-      <div @click="toLink(cardItem.task,'task')">
-        Task: <span class="underline cursor-pointer">{{ cardItem.task.title }}</span>
-      </div>
-      <div class="text-xs my-1">Status: <span>{{ cardItem.task.status || 'N/A' }}</span></div>
-      <div class="text-xs">Responsible: <span>{{ cardItem.task.responsible?.username || 'N/A' }}</span></div>
-    </div>
+   <div class="flex flex-col">
+     <div v-if="cardItem.task">
+       <div @click="toLink(cardItem.task,'task')">
+         Task: <span class="underline cursor-pointer">{{ cardItem.task.title }}</span>
+       </div>
+       <div class="text-xs my-1">Status: <span>{{ cardItem.task.status || 'N/A' }}</span></div>
+       <div class="text-xs">Responsible: <span>{{ cardItem.task.responsible?.username || 'N/A' }}</span></div>
+     </div>
 
-    <div v-if="cardItem.project" @click="toLink(cardItem.project,'project')">
-      Project: <span class="underline cursor-pointer">{{ cardItem.project.title }}</span>
-    </div>
+     <div v-if="cardItem.project" @click="toLink(cardItem.project,'project')">
+       Project: <span class="underline cursor-pointer">{{ cardItem.project.title }}</span>
+     </div>
 
-    <div v-if="cardItem.board" @click="toLink(cardItem.board,'board')">
-      Board: <span class="underline cursor-pointer">{{ cardItem.board.name }}</span>
-    </div>
+     <div v-if="cardItem.board" @click="toLink(cardItem.board,'board')">
+       Board: <span class="underline cursor-pointer">{{ cardItem.board.name }}</span>
+     </div>
 
-    <span v-if="cardItem.comment">{{ cardItem.comment }}</span>
+     <span v-if="cardItem.comment">{{ cardItem.comment }}</span>
+   </div>
 
     <div
         class="flex opacity-0 group-hover:opacity-100 transition-all ease-in-out justify-center items-center bg-white rounded-full w-6 h-6 shadow-md">

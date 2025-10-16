@@ -71,6 +71,7 @@ import CloseBlackIcon from "../Svg/CloseBlackIcon.vue";
 import Button from '../Button/Button.vue'
 import {catchErrors} from "../../utils/index.js";
 import {useBoardsStore} from "../../store/boards.js";
+import {useToast} from "vue-toastification";
 
 const emit = defineEmits(['close'])
 const props = defineProps({
@@ -89,7 +90,7 @@ const props = defineProps({
   },
 })
 
-
+const toast = useToast()
 const boardsStore = useBoardsStore()
 
 // State
@@ -134,6 +135,9 @@ const fetchCards = async () => {
 
 const sendToBoard = async () => {
   try {
+    if (!selectedBoard.value) return toast.error("Please select board");
+    if (!selectedCard.value.length) return toast.error("Please select card");
+
     btnLoad.value = true
     const data = {
       pk: props.task.id,
@@ -142,7 +146,7 @@ const sendToBoard = async () => {
     }
 
     await boardsStore.sendToBoard(data)
-    await toast.success("Successfully created");
+    toast.success("Successfully created");
     close()
   } catch (e) {
     catchErrors(e)

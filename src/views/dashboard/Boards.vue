@@ -79,7 +79,6 @@
           </DataTable>
         </div>
 
-
         <Pagination
             v-if="paginate.pagination.value.total > 1 && !loading"
             :pagination="paginate.pagination.value"
@@ -108,7 +107,6 @@ import {useRouter} from "vue-router";
 import {useFilter} from "../../composables/useFilter.js";
 import SearchIcon from "../../components/Svg/SearchIcon.vue";
 import PlusIcon from "../../components/Svg/PlusIcon.vue";
-
 
 //Store
 const toast = useToast()
