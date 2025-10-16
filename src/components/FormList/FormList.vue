@@ -328,7 +328,7 @@ const editItem = (index) => {
 }
 
 const removeCheckboxItem = (checklistIndex, elementIndex) => {
-  formList.value[checklistIndex].elements = formList.value[checklistIndex].elements.filter((item, i) => i !== elementIndex)
+    formList.value[checklistIndex].content.elements = formList.value[checklistIndex].content.elements.filter((item, i) => i !== elementIndex)
 }
 
 const removeFormItem = (index) => {
