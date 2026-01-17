@@ -65,7 +65,7 @@ import {useUserStore} from "../../store/user";
 import {catchErrors} from "../../utils";
 import {useVuelidate} from '@vuelidate/core'
 import {required} from '@vuelidate/validators'
-import axios from "./../../axios.js";
+import axios, {fetchCsrfToken} from "./../../axios.js";
 import Button from '../../components/Button/Button.vue'
 import Input from '../../components/Input/Input.vue'
 import config from "../../config/index.js";
@@ -105,6 +105,9 @@ const signIn = async () => {
 
     if (isValid) {
       axios.defaults.baseURL = cookieBaseUrl ? cookieBaseUrl : baseUrl.value ? baseUrl.value : config.BASE_API_URL;
+
+      // Fetch CSRF token before login
+      await fetchCsrfToken();
 
       const resp = await userStore.login(form.value)
       await cookies.set('task_focus_token', resp.data.key)
