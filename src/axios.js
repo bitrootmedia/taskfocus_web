@@ -28,7 +28,11 @@ instance.interceptors.request.use((config) => {
 
 // Fetch CSRF token from backend (call this before login)
 export async function fetchCsrfToken() {
-    await instance.get('/csrf/');
+    try {
+        await instance.get('/csrf/');
+    } catch (e) {
+        // Ignore errors - CSRF fetch is optional
+    }
 }
 
 export default instance;
