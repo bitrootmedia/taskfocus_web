@@ -107,7 +107,7 @@ const signIn = async () => {
       axios.defaults.baseURL = cookieBaseUrl ? cookieBaseUrl : baseUrl.value ? baseUrl.value : config.BASE_API_URL;
 
       // Fetch CSRF token before login
-      await fetchCsrfToken();
+      // await fetchCsrfToken();
 
       const resp = await userStore.login(form.value)
       await cookies.set('task_focus_token', resp.data.key)
