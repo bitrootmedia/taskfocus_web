@@ -1,13 +1,15 @@
 import {defineStore} from "pinia";
 import axios from "./../axios.js";
 import {useCookies} from "vue3-cookies";
+import config from "./../config/index.js";
 
 const {cookies} = useCookies();
 const token = cookies.get('task_focus_token')
 if (token) {
   axios.defaults.headers.common['Authorization'] = `Token ${token}`
 }
-const baseUrl = 'https://stage-api.ayeayecaptain.io'
+// Use configured API URL (without /api suffix for messenger endpoints)
+const baseUrl = config.BASE_API_URL?.replace(/\/api\/?$/, '') || ''
 
 
 export const useConversationsStore = defineStore('conversations', {
