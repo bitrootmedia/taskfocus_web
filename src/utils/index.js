@@ -103,4 +103,5 @@ export const pusherEventNames = {
     'block_updated': 'block_updated',
     'block_archived': 'block_archived',
     'block_moved': 'block_moved',
+    'message_added': 'message_added',
 }

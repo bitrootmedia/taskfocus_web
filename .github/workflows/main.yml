@@ -22,7 +22,7 @@ jobs:
       - name: .env setup
         run: echo "$ENV_FILE" > .env
         env:
-          ENV_FILE: ${{ vars.ENV_FILE }}
+          ENV_FILE: ${{ vars.LIVE_ENV_FILE }}
 
       - name: Build
         run: npm run build
@@ -30,10 +30,10 @@ jobs:
       - name: Deploy to server
         uses: appleboy/scp-action@master
         with:
-          host: ${{ secrets.STAGE_HOST }}
-          username: ${{ secrets.STAGE_USERNAME }}
-          password: ${{ secrets.STAGE_PASSWORD }}
-          port: ${{ secrets.STAGE_PORT }}
+          host: ${{ secrets.LIVE_HOST }}
+          username: ${{ secrets.LIVE_USERNAME }}
+          password: ${{ secrets.LIVE_PASSWORD }}
+          port: ${{ secrets.LIVE_PORT }}
           source: "dist/*"
-          target: "/home/deploy/www/web/"
+          target: "/home/deploy/taskfocus_web/dist/"
           strip_components: 1

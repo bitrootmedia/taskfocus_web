@@ -35,6 +35,7 @@ import {useUserStore} from "../store/user";
 import axios from "./../axios.js";
 import CreateBoard from "../views/dashboard/CreateBoard.vue";
 import Conversations from "../views/dashboard/Conversations.vue";
+import Chat from "../views/dashboard/Chat.vue";
 
 // routes
 const routes = [
@@ -173,6 +174,11 @@ const routes = [
                 path: "/dashboard/conversations",
                 component: Conversations,
                 name: 'Conversations',
+            },
+            {
+                path: "/dashboard/chat",
+                component: Chat,
+                name: 'Chat',
             },
         ],
     },
